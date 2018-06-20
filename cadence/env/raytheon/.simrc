@@ -1,0 +1,2 @@
+simNlpGlobalLibName	=	"lvslib"
+ivProbeForm->runDir->value= ivLVSEnvForm~>runDir~>value

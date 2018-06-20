@@ -1,0 +1,54 @@
+#!/bin/tcsh
+#
+
+setenv REFLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
+setenv PROCLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
+setenv PROJDIR ~/cad_layout_61
+setenv DESDIR ~/deslibs_oa
+setenv SETUPDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/raytheon/trunk
+setenv EDITOR /usr/bin/emacs
+setenv TERM konsole
+setenv CDS_CMI_COMPLEVEL 0
+setenv SETUP 0
+
+# This setup is Cadence Raytheon Environment
+# Users can modify the local .cdsinit and .cdsenv
+# to their preferences and they will not get 
+# overwritten
+if !(-d $PROJDIR) then
+  mkdir $PROJDIR
+  cp $SETUPDIR/cds.lib $PROJDIR/cds.lib
+  cp $SETUPDIR/display.drf $PROJDIR/display.drf
+  cp $SETUPDIR/.cdsinit $PROJDIR/.cdsinit
+  cp $SETUPDIR/.cdsenv $PROJDIR/.cdsenv
+#  cp $SETUPDIR/assura_tech.lib $PROJDIR/assura_tech.lib
+  cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
+  cp $SETUPDIR/.simrc $PROJDIR/.simrc
+  cp $SETUPDIR/divaLVS.rul $PROJDIR/divaLVS.rul
+endif
+
+if !(-d $DESDIR) then
+  mkdir $DESDIR
+endif
+
+
+# Environement setup for cadence virtuos 6.1.6
+setenv CDS_AUTO_64BIT ALL
+setenv CDS_LOAD_ENV CWD
+setenv CDS_LIC_FILE 5280@eand-idslnxlic01.and.us.ray.com:5280@esud-lnxlic01.sud.us.ray.com:5280@epts-lnxlic01.pts.us.ray.com:27338@cadence-license01-gbs.app.ray.com
+setenv INSTALLDIR /apps/cadence/IC616
+setenv CDS /apps/cadence/IC616
+setenv CDS_HOME /apps/cadence/IC616
+setenv ASSURAHOME /apps/assura/ASSURA616_04.14.101
+
+# Set the Cadence mode for lvs netlists
+#setenv CDS_Netlisting_Mode Analog
+setenv CDS_Netlisting_Mode Digital
+########################################################
+
+set path = ( /apps/python/python27/bin $INSTALLDIR/tools/bin $INSTALLDIR/tools/dfII/bin $ASSURAHOME/tools/bin $ASSURAHOME/tools/assura/bin $ASSURAHOME/tools/dfII/bin $path )
+
+cd $PROJDIR
+
+virtuoso & 
+

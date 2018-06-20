@@ -1,0 +1,253 @@
+############################################################################
+# Cadence Design Systems                                       Version 4.2.2
+#
+# .cdsplotinit plotter models file.
+#
+# This file is the foundation plotter model data base for Cadence Design
+# Systems plot software.  This file is used to build site specific 
+# .cdsplotinit files.  
+#
+# IMPORTANT****YOU MUST CREATE A SITE SPECIFIC VERSION OF THIS FILE AND
+#              LOCATE IT IN EITHER <install_path>/tools/dfII/local, your 
+#              working directory, or your home directory.
+#
+############################################################################
+# Cadence .cdsplotinit
+#
+# Sample site specific entries in the file.
+
+post42|adcpt42: \
+	:spool=lpr -Padcpt42: \
+	:query=lpq  -Padcpt42: \
+	:remove=lprm -Padcpt42 $3: \
+	:manufacturer=XEROX: \
+	:type=postscript2: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75: \
+        :paperSize="B" 3150 4868 75 75:
+
+post8a|adcpt8a: \
+	:spool=lpr  -Padcpt8a: \
+	:query=lpq  -Padcpt8a: \
+	:remove=lprm -Padcpt8a $3: \
+	:manufacturer=XEROX: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post43|post43: \
+	:spool=lpr  -Padcpt43: \
+	:query=lpq  -Padcpt43: \
+	:remove=lprm -Padcpt43 $3: \
+	:manufacturer=XEROX: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post44|post44: \
+	:spool=lpr  -Padcpt44: \
+	:query=lpq  -Padcpt44: \
+	:remove=lprm -Padcpt44 $3: \
+	:manufacturer=XEROX: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+	
+post15|post15: \
+	:spool=lpr  -Padcpt15: \
+	:query=lpq  -Padcpt15: \
+	:remove=lprm -Padcpt15 $3: \
+	:manufacturer=HP: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post19a|post19a: \
+	:spool=lpr -Padcpt19a: \
+	:query=lpq -Padcpt19a: \
+	:remove=lprm -Padcpt19a $3: \
+	:manufacturer=HP: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post33|post33: \
+        :spool=lpr -Padcpt33: \
+        :query=lpq -Padcpt33: \
+        :remove=lprm -Padcpt33 $3: \
+        :manufacturer=HP: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post32|post32: \
+        :spool=lpr -Padcpt32: \
+        :query=lpq -Padcpt32: \
+        :remove=lprm -Padcpt32 $3: \
+        :manufacturer=HP: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post12a|adcpt12a: \
+	:spool=lpr  -Padcpt12a: \
+	:query=lpq  -Padcpt12a: \
+	:remove=lprm -Padcpt12a $3: \
+	:manufacturer=XEROX: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post14|adcpt14: \
+	:spool=lpr  -Padcpt14: \
+	:query=lpq  -Padcpt14: \
+	:remove=lprm -Padcpt14 $3: \
+	:manufacturer=HP: \
+	:type=postscript1: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post37|Hewlett-Packard DesignJet T1100ps: \
+        :manufacturer=Hewlett-Packard: \
+	:type=hpgl2: \
+        :spool="lpr -Padcpt37 -o raw": \
+        :query=lpq -Padcpt37: \
+        :remove=lprm -Padcpt37 $3: \
+        :resolution#1016: \
+        :maximumPages#10: \
+        :paperSize="A portrait" 8226 9806: \
+        :paperSize="A landscape" 10766 7266: \
+        :paperSize="B portrait" 10766 15902: \
+        :paperSize="B landscape" 16862 9806: \
+        :paperSize="C portrait" 16862 20982: \
+        :paperSize="C landscape" 21942 15902: \
+        :paperSize="D portrait" 21942 33174: \
+        :paperSize="D landscape" 34134 20982: \
+        :paperSize="E portrait" 34134 43334: \
+        :paperSize="A0 portrait" 33230 46190: \
+        :paperSize="A1 portrait" 23350 32270: \
+        :paperSize="A1 landscape" 33230 22390: \
+        :paperSize="A2 portrait" 16390 22390: \
+        :paperSize="A2 landscape" 23350 15430: \
+        :paperSize="A3 portrait" 11470 15430: \
+        :paperSize="A3 landscape" 16390 10510: \
+        :paperSize="A4 portrait" 7990 10510: \
+        :paperSize="A4 landscape" 11470 7030: \
+        :paperSize="24 inches wide" 23984 0: \
+        :paperSize="36 inches wide" 36176 0:
+
+post52|Hewlett-Packard DesignJet 1055CM: \
+        :manufacturer=Hewlett-Packard: \
+	:type=hpgl2: \
+        :spool="lpr -Padcpt52 -o raw": \
+        :query=lpq -Padcpt52: \
+        :remove=lprm -Padcpt52 $3: \
+        :resolution#1016: \
+        :maximumPages#10: \
+        :paperSize="A portrait" 8226 9806: \
+        :paperSize="A landscape" 10766 7266: \
+        :paperSize="B portrait" 10766 15902: \
+        :paperSize="B landscape" 16862 9806: \
+        :paperSize="C portrait" 16862 20982: \
+        :paperSize="C landscape" 21942 15902: \
+        :paperSize="D portrait" 21942 33174: \
+        :paperSize="D landscape" 34134 20982: \
+        :paperSize="E portrait" 34134 43334: \
+        :paperSize="A0 portrait" 33230 46190: \
+        :paperSize="A1 portrait" 23350 32270: \
+        :paperSize="A1 landscape" 33230 22390: \
+        :paperSize="A2 portrait" 16390 22390: \
+        :paperSize="A2 landscape" 23350 15430: \
+        :paperSize="A3 portrait" 11470 15430: \
+        :paperSize="A3 landscape" 16390 10510: \
+        :paperSize="A4 portrait" 7990 10510: \
+        :paperSize="A4 landscape" 11470 7030: \
+        :paperSize="24 inches wide" 23984 0: \
+        :paperSize="36 inches wide" 36176 0:
+
+post45|adcpt45: \
+        :spool=lpr -Padcpt45: \
+        :query=lpq -Padcpt45: \
+        :remove=lprm -Padcpt45 $3: \
+        :manufacturer=XEROX: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post28|adcpt28: \
+	:spool=lpr -Padcpt28: \
+	:query=lpq -Padcpt28: \
+	:remove=lprm -Padcpt28 $3: \
+	:manufacturer=XEROX: \
+	:type=postscript2: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:paperSize="A" 2400 3150 75 75:
+
+post16|adcpt16: \
+        :spool=lpr -Padcpt16: \
+        :query=lpq -Padcpt16: \
+        :remove=lprm -Padcpt16 $3: \
+        :manufacturer=XEROX: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post5b|adcpt5b: \
+        :spool=lpr -Padcpt5b: \
+        :query=lpq -Padcpt5b: \
+        :remove=lprm -Padcpt5b $3: \
+        :manufacturer=XEROX: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post34|adcpt34: \
+        :spool=lpr -Padcpt34: \
+        :query=lpq -Padcpt34: \
+        :remove=lprm -Padcpt34 $3: \
+        :manufacturer=XEROX: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+post71|adcpt71: \
+        :spool=lpr -Padcpt71: \
+        :query=lpq -Padcpt71: \
+        :remove=lprm -Padcpt71 $3: \
+        :manufacturer=LEXMARK: \
+        :type=postscript2: \
+        :maximumPages#30: \
+        :resolution#300: \
+        :paperSize="A" 2400 3150 75 75:
+
+MECL2N3|MECL2N3: \
+        :spool=lp -dAND-MECL2N3-H4730-CMFD1: \
+	:query=lpstat -pAND-MECL2N3-H4730-CMFD1: \
+	:remove=cancel $1 AND-MECL2N3-H4730-CMFD1 $3: \
+	:manufacturer=Hewlett-Packard: \
+	:type=postscript2: \
+	:maximumPages#30: \
+	:resolution#300: \
+	:PPDFile=/users/parkesm/Desktop/HP-Color_LaserJet_4730_MFP-Postscript.ppd: \
+	:PPD="(A) *PageSize Letter": \
+	:PPD="(B) *PageSize Tabloid": \	
+#	:paperSize="A" 4800 6300 150 150: 
+	:paperSize="A" 2400 3150 75 75: \
+        :paperSize="B" 3150 4868 75 75:
+
+#

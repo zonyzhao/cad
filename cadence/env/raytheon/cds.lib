@@ -1,0 +1,12 @@
+INCLUDE /net/nfs-n501/ANFS01/apps/cadence/IC616/share/cdssetup/cds.lib
+DEFINE avTech /apps/assura/ASSURA616_04.14.101/tools/assura/etc/avtech/avTech
+DEFINE RRFC_2metal /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/RRFC_2metal
+DEFINE ganLib /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/ganLib
+DEFINE ASML /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/ASML
+DEFINE XYnumbers /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/XYnumbers
+DEFINE PLL_46 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/PLL_46
+DEFINE PLL_51 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/PLL_51
+DEFINE PLL_60 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/PLL_60
+DEFINE PLL_70 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/PLL_70
+DEFINE POL_70 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cdb2oa_d/POL_70
+DEFINE lvslib /net/rfctest/vol/vol13/eng/lib/oaLibs/converted/lvslib
