@@ -1,0 +1,71 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  layCell: Layout Cell View Object 
+; SKILL LINT RESULTS:
+; IQ Score is 100 (best is 100)
+; 0 errors, 0 general warnings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cell2png ()
+	  (
+		( cell @reader getCell @writer setCell)
+		( lib @reader getLib @writer setLib)
+        	( view @reader getView @writer setView)
+		( dir @reader getDir @writer setDir)
+		( fileName @reader getFileName @writer setFileName)
+		( desPath @reader getDesPath)				  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Generates the PNG Image for the target cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( savePng (( c2p cell2png ))
+	let( ( dd 
+	       viewType
+	       wid
+	       pngName
+	       fName)
+	dd = ddGetObj(c2p->lib c2p->cell c2p->view "*")
+	when(dd==nil error("cell2png: CELL: %s, LIB: %s VIEW: %s Not Found" c2p->cell c2p->lib c2p->view))
+	viewType = ddMapGetFileViewType(dd)
+	wid = hiCreateWindow( list(0:0 800:800) "none" "Export Window")
+	wid->neverCurrentWindow = t
+	deOpenCellView(c2p->lib c2p->cell c2p->view viewType wid "r")
+	sprintf(pngName "%s.png" c2p->fileName)
+	printf("INFO (cell2png): saving png file: %s\n" strcat(c2p->dir "/" pngName) )
+;	fName = symbolToString(stringToSymbol((strcat(c2p->dir "/" pngName)))) 
+	fName = strcat(c2p->dir "/" pngName)
+	hiExportImage(?fileName fName
+	      	      ?exportRegion 'entireDesign
+	              ?window wid
+	              );hiExportImage
+	hiCloseWindow(wid)
+    ) ; let
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method checks to see if the png directory exist in the release directory
+; and creates it if it does not
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( checkPngDir (( c2p cell2png ))
+	       c2p->dir = strcat(c2p->desPath "/release/png")  
+    	       if( !isDir( c2p->dir) then createDir( c2p->dir) printf("INFO: Creating a new directory %s\n" c2p->dir)
+	       	   else printf("INFO: Directory exists: %s\n" c2p->dir)
+	       );if
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This sets the design path variable in the object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setDesignPath (( c2p cell2png ))
+  c2p->fileName = c2p->cell
+  c2p->desPath=ddGetObjReadPath( ddGetObj( c2p->lib))   
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+	

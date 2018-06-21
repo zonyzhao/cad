@@ -1,0 +1,2250 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cadObj.ils: base class 
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  )
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+) ; defclass
+
+;########################################################
+;# Class Constructor
+;########################################################
+
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.025
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	) ; let
+) ; defMethod
+;############################################################
+;############################################################
+;############################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  list.ils: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( listfun ()
+	  (
+		( elems @reader getElems)
+		( len )	
+		( cid )
+		( oid )	  
+	  )
+);defClass
+
+;#########################################################
+; Class Constructor
+;#########################################################
+defmethod( initializeInstance @after ((obj listfun)) 
+	   obj->elems = '()
+	   obj->len = 0
+	   obj->oid = nil
+	   obj->cid = "lst"
+);defmethod
+
+;#########################################################
+; Initializes the elems and len
+;#########################################################
+defmethod( setElems (( list listfun ) elems)
+	   list->elems = elems
+	   list->len = sub1(length(list->elems))
+	   length(elems)
+);defmethod
+
+;#########################################################
+; Updates the list length member
+;#########################################################
+defmethod( getLen (( list listfun ))
+	   list->len = sub1(length(list->elems))
+);defmethod
+
+;#########################################################
+; Returns the "head" of a list at the index position
+;#########################################################
+defmethod( head (( list listfun ) ind)
+	   let( (lis
+	   	 tmp)
+             if(ind > sub1(length(list->elems)) then
+	          nil
+             else
+	       lis=list->elems
+	       tmp='()
+	       for( i 1 ind+1
+     	     	  tmp = cons(popf(lis) tmp)
+	       );for
+	       list->len = sub1(length(list->elems))
+	       tmp=reverse(tmp)
+	     );if
+	   );let
+);defmethod
+
+;#########################################################
+; Returns the "tail" of a list at the index position.
+;#########################################################
+defmethod( tail (( list listfun ) ind)
+	   if(ind > sub1(length(list->elems)) then
+	          nil
+           else
+	     nthcdr(ind+1 list->elems)
+	   );if
+);defmethod
+
+;#########################################################
+; Replaces an item in the list at the index with the method
+; argument - list is zero indexed
+;#########################################################
+defmethod( replace (( list listfun ) @key (ind 0) (val 0)) 
+	   let( (tmp0 tmp1)
+	   	if(ind > sub1(length(list->elems)) then
+	          nil
+		else
+		  tmp0 = head(list sub1(ind))
+		  tmp1 = rplaca(tail(list sub1(ind)) val)
+		  list->len = sub1(length(list->elems))
+		  list->elems = append(tmp0 tmp1)
+		);if
+	   );let
+);defmethod
+
+;#########################################################
+; Inserts an item in the list at the index with the method
+; argument - list is 0 indexed
+;#########################################################
+defmethod( insert (( list listfun ) @key (ind 0) (val 0))
+	   let( (tmp0 tmp1)
+	   	if(ind > sub1(length(list->elems)) then
+	          nil
+		else
+	   	  tmp0 = head(list ind)
+		  tmp1 = cons(val tail(list ind))
+		  list->elems = append(tmp0 tmp1)
+		  list->len = sub1(length(list->elems))
+		  list->elems
+		);if
+	  );let
+);defmethod
+
+;#########################################################
+; Appends to end of list 
+;#########################################################
+defmethod( addTail (( list listfun ) elem)
+	   list->elems = append1(list->elems elem )
+);defmethod
+
+;#########################################################
+; Appends to beginning of list 
+;#########################################################
+defmethod( addHead (( list listfun ) elem)
+	   list->elems = cons(elem list->elems)
+);defmethod
+
+;#########################################################
+; Auxilliarry method Redundant item remover in a list (needs to be a flat list)
+; If a recursive list use recursive flattenin method
+;#########################################################
+defmethod( removeRedundantItems (( list listfun ) @key elist rlist)
+  prog( (item retList)
+    retList = rlist
+    printf("INFO: Entry List: %L\n" elist)
+    if(length(elist)>0 then
+      item = nth(0 elist)
+      printf("INFO: Adding Item: %s\n" item)
+      retList = cons(item retList)
+      retList = append(removeRedundantItems(list ?elist remove(item elist) ?rlist '()) retList) 
+      return(retList)
+    else
+      println("INFO: List expired. Redundancy Removed.")
+      return(retList)	
+    );if
+  );prog
+);defmethod
+
+;#########################################################
+; Remove Redundant Items - uses recursive method "removeRedundantItems"
+;#########################################################
+defmethod( removeRedundant (( list listfun ))
+  list->elems = removeRedundantItems(list ?elist list->elems ?rlist '())
+);defmethod
+
+;#########################################################
+; Auxilliary method for flatting a recursive list
+;#########################################################
+defmethod( flattenRecurseList (( list listfun ) @key hlist flist)
+  prog( (retList)
+    retList = '()
+    printf("Recursed List: %L\n" flist)
+    if(listp(hlist) then
+      if( length(hlist) != 1 then
+        for( i 0 sub1(length(hlist))
+          if( listp(nth(i hlist)) then
+	    printf("Detected List %L\n", nth(i hlist))
+	    retList = append(flattenRecurseList(list ?hlist nth(i hlist) ?flist flist) retList)
+	  else
+            printf("Nested Layer added %L\n", nth(i hlist))
+	    retList = cons(nth(i hlist) retList)		    
+	  );if
+        );for
+        return(append(flist retList))
+      else
+        println("Nested List Detected")
+        retList = append(flattenRecurseList(list ?hlist nth(0 hlist) ?flist flist) retList)
+        return(retList)
+      );if
+      else 
+        return(cons(hlist retList))
+    );if
+  );prog
+);defmethod
+
+;#########################################################
+; Flattens a Recursive List - uses recursive method "flattenRecurseList"
+;#########################################################
+defmethod( flattenRecursive (( list listfun ))
+  list->elems = flattenRecurseList(list ?hlist list->elems ?flist '())
+);defmethod
+
+;#########################################################
+; Intersection of two lists
+;#########################################################
+defmethod( intersection (( list listfun ) lst)
+  setof( element list->elems
+  	 member( element lst )
+  );setof
+);defmethod
+
+;#########################################################
+; Removes one  elem from the class member's list
+;#########################################################
+defmethod( removeElem (( list listfun ) arg)
+  list->elems = remove(arg list->elems)
+  ;printf("%L\n" list->elems)
+);defmethod
+
+;#########################################################
+; Removes elems of arg list from the class member's list
+;#########################################################
+defmethod( removeElems (( list listfun ) arglist)
+  let( (i)
+    i=0
+    foreach(el arglist
+      printf("Removing %L\n" el)
+      removeElem(list el)
+      i++
+    );foreach
+    printf("Removed %d elems from list\n" i)
+    list->elems
+  );let
+);defmethod
+
+
+;#########################################################
+; Intersection "NOT" of two lists
+; FIXME: Not working correctly
+;#########################################################
+;defmethod( intersectionNot (( list listfun ) lst)
+;  let( (ilist nlist)
+;   nlist = lst
+;   ;first find the intersection of the two lists
+;   ilist = intersection(list lst)
+;   ; now remove the list intersection elems from the input
+;   ; arg's elems
+;   foreach(el ilist
+;     printf("Removing intersecting element %s\n" el)
+;     nlist = remove(el nlist)
+;     ;printf("%L\n" nlist)
+;   );foreach
+;   nlist
+;  );let
+;);defmethod
+
+;#########################################################
+; Union of two lists
+; FIXME: Does not return proper union - repeated elems!!
+; proper union should represent the concatenation of
+; the two lists with redundant elems removed
+; 1.) Append the two lists 
+; 2.) remove redundant elems
+;#########################################################
+defmethod( union (( list listfun ) lst)
+  list->elems = nconc(
+	setof( element lst
+  	        member( element list->elems )
+  	);setof
+  );nconc
+  list->elems
+);defmethod
+
+;#########################################################
+; Is the elem arg an elem of the class memeber list
+; returns nil if not in list or the index of the
+; arguments position in the class member's list
+;#########################################################
+defmethod( isElem (( list listfun ) elem)
+  lindex(list->elems elem)
+);defmethod
+
+;#########################################################
+; Remove redundant items from a flat list
+;#########################################################
+;defmethod( removeRedundantFlat (( list listfun ))
+;  let( (rlist nlist)
+;       rlist = list->elems
+;       nlist = '()
+;       foreach(el list->elems
+;         
+;;         nlist = cons(el nlist)
+ ;        tlist = remove(el tlist)
+;       );
+;       list->elems = tlist
+;  );let
+;);defmethod
+
+;#########################################################
+; Checks to see if the arg is a Disembodied Property List
+; The list needs to be odd and start with nil
+;#########################################################
+defmethod( isDPL (( list listfun ) arg)
+  dplp(arg)
+);defmethod
+
+;#########################################################
+; Resets the list contents to empy list
+;#########################################################
+defmethod( resetList (( list listfun ))
+  list->elems = '()
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; collection.ils: object collection class. Collections are
+;                  lists of objects that can be homegeneous or homogeneous object
+;                  lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
+;IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( collection (cadObj)
+	  (
+		( n @reader getN @writer setN )
+		( list @reader getList @writer setList )
+		( cList )		  
+	  )
+);defclass
+
+;############################################################
+; Class Constructor 
+;#############################################################
+defmethod( initializeInstance @after ((obj collection)) 
+	   obj->n = 1
+           obj->list = makeInstance( 'listfun )
+	   obj->cList = '()
+	   obj->cid="col"
+	   obj->oid=""
+);defmethod
+
+
+
+;############################################################
+; Resets the collection list to empty list
+;#############################################################
+defmethod( resetCollection ((col collection))
+       resetList(col->list)
+);defmethod
+
+;############################################################
+; Returns a reference to the collection list
+;#############################################################
+defmethod( getCollection ((col collection))
+       col->list->elems
+);defmethod
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+defmethod( genCollection ((col collection) arg)
+       for( i 0 sub1(col->n)
+       	  lappendBeg(col->list makeInstance(stringToSymbol(arg)))
+       );for
+);defmethod
+
+;############################################################
+; Generate a listing of the class the objects belong to in
+; the collection
+;#############################################################
+defmethod( class ((col collection))
+  let( (i)
+    i=0
+    col->cList = '()
+    foreach( obs getElems(col->list)
+      col->cList = cons(classOf(obs) col->cList) 
+      printf("%L\n" classOf(obs)) 
+      i++   	  
+    );foreach
+  );let
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( add ((col collection) arg)
+   addTail(col->list arg)
+);defmethod
+
+;############################################################
+; Is collection list empty
+;#############################################################
+defmethod( isEmpty ((col collection))
+    null(col->list->elems)
+);defmethod
+
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+;defmethod( genCon ((cont collection) obj)
+;  let( (  vName
+;	  estrng )
+;       for( i 0 sub1(cont->num)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;       );for
+;     );let
+;);defmethod
+
+;############################################################
+; Adds an object to the container list 
+; FIXME: WIP!
+;#############################################################
+;defmethod( add ((obj collection))
+;  let( (  vName
+;	  estrng 
+;;	  i)
+;	  sprintf(estrng strcat("i = length(" obj->cid "->objList"))
+;	  evalstring(estrng)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;	  obj->objNum=obj->objNum+1
+;     );let
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;###################################################################
+;#   techfile.ils: techfile library class
+;###################################################################
+defclass( techfile (cadObj)
+	  (
+		( name @reader getName @writer setName )
+		( techFileName )
+		( techFileProcess )
+		( techFilePath )
+		( layerNames )
+		( tf )		  
+	  )
+); defclass
+
+;###############################################
+;# Class Constructor
+;###############################################
+defmethod( initializeInstance @after ((obj techfile)) 
+	   obj->name = nil
+           obj->techFileName = nil
+	   obj->techFileProcess = nil
+	   obj->techFilePath = nil
+	   obj->tf=nil
+	   obj->cid="tech"
+);defmethod
+
+;###############################################
+; Get techfile object from the library name
+; FIXME: does this return a list of refs if 
+;        there are multiple techfiles attached
+;        to a library
+;###############################################
+defmethod( getTechFileRef (( tech techfile ))
+	   tech->ref = techGetTechFile(ddGetObj(tech->name)) 
+); defmethod
+
+;###############################################
+; Unattach all techfiles from the target library
+; FIXME: getTechFileRef method may return a list 
+;        of techfile references
+;###############################################
+defmethod( unattachAllTechFiles (( tech techfile ))
+	   ;foreach( tf tech->ref
+	   	    techUnattachTechFile(ddGetObj(tech->name))
+	   ;);foreach
+); defmethod
+
+;###############################################
+; Attach a techfile from another library by name
+;###############################################
+defmethod( attachTechFile (( tech techfile ) libname)
+	   techBindTechFile(ddGetObj(tech->name) libname "tech.db" t)
+); defmethod
+
+;###############################################
+; set techfile object name
+;###############################################
+defmethod( setTechFileName (( tech techfile ))
+	   	tech->techFileName = tech->ref->libName
+); defmethod
+
+;###############################################
+; set techfile object process
+;###############################################
+defmethod( setTechFileProcess (( tech techfile ))
+	   	tech->techFileProcess = tech->ref->processFamily
+); defmethod
+
+;###############################################
+; set techfile object techfile path
+;###############################################
+defmethod( setTechFilePath (( tech techfile ))
+	   	tech->techFilePath = tech->ref->path
+); defmethod
+
+;###############################################
+; Is grid set
+;###############################################
+defmethod( isGrid (( tech techfile ))
+   techIsMfgGridResolutionSet(tech->ref)
+); defmethod
+
+;###############################################
+; Get MFG grid resolution
+;###############################################
+defmethod( getMfgGrid (( tech techfile ))
+   techGetMfgGridResolution(tech->ref)
+); defmethod
+
+;###############################################
+; Set MFG grid resolution
+;###############################################
+defmethod( setMfgGrid (( tech techfile ) res)
+   techSetMfgGridResolution(tech->ref res)
+); defmethod
+
+;###############################################
+; Get User Units
+;###############################################
+defmethod( getUserUnit (( tech techfile ))
+   techGetUserUnit(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; Get DBU per UU
+;###############################################
+defmethod( getDBUPerUU (( tech techfile ))
+   techGetDBUPerUU(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns a list of all spacing rules
+;###############################################
+defmethod( getSpacingRules (( tech techfile ))
+   techGetSpacingRules(tech->ref)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry width rule for a given layer
+;###############################################
+defmethod( getWidthRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minWidth" layer)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry spacing rule for a given layer
+;###############################################
+defmethod( getSpacingRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minSpacing" layer)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry separation rule between
+; two layers
+;###############################################
+;defmethod( getSeparationRule (( tech techfile ) @key (layerA) (layerB))
+;   techGetSpacingRule(tech->ref "minSpacing" layerA layerB)
+;); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry same neet spacing rule for a given layer
+;###############################################
+defmethod( getSameNetSpacingRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minSamNetSpacing" layer)
+); defmethod
+
+;###############################################
+; DEVICE SECTION
+; Returns a list of all extracted devices 
+;###############################################
+defmethod( getExtractedDevices (( tech techfile ))
+   techGetExractedDevices(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; DEVICE SECTION
+; Returns a supermaster cellviw of the specified
+; device
+;###############################################
+defmethod( getDeviceCellViewe (( tech techfile ) name )
+   techGetDeviceCellView(tech->ref name "symbolic")
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Returns a list of tech layers in the techfile
+; name(LayerNumber) 
+;###############################################
+defmethod( setTechLayers (( tech techfile ))
+  let( (layers names)
+    layers = tech->ref~>layers
+    tech->layerNames = '()
+    foreach( layer layers
+       tech->layerNames = cons(layer~>name tech->layerNames)	  
+    );
+    tech->layerNames
+  );let
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer number get layer name
+;###############################################
+defmethod( getLayerName (( tech techfile ) number )
+   techGetLayerName(tech->ref number)
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer name get layer number
+;###############################################
+defmethod( getLayerNumber (( tech techfile ) name )
+   techGetLayerNum(tech->ref name)
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer name get layer number
+;###############################################
+defmethod( printLayers (( tech techfile ))
+  println("Name (Num)")
+  let( (num)
+    foreach(name tech->layerNames
+  	num = getLayerNumber(tech name)
+        printf("%s (%d)\n" name num)
+    );foreach
+    t
+  );let
+); defmethod
+
+;###################################################################
+;###################################################################
+;###################################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  library.ils: Class operates on the contents of the cds.lib file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( library ()
+	  (
+		( libList )
+		( name )
+                ( attr )
+		( techfile )
+		( cellNames )	  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method initializes the class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj library))
+	   obj->libList = makeInstance( 'listfun )  
+	   obj->name = nil 
+	   obj->attr = makeInstance( 'listfun )  
+	   obj->techfile = makeInstance( 'techfile ) 
+	   obj->cellNames = makeInstance( 'listfun )  	     
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates the libraries member via the cds.lib libraries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( genLibList (( lib library ))
+	       setElems(lib->libList sort( ddGetLibList()~>name 'alphalessp))
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Library Attributes in the Library Object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrList (( lib library ))
+	let( ( libid )
+	       libid = ddGetObj(lib->name)
+	       setElems(attr libid~>?)
+	       ) ; let
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Generates a list of cellnames in the library object
+; FIXME: this should be done in lib class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( genLibCellList (( lib library ))
+;	let( ( libid
+;	       cells
+;	       list)
+;	libid = ddGetObj(lib->name)
+;	cells = libid->cells
+;        list = '()
+;	foreach(cell cells
+;       		     list = cons(cell->name list)
+;        )
+;	setElems(lib->cellNames list)
+;    ) ; let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+;###################################################################
+;#   lib.ils: design library class
+;###################################################################
+defclass( lib (cadObj)
+	  (
+		( name 	@reader getName @writer setName )
+		( cellNameList)
+		( techLib )
+		( uLayers )
+		( path @reader getPath @writer setPath )				  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj lib)) 
+	   obj->name = nil
+	   obj->cellNameList=nil
+	   obj->techLib= makeInstance('techfile)
+	   obj->path = nil
+	   obj->cid="lib"   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method sets the library reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( setLibRef (( tl lib ))
+   tl->ref = ddGetObj(tl->name)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This gets and sets the techfile reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( getTechLib (( tl lib ))
+	tl->techLib->name = tl->name
+	getTechFileRef(tl->techLib)
+	setTechFileName(tl->techLib)
+	setTechFileProcess(tl->techLib)
+	setTechFilePath(tl->techLib)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method removes the attached techfile from the target
+; library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( unattachTechFile (( tl lib ))
+	getTechLib(tl)
+	unattachAllTechFiles(tl->techLib)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method attaches a techfile to the target library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( attachTechFile (( tl lib ) techLibName)
+	attachTechFile(tl->techLib techLibName)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Library Attributes in the lib
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;defmethod( getAttrList (( tl lib ))
+;	
+;	      
+;	       tl->techLib->?
+;
+;) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the libraries last modify data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getCreateDate (( tl lib ))
+  tlib->ref~>lastModify
+);defmethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the libraries last modify data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getModifyDate (( tl lib ))
+  tlib->ref~>lastModify
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Generates a list of cell view names in the lib
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( genCellNameList (( tl lib ))
+	let( ( libid
+	       cells
+	       list)
+	libid = ddGetObj(tl->name)
+	cells = libid->cells
+        list = '()
+	foreach(cell cells
+       		     list = cons(cell->name list)
+        )
+	tl->cellNameList = list
+    ); let
+); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method calls for the creation of the child "lib" object list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( init (( lib library ))
+	   let( (enList
+	   	 i)
+		; set the cid to "lib" class
+		lib->cid="lib"
+	   	enList='()
+		i=0
+		foreach( sw lib->enables->elems
+			 if(sw then
+		     	   lib->enLibList = nth(i lib->libList->elems)
+			   i=i+1
+			 else
+			   return nil
+			 );if
+		);foreach
+	   	lib->objNum = i
+		; Generate the list of empty "lib" class objects
+		genCon(lib) 
+	   );let 
+); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates a list of used layers in the library
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getUsedLayers (( tl lib ))
+  let( (cell lst)
+    genCellNameList(tl)
+    tl->uLayers = '()
+    printf("INFO: Getting all layers used in library: %s\n" tl->name)
+    cell = makeInstance( 'cv )
+    foreach( name tl->cellNameList
+    	 printf("INFO: Processing Cell View: %s\n" name)
+	 cvRef = dbOpenCellViewByType( tl->name name "layout" "maskLayout")
+	 setRef(cell cvRef)
+	 tl->uLayers = append( getUsedLayers(cell) tl->uLayers)
+   );foreach
+   lst = makeInstance( 'listfun )
+   setElems(lst tl->uLayers)
+   tl->uLayers = removeRedundant(lst)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates lib object and calls the cellview container based upon the 
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( populate (( tl lib ) name)
+;	nil
+;); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates lib object and calls the cellview container based upon the 
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setLibPath (( tl lib ))
+    tl->path=ddGetObjReadPath( ddGetObj( tl->name))
+); defmethod
+
+;###################################################################
+;###################################################################
+;###################################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cv.ils: Cell view class inheriting from cadObj 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cv (cadObj)
+	  (
+		( name @reader getName @writer setName)
+        	( view @reader getView @writer setView )
+		( lib @reader getLib @writer setLib )
+		( cvLeaf )
+                ( cvPcell )
+		( instances )
+		( leafs )
+		( stack )
+		( layers )
+		( pcells )
+		( bb )	
+		( iRefs )
+                ( iCnt )
+                ( iNames )
+		( iLibNames )
+		( iLevels )
+		( iLayers )
+		( uLayers @reader getuLayers )			  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj cv)) 
+	   obj->name      = nil
+	   obj->view      = nil
+	   obj->lib       = nil
+	   obj->cvLeaf    = nil
+           obj->cvPcell   = nil
+	   obj->instances = makeInstance('collection)
+	   obj->leafs     = nil
+	   obj->layers    = nil
+	   obj->stack     = makeInstance('stackup)
+	   obj->pcells    = nil
+	   obj->bb        = makeInstance('bbox) 
+	   obj->iRefs     = nil
+	   obj->iCnt      = nil
+	   obj->iNames    = nil
+	   obj->iLibNames = nil
+           obj->iLevels   = nil
+	   obj->iLayers   = makeInstance('listfun)
+);defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the cellview has instances
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( hasInstance (( cell cv ))
+  dbHasInstance(cell->ref)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Completely flatten the entire cellview hierarchy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( smash (( cell cv ))
+  foreach( inst cell->instances->list->elems
+     flattenInstance(inst)
+  )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get all the instances in the current cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getInstances (( cell cv ))
+  let( (instances temp)
+	  instances = cell->ref~>instances
+	  foreach( inst instances
+	  	   temp = makeInstance( 'instance )
+		   setRef(temp inst)
+	  	   add(cell->instances temp)
+	  );foreach
+  );let
+);defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a new instance in the cellview
+; FIXME: Create and container of instances
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( createInstance (( cell cv ) inst )
+	   	cell->instances = const(dbCreateInst( inst cv->ref nil 0:0 "R0" 1) cell->instances)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets Cell Grid Information
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getGridInfo (( cell cv ))
+		dbGetGlobalGridOffsetReferenceType(cell->ref)
+		dbGetGlobalGridDefaultRepeatMode(cell->ref)
+		dbGetGlobalGridRepeatMode(cell->ref "wsspDefName" "wspName")
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Removes layout cell from library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( removeCell (( cell cv ))
+		let( ( (name cell->name)
+		       (lib  cell->lib) )
+		if( !null(ddGetObj(cell->lib cell->name cell->view)) then
+		    if(!null(ddDeleteObj(ddGetObj(cell->lib cell->name cell->view))) then
+		      printf("INFO: Removing cell view: %s\n" cell->name)
+		      t
+		    else
+		      printf("ERROR: Could not deleted cell view: %s\n" cell->name)
+		      nil
+		    );if
+		else
+	            printf("ERROR: Cell view not found: %s\n" cell->name)
+		    nil
+                );if
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copys layout view from another library into the cell object's library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( copyCell (( cell cv ) copyLib copyCell)
+  if( !ddGetObj(copyLib copyCell "layout") then
+    dbCopyCellView(cell->ref copyLib copyCell "layout" "" nil t)
+  else
+    printf("ERROR: layout cell %s exists in library\n" copyCell)
+    nil
+  );if 
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Creates a new cell in the target library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( createCell (( cell cv ))
+	let( ( (name cell->name)
+		       (lib  cell->lib) 
+		       cv)
+		if( !ddGetObj(lib name "layout") then
+		    cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+		    dbSave(cv)
+		    dbClose(cv)
+		    t
+		else
+		    printf("ERROR: layout cell %s exists in library\n" name)
+		    nil
+		);if 
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copies a cellview instance into the a new cell in the target library
+; at the origin of the object's cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( newCellInstance (( cell cv ) instLib instCell)
+	let( ( (name cell->name)
+		       (lib  cell->lib)
+		       (chlst  cell->children) 
+		       cvp
+                       cvc)
+		if( ddGetObj(lib name "layout") then
+		    cvp = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+		    if( ddGetObj(instLib instCell "layout") then
+		    	cvc = dbOpenCellViewByType(instLib instCell "layout" "maskLayout")
+			;FIXME: need a constructor which provides an initial empty list for children member
+                        ;       append this child to the children list list
+			cons( child = dbCreateInst( cvp cvc nil 0:0 "R0" 1) chlst )
+		    	dbSave(cvp)
+			dbClose(cvp)
+			dbClose(cvc)
+		    	t
+	             else
+			printf("ERROR: layout cell %s exists in library %s" instCell instLib)
+		    	nil
+		    );if
+		else
+		   printf("ERROR: layout cell %s exists in library %s" name lib)
+		   nil	
+		);if 
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method determines if the cv is a leaf cell
+; returns t if it is and nil if it is not
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isLeaf (( cell cv ))
+   if( length(cell->ref~>instances) > 0 then 
+     nil
+   else
+     t
+   )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method determines if the cv is a Pcell
+; returns t if it is and nil if it is not
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isPcell (( cell cv ))
+   if( length(cell->ref~>instances) > 0 then 
+     nil
+   else
+     t
+   )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv bbox
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getbBox (( cell cv ))
+  setName(cell->bb cell->name)
+  setLib(cell->bb cell->lib)
+  setRef(cell->bb cell->ref)
+  getbb(cell->bb)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv bbox
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getDim (( cell cv ))
+  setName(cell->bb cell->name)
+  setLib(cell->bb cell->lib)
+  setRef(cell->bb cell->ref)
+  getDim(cell->bb)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv recursive instance tree
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
+  prog( (instRef llist rlist)
+       cLst = cons(cv cLst)
+       if(!null(cv~>instances) then
+         if( length(cv~>instances) > 0 then
+           llist = '()
+	   rlist = '()
+       	   foreach( instance cv~>instances
+	     printf("Sniffing ID->[%L]: CV->%s: INST->%s(%s)\n" instance cv~>cellName instance~>cellName instance~>name)
+	     instRef = dbOpenCellViewByType(instance~>libName instance~>cellName "layout" "maskLayout")
+             rlist = cons(getRecursiveTree(cell ?cv instRef ?cLst llist) rlist)  
+	     ;dbClose(instRef)
+	   );foreach
+	   return(cons(rlist cLst))
+         else
+           printf("INFO: Leaf Cell: ID->[%L]: %s\n" cv cv~>cellName)
+           return(cv)
+         );if
+       else
+         printf("INFO: Leaf cell: ID->[%L] %s\n" cv cv~>cellName)
+	 return(cv)
+       );if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv instance tree
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getTree (( cell cv ))
+  cell->iRefs = '()
+  cell->iRefs = getRecursiveTree(cell ?cv cell->ref ?cLst '())
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Print cv instance tree 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( printRecursiveTree (( cell cv ) @key hlist nlev cnt)
+    prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    plist = nth(0 cdr(revlist))
+	    printf("%s NUMBER OF CELLVIEW INSTANCES: %d\n" nth(0 revlist)~>libName length(plist))
+	    for(i 0 sub1(length(plist))
+	    	if(listp(nth(i plist)) then
+		  printf("L%d: %s INST %d (ROOT) : %s, " sub1(nlev) nth(0 revlist)~>libName i nth(0 reverse(nth(i plist)))~>libName)
+		else
+	          printf("L%d: %s INST %d : %s" sub1(nlev) nth(0 revlist)~>cellName i nth(i plist)~>libName)
+		);if
+	        cnt = printRecursiveTree(cell ?hlist nth(i plist) ?nlev nlev ?cnt 0) + cnt
+	    );for
+	    return(cnt)
+	   else
+	     printf("HLeaf Cell: %s\n"  nth(0 hlist)~>cellName)
+	     return(cnt)
+	   );if
+	else
+	   cnt++
+	   printf(" (LEAF)\n")
+	   return(cnt)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Prints recursive Instance Tree (Uses Auxilliary method " printRecursiveTree"                            
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( printTree (( cell cv ))
+  cell->iCnt = 0
+  cell->iCnt = printRecursiveTree(cell ?hlist cell->iRefs ?nlev 0 ?cnt 0)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Get the instance names of the cv (recursive)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveTreeNames (( cell cv ) @key hlist nlev nList)
+  prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    nList = cons(nth(0 revlist)~>cellName nList) 
+	    plist = nth(0 cdr(revlist))
+	    for(i 0 sub1(length(plist))
+	        nList = cons(getRecursiveTreeNames(cell ?hlist nth(i plist) ?nlev nlev ?nList '()) nList)
+	    );for
+	    return(nList)
+	   else
+	     nList = cons(nth(0 hlist)~>cellName nList) 
+	     return(nList)
+	   );if
+	else
+	   nList = cons(hlist~>cellName nList)
+	   return(nList)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getTreeNames (( cell cv ))
+  cell->iNames = ()
+  cell->iNames = reverse(getRecursiveTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Get the instance names of the cv (recursive)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveLibTreeNames (( cell cv ) @key hlist nlev nList)
+  prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    nList = cons(nth(0 revlist)~>libName nList) 
+	    plist = nth(0 cdr(revlist))
+	    for(i 0 sub1(length(plist))
+	        nList = cons(getRecursiveLibTreeNames(cell ?hlist nth(i plist) ?nlev nlev ?nList '()) nList)
+	    );for
+	    return(nList)
+	   else
+	     nList = cons(nth(0 hlist)~>libName nList) 
+	     return(nList)
+	   );if
+	else
+	   nList = cons(hlist~>libName nList)
+	   return(nList)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLibTreeNames (( cell cv ))
+  cell->iLibNames = ()
+  cell->iLibNames = reverse(getRecursiveLibTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers used in the cv 
+; (use list remove() function to filter out repeated layers - lstFun??)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLpps (( cell cv ) @key cv cLst)
+  prog( (instRef rlist)
+       if(!null(cv~>instances) then
+         if( length(cv~>instances) > 0 then
+	   rlist = '()
+       	   foreach( instance cv~>instances
+	     printf("Sniffing ID->[%L]: CV->%s: INST->%s(%s)\n" instance cv~>cellName instance~>cellName instance~>name)
+	     instRef = dbOpenCellViewByType(instance~>libName instance~>cellName "layout" "maskLayout")
+	     if(!null(instRef)  then
+	        rlist = cons(getLpps(cell ?cv instRef ?cLst '()) rlist)
+	     else
+		printf("WARNING: cellview instance not found!")
+	     );if  
+	   );foreach
+	   return(cons(rlist cLst))
+         else
+	   if(!null(cv~>cellName) then
+             printf("Leaf Cell: ID->[%L]: %s\n" cv cv~>cellName)
+	     foreach( lpp cv~>lpps
+	   	 printf("Leaf Cell Layer: %s: %s\n" cv lpp~>layerName)
+		 if(!null(lpp~>layerName) then
+		   rlist = cons(lpp~>layerName rlist)
+                 else
+		   return(rlist)
+		 );if 
+	     );foreach
+             return(rlist)
+	   else
+	     printf("WARNING: Cell View not found!")
+	     return(rlist)
+           ):if
+         );if
+      else
+         if(!null(cv~>cellName) then
+           printf("INFO (getLpps): No cellview instances found - leaf cell: %s\n" cv~>cellName)
+	   foreach( lpp cv~>lpps
+	   	 printf("Leaf Cell Layer: %s: %s\n" cv lpp~>layerName) 
+		 if(!null(lpp~>layerName) then
+		   rlist = cons(lpp~>layerName rlist) 
+		 else
+		   return(rlist)
+		 );if   
+	   );foreach
+	   return(rlist)
+	  else
+	    printf("WARNING: Cell View not found!")
+	    return(rlist)
+          );if
+      );if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers in the cv                                         
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLayers (( cell cv ))
+  cell->layers = getLpps( cell ?cv cell->ref ?cLst '())
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers used in the cv 
+; (use list remove() function to filter out repeated layers )                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getUsedLayers (( cell cv ))
+    getLayers(cell)
+    setElems(cell->iLayers cell->layers)
+    flattenRecursive(cell->iLayers)
+    cell->uLayers = removeRedundant(cell->iLayers)
+    cell->uLayers
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets the technology layer stackup from the target cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getStackUp (( cell cv ))
+    setRef(cell->stack cell->ref)
+    getStackUp(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a snapshot using a currently targeted smashed (fully flattened) 
+; cellview object reference. Argument is a freshly opened layout cellview
+; reference.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( snapshot (( cell cv ))
+    setRef(cell->stack cell->ref)
+    renderStack(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Removes layers from the stackup object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod(  removeLayerFromStackup (( cell cv ) arg)
+    deleteLayer(cell->stack arg)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Prints the stackup layer contents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod(  printStackUp (( cell cv ))
+    printStackUp(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the leaf cells used in the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLeafCells (( cell cv ))
+    nil
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the pcells used in the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getPcells (( cell cv ))
+    nil
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  close and purge the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( closeAndPurge (( cell cv ))
+    cell->ref = dbOpenCellViewByType( cell->lib cell->name cell->view "maskLayout")
+    if(!null(cell->ref) then
+      if( !null(dbPurge(cell->ref)) then
+        printf("INFO: Closing and Purging: %s\n:" cell->name )
+      else
+        printf("WARNING: Cellview not found: %s\n:" cell->name )
+      );if
+    else
+      printf("WARNING: Cellview not found: %s\n:" cell->name )
+    );if
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  "Cleans" up a list of cellviews. Open's, closes, purges and then 
+;   deletes the list of cellviews in the input argument list.
+;   Cellview list must be in the same library as the current cv object's
+;   cellview member as determined by the cv->lib member.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( clean (( cell cv ) arg )
+  let( (cvName)
+           cvName = cell->name
+	   foreach( ar arg
+	     cell->name = ar
+	     closeAndPurge(cell)
+	   );foreach	   
+	   cell->name = cvName
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;######################################################
+;# stackup.ils: container class for multiple layers 
+;               forming a layout stackup for a number
+;               of layout assemblies
+;######################################################
+defclass( stackup (cadObj)
+	  (
+		( stack @writer setStackCollection )
+	  )				  
+) ; defclass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj stackup)) 
+	   obj->stack = makeInstance( 'collection )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method gets the layer stackup and prints it out
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getStackUp (( st stackup ))
+  let( (n temp)
+    n = 0
+    if( !null(st->ref~>lpps) then
+    	foreach(lpp st->ref~>lpps
+      	  printf("%d: LAYER: %s, PURPOSE: %s SHAPES: %d\n" n lpp~>layerName lpp~>purpose lpp~>nShapes)
+      	  temp = makeInstance( 'techLayer )
+	  setRef(temp st->ref)
+	  setName(temp lpp~>layerName)
+	  setPurpose(temp lpp~>purpose)
+	  getShapesOnLayer(temp)
+	  add(st->stack temp)
+	  n++
+    	);foreach
+    	n
+    else
+	printf("WARNING: No layers found in cellview\n")
+	nil
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; render the stack in the target cellview (st->ref)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderStack (( st stackup ))
+  let( (n m)
+    m=0
+    foreach(stack st->stack->list->elems
+      printf("Rendering stackup: %d\n" m)
+      n=0
+      foreach(layer stack->list->elems
+        printf("%d: Rendering layer: %s\n" n layer->name)
+        setRef(layer st->ref)
+        renderShapesOnLayer(layer)
+        n++
+      );foreach
+      m++
+    );foreach
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Merges all layers that are teh same
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( mergeStackUp (( st stackup ))
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; add a single layer object to the stack
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( addLayer (( st stackup ) arg )
+  add(st->stack arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; add a single assembly object to the stackup list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( addAssembly (( st stackup ) arg )
+  add(st->stack arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method deletes the "arg" layer from the cellview stackup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deleteLayer (( st stackup ) arg )
+  let( (i found)
+    found = nil
+    i=0
+    foreach(lay st->stack->list->elems
+      if(getName(lay) == arg then
+        found = t
+	removeElem(st->stack->list lay)
+	i++
+      else
+       i++	     
+      );if    
+    );foreach
+    if(found then
+      printf("INFO: Layer %s removed from stackup\n" arg)
+    else
+      printf("WARNING: Layer %s not found in stackup\n" arg)
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method prints the stackup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( printStackUp (( st stackup ))
+  let( (n)
+    n = 0
+    if( !null(st->stack->list->elems) then
+    	foreach(lay st->stack->list->elems
+      	  printf("%d: LAYER: %s\n" n getName(lay))
+	  n++
+    	);foreach
+    	n
+    else
+	printf("WARNING: No layers found in cellview\n")
+	nil
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  bbox.ils: Black box class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( bbox (cadObj)
+	  (
+		( ur @reader getUr @writer setUr )
+		( ll @reader getLl @writer setLl )
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( cvbbox @reader getCvbbox @writer setCvbbox )
+		( bbox )
+		( transformation )			  
+	  )
+) ; defClass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj bbox)) 
+	   obj->ur = nil
+	   obj->ll = nil
+	   obj->transformation = makeInstance( 'transformation2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Populates Boundary Box Member
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getbbFromCellView (( bb bbox ))
+	setBbox(bb getRef(bb)~>bBox) 
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets The Width and Height cell's boundary box 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getDimFromCellView (( bb bbox ))
+	getbb(bb) 
+	bb->width  = caadr( bb->bbox ) - caar( bb->bbox )
+	bb->height = cadadr( bb->bbox ) - cadar( bb->bbox) 
+	list(bb->width bb->height)
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets the Cell's Origin - defined as lower left (minx,miny)
+; for a black box
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getOriginFromCellView (( bb bbox ))
+	       getbb(bb) 
+	       bb->origin->x=caar(bb->bbox) 
+               bb->origin->y=cadar(bb->bbox)
+	       list(bb->origin->x bb->origin->y)
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Finds the center of the cell's boundary box
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getCentroidFromCellView (( bb bbox ))
+	let( ( llx
+	       lly
+	       urx
+	       ury )
+	getbb(bb)
+	ury = yCoord( upperRight( bb->bbox ))
+	urx = xCoord( upperRight( bb->bbox ))
+	llx = xCoord( lowerLeft( bb->bbox ))
+	lly = yCoord( lowerLeft( bb->bbox ))
+	bb->bbCentroid->x = (urx+llx)/2 
+	bb->bbCentroid->y = (ury+lly)/2
+	list(bb->bbCentroid->x bb->bbCentroid->y)
+    ) ; let
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method converts bbox coordinates to vertices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( bb2vert (( bb bbox ))
+  let( (ury urx llx lly vo v1 v2 v3)
+;        getbb(bb)
+       	ury = yCoord( upperRight( bb->bbox ))
+	urx = xCoord( upperRight( bb->bbox ))
+	llx = xCoord( lowerLeft( bb->bbox ))
+	lly = yCoord( lowerLeft( bb->bbox ))
+	v0 = list(llx lly)
+	v1 = list(urx lly)
+	v2 = list(urx ury)
+	v3 = list(llx ury)
+	setVertices(bb list(v0 v1 v2 v3 v0))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Finds the area of the cell's boundary box in square meters
+; FIXME: need to get UserUnits from the techfile to do proper
+;        unit conversion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getBboxArea (( bb bbox ))
+	bb2vert(bb)
+	area(bb)*1e-12
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method calculates the upper right and lower left of a new bounding 
+; centered at a new location with widths and heights given by 0.5*deltaX
+; and 0.5*deltaY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( setCenter (( bb bbox ) aPoint @key (deltaX 1) (deltaY 1))
+; let( (llx lly urx ury aPointX aPointY)
+;      apointX = xCoord( aPoint )
+;      apointY = yCoord( aPoint )
+;      llx = aPointX - deltaX
+;      urx = aPointX + deltaX
+;      ury = sPointY + deltaY
+;      list( llx:lly urx:ury ) 
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method translates the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( translate (( bb bbox ) arg )
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method rotates the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( rotate (( bb bbox ) arg )
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method scales the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( scale (( bb bbox ) arg)
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the smallest bounding box coordinates containing
+; all boxes given in a list with the class box's object - Merge!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( union (( bb bbox ) box)
+ let( ( llxList llyList urxList uryList minllx minlly maxurx maxury )
+      llxList = foreach(mapcar bb->bbox box xCoord( lowerLeft( bb->bbox )))
+      llyList = foreach(mapcar bb->bbox box yCoord( lowerLeft( bb->bbox )))
+      urxList = foreach(mapcar bb->bbox box xCoord( upperRight( bb->bbox )))
+      uryList = foreach(mapcar bb->bbox box yCoord( upperRight( bb->bbox )))
+      minllx = apply( 'min llxList )
+      minlly = apply( 'min llyList )
+      minllx = apply( 'max urxList )
+      minlly = apply( 'max uryList )
+  );let
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the intersection of two class box's object and a 
+; list of bboxs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( intersection (( bb bbox ) box)
+  let( (llxList llyList urxList uryList maxllx maxlly minurx minury )
+       llxList = foreach(mapcar bb->bbox box xCoord( lowerLeft( bb->bbox )))
+       llyList = foreach(mapcar bb->bbox box yCoord( lowerLeft( bb->bbox )))
+       urxList = foreach(mapcar bb->bbox box xCoord( upperRight( bb->bbox )))
+       uryList = foreach(mapcar bb->bbox box yCoord( upperRight( bb->bbox )))
+       minurx = apply( 'min urxList )
+       minury = apply( 'min uryList )
+       maxllx = apply( 'max llxList )
+       maxlly = apply( 'max llyList )
+       cond(
+		( maxllx >= minurx 
+	  	  nil
+		);maxllx
+		( maxlly >= minury 
+	  	  nil
+		);maxlly
+		( t
+	  	  list(maxllx:maxlly minurx:minury)
+		);t
+  	);cond
+  );let
+);defmethod
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts The bbox Origin To the Upper Right Quadrant of the 
+; cellviews master grid field
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( shiftURQ (( bb bbox ))
+  let( ( shift dx dy) 
+	  getbBox(bb)
+	  unless( caar( bb->bbox) == 0 && cadar( bb->bbox) == 0
+		  dx = 0 - bb->origin->x
+      		  dy = 0 - bb->origin->y
+      		  shift = list( list( dx dy) "R0")
+      		  printf( "NOTE:  shifting %s to upper-right quadrant" name)
+      		  printf( "       shift is: %f by %f" caar( shift) cadar( shift))
+		  dbReopen( bb->cvRef "a")
+		  foreach( inst cvRef~>instances dbMoveFig( inst bb->cvRef shift))
+    		  foreach( shape cvRef~>shapes   dbMoveFig( shape bb->cvRef shift))
+      		  dbSave(bb->cvRef)
+		  dbClose(bb->cvRef)
+	  );unless
+	  getbBox(bb)
+  );let
+);defMethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( setCentroid (( bb bbox ) arg)
+;  let( ( sx sy )	
+;  );let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts cellview bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( shiftCentroidCellView (( bb bbox ) dx dy)
+;	let( ( (name bb->cellName)
+;		   (lib  bb->library)
+;		   shift
+;		   sx
+;                  sy
+;		   cvRef )
+;		getbBox(bb)
+;		cvRef = dbOpenCellViewByType( lib name "layout" "maskLayout")
+;		sx = bb->x0 + dx
+;      	sy = bb->y0 + dy
+;      	shift = list( list( sx sy) "R0")
+;		dbReopen( cvRef "a")
+;		foreach( inst cvRef~>instances dbMoveFig( inst cvRef shift))
+;    	foreach( shape cvRef~>shapes   dbMoveFig( shape cvRef shift))
+;      	dbSave(cvRef)
+;		dbClose(cvRef)
+;		getbBox(bb)
+;		)
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+	;######################################################
+;# 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( setPoint (( pt point2 ) arg )
+;  pt->point = list(float(xCoord(arg)) float(yCoord(arg)))	   
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( getPoint (( pt point2 ))
+;  pt->point	   
+;);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; rotation2: Generic Point Class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( rotation2 ()
+	  (
+	  	( radius @reader getRadius @writer setRadius)
+	  	( theta @reader getTheta @writer setTheta)
+	  )				  
+) ; defclass
+;#####################################################
+;
+;#####################################################
+defmethod( initializeInstance @after ((obj rotation2)) 
+	   obj->radius=nil
+	   obj->theta=nil	   
+)
+;######################################################
+;######################################################
+;######################################################
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  transformation2: Class representing the transformation of any
+;;;;;;;;;;;;;;;;  2-D geometry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( transformation2 ()
+	  (
+	    ( centroid @reader centroid)
+	    ( absRotation @reader absRotation)
+	    ( relRotation @reader relRotation)
+	    ( scale @reader getScale @writer setScale)
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj transformation2)) 
+  obj->centroid = makeInstance( 'point2 )
+  obj->absRotation = makeInstance( 'rotation2 )
+  obj->relRotation = makeInstance( 'rotation2 )
+  obj->scale = nil
+);defmethod
+
+;#####################################################
+; sets the centroid of the transformation
+;#####################################################
+defmethod( setCentroid (( tr2 transformation2 ) arg)
+  if(listp(arg) then
+    setCoord(tr2->centroid arg)
+  else
+    println("ERROR(transformation2): Expecting list argument")
+  );if	   
+);defmethod
+
+;#####################################################
+; gets the centroid of the transformation
+;#####################################################
+defmethod( getCentroid (( tr2 transformation2 ))
+  getCoord(tr2->centroid)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+; (normally this is zero representing the base 
+;  transform)
+;#####################################################
+defmethod( getRadius (( tr2 transformation2 ))
+  getRadius(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; sets the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( setTheta (( tr2 transformation2 ) arg)
+  setTheta(tr2->relRotation arg)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( getTheta (( tr2 transformation2 ))
+  getTheta(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+;#####################################################
+defmethod( getRadiusToCentroid (( tr2 transformation2 ))
+  getRadius(tr2->absRotation)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation about the 
+;#####################################################
+defmethod( getThetaToCentroid (( tr2 transformation2 ))
+  getTheta(tr2->absRotation)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  system.ils: linux system class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( system ()
+	  (
+		( name @reader getName @writer setName)			  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj system)) 
+	   obj->name      = nil
+);defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; remove directory 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( rmDirectory (( sys system ))
+  if(!null(deleteDir(sys->name)) then
+    printf("INFO: Removed directory %s\n" sys->name)
+  else
+    printf("WARNING: Directory not found for removal %s\n" sys->name)
+  )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; checks to see if it's a directory
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isDirectory (( sys system ))
+  isDir(sys->name)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; remove file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( rmFile (( sys system ))
+  if(!nulldeleteFile(sys->name) then
+    printf("INFO: Removed File: %s\n" sys->name)
+  else
+    printf("WARNING: File not found for removal: %s\n" sys->name)
+  ) 
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; create a directory
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( createDirectory (( sys system ))
+  createDir(sys->name)
+);defmethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; create a directory
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( createHierDirectory (( sys system ))
+  createDirHeir(sys->name)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; start a unix C-shell as a child process
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( startCsh (( sys system ))
+  csh(sys->name)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Returns a string representation of the current time
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getTime (( sys system ))
+  getCurrentTime()
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Returns the users login name
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLoginName (( sys system ))
+  getLogin()
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Returns the current working directory as a string
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getWorkingDirectory (( sys system ))
+  getWorkingDir()
+);defmethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Spawns a separate UNIX process to execute a command
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( sysExec (( sys system ))
+  if(!null(system(sys->name)) then
+    printf("INFO: System command executed %s\n" sys->name)
+  else
+    printf("WARNING: System command not executed %s\n" sys->name)
+  );if
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+

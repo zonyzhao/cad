@@ -390,6 +390,8 @@ procedure( xynums()
       xynCreateForm1()
       xynPresetForm1()
     )
+
+    ; This procedure call is where all the processing is done ...
     xynTriggerCBs1()
 
 ;   display the form:
@@ -564,13 +566,26 @@ procedure( xynPresetForm1()
 
 procedure( xynTriggerCBs1()
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Invalidation call backs
+    ; If user changes values during execution of the flow 
+    ; then certain data generated upstream will become invalid and 
+    ; have to be re-evaluatted/generated ...
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;
     xynpl->notInvalid = t
     xynInchCB()
     xynProcTypeCB()
     xynNumsTypeCB()
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; End of Invalidation call backs
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; 
     xynLibCB()
+    ; Run input checks on primary
     xynRetCB()
+    ; Run input checks on secondary
     xynDropinCB()
+    ; Everything is valid??
     xynpl->notInvalid = nil
 )
 
@@ -915,11 +930,58 @@ procedure( xynLibCB()
         xynpl->dropinSites = nil
 
 ;	load any saved form1 data found in the release dir:
-	xynLoadForm1()
+	xynLoadForm1() 
       )
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Step 1.) Process the primary reticle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  This procedure ensures the following:
+;   
+;  A.) the primary is set in the UI form
+;  B.) opens up the primary reticle cell view in read mode
+;  C.) makes a copy of the primary reticle cellview with and "_xyn" name extension
+;      (the "_xyn" copy will be used to align the original reticle to the upper
+;       left quadrant)
+;  D.) Open the "_xyn" copy
+;  E.) Close the original primary cellview
+;  F.) Moves the "_xyn" reticle's bounding box lower left coordinate to the 
+;      origin. This effectively aligns the reticle outline to the upper right
+;      hand quadrant of the layout window
+;  G.) Generates all the sub-view names that will be needed in further processing
+;      and adds these names to the GUI form
+;  H.) Measures the width and height of the reticle outline using it's bounding
+;      box 
+;      (FIXME: shouldn't this be done based upon the reticle outline layer???)
+;  I.) Performs a step and repeat check using the measured reticle outline and
+;      the step and repeat resolution defined in the options form. The 
+;      xynCheckRes(X,S&R_RES) function is called on both the reticle W adn L values to 
+;      determine if the reticle outline is dimensioned properly for further
+;      processing. The W and L values of the reticle outline must be divisible multiples
+;      of the S&R resolution. For a given dimension, the following condition must be
+;      satified:
+;                      if(Floor(X/S&R_RES)*S&R_RES == X)
+;                        true
+;                      else
+;                        false
+; 
+;      Ex 1: If the reticle W is 10,000um and the S&R_RES is 10um
+;            the psuedo code above will evaluate to true
+;      Ex 2: If the recticle W is 9,995um and the S&R_RES is 10um, the
+;            psuedo code will evaluate to false. If the S&R resolution
+;            is set to 5um, the psuedo code will evaluate to true
+;
+;     NOTE: The step and repeat algorithm used to maximum the number of chips
+;           on a wafer uses X/S&R_RES as the maximum number of shifts before
+;           ending the search. The largest number of chips that fit on the 
+;           wafer after a complete shift count is used to choose the best 
+;           retical array to wafer alignment to produce the maximum chip 
+;           count 
+;   J.) If all goes well the user is messaged that the reticle meets
+;       the S&R algorithm requirements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynRetCB()
   let( ( retName cv)
 
@@ -970,19 +1032,18 @@ procedure( xynRetCB()
 	unless( and( xynCheckRes( xynpl->retW xynpl->stepRepeatResolution)
 		     xynCheckRes( xynpl->retH xynpl->stepRepeatResolution))
 	  hiGetAttention()
-	  xynErr( "reticle step & repeat violates expected resolution")
-	  xynMsg( "reticle step x: %g  y: %g  resolution:  %g"
+	  xynErr( "ERROR: Reticle dimensions violate step & repeat resolution settings")
+	  xynMsg( "Reticle Width: %g  Height: %g  S&R Resolution: %g"
 		  float( xynpl->retW) float( xynpl->retH) 
 		  float( xynpl->stepRepeatResolution))
 	  hiDisplayAppDBox( ?name 'badReso ?dboxBanner "XYN ERROR"
-		?dboxText sprintf( nil "Expected reticle resolution is %g"
+		?dboxText sprintf( nil "Reticle S&R resolution is currently set to: %g"
 				   float( xynpl->stepRepeatResolution)))
 	  xynpl->retCV = nil
 	  xynpl->retName = ""
 	  xynpl->form1->retName->value = ""
 	)
-
-        xynMsg( "Reticle:     %s   step size:  %f x %f" xynpl->retName
+        xynMsg( "Valid Reticle Dimensions:  %s, Width=%f X Height=%f" xynpl->retName
 		xynpl->retW xynpl->retH)
       )
     )
@@ -994,6 +1055,26 @@ procedure( xynCheckRes( distance resolution)
   equal( fix( distance / resolution) * resolution 
 	  distance)
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Step 2.) Process the secondary reticle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  This procedure ensures the following:
+;   
+;  A.) the secondart is set in the UI form
+;  B.) opens up the secondary reticle cell view in read mode
+;  C.) makes a copy of the secondary reticle cellview with and "_xyn" name extension
+;      (the "_xyn" copy will be used to align the original reticle to the upper
+;       left quadrant)
+;  D.) Open the "_xyn" copy
+;  E.) Close the original secondary cellview
+;  H.) Measures the width and height of the reticle outline using its bounding
+;      box 
+;      (FIXME: shouldn't this be done based upon the reticle outline layer???)
+;  I.) Moves the "_xyn" secondary reticle's bounding box lower left coordinate to the 
+;      origin. This effectively aligns the reticle outline to the upper right
+;      hand quadrant of the layout window 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 procedure( xynDropinCB()
   let( ( cv dropinName box w h)
@@ -1024,7 +1105,7 @@ procedure( xynDropinCB()
       ( t
 	dbClose( cv)
 
-        xynLog( "Dropin:      %s" xynpl->dropinName)
+        xynLog( "Secondary:      %s" xynpl->dropinName)
 
 ;	compare the drop-in's step & repeat with the primary reticle, must match:
 	box = xynpl->dropinCV~>bBox
@@ -1033,15 +1114,15 @@ procedure( xynDropinCB()
 	cond(
 	  ( or( w != xynpl->retW
 		h != xynpl->retH)
-	    xynErr( "drop-in step & repeat does not match primary reticle!")
-	    xynMsg( "drop-in:  %s/%s" xynpl->libName xynpl->dropinName)
-	    xynMsg( "          w=%g  h=%g" w h)
-	    xynMsg( "primary:  %s/%s" xynpl->libName xynpl->retName)
-	    xynMsg( "          w=%g  h=%g" xynpl->retW xynpl->retH)
-	    xynConfirm( "drop-in step & repeat does not match primary reticle")
+	    xynErr( "Secondary Reticle Dimensions do not match Primary Reticle!")
+	    xynMsg( "Secondary:  %s/%s" xynpl->libName xynpl->dropinName)
+	    xynMsg( "             Width=%g  Height=%g" w h)
+	    xynMsg( "Primary  :  %s/%s" xynpl->libName xynpl->retName)
+	    xynMsg( "          Width=%g  Height=%g" xynpl->retW xynpl->retH)
+	    xynConfirm( "Primary and Secondary Dimensions do not match")
 	  )
 	  ( t
-	    xynMsg( "drop-in dimensions match primary reticle")
+	    xynMsg( "Secondary Reticle dimensions match Primary Reticle")
 ;	    put the drop-in in the upper-right quandrant (positive x & y):
 	    xynUpperRightQuadrant( xynpl->dropinCV)
 	  )
