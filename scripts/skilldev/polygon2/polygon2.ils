@@ -1,0 +1,513 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  polygon2.ils: Layout Polygon Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( polygon2 (cadObj)
+  (	
+    ( vertices @reader getVertices )
+    ( area )
+    ( centroid )
+    ( scale )
+    ( rtran @reader getRectTran )			  	
+  )
+);defClass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj polygon2)) 
+	   obj->vertices = nil
+	   obj->area = nil
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->scale = 1.0
+	   obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;####################################################
+; Checks to make sure that the centroid of the
+; rectTran is at the origin
+;####################################################
+defmethod( isCentered (( poly polygon2 ))
+  let( (c)
+    c = getCentroid(poly->rtran)
+    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
+      t
+    else
+      nil
+    )	 
+  );let	   
+);defmethod
+
+;####################################################
+; Centers the polygon's rectTran at the origin
+; if not already centered
+;####################################################
+defmethod( center (( poly polygon2 ))
+  let( (c)
+    if( !isCentered(poly) then
+       c = getCentroid(poly->rtran)
+       translate(poly list(-xCoord(c) -yCoord(c)))
+       setCentroid(poly->rtran list(0.0 0.0))
+       setCentroid(poly list(0.0 0.0))
+       getCentroid(poly->rtran)
+    else
+      t
+    );if
+  );let	 	   
+);defmethod
+
+;####################################################
+; Sets the polygon vertices and calculates the
+; area and centroid of the polygon
+;####################################################
+defmethod( setVertices (( poly polygon2 ) arg)
+  poly->vertices = arg
+  centroid(poly)
+  poly->vertices	 	   
+);defmethod
+
+;####################################################
+; Sets the polygon centroid value
+;####################################################
+defmethod( setCentroid (( poly polygon2 ) arg)
+  setCoord(poly->centroid arg)	   
+);defmethod
+
+;####################################################
+; Gets the polygon centroid value
+;####################################################
+defmethod( getCentroid (( poly polygon2 ))
+  getCoord(poly->centroid)	   
+);defmethod
+
+;###############################################################################
+; Area of a closed non-self intersecting polygon
+;###############################################################################
+defmethod( area (( poly polygon2 ))
+	   let( (term0
+	   	 term1 
+	   	 j
+	   	 len)
+		poly->area = 0.0
+		len = length(poly->vertices)
+	   	for( i 0 length( poly->vertices)-1
+		     j = modulo(i+1 len)
+		     term0 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term1 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     poly->area = poly->area + (term0 - term1)
+		     i = i+1
+	   	);for
+		if( poly->area < 0 then
+		    poly->area = -1*poly->area
+		)
+		poly->area = 0.5*(poly->area)
+	   );let	   
+);defmethod
+
+;###############################################################################
+; Centroid of a closed non-self intersecting 2-D transform
+;###############################################################################
+defmethod( centroid (( poly polygon2 ))
+	   let( (term0
+	   	 term1 
+		 term2
+		 term3
+		 term4
+		 term5
+	   	 j
+	   	 len
+		 cx
+		 cy)
+		area(poly)
+		len = length(poly->vertices)
+		cx=0.0
+		cy=0.0
+	   	for( i 0 length( poly->vertices)-1
+		     j = modulo(i+1 len)
+		     term0 = xCoord(nth(i poly->vertices))+xCoord(nth(j poly->vertices))
+		     term1 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term2 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     term3 = yCoord(nth(i poly->vertices))+yCoord(nth(j poly->vertices))
+		     term4 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term5 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     cx=cx+(term0*(term1+term2))/(6*poly->area)
+		     cy=cy+(term3*(term4+term5))/(6*poly->area)
+		     i = i+1
+	   	);for
+		if( cx > 1000 || cy > 1000 then
+		    println("WARNING(polygon2): Centroid calculation may have failed")
+		    println("                   Setting centroid manually is recommended")
+		) 
+		setCoord(poly->centroid list(cx cy))
+	   );let	   
+);defmethod
+
+;###############################################################################
+; Rotate Polygon. Polygon's centroid must be at origin prior to rotation
+;###############################################################################
+defmethod( rotate (( poly polygon2 ) arg)
+  let( (rVerts mag theta thetaPrime tvert pi)
+    pi = 3.14159265
+    foreach( vert poly->vertices
+      mag   = (xCoord(vert)**2+yCoord(vert)**2)**0.5
+      theta = atan2(yCoord(vert) xCoord(vert))
+      thetaPrime = theta+arg/180*pi
+      tvert = list(mag*cos(thetaPrime) mag*sin(thetaPrime))
+      rVerts = cons(tvert rVerts)
+    );foreach
+      setVertices(poly rVerts)
+  );let	   
+);defmethod
+
+;#####################################################
+; This method scales the polygon by the arg value
+;#####################################################
+defmethod( scale (( poly polygon2 ) arg)
+  let( (new rvert)
+    new = '()
+    foreach( vert poly->vertices
+      rvert = list(arg*xCoord(vert) arg*yCoord(vert))
+      new = cons(rvert new)
+    );foreach
+      poly->vertices = new
+  );let	   
+);defmethod
+
+;###############################################################################
+; render the polygon
+;###############################################################################
+defmethod( render (( poly polygon2 ))
+  if( !null(poly->vertices) then
+    println("INFO(polygon): Rendering")
+    dbCreatePolygon(poly->ref
+	     	    list(poly->layer poly->purpose)
+		    poly->vertices
+    );dbCreatePolygon
+  else
+    println("ERROR(polygon): No vertices to render")
+  );if   
+);defmethod
+
+;#####################################################
+; Find max x 
+;#####################################################
+defmethod( maxx (( poly polygon2 ))
+  let( (maxx)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    maxx = 0.0
+    foreach( vert poly->vertices
+      if(xCoord(vert) > maxx then
+        maxx = xCoord(vert)
+      else
+        maxx = maxx
+      );if
+    );foreach
+    maxx 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find min x 
+;#####################################################
+defmethod( minx (( poly polygon2 ))
+  let( (minx)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    minx = 0.0
+    foreach( vert poly->vertices
+      if(xCoord(vert) < minx then
+        minx = xCoord(vert)
+      else
+        minx = minx
+      );if
+    );foreach
+    minx 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find max y 
+;#####################################################
+defmethod( maxy (( poly polygon2 ))
+  let( (maxy)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    maxy = 0.0
+    foreach( vert poly->vertices
+      if(yCoord(vert) > maxy then
+        maxy = yCoord(vert)
+      else
+        maxy = maxy
+      );if
+    );foreach
+    maxy 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find min y
+;#####################################################
+defmethod( miny (( poly polygon2 ))
+  let( (miny)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    miny = 0.0
+    foreach( vert poly->vertices
+      if(yCoord(vert) < miny then
+        miny = yCoord(vert)
+      else
+        miny = miny
+      );if
+    );foreach
+    miny
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Set the rectangular transformation rectTran of the
+; polygon
+;#####################################################
+defmethod( setRectTran (( poly polygon2 ))
+  setUpperRight(poly->rtran list(maxx(poly) maxy(poly)))
+  setLowerLeft(poly->rtran list(minx(poly) miny(poly)))
+  calculateCentroid(poly->rtran)
+);defmethod
+
+;#####################################################
+; FIXME: this should be in transform2 class
+; This method "spins" the polygon vertices in a 
+; counter-clockwise direction by one increment every call 
+;#####################################################
+;defmethod( spin (( poly polygon2 ))
+;	    let( (j temp)  
+;	   	temp = '()
+;		j=1
+;		for( i 0 length( poly->vertices)-2    
+;		     temp = append1(temp nth(j poly->vertices))
+;		     j = j+1
+;	   	);for
+;		temp = append1(temp nth(0 poly->vertices)) 
+;		poly->vertices = temp
+;	    );let
+;);defmethod
+
+;#####################################################
+; This method translates the position of each polygon2
+; vertex and it's current centroid value by the point 
+; value argument "list(x y)" 
+;#####################################################
+defmethod( translate (( poly polygon2 ) trn)
+  let( (new len tvert) 
+    new = '()
+    len = length(poly->vertices)
+    foreach( vert poly->vertices
+      tvert = list(xCoord(vert)+xCoord(trn) yCoord(vert)+yCoord(trn))
+      new = cons(tvert new)
+    );foreach
+    poly->vertices = new
+    poly->centroid->x = poly->centroid->x + xCoord(trn)
+    poly->centroid->y = poly->centroid->y + yCoord(trn)
+  );let	   
+);defmethod
+
+;###############################################################################
+; Check that there are at least 3 vertices (not a line or a point)
+;###############################################################################
+
+;###############################################################################
+; Make Vertex List
+;###############################################################################
+;defmethod( setVertexList (( poly polygon2 ))
+;  let( (i vobj)
+;   poly->vertObjList = '()
+;   i=0
+;    foreach(vert poly->vertices
+;  	   vobj = makeInstance('vertex2)
+;	   setxy(vobj vert)
+;	   setNum(vobj i)
+;  	   poly->vertObjList = cons(vobj poly->vertObjList)
+;	   i++
+;    );foreach	       
+;  );let   
+;);defmethod
+
+;###############################################################################
+; FIXME: Edge object?
+; Make Poly Edge List
+;###############################################################################
+;defmethod( setEdgeList (( poly polygon2 ))
+;  let( (eobj)
+;    poly->edgeObjList = '()
+;    for(i 0 sub1(sub1(poly->vertices))
+;  	   eobj = makeInstance('edge)
+;	   setxy(eobj->p0 nth(i poly->vertices))
+;	   setxy(eobj->p1 nth(i+1 poly->vertices))
+;	   update(eobj)
+;  	   poly->vertObjList = cons(eobj poly->vertObjList)
+;    );for       
+;  );let   
+;);defmethod
+
+;###############################################################################
+; FIXME: Merge Object?
+; Get lower-left vertex of the polygon
+;###############################################################################
+;defmethod( getLowerLeft (( poly polygon2 ))
+;  let( ()  
+;    foreach(vert poly->vertices
+;      
+;    );foreach
+;  );let
+;  nil
+;);defmethod
+
+;###############################################################################
+; FIXME: Merge Object?
+; Detect if polygon is intersecting the argument
+;###############################################################################
+;defmethod( isIntersecting (( poly polygon2 ) arg )
+;  nil
+;);defmethod
+;###############################################################################
+; Close Vertices
+;###############################################################################
+
+;###############################################################################
+; Derivative Filtering of Vertice List - eliminate dy/dx=0 vertices
+;###############################################################################
+
+
+;###############################################################################
+; Perimeter of a 2-D Polygon
+;###############################################################################
+
+;###############################################################################
+; Diff the vertices of another set of vertices of a second 2-D Polygon
+;###############################################################################
+
+
+
+;###############################################################################
+; FIXME: This method should be in the transform class and it should be using the  
+; point2 on grid method
+; Determine if all polygon points are on the manufacturing grid
+;###############################################################################
+;defmethod( isPolyOnGrid (( poly polygon2 ))
+;  let( (ret)
+;    ret = t
+;    foreach( vert poly->vertObjList
+;      if(isOnGrid(vert) then
+;        println("Point on Grid")
+;      else
+;        ret = nil
+;      );if
+;    );foreach
+;    ret
+;  );let
+;);defmethod
+
+;###############################################################################
+; FIXME: This method should be in the transform class 
+; FIXME: Should be in the points2 class
+; Place all polygon points on the manufacturing grid
+;###############################################################################
+;defmethod( setPolyOnGrid (( poly polygon2 ))
+;    foreach( vert poly->vertObjList
+;      setOnGrid(vert) 
+;    );foreach
+;);defmethod
+
+;###############################################################################
+; WIP: DEBUG MODE ...
+; Detect if point is inside the member polygon.
+; Implements "overlap rule" where the point needs to be inside
+; and not lie on the perimeter of the polygon.
+; FIXME: could make this identify if a point is ON a edge or vertex
+;        by adding in additional abs(cp) equal zero checks
+;        Check if the detected point is a vertex gives you a vertex
+;        overlap and if not it's an edge overlap
+;###############################################################################
+defmethod( isPointInside (( poly polygon2 ) pnt )
+  let( (vectList vect vp rotation vect0 vect1 ret cp)
+     vectList = '()
+     foreach( vert poly->vertices
+       vect = makeInstance( 'vector2 )
+       setHead(vect vert)
+       setTail(vect pnt)
+       vectList = cons(vect vectList) 
+     );foreach
+     rotation = 0.0
+     vect0 = nth(0 vectList)
+     vect1 = nth(1 vectList)
+     cp = cross(vect0 vect1)
+     ret = t
+     if( cp != abs(0.0) then
+       if( cp > 0.0 then
+       	 printf("0: Initial Pos CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       else
+	 printf("0: Initial Neg CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       );if
+       if(cp > 0.0 then
+         for( i 1 sub1(sub1(length(vectList)))
+           vect0 = nth(i vectList)
+	   vect1 = nth(i+1 vectList)
+	   cp = cross(vect0 vect1)
+	   printf("%d: Pos Incremental CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" i cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y ) 
+	   if(cp <= 0.0 then
+	     ret = nil
+	   else 
+	     ret = ret
+	   );
+       );for
+       else
+         for( i 1 sub1(sub1(length(vectList)))
+           vect0 = nth(i vectList)
+	   vect1 = nth(i+1 vectList)
+	   cp = cross(vect0 vect1)
+	   printf("%d: Neg Incremental CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" i cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y ) 
+	   if(cp >= 0.0 then
+	     ret = nil
+	   else
+	     ret = ret
+	   );
+         );for
+       );if
+     else
+       printf("0: Initial Zero CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       ret=nil
+     );if
+     ret
+  );let
+);defmethod
+
+
+;###############################################################################
+; FIXME: Edge object?
+; Using the vertices, generate a list of edge2 objects in the edge collection
+;###############################################################################
+;defmethod( genEdges (( poly polygon2 ) )
+;  nil
+;);defmethod
+
+;###############################################################################
+; Is polygon a rectangle
+;###############################################################################
+defmethod( isRectangle (( poly polygon2 ))
+  nil
+)
+
+;###############################################################################
+;###############################################################################
+;###############################################################################
+
+
+
+
