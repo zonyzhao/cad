@@ -1,0 +1,125 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  points.ils: container class for 2-D points 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( points2 ()
+	  (
+		( points @reader getPoints @writer setCollection)		  
+	  )
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj points2)) 
+  obj->points = makeInstance( 'collection )
+);defmethod
+
+;#####################################################
+; Add point2 object to points collection
+;#####################################################
+defmethod( appendPoint ((pts points2) arg) 
+  if(classp( arg 'point2) then
+    add(pts->points arg)
+  else
+    println("ERROR(points2): Argument is not a point2 object")
+  );if
+);defmethod
+
+;#####################################################
+; Add a list of point2 object to points collection
+; argument is a simple list of points
+;#####################################################
+defmethod( addPoints ((pts points2) arg)
+  let( (temp) 
+    if(listp(arg) then
+      foreach(pt arg
+        temp = makeInstance( 'point2 )
+	setCoord(temp pt) 
+        appendPoint(pts temp)
+      );foreach
+    else
+      println("ERROR(points2): Argument is not a simple list")
+    );if
+  );let
+);defmethod
+
+;#####################################################
+; Reset points points collection
+;#####################################################
+defmethod( resetPoints ((pts points2)) 
+  resetCollection(pts->points)
+);defmethod
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+defmethod( translate ((pts points2) arg)
+  if( listp(arg) then
+    foreach(p2 getCollection(pts->points)
+      translate(p2 arg)
+    );foreach
+  else
+    println("ERROR(points2): argument must be a simple list")
+  );if
+);defmethod 
+
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+defmethod( rotate ((pts points2) arg)
+    foreach(p2 getCollection(pts->points)
+      rotate(p2 arg)
+    );foreach
+);defmethod 
+
+;#####################################################
+; scale all points in the collection based
+; upon a scalar argument
+;#####################################################
+defmethod( scale ((pts points2) arg)
+  foreach(p2 getCollection(pts->points)
+    scale(p2 arg)
+  );foreach
+);defmethod
+
+;#####################################################
+; mirror all points about the y axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+defmethod( mirrory ((pts points2))
+  let( (newpnts temp)
+    newPnts = makeInstance( 'collection )
+    foreach( pnt getCollection(pts->points)
+      temp = makeInstance( 'point2 )
+      setCoord(temp list(-1*xCoord(getCoord(pnt)) yCoord(getCoord(pnt))))
+      add(newPnts temp)
+    );foreach
+    setCollection(pts newPnts)
+  );let
+);defmethod 
+
+;#####################################################
+; mirror all points about the x axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+defmethod( mirrorx ((pts points2))
+  let( (newpnts temp)
+    newPnts = makeInstance( 'collection )
+    foreach( pnt getCollection(pts->points)
+      temp = makeInstance( 'point2 )
+      setCoord(temp list(xCoord(getCoord(pnt)) -1*yCoord(getCoord(pnt))))
+      add(newPnts temp)
+    );foreach
+    setCollection(pts newPnts)
+  );let
+);defmethod 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

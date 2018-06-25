@@ -1,0 +1,18 @@
+;#############################################################
+; WRAP.ils: Defines a wrapped core class that inherits both
+;           CORE and RING classes
+;#############################################################
+defclass( WRAP (CORE RING)
+	  ()
+);defclass
+;#############################################################
+; Draw method for WRAP is just a simple call to callNextMethod()
+; Due to the specificity of WRAP's superclasses, the draw
+; methods for CORE and RING will be called in this order
+;#############################################################
+defmethod(draw ((device WRAP))
+  callNextMethod()
+);defmethod
+;#############################################################
+;#############################################################
+;#############################################################

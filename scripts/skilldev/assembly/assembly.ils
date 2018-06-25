@@ -1,0 +1,162 @@
+;######################################################
+;# edge2.ils: Polygon edge Class inheriting from line class
+;######################################################
+defclass( assembly ()
+	  (
+	     ( geometries @reader getGeometryCollection )
+	     ( layers @reader getLayerCollection )
+	     ( ref @reader getRef @writer setRef )
+	     ( rtrans )
+	  )				  
+);defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj assembly)) 
+	   obj->geometries = makeInstance( 'collection )
+	   obj->ref = nil
+	   obj->layers = makeInstance( 'collection )
+	   obj->rtrans = makeInstance( 'rectTrans )
+);defmethod
+
+;#####################################################
+; Gets a list of layer objects in the assembly
+;#####################################################
+defmethod( getRectTran (( ass assembly ))
+  getRectTran(ass->rtrans)
+);defmethod
+
+;#####################################################
+; Gets a list of layer objects in the assembly
+;#####################################################
+defmethod( getLayers (( ass assembly ))
+  ass->layers->list
+);defmethod
+
+;#####################################################
+; Adds shapes to the assembly via the shapes container. 
+;#####################################################
+defmethod( addGeometry (( ass assembly ) arg )
+  if( !null(arg) then
+    if( classp(arg 'geometry) then
+      add(ass->geometries arg)
+      t
+    else
+      println("ERROR(assembly): Only geometry objects can be added")
+      nil
+    );if
+  else
+    println("ERROR(assembly): Cannot add null shape")	       
+    nil
+  );if
+);defmethod
+
+;#####################################################
+; Adds shapes to the assembly via the shapes container. 
+;#####################################################
+defmethod( resetLayers (( ass assembly ))
+  resetCollection(ass->layers)
+);defmethod
+
+;#####################################################
+; Creates the layers in the layer stackup needed to 
+; render the shape
+;#####################################################
+defmethod( setShapesOnLayers (( ass assembly ))
+  let( (temp)
+    if( !null(ass->shapes->list->elems) then
+      foreach( shape ass->shapes->list->elems
+      	printf("INFO(Assembly): Processing shape on layer %s\n" getLayer(shape))
+	if( !null(ass->layers->list->elems) then
+          foreach( layer ass->layers->list->elems
+	    printf("INFO(Assembly): Finding layer %s in list\n" getName(layer))
+            if(getName(layer) == getLayer(shape) then
+	      printf("INFO(Assembly): Layer %s found - Adding shape to layer\n" getLayer(shape))	
+	      addShape(layer shape)
+	    else
+	      printf("INFO(Assembly): Adding shape to new layer %s\n" getName(layer))
+              temp = makeInstance( 'techLayer )
+    	      setName(temp getLayer(shape))
+	      addShape(temp shape)
+	      add(ass->layers temp)
+	    );if
+          );foreach
+        else
+	  printf("INFO(Assembly): Adding shape to new layer %s (first layer in assembly layer collection)\n" getLayer(shape))
+	  temp = makeInstance( 'techLayer )
+    	  setName(temp getLayer(shape))
+	  addShape(temp shape)
+	  add(ass->layers temp)
+	);if
+      );foreach
+      t
+    else
+      printf("ERROR(Assembly): Shape collection is null\n")
+      nil	       
+    );if
+  );let
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
+defmethod( renderAssembly (( ass assembly ))
+  if( !null(arg) then
+    setLayers(ass)
+    setShapesOnLayers(ass)
+    renderStack(ass)
+  else
+    printf("ERROR: Cannot add null shape" )	       
+    t
+  );if
+);defmethod
+
+;#####################################################
+; Translates the assembly
+;#####################################################
+defmethod( translate (( ass assembly ) arg )
+  if(listp(arg) then
+    println("INFO:(assembly): translating assembly geometries")
+    foreach( geom getCollection(ass->geometries)
+      translate(geom arg)
+    );foreach
+    translate(ass->rtrans arg)
+  else
+    println("ERROR(assembly): requires a list argument")   
+  );if
+);defmethod
+
+;#####################################################
+; Rotate the assembly
+;#####################################################
+defmethod( rotate (( ass assembly ) arg )
+  foreach( geom getCollection(ass->geometries)
+      rotate(geom arg)
+    );foreach
+    rotate(geom->rtran arg)
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
+defmethod( render (( ass assembly ))
+  if( !isEmpty(ass->geometries) then
+    foreach( geom getCollection(ass->geometries)
+      if( classp(geom 'geometry) then
+        setRef(geom getRef(ass))
+        render(geom)
+      else
+        println("ERROR(assembly): Render object must be a geometry")
+      );if
+    );foreach
+  else
+    println("ERROR(assembly): Empty geometry collection")
+  );if
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################

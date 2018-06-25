@@ -1,0 +1,40 @@
+;######################################################
+;# 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+
+
+

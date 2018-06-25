@@ -1,0 +1,50 @@
+;#####################################################################
+; CORE.ils: core pcell class inheriting from PcellParam class
+; Note: Parameter created via defineParam will be treated as
+;       a Pcell parameter; otherwise it is treated as a normal
+;       class slot (e.g. coreBBox is not a Pcell parameter)
+;#####################################################################
+defclass( CORE (PcellParam)
+  (
+	( cyanW @initform defineParam("float" 0.6) )
+	( cyanL @initform defineParam("float" 0.2) )
+	( greenW @initform defineParam("float" 0.2) )
+	( greenL @initform defineParam("float" 0.8) )
+	( coreBBox @initarg coreBBox )
+  )
+);defclass
+
+;######################################################################
+; Draw a simple cross represented by two rectangles
+;######################################################################
+defmethod( draw ((device CORE))
+  let((cv cyanW cyanL greenW greenL rectId llx lly urx ury)
+    cyanW = getParamValue(device 'cyanW)
+    cyanL = getParamValue(device, 'cyanL)
+    greenW = getParamValue(device, 'greenW)
+    greenL = getParamValue(device, 'greenL)
+    ; layers are choosen for their color's visibility
+    ; you can replace teh layer names here with the 
+    ; the layer names present in the library
+    cv = slotValue(device 'cvId)
+    rectId = dbCreateRect(cv list("sd" "drawing") list(0:0 greenL:greenW))
+    llx = 0.5 * greenL - 0.5 * cyanL
+    lly = 0.5 * greenW - 0.5 * cyanW
+    urx = 0.5 * greenL - 0.5 * cyanL
+    ury = 0.5 * greenW - 0.5 * cyanW
+    rectId = dbCreateRect(cv list("sd" "drawing") list(llx:lly urx:ury))
+    setSlotValue(device 'coreBBox list( 0.0:lly greenL:ury))
+    callNextMethod()
+    );let
+);defmethod
+
+;######################################################################
+; Returns CORE's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((device CORE))
+  slotValue(device 'coreBBox)
+);defmethod
+
+;#######################################################################
+;#######################################################################
+;#######################################################################

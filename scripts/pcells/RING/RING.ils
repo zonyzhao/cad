@@ -1,0 +1,57 @@
+;############################################################################
+; RING.ils: Draws a polygon that wraps around a devices' coreBBox 
+;           with a griven spacing value and width of the polygon.
+;           Inherits from PcellParam class
+;############################################################################
+defclass( RING (PcellParam)
+  (
+	(ringW @initform defineParam("float" 0.1))
+	(ringS @initform defineParam("float" 0.1))
+  )
+);defclass
+
+;#################################################################
+; Draw a polygon that wraps around the devices coreBBox with a
+; given spacing value and width
+;#################################################################
+defmethod( draw ((device RING))
+  let((cv ringS ringW coreBBox llx lly urx ury pts ring)
+    ringS = getParamValue(device 'ringS)
+    ringW = getParamValue(device 'ringW)
+    coreBBox = getCoreBBox(device)
+    llx = xCoord( lowerLeft(coreBBox))
+    lly = yCoord( lowerLeft(coreBBox))
+    urx = xCoord( upperRight(coreBBox))
+    ury = yCoord( upperRight(coreBBox))
+    pts = list(
+    	llx-ringS:lly-ringS ; points on inner edges
+	urx+ringS:lly-ringS
+	urx+ringS:ury+ringS
+	llx-ringS:ury+ringS
+	llx-ringS:lly-ringS-ringW         ; extending to outer edge
+	llx-ringS-ringW:lly-ringS-ringW   ; points on outer edges
+	llx-ringS-ringW:ury+ringS+ringW   
+	urx+ringS+ringW:ury+ringS+ringW
+	urx+ringS+ringW:lly-ringS-ringW
+	llx-ringS:lly-ringS-ringW
+	);list
+    ; layer chosen for its color's visibility
+    ; you can replace the layer names mentioned here with the layer
+    ; name present in your library
+    cv = slotValue(device 'cvId)
+    ring = dbCreatePolygon(cv list("GRID" "drawing") pts)
+    callNextMethod()
+    );let
+);defmethod
+
+;#################################################################
+; This method is called when RING is used on its own
+; Returns and empty box
+;#################################################################
+defmethod(getCoreBBox ((device RING))
+  list(0:0 0:0)
+);defmethod
+;#################################################################
+;#################################################################
+;#################################################################
+

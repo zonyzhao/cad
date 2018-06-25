@@ -1,0 +1,71 @@
+;######################################################
+;# gate.ils: fet gate PCELL class. Inherits from PcellParam
+;            making it a Cadence PCELL class
+;######################################################
+defclass( gate (PcellParam)
+  (
+    ( width  @initform defineParam("float" 50.0) )
+    ( length @initform defineParam("float" 0.25) )
+    ( stem )
+    ( pad )
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj gate)) 
+	   obj->stem = makeInstance( 'gateStem )
+	   obj->pad = makeInstance( 'gatePad )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( draw (( gt gate ))
+  let( (width length stemRectTran padRectTran)
+    width = getParamValue(gt 'width)
+    length = getParamValue(gt 'length)
+    setWidthInner(gt->pad 13.5)
+    setHeightInner(gt->pad 4.0)
+    setWidthOutter(gt->pad 13.5)
+    setHeightOutter(gt->pad 5.6)
+    setInnerLayer(gt->pad "leGatePad")
+    setOutterLayer(gt->pad "TgateTop")
+    setBsegLayer(gt->pad "capBot")
+    setRef(gt->pad getRef(gt))
+    generate(gt->pad)
+    render(gt->pad)
+    setWidth(gt->stem width)
+    setLength(gt->stem length)
+    setWidthTaper(gt->stem 2.5)
+    setLayer(gt->stem "gateStem")
+    setRef(gt->stem getRef(gt))
+    generate(gt->stem)
+    render(gt->stem)
+    stemRectTran = getRectTran(gt->stem)
+    padRectTran = getRectTran(gt->pad)
+    rtsAdd(gt->rtrans stemRectTran) 
+    rtsAdd(gt->rtrans padRectTran)
+    rtsUnion(gt->rtrans)
+    setSlotValue(gt 'coreBBox list( getLowerLeft(gt->rtrans->rtran) getUpperRight(gt->rtrans->rtran)))
+    callNextMethod()
+  );let
+);defmethod
+
+;######################################################################
+; Returns gates's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((gt gate))
+  slotValue(gt 'coreBBox)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

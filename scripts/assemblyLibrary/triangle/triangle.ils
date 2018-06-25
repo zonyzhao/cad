@@ -1,0 +1,34 @@
+defclass( triangle (polygon2)
+	  (
+		( base @reader getBase @writer setBase )
+		( height @reader getHeight @writer setHeight )
+	  )				  
+) ; defclass
+
+;######################################################
+;
+;######################################################
+defmethod( initializeInstance @after ((obj triangle)) 
+	   obj->base  = 1.0
+           obj->height = 1.0
+);defmethod
+
+;######################################################
+;######################################################
+defmethod( generate (( tri triangle ))
+  let( (vertices)
+	   vertices = '()
+	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
+	   vertices = cons(list( tri->base/2 -tri->height/2) vertices)
+	   vertices = cons(list( 0            tri->height/2) vertices)
+	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
+	   setVertices(tri vertices)
+	   setCentroid(tri list(0.0 0.0))
+	   setRectTran(tri)
+	   getCentroid(tri)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################

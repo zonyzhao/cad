@@ -1,0 +1,169 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  transform2: Generic Point Class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( transform2 (cadObj)
+	  (
+	    ( polygon )
+	    ( vertices @reader getVertices)
+	    ( area )
+	    ( transformation )
+	    ( rtran @reader getRectTran)
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj transform2))
+	   obj->polygon = makeInstance( 'polygon2 ) 
+	   obj->vertices = makeInstance( 'points2 )
+	   obj->area=nil
+	   obj->transformation = makeInstance( 'transformation2 )
+	   obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;#####################################################
+; sets up the polygon "component" of the transform2 object 
+;#####################################################
+defmethod( addPolygon (( tran transform2 ) arg)
+  if( classp(arg 'polygon2) then
+    setVertices(tran getVertices(arg))
+    setCentroid(tran getCentroid(arg))
+  else
+    println("ERROR(transform2): argument is not a polygon.")
+  );if
+);defmethod
+
+;#####################################################
+; Creates a collection of vertex objects from an input
+; vertex simple list argument
+;#####################################################
+defmethod( setVertices (( tran transform2 ) arg)
+  let( (p2)
+    setVertices(tran->polygon arg)
+    setRectTran(tran->polygon)
+    foreach(vert arg
+      p2 = makeInstance( 'point2 )
+      setCoord(p2 vert)
+      appendPoint(tran->vertices p2)
+    );foreach
+    setCentroid(tran->transformation getCoord(tran->polygon->centroid))
+    setScale(tran->transformation 1.0)
+    setTheta(tran->transformation 0.0)
+    cloneRectTran(tran)
+    t
+  );let
+);defmethod
+
+;#####################################################
+; Clones the polygons's rectTran into the transform2's
+; recTran. Use this to "reset" the recTran when 
+; transform2's transformation is reset.
+;#####################################################
+defmethod( cloneRectTran (( tran transform2 ))
+  clone(tran->rtran getRectTran(tran->polygon))
+);defmethod
+
+;###############################################################################
+; render the transform
+;###############################################################################
+defmethod( render (( tran transform2 ))
+  let( (verts)
+    verts = '()
+    if( !null(tran->ref) then
+      if( !isEmpty(tran->vertices->points) then
+        foreach( point getCollection(tran->vertices->points)
+	  verts = cons(getCoord(point) verts)
+        );foreach
+        println("INFO(transform2): Rendering Transform")
+        dbCreatePolygon(tran->ref
+	     	        list(tran->layer tran->purpose)
+		        verts
+	);dbCreatePolygon
+      else
+        println("ERROR(transform2): No vertices to render")
+      );if
+    else
+        println("ERROR(transform2): Layout cellview reference not set")
+    );if
+  );let   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( translate (( tran transform2 ) arg)
+  let( (centroid)
+    if( listp(arg) then
+      translate(tran->vertices arg)
+      centroid = getCentroid(tran->transformation)
+      setCentroid(tran->transformation list(xCoord(centroid)+xCoord(arg) yCoord(centroid)+yCoord(arg)))
+      translate(tran->rtran arg)
+    else
+      println("ERROR(transform2): list argument required")
+    );if
+  );let	   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( scale (( tran transform2 ) arg)
+  scale(tran->vertices arg)
+  setScale(tran->transformation arg*getScale(tran->transformation))	   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( isCentered (( tran transform2 ))
+  isCentered(tran->rtran)	   
+);defmethod
+
+
+;#####################################################
+; This method centers the transform based upon its
+; rectTran center
+;#####################################################
+defmethod( center (( tran transform2 ))
+  let( (rtcent)
+    if( !isCentered(tran->rtran) then
+      rtcent = getCentroid(tran->rtran)
+      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
+    else
+      t
+    );if
+  );let	   
+);defmethod
+
+
+;###############################################################################
+; Note A: A local rotation requires that the transforms centroid be translated
+;         to origin. Global rotations do not need the tranlation to origin
+; Note B: positive angles = counter clockwise in according to 
+; the "right handedness" convention.
+;###############################################################################
+defmethod( rotate (( tran transform2 ) arg)
+      rotate(tran->vertices arg)	   
+);defmethod
+
+;###############################################################################
+; Get centroid of transform
+;###############################################################################
+defmethod( getCentroid (( tran transform2 ))
+  getCoord(tran->transformation->centroid)
+)
+
+;###############################################################################
+; Set centroid of transform
+;###############################################################################
+defmethod( setCentroid (( tran transform2 ) arg)
+  setCoord(tran->transformation->centroid arg)
+)	  
+	  
+;###############################################################################
+;###############################################################################
+;###############################################################################

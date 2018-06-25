@@ -1,0 +1,83 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  transformation2: Class representing the transformation of any
+;;;;;;;;;;;;;;;;  2-D geometry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( transformation2 ()
+	  (
+	    ( centroid @reader centroid)
+	    ( absRotation @reader absRotation)
+	    ( relRotation @reader relRotation)
+	    ( scale @reader getScale @writer setScale)
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj transformation2)) 
+  obj->centroid = makeInstance( 'point2 )
+  obj->absRotation = makeInstance( 'rotation2 )
+  obj->relRotation = makeInstance( 'rotation2 )
+  obj->scale = nil
+);defmethod
+
+;#####################################################
+; sets the centroid of the transformation
+;#####################################################
+defmethod( setCentroid (( tr2 transformation2 ) arg)
+  if(listp(arg) then
+    setCoord(tr2->centroid arg)
+  else
+    println("ERROR(transformation2): Expecting list argument")
+  );if	   
+);defmethod
+
+;#####################################################
+; gets the centroid of the transformation
+;#####################################################
+defmethod( getCentroid (( tr2 transformation2 ))
+  getCoord(tr2->centroid)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+; (normally this is zero representing the base 
+;  transform)
+;#####################################################
+defmethod( getRadius (( tr2 transformation2 ))
+  getRadius(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; sets the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( setTheta (( tr2 transformation2 ) arg)
+  setTheta(tr2->relRotation arg)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( getTheta (( tr2 transformation2 ))
+  getTheta(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+;#####################################################
+defmethod( getRadiusToCentroid (( tr2 transformation2 ))
+  getRadius(tr2->absRotation)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation about the 
+;#####################################################
+defmethod( getThetaToCentroid (( tr2 transformation2 ))
+  getTheta(tr2->absRotation)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################

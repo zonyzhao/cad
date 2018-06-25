@@ -1,0 +1,141 @@
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( setPoint (( pt point2 ) arg )
+;  pt->point = list(float(xCoord(arg)) float(yCoord(arg)))	   
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( getPoint (( pt point2 ))
+;  pt->point	   
+;);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################

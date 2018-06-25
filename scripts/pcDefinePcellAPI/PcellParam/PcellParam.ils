@@ -1,0 +1,98 @@
+;#################################################################
+; PcellParam.ils: class for pcell parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Defines a base class for the PCELL API with a single slot for 
+; holding the PCELL master ID. This PCELL ID is the same as the
+; the pcCellView variable using in the a standard SKILL Pcell
+..................................................................
+; cvId will hold the pcCellView reference which is set in the 
+; extremely important "setPcellParams" method
+;#################################################################
+defclass( PcellParam ()
+  (
+	(cvId @initarg cvId)
+  )
+);defclass
+
+;#################################################################
+; Transfers the Pcell parameters from the super master cell view to 
+; a Pcell device's slots.
+;
+; input argument cv is the built in "pcCellView" class object's
+; reference . The "pcCellView" is the standard variable, representing
+; the PCELL master ID,  used in a standard SKILL Pcell.
+; 
+; NOTE: 
+; This important method does the mapping of the desired user
+; parameters between and the required built in "pcCellView" parameters.
+; This ensures that the user defined pcell has full access to the
+; built in class' parameters (pcCellView). During pcell compilation
+; this method is called in order to update the user pcell code object from
+; the parameterized inputs of the built in pcell object (pcCellView).
+; Every time a pcell's parameter is changed, the user pcell is 
+; recompiled and executed using the new parameter values of the built 
+; in pcell object. 
+;#################################################################
+defmethod( setPcellParams ((device PcellParam) cv)
+  when( cv && dbIsId(cv)
+  	setSlotValue(device 'cvId cv)
+	foreach( param cv~>parameters~>value
+	  setParamValue(device concat(param~>name) param~>value)
+	);foreach
+  );when
+);defmethod
+
+;#################################################################
+; A function to define a Pcell parameter stored as a Pcell class'
+; slot. The optional argument _isParam is set to 't to indicate
+; this parameter is a Pcell parameter
+;#################################################################
+defun( defineParam (g_type g_value @optional (_isParam t))
+  list(nil 'type g_type 'value g_value 'isParam _isParam)
+);defun
+
+;#################################################################
+; A method to get Pcell parameter's type
+;#################################################################
+defmethod( getParamType ((device PcellParam) (propName symbol))
+  slotValue(device propName)->type
+);defmethod
+
+;#################################################################
+; A method to get Pcell parameter's value
+;#################################################################
+defmethod( getParamValue ((device PcellParam) (propName symbol))
+  slotValue(device propName)->value
+);defmethod
+
+;#################################################################
+; A method to set Pcell parameter's value
+;#################################################################
+defmethod( setParamValue ((device PcellParam) (propName symbol) val)
+  slotValue(device propName)->value = val
+);defmethod
+
+;#################################################################
+; A method to check if the given name is a Pcell parameter. Based
+; upon setting the of the isParam attribute
+;#################################################################
+defmethod( isParam ((device PcellParam) (propName symbol))
+  slotValue(device propName)->isParam
+);defmethod
+
+;#################################################################
+; A method to to get a list of Pcell parameters with their names,
+; types, and values
+;#################################################################
+defmethod( getPcellParams ((device PcellParam) )
+  let((params)
+    params = setof(p device->? isParam(device p))
+    params = foreach( mapcar p params 
+    	              list( p getParamType(device p) getParamValue(device p))
+	     );foreach
+  );let
+);defmethod
+
+;#################################################################
+;#################################################################
+;#################################################################

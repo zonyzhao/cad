@@ -1,0 +1,67 @@
+;######################################################
+; capsule.ils: Capsule geometry class. Inherits from 
+;              rectangle and circle objects
+;              Centroid of this object is geometric
+;              center of mass
+;######################################################
+defclass( capsule (geometry)
+   (
+	  ( width @reader getWidth @writer setWidth )
+	  ( height @reader getHeight @writer setHeight )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj capsule))
+	   obj->width  = 1.0
+	   obj->height = 1.0 	     
+);defmethod
+
+;#####################################################
+; This method generates the vertices and translation
+; of the vertices of the object
+;#####################################################
+defmethod( generate (( cap capsule ))
+  let((body capR capL bodyTran capRTran capLTran)
+    body = makeInstance( 'rectangle )
+    setHeight(body cap->height)
+    setWidth(body cap->width)
+    generate(body)
+    setCentroid(cap getCentroid(body))	
+    bodyTran = makeInstance( 'transform2 )
+    setVertices(bodyTran getVertices(body))
+    setCentroid(bodyTran getCentroid(body))
+    cloneRectTran(bodyTran)   
+    capR = makeInstance( 'circle )
+    setGrid(capR 0.025)
+    setRadius(capR cap->height/2.0)
+    generateHalfCircle(capR)
+    center(capR)
+    capRTran = makeInstance( 'transform2 )
+    setVertices(capRTran getVertices(capR))
+    setCentroid(capRTran getCentroid(capR))
+    cloneRectTran(capRTran)
+    capL = makeInstance( 'circle )
+    setGrid(capL 0.025)
+    setRadius(capL cap->height/2.0)
+    generateHalfCircle(capL)
+    center(capL)
+    capLTran = makeInstance( 'transform2 )
+    setVertices(capLTran getVertices(capL))
+    setCentroid(capLTran getCentroid(capL))
+    cloneRectTran(capLTran)
+    rotate(capLTran 180.0)
+    translate(capRTran list((cap->width+cap->height/2.0)/2.0 0.0))
+    translate(capLTran list( -(cap->width+cap->height/2.0)/2.0 0.0))
+    addTransform(cap bodyTran)
+    addTransform(cap capLTran)
+    addTransform(cap capRTran) 
+    rectTranUnion(cap)
+  );let	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################

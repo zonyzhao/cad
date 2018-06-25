@@ -1,0 +1,154 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  geometry.ils: container class which holds a group
+;                of polygon transforms.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( geometry ()
+	  (
+		( transforms )	
+		( centroid )
+		( rtran @reader getRectTran )
+		( ref @reader getRef @writer setRef )		  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj geometry)) 
+	   obj->transforms = makeInstance( 'collection )
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->rtran = makeInstance( 'rectTran )
+	   obj->ref = nil
+);defmethod
+
+;#####################################################
+; Generate the rectTran union of all the transforms
+; in the  geometry
+;#####################################################
+defmethod( rectTranUnion (( geom geometry ))
+  zero(geom->rtran)
+  foreach( trans getCollection(geom->transforms)
+    union(geom->rtran getRectTran(trans))
+  ) 
+  calculateCentroid(geom->rtran)
+);defmethod
+
+;#####################################################
+; Sets the centroid of the geometry
+;#####################################################
+defmethod( setCentroid (( geom geometry ) arg)
+  setCoord(geom->centroid arg)
+);defmethod
+
+;#####################################################
+; Gets the centroid of the geometry
+;#####################################################
+defmethod( getCentroid (( geom geometry ))
+  getCoord(geom->centroid)
+);defmethod
+
+;#####################################################
+; Sets the layer of the geometry
+;#####################################################
+defmethod( setLayer (( geom geometry ) arg)
+  if( !isEmpty(geom->transforms) then
+    foreach( trans getCollection(geom->transforms)
+;      println("INFO(geometry): Changing transform Layer")
+      setLayer(trans arg)
+    );foreach
+  else
+    println("ERROR(geometry): Empty transform collection")
+  );if
+);
+
+;#####################################################
+; Sets the purpose of the geometry 
+;#####################################################
+defmethod( setPurpose (( geom geometry ) arg)
+  foreach( trans getCollection(geom->transforms)
+    setPurpose(trans arg)
+  )
+);
+
+;#####################################################
+; Add transform to transforms collection
+;#####################################################
+defmethod( addTransform (( geom geometry ) arg)
+  if( classp( arg 'transform2) then
+    add(geom->transforms arg)
+  else
+    println("ERROR(geometry): Argument must be a transform object")
+  );if
+);defmethod
+
+
+;#####################################################
+; Center the geometry based upon the geometry's 
+; rectTran centroid
+;#####################################################
+defmethod( isCentered (( geom geometry ))
+  isCentered(geom->rtran)
+);defmethod
+
+;#####################################################
+; Center the geometry based upon the geometry's 
+; rectTran centroid
+;#####################################################
+defmethod( center (( geom geometry ))
+  let( (tval)
+    if( !isCentered(geom) then
+      tval = list( -xCoord(getCentroid(geom->rtran)) -yCoord(getCentroid(geom->rtran)))
+      setCentroid(geom list(0.0 0.0))
+      translate(geom->rtran tval)
+      translate(geom tval)
+    else
+      t
+    );if
+  );let  
+);defmethod
+
+;#####################################################
+; translate the geometry
+;#####################################################
+defmethod( translate (( geom geometry ) arg)
+  foreach(tran getCollection(geom->transforms)
+    translate(tran arg)
+  );  
+);defmethod
+
+;#####################################################
+; rotate the geometry
+;#####################################################
+defmethod( rotate (( geom geometry ) arg)
+  let( (tcent)
+    foreach(tran getCollection(geom->transforms)
+      rotate(tran arg)
+    );foreach
+    rotate(geom->rtran arg)
+  );let
+);defmethod
+
+;#####################################################
+; scale the geometry
+;#####################################################
+defmethod( scale (( geom geometry ) arg)
+ nil	  
+);defmethod
+
+;#####################################################
+; render the geometry
+;#####################################################
+defmethod( render (( geom geometry ) )
+  foreach( trans getCollection(geom->transforms)
+    if( classp(trans 'transform2) then
+      setRef(trans geom->ref)
+      render(trans)
+    else
+      printf("ERROR(geometry): Render object must be a transform2")
+    );if
+  )	  
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
