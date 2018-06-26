@@ -1,0 +1,2603 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  cadObj.ils: base CAD class. Most all classes will be derived/Inherit from 
+;              this class
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  )
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+) ; defclass
+
+;########################################################
+;# Class Constructor
+;########################################################
+
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.025
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	) ; let
+) ; defMethod
+;############################################################
+;############################################################
+;############################################################
+;######################################################
+;# 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( setPoint (( pt point2 ) arg )
+;  pt->point = list(float(xCoord(arg)) float(yCoord(arg)))	   
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( getPoint (( pt point2 ))
+;  pt->point	   
+;);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  points.ils: container class for 2-D points 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( points2 ()
+	  (
+		( points @reader getPoints @writer setCollection)		  
+	  )
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj points2)) 
+  obj->points = makeInstance( 'collection )
+);defmethod
+
+;#####################################################
+; Add point2 object to points collection
+;#####################################################
+defmethod( appendPoint ((pts points2) arg) 
+  if(classp( arg 'point2) then
+    add(pts->points arg)
+  else
+    println("ERROR(points2): Argument is not a point2 object")
+  );if
+);defmethod
+
+;#####################################################
+; Add a list of point2 object to points collection
+; argument is a simple list of points
+;#####################################################
+defmethod( addPoints ((pts points2) arg)
+  let( (temp) 
+    if(listp(arg) then
+      foreach(pt arg
+        temp = makeInstance( 'point2 )
+	setCoord(temp pt) 
+        appendPoint(pts temp)
+      );foreach
+    else
+      println("ERROR(points2): Argument is not a simple list")
+    );if
+  );let
+);defmethod
+
+;#####################################################
+; Reset points points collection
+;#####################################################
+defmethod( resetPoints ((pts points2)) 
+  resetCollection(pts->points)
+);defmethod
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+defmethod( translate ((pts points2) arg)
+  if( listp(arg) then
+    foreach(p2 getCollection(pts->points)
+      translate(p2 arg)
+    );foreach
+  else
+    println("ERROR(points2): argument must be a simple list")
+  );if
+);defmethod 
+
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+defmethod( rotate ((pts points2) arg)
+    foreach(p2 getCollection(pts->points)
+      rotate(p2 arg)
+    );foreach
+);defmethod 
+
+;#####################################################
+; scale all points in the collection based
+; upon a scalar argument
+;#####################################################
+defmethod( scale ((pts points2) arg)
+  foreach(p2 getCollection(pts->points)
+    scale(p2 arg)
+  );foreach
+);defmethod
+
+;#####################################################
+; mirror all points about the y axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+defmethod( mirrory ((pts points2))
+  let( (newpnts temp)
+    newPnts = makeInstance( 'collection )
+    foreach( pnt getCollection(pts->points)
+      temp = makeInstance( 'point2 )
+      setCoord(temp list(-1*xCoord(getCoord(pnt)) yCoord(getCoord(pnt))))
+      add(newPnts temp)
+    );foreach
+    setCollection(pts newPnts)
+  );let
+);defmethod 
+
+;#####################################################
+; mirror all points about the x axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+defmethod( mirrorx ((pts points2))
+  let( (newpnts temp)
+    newPnts = makeInstance( 'collection )
+    foreach( pnt getCollection(pts->points)
+      temp = makeInstance( 'point2 )
+      setCoord(temp list(xCoord(getCoord(pnt)) -1*yCoord(getCoord(pnt))))
+      add(newPnts temp)
+    );foreach
+    setCollection(pts newPnts)
+  );let
+);defmethod 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  polygon2.ils: Layout Polygon Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( polygon2 (cadObj)
+  (	
+    ( vertices @reader getVertices )
+    ( area )
+    ( centroid )
+    ( scale )
+    ( rtran @reader getRectTran )			  	
+  )
+);defClass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj polygon2)) 
+	   obj->vertices = nil
+	   obj->area = nil
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->scale = 1.0
+	   obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;####################################################
+; Checks to make sure that the centroid of the
+; rectTran is at the origin
+;####################################################
+defmethod( isCentered (( poly polygon2 ))
+  let( (c)
+    c = getCentroid(poly->rtran)
+    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
+      t
+    else
+      nil
+    )	 
+  );let	   
+);defmethod
+
+;####################################################
+; Centers the polygon's rectTran at the origin
+; if not already centered
+;####################################################
+defmethod( center (( poly polygon2 ))
+  let( (c)
+    if( !isCentered(poly) then
+       c = getCentroid(poly->rtran)
+       translate(poly list(-xCoord(c) -yCoord(c)))
+       setCentroid(poly->rtran list(0.0 0.0))
+       setCentroid(poly list(0.0 0.0))
+       getCentroid(poly->rtran)
+    else
+      t
+    );if
+  );let	 	   
+);defmethod
+
+;####################################################
+; Sets the polygon vertices and calculates the
+; area and centroid of the polygon
+;####################################################
+defmethod( setVertices (( poly polygon2 ) arg)
+  poly->vertices = arg
+  centroid(poly)
+  poly->vertices	 	   
+);defmethod
+
+;####################################################
+; Sets the polygon centroid value
+;####################################################
+defmethod( setCentroid (( poly polygon2 ) arg)
+  setCoord(poly->centroid arg)	   
+);defmethod
+
+;####################################################
+; Gets the polygon centroid value
+;####################################################
+defmethod( getCentroid (( poly polygon2 ))
+  getCoord(poly->centroid)	   
+);defmethod
+
+;###############################################################################
+; Area of a closed non-self intersecting polygon
+;###############################################################################
+defmethod( area (( poly polygon2 ))
+	   let( (term0
+	   	 term1 
+	   	 j
+	   	 len)
+		poly->area = 0.0
+		len = length(poly->vertices)
+	   	for( i 0 length( poly->vertices)-1
+		     j = modulo(i+1 len)
+		     term0 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term1 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     poly->area = poly->area + (term0 - term1)
+		     i = i+1
+	   	);for
+		if( poly->area < 0 then
+		    poly->area = -1*poly->area
+		)
+		poly->area = 0.5*(poly->area)
+	   );let	   
+);defmethod
+
+;###############################################################################
+; Centroid of a closed non-self intersecting 2-D transform
+;###############################################################################
+defmethod( centroid (( poly polygon2 ))
+	   let( (term0
+	   	 term1 
+		 term2
+		 term3
+		 term4
+		 term5
+	   	 j
+	   	 len
+		 cx
+		 cy)
+		area(poly)
+		len = length(poly->vertices)
+		cx=0.0
+		cy=0.0
+	   	for( i 0 length( poly->vertices)-1
+		     j = modulo(i+1 len)
+		     term0 = xCoord(nth(i poly->vertices))+xCoord(nth(j poly->vertices))
+		     term1 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term2 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     term3 = yCoord(nth(i poly->vertices))+yCoord(nth(j poly->vertices))
+		     term4 = xCoord(nth(i poly->vertices))*yCoord(nth(j poly->vertices))
+		     term5 = xCoord(nth(j poly->vertices))*yCoord(nth(i poly->vertices))
+		     cx=cx+(term0*(term1+term2))/(6*poly->area)
+		     cy=cy+(term3*(term4+term5))/(6*poly->area)
+		     i = i+1
+	   	);for
+		if( cx > 1000 || cy > 1000 then
+		    println("WARNING(polygon2): Centroid calculation may have failed")
+		    println("                   Setting centroid manually is recommended")
+		) 
+		setCoord(poly->centroid list(cx cy))
+	   );let	   
+);defmethod
+
+;###############################################################################
+; Rotate Polygon. Polygon's centroid must be at origin prior to rotation
+;###############################################################################
+defmethod( rotate (( poly polygon2 ) arg)
+  let( (rVerts mag theta thetaPrime tvert pi)
+    pi = 3.14159265
+    foreach( vert poly->vertices
+      mag   = (xCoord(vert)**2+yCoord(vert)**2)**0.5
+      theta = atan2(yCoord(vert) xCoord(vert))
+      thetaPrime = theta+arg/180*pi
+      tvert = list(mag*cos(thetaPrime) mag*sin(thetaPrime))
+      rVerts = cons(tvert rVerts)
+    );foreach
+      setVertices(poly rVerts)
+  );let	   
+);defmethod
+
+;#####################################################
+; This method scales the polygon by the arg value
+;#####################################################
+defmethod( scale (( poly polygon2 ) arg)
+  let( (new rvert)
+    new = '()
+    foreach( vert poly->vertices
+      rvert = list(arg*xCoord(vert) arg*yCoord(vert))
+      new = cons(rvert new)
+    );foreach
+      poly->vertices = new
+  );let	   
+);defmethod
+
+;###############################################################################
+; render the polygon
+;###############################################################################
+defmethod( render (( poly polygon2 ))
+  if( !null(poly->vertices) then
+    println("INFO(polygon): Rendering")
+    dbCreatePolygon(poly->ref
+	     	    list(poly->layer poly->purpose)
+		    poly->vertices
+    );dbCreatePolygon
+  else
+    println("ERROR(polygon): No vertices to render")
+  );if   
+);defmethod
+
+;#####################################################
+; Find max x 
+;#####################################################
+defmethod( maxx (( poly polygon2 ))
+  let( (maxx)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    maxx = 0.0
+    foreach( vert poly->vertices
+      if(xCoord(vert) > maxx then
+        maxx = xCoord(vert)
+      else
+        maxx = maxx
+      );if
+    );foreach
+    maxx 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find min x 
+;#####################################################
+defmethod( minx (( poly polygon2 ))
+  let( (minx)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    minx = 0.0
+    foreach( vert poly->vertices
+      if(xCoord(vert) < minx then
+        minx = xCoord(vert)
+      else
+        minx = minx
+      );if
+    );foreach
+    minx 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find max y 
+;#####################################################
+defmethod( maxy (( poly polygon2 ))
+  let( (maxy)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    maxy = 0.0
+    foreach( vert poly->vertices
+      if(yCoord(vert) > maxy then
+        maxy = yCoord(vert)
+      else
+        maxy = maxy
+      );if
+    );foreach
+    maxy 
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Find min y
+;#####################################################
+defmethod( miny (( poly polygon2 ))
+  let( (miny)
+    ;FIXME: Need to ensure with a check that the origin is inside
+    ;       the polygon. By construction rules, polygons will always
+    ;       have the origin withih the polygon, but it should have
+    ;       an extra check
+    miny = 0.0
+    foreach( vert poly->vertices
+      if(yCoord(vert) < miny then
+        miny = yCoord(vert)
+      else
+        miny = miny
+      );if
+    );foreach
+    miny
+   );let		     	 
+);defmethod
+
+;#####################################################
+; Set the rectangular transformation rectTran of the
+; polygon
+;#####################################################
+defmethod( setRectTran (( poly polygon2 ))
+  setUpperRight(poly->rtran list(maxx(poly) maxy(poly)))
+  setLowerLeft(poly->rtran list(minx(poly) miny(poly)))
+  calculateCentroid(poly->rtran)
+);defmethod
+
+;#####################################################
+; FIXME: this should be in transform2 class
+; This method "spins" the polygon vertices in a 
+; counter-clockwise direction by one increment every call 
+;#####################################################
+;defmethod( spin (( poly polygon2 ))
+;	    let( (j temp)  
+;	   	temp = '()
+;		j=1
+;		for( i 0 length( poly->vertices)-2    
+;		     temp = append1(temp nth(j poly->vertices))
+;		     j = j+1
+;	   	);for
+;		temp = append1(temp nth(0 poly->vertices)) 
+;		poly->vertices = temp
+;	    );let
+;);defmethod
+
+;#####################################################
+; This method translates the position of each polygon2
+; vertex and it's current centroid value by the point 
+; value argument "list(x y)" 
+;#####################################################
+defmethod( translate (( poly polygon2 ) trn)
+  let( (new len tvert) 
+    new = '()
+    len = length(poly->vertices)
+    foreach( vert poly->vertices
+      tvert = list(xCoord(vert)+xCoord(trn) yCoord(vert)+yCoord(trn))
+      new = cons(tvert new)
+    );foreach
+    poly->vertices = new
+    poly->centroid->x = poly->centroid->x + xCoord(trn)
+    poly->centroid->y = poly->centroid->y + yCoord(trn)
+  );let	   
+);defmethod
+
+;###############################################################################
+; Check that there are at least 3 vertices (not a line or a point)
+;###############################################################################
+
+;###############################################################################
+; Make Vertex List
+;###############################################################################
+;defmethod( setVertexList (( poly polygon2 ))
+;  let( (i vobj)
+;   poly->vertObjList = '()
+;   i=0
+;    foreach(vert poly->vertices
+;  	   vobj = makeInstance('vertex2)
+;	   setxy(vobj vert)
+;	   setNum(vobj i)
+;  	   poly->vertObjList = cons(vobj poly->vertObjList)
+;	   i++
+;    );foreach	       
+;  );let   
+;);defmethod
+
+;###############################################################################
+; FIXME: Edge object?
+; Make Poly Edge List
+;###############################################################################
+;defmethod( setEdgeList (( poly polygon2 ))
+;  let( (eobj)
+;    poly->edgeObjList = '()
+;    for(i 0 sub1(sub1(poly->vertices))
+;  	   eobj = makeInstance('edge)
+;	   setxy(eobj->p0 nth(i poly->vertices))
+;	   setxy(eobj->p1 nth(i+1 poly->vertices))
+;	   update(eobj)
+;  	   poly->vertObjList = cons(eobj poly->vertObjList)
+;    );for       
+;  );let   
+;);defmethod
+
+;###############################################################################
+; FIXME: Merge Object?
+; Get lower-left vertex of the polygon
+;###############################################################################
+;defmethod( getLowerLeft (( poly polygon2 ))
+;  let( ()  
+;    foreach(vert poly->vertices
+;      
+;    );foreach
+;  );let
+;  nil
+;);defmethod
+
+;###############################################################################
+; FIXME: Merge Object?
+; Detect if polygon is intersecting the argument
+;###############################################################################
+;defmethod( isIntersecting (( poly polygon2 ) arg )
+;  nil
+;);defmethod
+;###############################################################################
+; Close Vertices
+;###############################################################################
+
+;###############################################################################
+; Derivative Filtering of Vertice List - eliminate dy/dx=0 vertices
+;###############################################################################
+
+
+;###############################################################################
+; Perimeter of a 2-D Polygon
+;###############################################################################
+
+;###############################################################################
+; Diff the vertices of another set of vertices of a second 2-D Polygon
+;###############################################################################
+
+
+
+;###############################################################################
+; FIXME: This method should be in the transform class and it should be using the  
+; point2 on grid method
+; Determine if all polygon points are on the manufacturing grid
+;###############################################################################
+;defmethod( isPolyOnGrid (( poly polygon2 ))
+;  let( (ret)
+;    ret = t
+;    foreach( vert poly->vertObjList
+;      if(isOnGrid(vert) then
+;        println("Point on Grid")
+;      else
+;        ret = nil
+;      );if
+;    );foreach
+;    ret
+;  );let
+;);defmethod
+
+;###############################################################################
+; FIXME: This method should be in the transform class 
+; FIXME: Should be in the points2 class
+; Place all polygon points on the manufacturing grid
+;###############################################################################
+;defmethod( setPolyOnGrid (( poly polygon2 ))
+;    foreach( vert poly->vertObjList
+;      setOnGrid(vert) 
+;    );foreach
+;);defmethod
+
+;###############################################################################
+; WIP: DEBUG MODE ...
+; Detect if point is inside the member polygon.
+; Implements "overlap rule" where the point needs to be inside
+; and not lie on the perimeter of the polygon.
+; FIXME: could make this identify if a point is ON a edge or vertex
+;        by adding in additional abs(cp) equal zero checks
+;        Check if the detected point is a vertex gives you a vertex
+;        overlap and if not it's an edge overlap
+;###############################################################################
+defmethod( isPointInside (( poly polygon2 ) pnt )
+  let( (vectList vect vp rotation vect0 vect1 ret cp)
+     vectList = '()
+     foreach( vert poly->vertices
+       vect = makeInstance( 'vector2 )
+       setHead(vect vert)
+       setTail(vect pnt)
+       vectList = cons(vect vectList) 
+     );foreach
+     rotation = 0.0
+     vect0 = nth(0 vectList)
+     vect1 = nth(1 vectList)
+     cp = cross(vect0 vect1)
+     ret = t
+     if( cp != abs(0.0) then
+       if( cp > 0.0 then
+       	 printf("0: Initial Pos CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       else
+	 printf("0: Initial Neg CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       );if
+       if(cp > 0.0 then
+         for( i 1 sub1(sub1(length(vectList)))
+           vect0 = nth(i vectList)
+	   vect1 = nth(i+1 vectList)
+	   cp = cross(vect0 vect1)
+	   printf("%d: Pos Incremental CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" i cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y ) 
+	   if(cp <= 0.0 then
+	     ret = nil
+	   else 
+	     ret = ret
+	   );
+       );for
+       else
+         for( i 1 sub1(sub1(length(vectList)))
+           vect0 = nth(i vectList)
+	   vect1 = nth(i+1 vectList)
+	   cp = cross(vect0 vect1)
+	   printf("%d: Neg Incremental CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" i cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y ) 
+	   if(cp >= 0.0 then
+	     ret = nil
+	   else
+	     ret = ret
+	   );
+         );for
+       );if
+     else
+       printf("0: Initial Zero CP :%f [(%f,%f),(%f,%f)] X [(%f,%f),(%f,%f)]\n" cp vect0->head->x vect0->head->y vect0->tail->x vect0->tail->y vect1->head->x vect1->head->y vect1->tail->x vect1->tail->y )
+       ret=nil
+     );if
+     ret
+  );let
+);defmethod
+
+
+;###############################################################################
+; FIXME: Edge object?
+; Using the vertices, generate a list of edge2 objects in the edge collection
+;###############################################################################
+;defmethod( genEdges (( poly polygon2 ) )
+;  nil
+;);defmethod
+
+;###############################################################################
+; Is polygon a rectangle
+;###############################################################################
+defmethod( isRectangle (( poly polygon2 ))
+  nil
+)
+
+;###############################################################################
+;###############################################################################
+;###############################################################################
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  rectTran.ils: Rectangle transform class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( rectTran (cadObj)
+	  (
+		( ur )
+		( ll )
+		( width )
+		( height )
+		( transformation )			  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor method
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj rectTran)) 
+	   obj->ur = makeInstance( 'point2 )
+	   obj->ll = makeInstance( 'point2 )
+	   obj->width = nil
+	   obj->height = nil
+	   obj->transformation = makeInstance( 'transformation2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Calculates the centroid of the rectTran
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( calculateCentroid (( rt rectTran ))
+  let( (urx ury llx lly xval yval)
+    urx = xCoord(getUpperRight(rt)) 
+    ury = yCoord(getUpperRight(rt))
+    llx = xCoord(getLowerLeft(rt)) 
+    lly = yCoord(getLowerLeft(rt))
+    xval = (urx+llx)/2
+    yval = (ury+lly)/2 
+    setCentroid(rt->transformation list(xval yval))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Checks if the rectTran is centered at that origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( isCentered (( rt rectTran ))
+  if( abs(xCoord(getCentroid(rt->transformation))) < 1e-6 && abs(yCoord(getCentroid(rt->transformation))) < 1e-6 then
+    t
+  else
+    nil
+  );if
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Centers the rectTran about the origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( center (( rt rectTran ))
+  let( (cx cy)
+    if( !isCentered(rt) then
+      translate(rt -1*xCoord(getCentroid(rt->transformation)))
+      setLowerLeft(rt -1*yCoord(getCentroid(rt->transformation)))
+      setCentroid(rt->transformation list(0.0 0.0))
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set Upper Right
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setUpperRight (( rt rectTran ) arg )
+  setCoord(rt->ur arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get Upper Right
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getUpperRight (( rt rectTran ))
+  getCoord(rt->ur)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set Upper Right
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setLowerLeft (( rt rectTran ) arg )
+  setCoord(rt->ll arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get Upper Right
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getLowerLeft (( rt rectTran ))
+  getCoord(rt->ll)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; sets the centroid of the rectTran
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setCentroid (( rt rectTran ) arg)
+  setCentroid(rt->transformation arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; gets the centroid of the rectTran
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getCentroid (( rt rectTran ))
+  getCentroid(rt->transformation)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Zeros out the rectTran
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( zero (( rt rectTran ))
+  setCentroid(rt list(0.0 0.0))
+  setUpperRight(rt list(0.0 0.0))
+  setLowerLeft(rt list(0.0 0.0))
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone the current rectTran to the input recTran argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( clone (( rt rectTran ) arg)
+  if( classp(arg 'rectTran) then
+    println("INFO(rectran): Cloning a rectTran")
+    setUpperRight(rt getUpperRight(arg))
+    setLowerLeft(rt getLowerLeft(arg))
+    setCentroid(rt getCentroid(arg))
+  else
+    println("ERROR(rectTran): recTran object argument required")
+  );
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Area of recTran - rectTran must be centered about origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( area (( rt rectTran ))
+  if( isCentered(rt) then
+    (xCoord(getUpperRight(rt))-xCoord(getLowerLeft(rt))*(yCoord(getUpperRight(rt))-yCoord(getLowerLeft(rt))))
+  else
+    println("ERROR(rectTran): rectTran is not centered at origin")
+  );if
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method translates the recTran about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( rt rectTran ) arg )
+  let( (urx ury llx lly)
+	urx = xCoord(getUpperRight(rt)) + xCoord(arg)
+        ury = yCoord(getUpperRight(rt)) + yCoord(arg)
+	llx = xCoord(getLowerLeft(rt))  + xCoord(arg)
+	lly = yCoord(getLowerLeft(rt))  + yCoord(arg)
+	setUpperRight(rt list(urx ury))
+	setLowerLeft(rt list(llx lly))
+	calculateCentroid(rt)
+	;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
+  );let 
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the vertices from the rectTran
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getVertices (( rt rectTran ))
+  let( (v0 v1 v2 v3 v4)
+    ;ll
+    v0 = getLowerLeft(rt)
+    ;lr
+    v1 = list( -xCoord(getLowerLeft(rt)) yCoord(getLowerLeft(rt)) )
+    ;ur
+    v2 = getUpperRight(rt)
+    ;ul
+    v3 = list( -xCoord(getUpperRight(rt)) yCoord(getUpperRight(rt)) )
+    ;ll (closes the polygon)
+    v4 = v0
+    list(v0 v1 v2 v3 v4)  
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method rotates the rectTran about its centroid
+; The rectran's centroid must be centered at origin
+; for this to work properly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rotate (( rt rectTran ) arg )
+  let( (poly)
+      poly = makeInstance( 'polygon2)
+      setVertices(poly getVertices(rt))
+      rotate(poly arg)
+      setRectTran(poly)
+      setUpperRight(rt getUpperRight(poly->rtran))
+      setLowerLeft(rt getLowerLeft(poly->rtran))	
+  );let
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method scales the rectTran about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( scale (( rt rectTran ) arg)
+;	nil
+;);defMethod
+
+;###############################################################################
+; render the rectTran
+;###############################################################################
+defmethod( render (( rt rectTran ))
+  if( !null(getUpperRight(rt)) && !null(getLowerLeft(rt)) then
+        println("INFO(rectTran): Rendering")
+        dbCreateRect(rt->ref
+	     	     list(rt->layer rt->purpose)
+		     list(getLowerLeft(rt) getUpperRight(rt))
+        );dbCreateRect
+  else
+    println("ERROR(recTran): No UpperRight or LowerLeft Coordinate")
+  );if   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the smallest bounding rectangle composed of the
+; current bounding rectangle and the bounding rectangle of the input 
+; rectTran argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( union (( rt rectTran ) arg)
+ let( ( maxx minx maxy miny )
+    if( classp(arg 'rectTran) then
+      println("INFO(rectran): Performing the union of two rectTrans")
+      maxx =  max(xCoord(getUpperRight(rt)) xCoord(getUpperRight(arg)))
+      minx =  min(xCoord(getLowerLeft(rt))  xCoord(getLowerLeft(arg)))
+      maxy =  max(yCoord(getUpperRight(rt)) yCoord(getUpperRight(arg)))
+      miny =  min(yCoord(getLowerLeft(rt))  yCoord(getLowerLeft(arg)))
+      setUpperRight(rt list(maxx maxy))
+      setLowerLeft(rt list(minx miny))
+    else
+      println("ERROR(recTran): Rectran object argument required")
+    );if  
+  );let
+);defMethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FIXME: the methods below should be part of a "rectTrans" class that
+;        operates on a collection of rectTran objects
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the intersection of two class box's object and a 
+; list of bboxs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( intersection (( bb bbox ) box)
+;  let( (llxList llyList urxList uryList maxllx maxlly minurx minury )
+;       llxList = foreach(mapcar bb->bbox box xCoord( lowerLeft( bb->bbox )))
+;       llyList = foreach(mapcar bb->bbox box yCoord( lowerLeft( bb->bbox )))
+;       urxList = foreach(mapcar bb->bbox box xCoord( upperRight( bb->bbox )))
+;       uryList = foreach(mapcar bb->bbox box yCoord( upperRight( bb->bbox )))
+;       minurx = apply( 'min urxList )
+;       minury = apply( 'min uryList )
+;       maxllx = apply( 'max llxList )
+;       maxlly = apply( 'max llyList )
+;       cond(
+;		( maxllx >= minurx 
+;	  	  nil
+;		);maxllx
+;		( maxlly >= minury 
+;	  	  nil
+;		);maxlly
+;		( t
+;	  	  list(maxllx:maxlly minurx:minury)
+;		);t
+; 	);cond
+;  );let
+;);defmethod
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts The bbox Origin To the Upper Right Quadrant of the 
+; cellviews master grid field
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( shiftURQ (( bb bbox ))
+;  let( ( shift dx dy) 
+;	  getbBox(bb)
+;	  unless( caar( bb->bbox) == 0 && cadar( bb->bbox) == 0
+;		  dx = 0 - bb->origin->x
+;     		  dy = 0 - bb->origin->y
+;      		  shift = list( list( dx dy) "R0")
+;      		  printf( "NOTE:  shifting %s to upper-right quadrant" name)
+;      		  printf( "       shift is: %f by %f" caar( shift) cadar( shift))
+;		  dbReopen( bb->cvRef "a")
+;		  foreach( inst cvRef~>instances dbMoveFig( inst bb->cvRef shift))
+;    		  foreach( shape cvRef~>shapes   dbMoveFig( shape bb->cvRef shift))
+;      		  dbSave(bb->cvRef)
+;		  dbClose(bb->cvRef)
+;	  );unless
+;	  getbBox(bb)
+;  );let
+;);defMethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( setCentroid (( bb bbox ) arg)
+;  let( ( sx sy )	
+;  );let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts cellview bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( shiftCentroidCellView (( bb bbox ) dx dy)
+;	let( ( (name bb->cellName)
+;		   (lib  bb->library)
+;		   shift
+;		   sx
+;                  sy
+;		   cvRef )
+;		getbBox(bb)
+;		cvRef = dbOpenCellViewByType( lib name "layout" "maskLayout")
+;		sx = bb->x0 + dx
+;      	sy = bb->y0 + dy
+;      	shift = list( list( sx sy) "R0")
+;		dbReopen( cvRef "a")
+;		foreach( inst cvRef~>instances dbMoveFig( inst cvRef shift))
+;    	foreach( shape cvRef~>shapes   dbMoveFig( shape cvRef shift))
+;      	dbSave(cvRef)
+;		dbClose(cvRef)
+;		getbBox(bb)
+;		)
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  transform2: Generic Point Class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( transform2 (cadObj)
+	  (
+	    ( polygon )
+	    ( vertices @reader getVertices)
+	    ( area )
+	    ( transformation )
+	    ( rtran @reader getRectTran)
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj transform2))
+	   obj->polygon = makeInstance( 'polygon2 ) 
+	   obj->vertices = makeInstance( 'points2 )
+	   obj->area=nil
+	   obj->transformation = makeInstance( 'transformation2 )
+	   obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;#####################################################
+; sets up the polygon "component" of the transform2 object 
+;#####################################################
+defmethod( addPolygon (( tran transform2 ) arg)
+  if( classp(arg 'polygon2) then
+    setVertices(tran getVertices(arg))
+    setCentroid(tran getCentroid(arg))
+  else
+    println("ERROR(transform2): argument is not a polygon.")
+  );if
+);defmethod
+
+;#####################################################
+; Creates a collection of vertex objects from an input
+; vertex simple list argument
+;#####################################################
+defmethod( setVertices (( tran transform2 ) arg)
+  let( (p2)
+    setVertices(tran->polygon arg)
+    setRectTran(tran->polygon)
+    foreach(vert arg
+      p2 = makeInstance( 'point2 )
+      setCoord(p2 vert)
+      appendPoint(tran->vertices p2)
+    );foreach
+    setCentroid(tran->transformation getCoord(tran->polygon->centroid))
+    setScale(tran->transformation 1.0)
+    setTheta(tran->transformation 0.0)
+    cloneRectTran(tran)
+    t
+  );let
+);defmethod
+
+;#####################################################
+; Clones the polygons's rectTran into the transform2's
+; recTran. Use this to "reset" the recTran when 
+; transform2's transformation is reset.
+;#####################################################
+defmethod( cloneRectTran (( tran transform2 ))
+  clone(tran->rtran getRectTran(tran->polygon))
+);defmethod
+
+;###############################################################################
+; render the transform
+;###############################################################################
+defmethod( render (( tran transform2 ))
+  let( (verts)
+    verts = '()
+    if( !null(tran->ref) then
+      if( !isEmpty(tran->vertices->points) then
+        foreach( point getCollection(tran->vertices->points)
+	  verts = cons(getCoord(point) verts)
+        );foreach
+        println("INFO(transform2): Rendering Transform")
+        dbCreatePolygon(tran->ref
+	     	        list(tran->layer tran->purpose)
+		        verts
+	);dbCreatePolygon
+      else
+        println("ERROR(transform2): No vertices to render")
+      );if
+    else
+        println("ERROR(transform2): Layout cellview reference not set")
+    );if
+  );let   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( translate (( tran transform2 ) arg)
+  let( (centroid)
+    if( listp(arg) then
+      translate(tran->vertices arg)
+      centroid = getCentroid(tran->transformation)
+      setCentroid(tran->transformation list(xCoord(centroid)+xCoord(arg) yCoord(centroid)+yCoord(arg)))
+      translate(tran->rtran arg)
+    else
+      println("ERROR(transform2): list argument required")
+    );if
+  );let	   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( scale (( tran transform2 ) arg)
+  scale(tran->vertices arg)
+  setScale(tran->transformation arg*getScale(tran->transformation))	   
+);defmethod
+
+;#####################################################
+; This method translates the position of each transform
+; vertex by the point value argument "list(x y)" 
+;#####################################################
+defmethod( isCentered (( tran transform2 ))
+  isCentered(tran->rtran)	   
+);defmethod
+
+
+;#####################################################
+; This method centers the transform based upon its
+; rectTran center
+;#####################################################
+defmethod( center (( tran transform2 ))
+  let( (rtcent)
+    if( !isCentered(tran->rtran) then
+      rtcent = getCentroid(tran->rtran)
+      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
+    else
+      t
+    );if
+  );let	   
+);defmethod
+
+
+;###############################################################################
+; Note A: A local rotation requires that the transforms centroid be translated
+;         to origin. Global rotations do not need the tranlation to origin
+; Note B: positive angles = counter clockwise in according to 
+; the "right handedness" convention.
+;###############################################################################
+defmethod( rotate (( tran transform2 ) arg)
+      rotate(tran->vertices arg)	   
+);defmethod
+
+;###############################################################################
+; Get centroid of transform
+;###############################################################################
+defmethod( getCentroid (( tran transform2 ))
+  getCoord(tran->transformation->centroid)
+)
+
+;###############################################################################
+; Set centroid of transform
+;###############################################################################
+defmethod( setCentroid (( tran transform2 ) arg)
+  setCoord(tran->transformation->centroid arg)
+)	  
+	  
+;###############################################################################
+;###############################################################################
+;###############################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Transformation2: Class representing the transformation of any
+;;  2-D geometry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( transformation2 ()
+	  (
+	    ( centroid @reader centroid)
+	    ( absRotation @reader absRotation)
+	    ( relRotation @reader relRotation)
+	    ( scale @reader getScale @writer setScale)
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj transformation2)) 
+  obj->centroid = makeInstance( 'point2 )
+  obj->absRotation = makeInstance( 'rotation2 )
+  obj->relRotation = makeInstance( 'rotation2 )
+  obj->scale = nil
+);defmethod
+
+;#####################################################
+; sets the centroid of the transformation
+;#####################################################
+defmethod( setCentroid (( tr2 transformation2 ) arg)
+  if(listp(arg) then
+    setCoord(tr2->centroid arg)
+  else
+    println("ERROR(transformation2): Expecting list argument")
+  );if	   
+);defmethod
+
+;#####################################################
+; gets the centroid of the transformation
+;#####################################################
+defmethod( getCentroid (( tr2 transformation2 ))
+  getCoord(tr2->centroid)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+; (normally this is zero representing the base 
+;  transform)
+;#####################################################
+defmethod( getRadius (( tr2 transformation2 ))
+  getRadius(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; sets the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( setTheta (( tr2 transformation2 ) arg)
+  setTheta(tr2->relRotation arg)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation (relative rotation)
+; of the CAD object 
+;#####################################################
+defmethod( getTheta (( tr2 transformation2 ))
+  getTheta(tr2->relRotation)	   
+);defmethod
+
+;#####################################################
+; returns the radius from origin to the centroid
+;#####################################################
+defmethod( getRadiusToCentroid (( tr2 transformation2 ))
+  getRadius(tr2->absRotation)	   
+);defmethod
+
+;#####################################################
+; returns the angle of rotation about the 
+;#####################################################
+defmethod( getThetaToCentroid (( tr2 transformation2 ))
+  getTheta(tr2->absRotation)	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  geometry.ils: container class which holds a group
+;                of polygon transforms.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( geometry ()
+	  (
+		( transforms )	
+		( centroid )
+		( rtran @reader getRectTran )
+		( ref @reader getRef @writer setRef )		  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj geometry)) 
+	   obj->transforms = makeInstance( 'collection )
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->rtran = makeInstance( 'rectTran )
+	   obj->ref = nil
+);defmethod
+
+;#####################################################
+; Generate the rectTran union of all the transforms
+; in the  geometry
+;#####################################################
+defmethod( rectTranUnion (( geom geometry ))
+  zero(geom->rtran)
+  foreach( trans getCollection(geom->transforms)
+    union(geom->rtran getRectTran(trans))
+  ) 
+  calculateCentroid(geom->rtran)
+);defmethod
+
+;#####################################################
+; Sets the centroid of the geometry
+;#####################################################
+defmethod( setCentroid (( geom geometry ) arg)
+  setCoord(geom->centroid arg)
+);defmethod
+
+;#####################################################
+; Gets the centroid of the geometry
+;#####################################################
+defmethod( getCentroid (( geom geometry ))
+  getCoord(geom->centroid)
+);defmethod
+
+;#####################################################
+; Sets the layer of the geometry
+;#####################################################
+defmethod( setLayer (( geom geometry ) arg)
+  if( !isEmpty(geom->transforms) then
+    foreach( trans getCollection(geom->transforms)
+;      println("INFO(geometry): Changing transform Layer")
+      setLayer(trans arg)
+    );foreach
+  else
+    println("ERROR(geometry): Empty transform collection")
+  );if
+);
+
+;#####################################################
+; Sets the purpose of the geometry 
+;#####################################################
+defmethod( setPurpose (( geom geometry ) arg)
+  foreach( trans getCollection(geom->transforms)
+    setPurpose(trans arg)
+  )
+);
+
+;#####################################################
+; Add transform to transforms collection
+;#####################################################
+defmethod( addTransform (( geom geometry ) arg)
+  if( classp( arg 'transform2) then
+    add(geom->transforms arg)
+  else
+    println("ERROR(geometry): Argument must be a transform object")
+  );if
+);defmethod
+
+
+;#####################################################
+; Center the geometry based upon the geometry's 
+; rectTran centroid
+;#####################################################
+defmethod( isCentered (( geom geometry ))
+  isCentered(geom->rtran)
+);defmethod
+
+;#####################################################
+; Center the geometry based upon the geometry's 
+; rectTran centroid
+;#####################################################
+defmethod( center (( geom geometry ))
+  let( (tval)
+    if( !isCentered(geom) then
+      tval = list( -xCoord(getCentroid(geom->rtran)) -yCoord(getCentroid(geom->rtran)))
+      setCentroid(geom list(0.0 0.0))
+      translate(geom->rtran tval)
+      translate(geom tval)
+    else
+      t
+    );if
+  );let  
+);defmethod
+
+;#####################################################
+; translate the geometry
+;#####################################################
+defmethod( translate (( geom geometry ) arg)
+  foreach(tran getCollection(geom->transforms)
+    translate(tran arg)
+  );  
+);defmethod
+
+;#####################################################
+; rotate the geometry
+;#####################################################
+defmethod( rotate (( geom geometry ) arg)
+  let( (tcent)
+    foreach(tran getCollection(geom->transforms)
+      rotate(tran arg)
+    );foreach
+    rotate(geom->rtran arg)
+  );let
+);defmethod
+
+;#####################################################
+; scale the geometry
+;#####################################################
+defmethod( scale (( geom geometry ) arg)
+ nil	  
+);defmethod
+
+;#####################################################
+; render the geometry
+;#####################################################
+defmethod( render (( geom geometry ) )
+  foreach( trans getCollection(geom->transforms)
+    if( classp(trans 'transform2) then
+      setRef(trans geom->ref)
+      render(trans)
+    else
+      printf("ERROR(geometry): Render object must be a transform2")
+    );if
+  )	  
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;######################################################
+;# edge2.ils: Polygon edge Class inheriting from line class
+;######################################################
+defclass( assembly ()
+	  (
+	     ( geometries @reader getGeometryCollection )
+	     ( layers @reader getLayerCollection )
+	     ( ref @reader getRef @writer setRef )
+	     ( rtrans )
+	  )				  
+);defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj assembly)) 
+	   obj->geometries = makeInstance( 'collection )
+	   obj->ref = nil
+	   obj->layers = makeInstance( 'collection )
+	   obj->rtrans = makeInstance( 'rectTrans )
+);defmethod
+
+;#####################################################
+; Gets a list of layer objects in the assembly
+;#####################################################
+defmethod( getRectTran (( ass assembly ))
+  getRectTran(ass->rtrans)
+);defmethod
+
+;#####################################################
+; Gets a list of layer objects in the assembly
+;#####################################################
+defmethod( getLayers (( ass assembly ))
+  ass->layers->list
+);defmethod
+
+;#####################################################
+; Adds shapes to the assembly via the shapes container. 
+;#####################################################
+defmethod( addGeometry (( ass assembly ) arg )
+  if( !null(arg) then
+    if( classp(arg 'geometry) then
+      add(ass->geometries arg)
+      t
+    else
+      println("ERROR(assembly): Only geometry objects can be added")
+      nil
+    );if
+  else
+    println("ERROR(assembly): Cannot add null shape")	       
+    nil
+  );if
+);defmethod
+
+;#####################################################
+; Adds shapes to the assembly via the shapes container. 
+;#####################################################
+defmethod( resetLayers (( ass assembly ))
+  resetCollection(ass->layers)
+);defmethod
+
+;#####################################################
+; Creates the layers in the layer stackup needed to 
+; render the shape
+;#####################################################
+defmethod( setShapesOnLayers (( ass assembly ))
+  let( (temp)
+    if( !null(ass->shapes->list->elems) then
+      foreach( shape ass->shapes->list->elems
+      	printf("INFO(Assembly): Processing shape on layer %s\n" getLayer(shape))
+	if( !null(ass->layers->list->elems) then
+          foreach( layer ass->layers->list->elems
+	    printf("INFO(Assembly): Finding layer %s in list\n" getName(layer))
+            if(getName(layer) == getLayer(shape) then
+	      printf("INFO(Assembly): Layer %s found - Adding shape to layer\n" getLayer(shape))	
+	      addShape(layer shape)
+	    else
+	      printf("INFO(Assembly): Adding shape to new layer %s\n" getName(layer))
+              temp = makeInstance( 'techLayer )
+    	      setName(temp getLayer(shape))
+	      addShape(temp shape)
+	      add(ass->layers temp)
+	    );if
+          );foreach
+        else
+	  printf("INFO(Assembly): Adding shape to new layer %s (first layer in assembly layer collection)\n" getLayer(shape))
+	  temp = makeInstance( 'techLayer )
+    	  setName(temp getLayer(shape))
+	  addShape(temp shape)
+	  add(ass->layers temp)
+	);if
+      );foreach
+      t
+    else
+      printf("ERROR(Assembly): Shape collection is null\n")
+      nil	       
+    );if
+  );let
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
+defmethod( renderAssembly (( ass assembly ))
+  if( !null(arg) then
+    setLayers(ass)
+    setShapesOnLayers(ass)
+    renderStack(ass)
+  else
+    printf("ERROR: Cannot add null shape" )	       
+    t
+  );if
+);defmethod
+
+;#####################################################
+; Translates the assembly
+;#####################################################
+defmethod( translate (( ass assembly ) arg )
+  if(listp(arg) then
+    println("INFO:(assembly): translating assembly geometries")
+    foreach( geom getCollection(ass->geometries)
+      translate(geom arg)
+    );foreach
+    translate(ass->rtrans arg)
+  else
+    println("ERROR(assembly): requires a list argument")   
+  );if
+);defmethod
+
+;#####################################################
+; Rotate the assembly
+;#####################################################
+defmethod( rotate (( ass assembly ) arg )
+  foreach( geom getCollection(ass->geometries)
+      rotate(geom arg)
+    );foreach
+    rotate(geom->rtran arg)
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
+defmethod( render (( ass assembly ))
+  if( !isEmpty(ass->geometries) then
+    foreach( geom getCollection(ass->geometries)
+      if( classp(geom 'geometry) then
+        setRef(geom getRef(ass))
+        render(geom)
+      else
+        println("ERROR(assembly): Render object must be a geometry")
+      );if
+    );foreach
+  else
+    println("ERROR(assembly): Empty geometry collection")
+  );if
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+;# rectangle.ils: Rectangle class
+;######################################################
+defclass( rectangle (polygon2)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+	  )				  
+) ; defclass
+
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj rectangle)) 
+	   obj->width  = 1.0
+           obj->height = 1.0
+);defmethod
+
+;######################################################
+;######################################################
+defmethod( generate (( rect rectangle ))
+  let( ( vertices )
+	   vertices = '()
+	   ;ll
+	   vertices = cons(list(-abs(rect->width)/2 -abs(rect->height)/2) vertices)
+	   ;lr
+	   vertices = cons(list( abs(rect->width)/2 -abs(rect->height)/2) vertices)
+	   ;ur
+	   vertices = cons(list( abs(rect->width)/2  abs(rect->height)/2) vertices)
+	   ;ul
+	   vertices = cons(list(-abs(rect->width)/2  abs(rect->height)/2) vertices)
+	   ;ll (again to close the polygon)
+	   vertices = cons(list(-abs(rect->width)/2 -abs(rect->height/2)) vertices)
+	   vertice = reverse(vertices)
+	   setVertices(rect reverse(vertices))
+	   setCentroid(rect list(0.0 0.0))
+	   setRectTran(rect)
+	   getCentroid(rect)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method chamfers the upper right and left corners
+; of the rectangle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( chamfer (( rect rectangle ) arg)
+  let( (ur nur0 nur1 ul nul0 nul1 xd newVertices)
+    ur = nth(2 getVertices(rect))
+    ul = nth(3 getVertices(rect))
+    xd = abs(xCoord(ul))+abs(xCoord(ur))-2*abs(arg)
+    if( xd >= 0.0 then
+      nur0 = list( xCoord(ur)     yCoord(ur)-arg)
+      nur1 = list( xCoord(ur)-arg yCoord(ur))
+      nul0 = list( xCoord(ul)+arg yCoord(ul))
+      nul1 = list( xCoord(ul)     yCoord(ul)-arg)
+      newVertices = '()
+      ;ll (same)
+      newVertices = cons(list(-rect->width/2 -rect->height/2) newVertices)
+      ;lr (same )
+      newVertices = cons(list( rect->width/2 -rect->height/2) newVertices)
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;chamfered ur start
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;nur0
+      newVertices = cons(nur0 newVertices)
+      ;nur1
+      newVertices = cons(nur1 newVertices)
+      ;;;;;;;;;;;;;;;;;;;
+      ;chamfered ur end 
+      ;;;;;;;;;;;;;;;;;;;
+      ;ur (deleted)
+      ;newVertices = cons(list( rect->width/2  rect->height/2) newVertices)
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;chamfered ul start
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;nul0
+      newVertices = cons(nul0 newVertices)
+      ;nul1
+      newVertices = cons(nul1 newVertices)
+      ;;;;;;;;;;;;;;;;;;;
+      ;chamfered ul end 
+      ;;;;;;;;;;;;;;;;;;;
+      ;ul (deleted)
+      ;newVertices = cons(list(-rect->width/2  rect->height/2) newVertices)
+      ;ll (same)
+      newVertices = cons(list(-rect->width/2 -rect->height/2) newVertices)
+      setVertices(rect newVertices) 
+    else
+      println("ERROR(rectangle): Intersecting chamfers - operation aborted")
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method tapers the rigtht side of the rectangle
+; using chamferUr and chamferLr above.
+; Fixme: A square that is chamfered becomes a triangle
+;        which could take the place of the triangle class
+;        (centroid remains the same)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( taperLeft (( rect rectangle ) )
+  nil
+);defmethod
+
+
+
+;######################################################
+;######################################################
+;######################################################
+defclass( triangle (polygon2)
+	  (
+		( base @reader getBase @writer setBase )
+		( height @reader getHeight @writer setHeight )
+	  )				  
+) ; defclass
+
+;######################################################
+;
+;######################################################
+defmethod( initializeInstance @after ((obj triangle)) 
+	   obj->base  = 1.0
+           obj->height = 1.0
+);defmethod
+
+;######################################################
+;######################################################
+defmethod( generate (( tri triangle ))
+  let( (vertices)
+	   vertices = '()
+	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
+	   vertices = cons(list( tri->base/2 -tri->height/2) vertices)
+	   vertices = cons(list( 0            tri->height/2) vertices)
+	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
+	   setVertices(tri vertices)
+	   setCentroid(tri list(0.0 0.0))
+	   setRectTran(tri)
+	   getCentroid(tri)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  circle.ils: On Grid Circle Generator Object based upon CORDIC 
+;              vector rotation algorithm.
+;              Note: All centroids for subset circles (half, quarter, etc.)
+;              are defined to have the same centroid as the original
+;              circle
+;
+;              FIXME: for large diameter circtles need to break the polygons into
+;                     a group of segments that are some maximum number of vertices
+;                     (maximimum is 2048 for the Cadence rendering). Circle will
+;                     have to inherit from geometry rather than polygon2 and 
+;                     contain a number of circle transforms ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( circle (polygon2)
+	  (
+		( radius @writer setRadius )
+		( orig @writer setOrig @reader getOrig)
+		( origin @writer setOrigin @reader getOrigin)
+		( area @reader getArea)
+		( direction )
+		( X )
+		( Y )
+		( grid )
+		( id )			  
+	  )
+) ; defClass
+
+defmethod( initializeInstance @after ((obj circle)) 
+	   obj->radius = 1.0
+	   obj->orig = list(0.0 0.0)
+	   obj->origin = list(0.0 0.0)
+	   obj->X = 0.0
+           obj->Y = 0.0
+	   obj->grid = 0.025
+	   obj->direction = 0
+	   obj->id="cir"
+);defmethod
+
+defmethod( genNextVertex ((cir circle))
+  let( ( (grid cir->grid)
+         X0 Y0 R0 D0 X1 Y1 R1 D1 X2 Y2 R2 D2 X3 Y3 R3 D3 
+         X4 Y4 R4 D4 X5 Y5 R5 D5 X6 Y6 R6 D6 X7 Y7 R7 D7)
+ 	  if( (cir->direction == 0 || cir->direction == 1 || cir->direction == 7) then
+   	     X0 = cir->X + grid
+   	     Y0 = cir->Y
+	     R0 = (X0**2 + Y0**2)**0.5
+	     D0 = abs(R0-cir->radius)
+          );if
+	  if( (cir->direction ==  1 || cir->direction == 2 || cir->direction == 0) then
+	     X1 = cir->X + grid
+	     Y1 = cir->Y - grid
+	     R1 = (X1**2 + Y1**2)**0.5
+	     D1 = abs(R1-cir->radius)
+	  );if
+	  if( (cir->direction ==  2 || cir->direction == 3 || cir->direction == 1) then
+	     X2 = cir->X
+	     Y2 = cir->Y - grid
+	     R2 = (X2**2 + Y2**2)**0.5
+	     D2 = abs(R2-cir->radius)
+	  );if
+	  if( (cir->direction == 3 || cir->direction == 4 || cir->direction == 2) then
+	     X3 = cir->X - grid
+   	     Y3 = cir->Y - grid
+	     R3 = (X3**2 + Y3**2)**0.5
+	     D3 = abs(R3-cir->radius)
+ 	  );if
+	  if( (cir->direction == 4 || cir->direction == 5 || cir->direction == 3) then
+	     X4 = cir->X - grid
+	     Y4 = cir->Y
+	     R4 = (X4**2 + Y4**2)**0.5
+	     D4 = abs(R4-cir->radius)
+	  );if
+	  if( (cir->direction == 5 || cir->direction == 6 || cir->direction == 4) then
+	     X5 = cir->X - grid
+	     Y5 = cir->Y + grid
+	     R5 = (X5**2 + Y5**2)**0.5
+	     D5 = abs(R5-cir->radius)
+	  );if
+	  if( (cir->direction == 6 || cir->direction == 7 || cir->direction == 5) then
+	     X6 = cir->X
+	     Y6 = cir->Y + grid
+	     R6 = (X6**2 + Y6**2)**0.5
+	     D6 = abs(R6-cir->radius)
+	  );if
+	  if( (cir->direction == 7 || cir->direction == 0 || cir->direction == 6) then
+	     X7 = cir->X + grid
+	     Y7 = cir->Y + grid
+	     R7 = (X7**2 + Y7**2)**0.5
+	     D7 = abs(R7-cir->radius)
+	  );if
+	  caseq( cir->direction
+	 	(0
+		  ; Possible 7 0 1  
+		  if( (D0 < D1 && D0 < D7) then
+		    ;Go D0 
+		    cir->X = X0
+ 		    cir->Y = Y0
+		    cir->direction= 0
+	          else
+	            if( (D1 < D0 && D1 < D7) then
+	              ; Go D1 
+		      cir->X = X1
+ 		      cir->Y = Y1
+		      cir->direction= 1
+		    else
+		      ; Go D7 
+		      cir->X = X7
+ 		      cir->Y = Y7
+		      cir->direction= 7
+		    );if
+		  );if
+	        );0
+                (1
+		  ; Possible 0 1 2   
+		  if( (D1 < D2 && D1 < D0) then
+		     ;Go D1 
+		     cir->X = X1
+ 		     cir->Y = Y1
+		     cir->direction= 1
+		   else
+		      if( (D2 < D1 && D2 < D0) then
+		        ; Go D2 
+			cir->X = X2
+ 		     	cir->Y = Y2
+		     	cir->direction= 2
+		       else
+		        ; Go D0
+			cir->X = X0
+ 		     	cir->Y = Y0
+		     	cir->direction= 0 
+		    );if
+		  );if
+	        );1
+                (2
+		  ;  Possible 1 2 3
+		  if( (D2 < D3 && D2 < D1) then
+		    ; Go D2 
+		     cir->X = X2
+ 		     cir->Y = Y2
+		     cir->direction= 2 
+		  else
+		    if( (D3 < D2 && D3 < D1) then
+ 		       ; Go D3 
+		       cir->X = X3
+ 		       cir->Y = Y3
+		       cir->direction= 3 
+ 		    else
+ 		       ;Go D1 
+		       cir->X = X1
+ 		       cir->Y = Y1
+		       cir->direction= 1 
+ 		   );if
+   		  );if
+ 	       	);2
+                (3
+ 	          ;Possible 2 3 4 
+		  if( (D3 < D4 && D3 < D2) then
+   		    ;Go D3 
+		    cir->X = X3
+ 		    cir->Y = Y3
+		    cir->direction= 3 
+   		   else
+		     if( (D4 < D3 && D4 < D2) then
+ 		       ; Go D4 
+		       cir->X = X4
+ 		       cir->Y = Y4
+		       cir->direction= 4
+ 		      else
+			; Go D2 
+			cir->X = X2
+ 		        cir->Y = Y2
+		        cir->direction= 2
+ 		     );if
+   		  );if
+ 	        );3
+   	        (4
+		  ; Possible  3 4 5 
+ 		  (if D4 < D5 && D4 < D3 then
+   		    ; Go D4
+		     cir->X = X4
+ 		     cir->Y = Y4
+		     cir->direction= 4
+   		   else
+		     (if D5 < D4 && D5 < D3 then
+ 		       ; Go D5 
+		       cir->X = X5
+ 		       cir->Y = Y5
+		       cir->direction= 5
+ 		      else
+ 		       ; Go D3 
+		       cir->X = X3
+ 		       cir->Y = Y3
+		       cir->direction= 3
+ 		     );if
+   		   );if
+                 );4
+	         (5
+		   ;Possible 4 5 6 
+ 		   if( (D5 < D6 && D5 < D4) then
+   		     ; Go D5 
+		     cir->X = X5
+ 		     cir->Y = Y5
+		     cir->direction= 5
+   		    else
+   		      if( (D6 < D5 && D6 < D4) then
+ 		        ; Go D6 
+			cir->X = X6
+ 		        cir->Y = Y6
+		        cir->direction= 6
+ 		      else
+ 		       ; Go D4
+		         cir->X = X4
+ 		         cir->Y = Y4
+		         cir->direction= 4 
+		     );if
+   		   );if
+ 	         );5
+   	         (6
+		   ; Possible  5 6 7 
+ 		   if( (D6 < D7 && D6 < D5) then
+   		     ; Go D6 
+		     cir->X = X6
+ 		     cir->Y = Y6
+		     cir->direction= 6
+                    else
+                      if( (D7 < D6 && D7 < D5) then
+ 		        ;Go D7 
+			cir->X = X7
+ 		     	cir->Y = Y7
+		     	cir->direction= 7
+ 		      else
+		        ;Go D5 
+			cir->X = X5
+ 		     	cir->Y = Y5
+		     	cir->direction= 5
+ 		     );if
+   		   );if
+	         );6
+    	         (7
+	           ;Possible 6 7 0 
+ 		   if( D7 < D0 && D7 < D6 then
+   		     ;Go D7 
+		     cir->X = X7
+ 		     cir->Y = Y7
+		     cir->direction= 7
+   		    else
+   		       if( (D0 < D7 && D0 < D6) then
+ 		         ;Go D0 
+			 cir->X = X0
+ 		    	 cir->Y = Y0
+		     	 cir->direction= 0
+ 		        else
+		         ;Go D6
+			 cir->X = X6
+ 		     	 cir->Y = Y6
+		     	 cir->direction= 6 
+ 		       );if
+   		    );if
+ 	         );7
+  	   );caseq
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "circle" vertex list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate (( cir circle ))
+	   let( (count)
+	   	;Initialize Members
+	   	cir->vertices = '()
+           	cir->direction= 0
+	   	cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+		cir->X = 0.0
+		cir->Y = cir->radius
+		cir->orig = list(cir->X cir->Y)
+		genNextVertex(cir)
+		count = 0
+	   	while( !( (abs(cir->X) < (cir->grid)) && (abs((cir->radius)-(cir->Y)) < (cir->grid)) )
+	   	        count = count + 1
+		 	genNextVertex(cir)
+		 	cir->vertices = cons(list(cir->X cir->Y) cir->vertices)	  		      
+	   	);while
+	   	if( count > 0 then
+		    ; add in origin vertex to close circle
+		    ;cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+	       	    count
+	   	else
+		    nil
+	   	);if
+		; Need to add starting point for algorithms that rely upon
+ 		; vertice perimeter completion (start vertex = end vertex)
+		setCentroid(cir list(0.0 0.0))
+		setRectTran(cir)
+		calculateCentroid(cir->rtran)
+	   );let
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "half circle" vertex list
+; forming the end shapes of capsules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generateHalfCircle (( cir circle ))
+	   let( (count)
+	   	;Initialize Members
+	   	cir->vertices = '()
+           	cir->direction= 0
+		cir->vertices = cons(list(0.0 0.0) cir->vertices)
+	   	cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+		cir->X = 0.0
+		cir->Y = cir->radius
+		cir->orig = list(0.0 0.0)
+		genNextVertex(cir)
+		count = 0
+	   	while( !( (abs(cir->X) < (cir->grid)) && ((cir->Y)+cir->radius < (cir->grid)) )
+	   	        count = count + 1
+		 	genNextVertex(cir)
+		 	cir->vertices = cons(list(cir->X cir->Y) cir->vertices)	  		      
+	   	);while
+	   	if( count > 0 then
+		    ; add in origin vertex to close circle
+		    cir->vertices = cons(list(0.0 -1*cir->radius) cir->vertices)
+;		    cir->vertices = cons(list(0.0 0.0) cir->vertices)
+	   	else
+		    nil
+	   	);if
+		; Need to add starting point for algorithms that rely upon
+ 		; vertice perimeter completion (start vertex = end vertex)
+		setCentroid(cir list(0.0 0.0))
+		setRectTran(cir)
+		calculateCentroid(cir->rtran)
+	   );let
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "quarter circle" vertex list
+; forming a rounded corner or arc polygon
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generateQuarterCircle (( cir circle ))
+	   let( (count)
+	   	;Initialize Members
+	   	cir->vertices = '()
+           	cir->direction= 0
+		cir->vertices = cons(list(0.0 0.0) cir->vertices)
+	   	cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+		cir->X = 0.0
+		cir->Y = cir->radius
+		cir->orig = list(0.0 0.0)
+		genNextVertex(cir)
+		count = 0
+	   	while( !( (abs(cir->X-cir->radius) < (cir->grid)) && (abs(cir->Y) < (cir->grid)) )
+	   	        count = count + 1
+		 	genNextVertex(cir)
+		 	cir->vertices = cons(list(cir->X cir->Y) cir->vertices)	  		      
+	   	);while
+	   	if( count > 0 then
+		    ; add in origin vertex to close circle
+		    cir->vertices = cons(list(0.0 0.0) cir->vertices)
+	       	    count
+	   	else
+		    nil
+	   	);if
+		; Need to add starting point for algorithms that rely upon
+ 		; vertice perimeter completion (start vertex = end vertex)
+		setCentroid(cir list(0.0 0.0))
+		setRectTran(cir)
+		calculateCentroid(cir->rtran)
+	   );let
+) ; defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+
+	
+;######################################################
+; trirect.ils: Triangle/Rectangle combination geometry class
+;              Overall centroid of this geometry is defined
+;              as the centroid of the rectangular body (not 
+;              the actual centroid, but conveniently defined
+;              for translation and rotation purposes)
+;######################################################
+defclass( trirect (geometry)
+   (
+	  ( width @reader getWidth @writer setWidth )
+	  ( height @reader getHeight @writer setHeight )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj trirect)) 
+	   obj->width  = 1.0
+	   obj->height = 1.0 		     
+);defmethod
+
+;######################################################
+; Generates the trirect geometry
+;######################################################
+defmethod( generate (( tr trirect ))
+  let((body head bodyTran headTran)
+    body = makeInstance( 'rectangle )			
+    setHeight(body tr->height)
+    setWidth(body tr->width)
+    generate(body)
+    setCentroid(tr getCentroid(body))
+    head = makeInstance( 'triangle )
+    setBase(head tr->height)
+    setHeight(head tr->height)
+    generate(head)
+    bodyTran = makeInstance( 'transform2 )
+    setVertices(bodyTran getVertices(body))
+    setCentroid(bodyTran getCentroid(body))
+    cloneRectTran(bodyTran)
+    headTran = makeInstance( 'transform2 )
+    setVertices(headTran getVertices(head))
+    setCentroid(headTran getCentroid(head))
+    cloneRectTran(headTran)
+    rotate(headTran 270.0)
+    translate(headTran list((tr->width+tr->height)/2.0 0.0)) 
+    addTransform(tr bodyTran)
+    addTransform(tr headTran)
+    rectTranUnion(tr) 	   
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################;######################################################
+; capsule.ils: Capsule geometry class. Inherits from 
+;              rectangle and circle objects
+;              Centroid of this object is geometric
+;              center of mass
+;######################################################
+defclass( capsule (geometry)
+   (
+	  ( width @reader getWidth @writer setWidth )
+	  ( height @reader getHeight @writer setHeight )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj capsule))
+	   obj->width  = 1.0
+	   obj->height = 1.0 	     
+);defmethod
+
+;#####################################################
+; This method generates the vertices and translation
+; of the vertices of the object
+;#####################################################
+defmethod( generate (( cap capsule ))
+  let((body capR capL bodyTran capRTran capLTran)
+    body = makeInstance( 'rectangle )
+    setHeight(body cap->height)
+    setWidth(body cap->width)
+    generate(body)
+    setCentroid(cap getCentroid(body))	
+    bodyTran = makeInstance( 'transform2 )
+    setVertices(bodyTran getVertices(body))
+    setCentroid(bodyTran getCentroid(body))
+    cloneRectTran(bodyTran)   
+    capR = makeInstance( 'circle )
+    setGrid(capR 0.025)
+    setRadius(capR cap->height/2.0)
+    generateHalfCircle(capR)
+    center(capR)
+    capRTran = makeInstance( 'transform2 )
+    setVertices(capRTran getVertices(capR))
+    setCentroid(capRTran getCentroid(capR))
+    cloneRectTran(capRTran)
+    capL = makeInstance( 'circle )
+    setGrid(capL 0.025)
+    setRadius(capL cap->height/2.0)
+    generateHalfCircle(capL)
+    center(capL)
+    capLTran = makeInstance( 'transform2 )
+    setVertices(capLTran getVertices(capL))
+    setCentroid(capLTran getCentroid(capL))
+    cloneRectTran(capLTran)
+    rotate(capLTran 180.0)
+    translate(capRTran list((cap->width+cap->height/2.0)/2.0 0.0))
+    translate(capLTran list( -(cap->width+cap->height/2.0)/2.0 0.0))
+    addTransform(cap bodyTran)
+    addTransform(cap capLTran)
+    addTransform(cap capRTran) 
+    rectTranUnion(cap)
+  );let	   
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+;  gatePad.ils: FET gate pad class.
+;               Width and height variables are associated
+;               with the inner gate pad capsule     
+;######################################################
+defclass( gatePad (assembly)
+   (
+	  ( widthInner @reader getWidthInner @writer setWidthInner )
+	  ( heightInner @reader getHeightInner @writer setHeightInner )
+	  ( widthOutter @reader getWidthOutter @writer setWidthOutter )
+	  ( heightOutter @reader getHeightOutter @writer setHeightOutter )
+	  ( innerLayer @reader getInnerLayer @writer setInnerLayer )
+	  ( innerPurpose @reader getInnerPurpose @writer setInnerPurpose )
+	  ( outterLayer @reader getOutterLayer @writer setOutterLayer )
+	  ( outterPurpose @reader getOutterPurpose @writer setOutterPurpose )
+	  ( bsegLayer @reader getBsegLayer @writer setBsegLayer )
+	  ( bsegPurpose @reader getBsegPurpose @writer setBsegPurpose )
+	  ( centroid @reader getCentroid @writer setCentroid )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj gatePad)) 
+	   obj->widthInner   = 1.0
+	   obj->heightInner  = 1.0
+ 	   obj->widthOutter  = 1.0
+	   obj->heightOutter = 1.1
+	   obj->innerLayer = "text"
+	   obj->outterLayer = "text"
+	   obj->innerPurpose = "drawing"
+	   obj->outterPurpose = "drawing"
+	   obj->bsegLayer = "text"
+	   obj->bsegPurpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( gp gatePad ))
+  capOutter = makeInstance('capsule)
+  setWidth(capOutter gp->widthOutter)
+  setHeight(capOutter gp->heightOutter)
+  generate(capOutter)
+  setLayer(capOutter getOutterLayer(gp))
+  setPurpose(capOutter getOutterPurpose(gp))
+  addGeometry(gp capOutter)
+  rtsAdd(gp->rtrans getRectTran(capOutter))
+;
+  capInner = makeInstance('capsule)
+  setWidth(capInner gp->widthInner)
+  setHeight(capInner gp->heightInner)
+  generate(capInner)
+  setLayer(capInner getInnerLayer(gp))
+  setPurpose(capInner getInnerPurpose(gp))
+  addGeometry(gp capInner)
+  rtsAdd(gp->rtrans getRectTran(capInner))
+;
+  bseg = makeInstance('rectangle)
+  setWidth(bseg 2*gp->widthOutter)
+  setHeight(bseg 2*gp->heightOutter)
+  generate(bseg)
+  bsegTran = makeInstance( 'transform2 )
+  setVertices(bsegTran getVertices(bseg))
+  setCentroid(bsegTran getCentroid(bseg))
+  cloneRectTran(bsegTran)
+  setLayer(bsegTran getBsegLayer(gp))
+  setPurpose(bsegTran getBsegPurpose(gp))
+  bsegGeom = makeInstance( 'geometry )
+  addTransform(bsegGeom bsegTran)
+  rectTranUnion(bsegGeom)
+  addGeometry(gp bsegGeom)
+  rtsAdd(gp->rtrans getRectTran(bsegGeom))
+  rtsUnion(gp->rtrans)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
+; gateStem.ils: Capsule geometry class. Inherits from 
+;               rectangle and circle objects
+;               Centroid is defined as the center of 
+;               mass of the body of the gateStem taper
+;######################################################
+defclass( gateStem (assembly)
+   (
+	  ( width @reader getWidth @writer setWidth )
+	  ( length  @reader getLength @writer setLength )	  
+	  ( widthTaper @reader getWidthTaper @writer setWidthTaper )
+	  ( centroid @reader getCentroid @writer setCentroid )
+	  ( layer @reader getLayer @writer setLayer )
+	  ( purpose @reader getPurpose @writer setPurpose )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj gateStem)) 
+	   obj->width  = 1.0
+	   obj->length = 1.0 
+	   obj->widthTaper = 1.0
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+);defmethod
+
+;######################################################
+; Generates the geometry
+;######################################################
+defmethod( generate (( gs gateStem ))
+  setCentroid(gs list(0.0 0.0))
+  ; Gate Taper
+  taper = makeInstance('trirect)
+  setWidth(taper getWidthTaper(gs))
+  setHeight(taper 3*getLength(gs))
+  generate(taper)
+  setLayer(taper getLayer(gs))
+  setPurpose(taper getPurpose(gs))
+  addGeometry(gs taper)
+  rtsAdd(gs->rtrans getRectTran(taper))
+  ; Gate stem
+  rect = makeInstance('rectangle)
+  setWidth(rect getWidth(gs))
+  setHeight(rect getLength(gs))
+  generate(rect)
+  rectTran = makeInstance('transform2)
+  addPolygon(rectTran rect)
+  cloneRectTran(rectTran)
+  setLayer(rectTran getLayer(gs))
+  setPurpose(rectTran getPurpose(gs))
+  translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
+  rectGeom = makeInstance('geometry)
+  addTransform(rectGeom rectTran )
+  rectTranUnion(rectGeom)
+  addGeometry(gs rectGeom)
+  rtsAdd(gs->rtrans getRectTran(rectGeom))
+  rtsUnion(gs->rtrans)
+  translate(gs list(8.75 0.0))
+);defmethod
+
+;######################################################
+; Translates the geometry
+;######################################################
+defmethod( translate (( gs gateStem ) arg)
+  foreach(geom getCollection(gs->geometries)
+     translate(geom arg)
+  );foreach
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
