@@ -4,9 +4,11 @@
 ; Defines a base class for the PCELL API with a single slot for 
 ; holding the PCELL master ID. This PCELL ID is the same as the
 ; the pcCellView variable using in the a standard SKILL Pcell
-..................................................................
+;..................................................................
 ; cvId will hold the pcCellView reference which is set in the 
-; extremely important "setPcellParams" method
+; extremely important "setPcellParams" method.
+; The cvId is the reference to the Pcell Supermaster Cellview
+; in the Pcell Libarary
 ;#################################################################
 defclass( PcellParam ()
   (
@@ -16,11 +18,11 @@ defclass( PcellParam ()
 
 ;#################################################################
 ; Transfers the Pcell parameters from the super master cell view to 
-; a Pcell device's slots.
+; a Pcell API Call device's slots.
 ;
-; input argument cv is the built in "pcCellView" class object's
+; Input argument cv is the built in "pcCellView" class object's
 ; reference . The "pcCellView" is the standard variable, representing
-; the PCELL master ID,  used in a standard SKILL Pcell.
+; the PCELL master ID,  used in a standard SKILL++ Pcell.
 ; 
 ; NOTE: 
 ; This important method does the mapping of the desired user
@@ -92,7 +94,6 @@ defmethod( getPcellParams ((device PcellParam) )
 	     );foreach
   );let
 );defmethod
-
 ;#################################################################
 ;#################################################################
 ;#################################################################

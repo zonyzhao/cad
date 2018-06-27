@@ -21,12 +21,19 @@ sdir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/"
 #########################################################################
 #  Package File Names
 #########################################################################
-skillDevPackage = cadObj coord2  point2 points2 polygon2 rectTran \
-                  transform2 transformation2 geometry assembly
+skillDevPackage = cadObj coord2 point2 points2 polygon2 shape2 rectTran \
+                  rectTrans transform2 transformation2 geometry assembly \
+                  collection
 #########################################################################
-assemblyLibraryPackage = rectangle triangle circle    \
-                         trirect capsule gatePad gateStem 
+polygons = rectangle triangle circle     
 #########################################################################
+geometries = trirect capsule  
+#########################################################################
+assemblies = gatePad gateStem 
+#########################################################################
+pcAPI = generics PcellParam 
+#########################################################################
+pcells = RING CORE WRAP gate
 #########################################################################
 # Class Name
 #########################################################################
@@ -40,7 +47,7 @@ paths:
 	@echo PATH is $$PATH
 	@echo CDS_LIC_FILE is $$CDS_LIC_FILE
 
-allPackages: skilldev assembly
+allLibs: skilldev polygon geometry assembly pcAPI pcells
 
 .phony: skilldev
 skilldev:
@@ -49,9 +56,25 @@ skilldev:
 	touch $(sdir)/packages/$(packName).ils
 	$(foreach var, $(skillDevPackage), cat $(sdir)/skilldev/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
 
+.phony: polygon
+polygon:
+	$(foreach var, $(polygons), cat $(sdir)/polygon/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: geometry
+geometry:
+	$(foreach var, $(geometries), cat $(sdir)/geometry/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
 .phony: assembly
 assembly:
-	$(foreach var, $(assemblyLibraryPackage), cat $(sdir)/assemblyLibrary/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+	$(foreach var, $(assemblies), cat $(sdir)/assembly/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: pcAPI
+pcAPI:
+	$(foreach var, $(pcAPI), cat $(sdir)/pcDefinePcellAPI/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: pcells
+pcells:
+	$(foreach var, $(pcells), cat $(sdir)/pcells/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
 
 .phony: nograph
 nograph:

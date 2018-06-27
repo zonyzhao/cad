@@ -1,0 +1,54 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  rectTrans.ils: container class for rectTran 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( rectTrans (cadObj)
+	  (
+		( rtrans @reader getRtrans )
+		( rtran @reader getRectTran )		  
+	  )
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj rectTrans)) 
+  obj->rtrans = makeInstance( 'collection )
+  obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;#####################################################
+; Add rectTran object to rectTrans collection
+;#####################################################
+defmethod( rtsAdd ((rts rectTrans) arg) 
+  if(classp( arg 'rectTran) then
+    add(rts->rtrans arg)
+  else
+    println("ERROR(rectTrans): Argument is not a rectTran object")
+  );if
+);defmethod
+
+;#####################################################
+; Generate the rectTran union of all the transforms
+; in the  geometry
+;#####################################################
+defmethod( rtsUnion (( rts rectTrans ))
+  zero(rts->rtran)
+  foreach( rt getCollection(rts->rtrans)
+    union(rts->rtran rt)
+  ) 
+  calculateCentroid(rts->rtran)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Translates a rectran and rectrans
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( rts rectTrans ) arg)
+  foreach(rtrn getCollection(rts->rtrans)
+    translate(rtrn arg)
+  );foreach
+  translate(rts->rtran arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

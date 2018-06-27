@@ -4,12 +4,17 @@
 ;       a Pcell parameter; otherwise it is treated as a normal
 ;       class slot (e.g. coreBBox is not a Pcell parameter)
 ;#####################################################################
+; cyanW: Width of the verticle cross block
+; cyanL: Lenth of the verticle cross blcok
+; greenW: Width of the verticle cross block
+; greenL: Lenth of the verticle cross blcok
+;#####################################################################
 defclass( CORE (PcellParam)
   (
 	( cyanW @initform defineParam("float" 0.6) )
-	( cyanL @initform defineParam("float" 0.2) )
+	( cyanL @initform defineParam("float" 0.8) )
 	( greenW @initform defineParam("float" 0.2) )
-	( greenL @initform defineParam("float" 0.8) )
+	( greenL @initform defineParam("float" 0.2) )
 	( coreBBox @initarg coreBBox )
   )
 );defclass
@@ -24,15 +29,15 @@ defmethod( draw ((device CORE))
     greenW = getParamValue(device, 'greenW)
     greenL = getParamValue(device, 'greenL)
     ; layers are choosen for their color's visibility
-    ; you can replace teh layer names here with the 
+    ; you can replace the layer names here with the 
     ; the layer names present in the library
     cv = slotValue(device 'cvId)
-    rectId = dbCreateRect(cv list("sd" "drawing") list(0:0 greenL:greenW))
+    rectId = dbCreateRect(cv list("numbers" "drawing") list(0:0 greenL:greenW))
     llx = 0.5 * greenL - 0.5 * cyanL
     lly = 0.5 * greenW - 0.5 * cyanW
-    urx = 0.5 * greenL - 0.5 * cyanL
-    ury = 0.5 * greenW - 0.5 * cyanW
-    rectId = dbCreateRect(cv list("sd" "drawing") list(llx:lly urx:ury))
+    urx = 0.5 * greenL + 0.5 * cyanL
+    ury = 0.5 * greenW + 0.5 * cyanW
+    rectId = dbCreateRect(cv list("numbers" "drawing") list(llx:lly urx:ury))
     setSlotValue(device 'coreBBox list( 0.0:lly greenL:ury))
     callNextMethod()
     );let

@@ -918,6 +918,354 @@ defmethod( isRectangle (( poly polygon2 ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  shape2.ils: Layout Shape Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( shape2 (cadObj)
+	  (	
+	  	( geometries )	
+		( layer @writer setLayer @reader getLayer )
+		( purpose @writer setPurpose @reader getPurpose )
+		( dbg )
+		( mfg )				
+	  )
+) ; defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj shape2))
+	   obj->geometries = makeInstance( 'collection )  
+	   obj->layer = nil 
+	   obj->purpose = nil 
+	   obj->dbg = nil
+	   obj->mfg = nil	     
+);defmethod
+
+;#####################################################
+; Add polygon to polygons collection of the shape2
+;#####################################################
+defmethod( addGeometry (( shp shape2 ) arg)
+  add(shp->geometries arg)
+);defmethod
+
+;#####################################################
+; Shape2 is the "foundation" Rendering Class for all
+; higher "layer" classes above shape2 - assembly, layer,
+; stackup and layout ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Renders the shape2 using the contained geometries
+; in the the focus cv reference
+;#####################################################
+defmethod( render (( shp shape2 ))
+  if( !null(shp->geometries->list) then
+    foreach( geom shp->geometries->list->elems
+      foreach( polygon geom->polygons->list->elems
+        printf("INFO(shape2): Rendering Shape2 Polygon\n")
+        dbCreatePolygon(shp->ref
+	     	        list(shp->layer shp->purpose)
+		        polygon->vertices
+		        );dbCreatePolygon
+      );foreach
+    );foreach
+  else
+    printf("ERROR(shape2): Shape2 Null Vertices - ")
+ );if   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FIXME: Need to update code below to process multiple 
+;        polygons in the new polygons collection 
+;        member. Most of this code should drop down
+;        into the geometry and polygon2 class definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;#####################################################
+; Reset the shape2's transform
+;#####################################################
+;defmethod( shape2Reset (( shp shape2 ))
+;	   shp->transform->vertices = shp->vertices
+;	   shp->transform->area = shp->area
+;	   shp->transform->centroid->x = shp->centroid->x
+;	   shp->transform->centroid->y = shp->centroid->y
+;);defmethod
+
+;#####################################################
+; This method sets the virtex list the the vertices
+; argument
+;#####################################################
+defmethod( setVertices (( shp shape2 ) vertices)
+	   shp->vertices = vertices
+	   shp->transform->vertices = vertices
+	   area(shp)
+	   shp->transform->area = shp->area
+	   centroid(shp)
+	   shp->transform->centroid->x = shp->centroid->x
+	   shp->transform->centroid->y = shp->centroid->y
+	   length(shp->transform->vertices)
+);defmethod
+
+;#####################################################
+; This method works on an existing Cadence layout, and
+; creates polygons for all layout shape2s
+;#####################################################
+;
+; FIXME: This needs to go into a new "snapshot" class
+;
+;defmethod( genVertices (( shp shape2 ))
+;	   let( (bbox
+;	   	 v0
+;		 v1
+;		 v2
+;		 v3)
+;	   	shp->type = shp->ref~>objType 
+;		shp->vertices='()
+;		shp->transform->vertices='()
+;		case( shp~>ref~>objType 
+;		  ( ( "polygon" )
+;		    println("polygon detected")
+;	   	    foreach(point shp~>ref~>points
+;	      	      shp~>vertices=cons(point shp~>vertices)
+;		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
+;	    	    )	     
+;	   	  );polygon
+;		  ( ( "dot" )
+;		    println("dot detected")
+;	   	    foreach(point shp~>ref~>points
+;	      	      shp~>vertices=cons(point shp~>vertices)
+;		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
+;	    	    )	     
+;	   	  );dot
+;		  ( ( "line" )
+;		    println("line detected")
+;		    bbox=shp~>ref~>bBox
+;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+;		    shp->vertices=list(v0 v1 v2 v3)
+;		    shp->transform->vertices=list(v0 v1 v2 v3)
+;		    shp->layer = shp~>ref~>layerName
+;		    shp->purpose = shp~>ref~>purpose
+;		    shp->type = shp~>ref~>objType
+;		  );line
+;		  ( ( "rect" )
+;		    println("rect dectected")
+;		    bbox=shp~>ref~>bBox
+;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+;		    shp->vertices=list(v0 v1 v2 v3)
+;		    shp->transform->vertices=list(v0 v1 v2 v3)
+;		    shp->layer = shp~>ref~>layerName
+;		    shp->purpose = shp~>ref~>purpose
+;		    shp->type = shp~>ref~>objType
+;		  );rect
+;		  ( ( "path" )
+;		    println("path detected")
+;		    bbox=shp~>ref~>bBox
+;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+;		    shp->vertices=list(v0 v1 v2 v3)
+;		    shp->transform->vertices=list(v0 v1 v2 v3)
+;		    shp->layer = shp~>ref~>layerName
+;		    shp->purpose = shp~>ref~>purpose
+;		    shp->type = shp~>ref~>objType
+;		  );path
+;		  ( "label"
+;		    println("label detected")
+;		    shp->vertices=nil
+;		  );label
+;		  ( t
+;			error( "ERROR SHAPE2: Encountered unknown shape2" )
+;			return()
+;		  );t
+;		);case	
+;		area(shp)
+;		shp->transform->area = shp->area
+;		centroid(shp)
+;		shp->transform->centroid->x = shp->centroid->x
+;		shp->transform->centroid->y = shp->centroid->y
+;		list(shp->transform->centroid->x shp->transform->centroid->y)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+; Translates the shape2's transform
+;#####################################################
+; Note: Class no longer inherits from polygon2
+;defmethod( shape2Translate (( shp shape2 ) trn)
+;	   if( listp(trn) then
+;	   ;FIXME: Need to check that inputs are in on grid increments
+;	     translate(shp->transform trn)
+;	     list(shp->transform->centroid->x shp->transform->centroid->y)
+;	   else
+;	      println("ERROR(shape2): argument must be a coordinate list")
+;           );if
+;);defmethod
+
+;#####################################################
+; Scales the shape2's transform
+;#####################################################
+; NOTE: Class no longer inherits from polygon2
+;defmethod( shape2Scale (( shp shape2 ) arg)
+;	   ;FIXME: Need to check that inputs are in on grid increments
+;	   scale(shp->transform arg)
+;	   list(shp->transform->centroid->x shp->transform->centroid->y)
+;);defmethod
+
+;#####################################################
+; Rotate the shape2's transform (rot is in degrees
+; with positive being counter-clockwise about the origin)
+;#####################################################
+; Note: Class no longer inherits from polygon2
+;defmethod( shape2Rotate (( shp shape2 ) rot)
+;  ;FIXME: Need to check that input arg in on grid increments
+;  rotate(shp->transform rot/180*3.14159)
+;);defmethod
+
+;#####################################################
+; Returns the transform's centroid
+;#####################################################
+;  Note: Class no longer inherits from polygon2
+;defmethod( shape2Centroid (( shp shape2 ))
+;	   list( shp->transform->centroid->x shp->transform->centroid->y)
+;);defmethod
+
+;#####################################################
+; Returns the transform's area
+;#####################################################
+; Note: Class no longer inherits from polygon2
+;defmethod( shape2Area (( shp shape2 ))
+;	   shp->transform->area 
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+; FIXME: This needs to go into geometry class
+;defmethod( setOnDbg (( shp shape2 ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+; FIXME: This needs to go into geometry class
+;defmethod( setOnMfg (( shp shape2 ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
+;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+; Center the shape2's transform centroid to align to the 
+; origin
+;#####################################################
+;defmethod( shape2Center (( shp shape2 ))
+;	   let( (delx dely)
+;	   	delx = shp->transform->origin->x - shp->centroid->x
+;	   	dely = shp->transform->origin->y - shp->centroid->y 
+;	   	shape2Translate(shp list(delx dely))
+;	   	shp->transform->centroid->x = shp->transform->origin->x
+;	   	shp->transform->centroid->y = shp->transform->origin->y
+;		list(shp->transform->centroid->x shp->transform->centroid->y)
+;	   );let
+;);defmethod
+
+;#####################################################
+; Generate a bounding box for the shape2
+;#####################################################
+;defmethod( genBbox (( shp shape2 ))
+;	   nil
+;);defmethod
+
+;#####################################################
+; Does the bbox exactly match the veritices. If it
+; does the bbox is a rectangle
+;#####################################################
+;defmethod( isRect (( shp shape2 ))
+;	   nil
+;);defmethod
+
+;#####################################################
+; Merge the two shape2s into one 
+; argument is another shape2 reference
+;#####################################################
+;defmethod( mergeShape2s (( shp shape2 ) arg)
+;	  shp->ref = leMergeShape2s(list(shp->ref arg))
+;);defmethod
+
+;#####################################################
+; Union of two shape2s
+;#####################################################
+;defmethod( unionShape2s (( shp shape2 ) arg)
+;	  leOr(shp->ref shp->ref arg)
+;);defmethod
+
+;#####################################################
+; Union minus intersection of two shape2s
+;#####################################################
+;defmethod( intersectionShape2s (( shp shape2 ) arg)
+;	  leXor(shp->ref shp->ref arg)
+;);defmethod
+
+;#####################################################
+; Union minus intersection of two shape2s
+;#####################################################
+;defmethod( unionMinusintersectionShape2s (( shp shape2 ) arg)
+;	   leXor(shp->ref shp->ref arg)
+;);defmethod
+
+;#####################################################
+; Fiter out redundant adjacent vertexes
+;#####################################################
+;defmethod( filter (( shp shape2 ) )
+;	   nil
+;);defmethod
+
+;#####################################################
+; Determines if two shape2s have collided. the second
+; shape2 is arg
+;#####################################################
+;defmethod( collide (( shp shape2 ) arg)
+;  if( null(dbStraddle(shp->ref "text" shp->ref  arg))
+;    nil
+;  else	       
+;    t
+;  );if
+;);defmethod
+
+;###############################################################################
+;###############################################################################
+;###############################################################################
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  rectTran.ils: Rectangle transform class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTran (cadObj)
@@ -1241,6 +1589,59 @@ defmethod( union (( rt rectTran ) arg)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  rectTrans.ils: container class for rectTran 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( rectTrans (cadObj)
+	  (
+		( rtrans @reader getRtrans )
+		( rtran @reader getRectTran )		  
+	  )
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj rectTrans)) 
+  obj->rtrans = makeInstance( 'collection )
+  obj->rtran = makeInstance( 'rectTran )
+);defmethod
+
+;#####################################################
+; Add rectTran object to rectTrans collection
+;#####################################################
+defmethod( rtsAdd ((rts rectTrans) arg) 
+  if(classp( arg 'rectTran) then
+    add(rts->rtrans arg)
+  else
+    println("ERROR(rectTrans): Argument is not a rectTran object")
+  );if
+);defmethod
+
+;#####################################################
+; Generate the rectTran union of all the transforms
+; in the  geometry
+;#####################################################
+defmethod( rtsUnion (( rts rectTrans ))
+  zero(rts->rtran)
+  foreach( rt getCollection(rts->rtrans)
+    union(rts->rtran rt)
+  ) 
+  calculateCentroid(rts->rtran)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Translates a rectran and rectrans
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( rts rectTrans ) arg)
+  foreach(rtrn getCollection(rts->rtrans)
+    translate(rtrn arg)
+  );foreach
+  translate(rts->rtran arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  transform2: Generic Point Class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( transform2 (cadObj)
@@ -1807,7 +2208,128 @@ defmethod( render (( ass assembly ))
 ;######################################################
 ;######################################################
 ;######################################################
-;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; collection.ils: object collection class. Collections are
+;                  lists of objects that can be homegeneous or homogeneous object
+;                  lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
+;IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( collection (cadObj)
+	  (
+		( n @reader getN @writer setN )
+		( list @reader getList @writer setList )
+		( cList )		  
+	  )
+);defclass
+
+;############################################################
+; Class Constructor 
+;#############################################################
+defmethod( initializeInstance @after ((obj collection)) 
+	   obj->n = 1
+           obj->list = makeInstance( 'listfun )
+	   obj->cList = '()
+	   obj->cid="col"
+	   obj->oid=""
+);defmethod
+
+
+
+;############################################################
+; Resets the collection list to empty list
+;#############################################################
+defmethod( resetCollection ((col collection))
+       resetList(col->list)
+);defmethod
+
+;############################################################
+; Returns a reference to the collection list
+;#############################################################
+defmethod( getCollection ((col collection))
+       col->list->elems
+);defmethod
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+defmethod( genCollection ((col collection) arg)
+       for( i 0 sub1(col->n)
+       	  lappendBeg(col->list makeInstance(stringToSymbol(arg)))
+       );for
+);defmethod
+
+;############################################################
+; Generate a listing of the class the objects belong to in
+; the collection
+;#############################################################
+defmethod( class ((col collection))
+  let( (i)
+    i=0
+    col->cList = '()
+    foreach( obs getElems(col->list)
+      col->cList = cons(classOf(obs) col->cList) 
+      printf("%L\n" classOf(obs)) 
+      i++   	  
+    );foreach
+  );let
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( add ((col collection) arg)
+   addTail(col->list arg)
+);defmethod
+
+;############################################################
+; Is collection list empty
+;#############################################################
+defmethod( isEmpty ((col collection))
+    null(col->list->elems)
+);defmethod
+
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+;defmethod( genCon ((cont collection) obj)
+;  let( (  vName
+;	  estrng )
+;       for( i 0 sub1(cont->num)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;       );for
+;     );let
+;);defmethod
+
+;############################################################
+; Adds an object to the container list 
+; FIXME: WIP!
+;#############################################################
+;defmethod( add ((obj collection))
+;  let( (  vName
+;	  estrng 
+;;	  i)
+;	  sprintf(estrng strcat("i = length(" obj->cid "->objList"))
+;	  evalstring(estrng)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;	  obj->objNum=obj->objNum+1
+;     );let
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
 ;# rectangle.ils: Rectangle class
 ;######################################################
 defclass( rectangle (polygon2)
@@ -2407,36 +2929,44 @@ defmethod( initializeInstance @after ((obj capsule))
 ;#####################################################
 defmethod( generate (( cap capsule ))
   let((body capR capL bodyTran capRTran capLTran)
+    ; Body Polygon
     body = makeInstance( 'rectangle )
     setHeight(body cap->height)
     setWidth(body cap->width)
     generate(body)
-    setCentroid(cap getCentroid(body))	
+    setCentroid(cap getCentroid(body))
+    ; Body Transform	
     bodyTran = makeInstance( 'transform2 )
     setVertices(bodyTran getVertices(body))
     setCentroid(bodyTran getCentroid(body))
-    cloneRectTran(bodyTran)   
+    cloneRectTran(bodyTran)
+    ; Right Cap Polygon   
     capR = makeInstance( 'circle )
     setGrid(capR 0.025)
     setRadius(capR cap->height/2.0)
     generateHalfCircle(capR)
     center(capR)
+    ; Rigth Cap Transform
     capRTran = makeInstance( 'transform2 )
     setVertices(capRTran getVertices(capR))
     setCentroid(capRTran getCentroid(capR))
     cloneRectTran(capRTran)
+    ; Left Cap Polygon
     capL = makeInstance( 'circle )
     setGrid(capL 0.025)
     setRadius(capL cap->height/2.0)
     generateHalfCircle(capL)
     center(capL)
+    ; Left Cap Transform
     capLTran = makeInstance( 'transform2 )
     setVertices(capLTran getVertices(capL))
     setCentroid(capLTran getCentroid(capL))
     cloneRectTran(capLTran)
+    ; Translations and Rotation of Transforms
     rotate(capLTran 180.0)
     translate(capRTran list((cap->width+cap->height/2.0)/2.0 0.0))
     translate(capLTran list( -(cap->width+cap->height/2.0)/2.0 0.0))
+    ; Add Transforms (same layer) to the Geometry (layer group)
     addTransform(cap bodyTran)
     addTransform(cap capLTran)
     addTransform(cap capRTran) 
@@ -2600,4 +3130,310 @@ defmethod( translate (( gs gateStem ) arg)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; generic.ils: generic functions
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Defines the generic function for draw. Redefining a generic function
+; removes all methods defined by the previous defgeneric from
+defgeneric( draw (devicd)
+	    t
+);defgeneric;#################################################################
+; PcellParam.ils: class for pcell parameters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Defines a base class for the PCELL API with a single slot for 
+; holding the PCELL master ID. This PCELL ID is the same as the
+; the pcCellView variable using in the a standard SKILL Pcell
+;..................................................................
+; cvId will hold the pcCellView reference which is set in the 
+; extremely important "setPcellParams" method
+;#################################################################
+defclass( PcellParam ()
+  (
+	(cvId @initarg cvId)
+  )
+);defclass
+
+;#################################################################
+; Transfers the Pcell parameters from the super master cell view to 
+; a Pcell device's slots.
+;
+; input argument cv is the built in "pcCellView" class object's
+; reference . The "pcCellView" is the standard variable, representing
+; the PCELL master ID,  used in a standard SKILL Pcell.
+; 
+; NOTE: 
+; This important method does the mapping of the desired user
+; parameters between and the required built in "pcCellView" parameters.
+; This ensures that the user defined pcell has full access to the
+; built in class' parameters (pcCellView). During pcell compilation
+; this method is called in order to update the user pcell code object from
+; the parameterized inputs of the built in pcell object (pcCellView).
+; Every time a pcell's parameter is changed, the user pcell is 
+; recompiled and executed using the new parameter values of the built 
+; in pcell object. 
+;#################################################################
+defmethod( setPcellParams ((device PcellParam) cv)
+  when( cv && dbIsId(cv)
+  	setSlotValue(device 'cvId cv)
+	foreach( param cv~>parameters~>value
+	  setParamValue(device concat(param~>name) param~>value)
+	);foreach
+  );when
+);defmethod
+
+;#################################################################
+; A function to define a Pcell parameter stored as a Pcell class'
+; slot. The optional argument _isParam is set to 't to indicate
+; this parameter is a Pcell parameter
+;#################################################################
+defun( defineParam (g_type g_value @optional (_isParam t))
+  list(nil 'type g_type 'value g_value 'isParam _isParam)
+);defun
+
+;#################################################################
+; A method to get Pcell parameter's type
+;#################################################################
+defmethod( getParamType ((device PcellParam) (propName symbol))
+  slotValue(device propName)->type
+);defmethod
+
+;#################################################################
+; A method to get Pcell parameter's value
+;#################################################################
+defmethod( getParamValue ((device PcellParam) (propName symbol))
+  slotValue(device propName)->value
+);defmethod
+
+;#################################################################
+; A method to set Pcell parameter's value
+;#################################################################
+defmethod( setParamValue ((device PcellParam) (propName symbol) val)
+  slotValue(device propName)->value = val
+);defmethod
+
+;#################################################################
+; A method to check if the given name is a Pcell parameter. Based
+; upon setting the of the isParam attribute
+;#################################################################
+defmethod( isParam ((device PcellParam) (propName symbol))
+  slotValue(device propName)->isParam
+);defmethod
+
+;#################################################################
+; A method to to get a list of Pcell parameters with their names,
+; types, and values
+;#################################################################
+defmethod( getPcellParams ((device PcellParam) )
+  let((params)
+    params = setof(p device->? isParam(device p))
+    params = foreach( mapcar p params 
+    	              list( p getParamType(device p) getParamValue(device p))
+	     );foreach
+  );let
+);defmethod
+
+;#################################################################
+;#################################################################
+;#################################################################;############################################################################
+; RING.ils: Draws a polygon that wraps around a devices' coreBBox 
+;           with a griven spacing value and width of the polygon.
+;           Inherits from PcellParam class
+;############################################################################
+defclass( RING (PcellParam)
+  (
+	(ringW @initform defineParam("float" 0.1))
+	(ringS @initform defineParam("float" 0.1))
+  )
+);defclass
+
+;#################################################################
+; Draw a polygon that wraps around the devices coreBBox with a
+; given spacing value and width
+;#################################################################
+defmethod( draw ((device RING))
+  let((cv ringS ringW coreBBox llx lly urx ury pts ring)
+    ringS = getParamValue(device 'ringS)
+    ringW = getParamValue(device 'ringW)
+    coreBBox = getCoreBBox(device)
+    llx = xCoord( lowerLeft(coreBBox))
+    lly = yCoord( lowerLeft(coreBBox))
+    urx = xCoord( upperRight(coreBBox))
+    ury = yCoord( upperRight(coreBBox))
+    pts = list(
+    	llx-ringS:lly-ringS ; points on inner edges
+	urx+ringS:lly-ringS
+	urx+ringS:ury+ringS
+	llx-ringS:ury+ringS
+	llx-ringS:lly-ringS-ringW         ; extending to outer edge
+	llx-ringS-ringW:lly-ringS-ringW   ; points on outer edges
+	llx-ringS-ringW:ury+ringS+ringW   
+	urx+ringS+ringW:ury+ringS+ringW
+	urx+ringS+ringW:lly-ringS-ringW
+	llx-ringS:lly-ringS-ringW
+	);list
+    ; layer chosen for its color's visibility
+    ; you can replace the layer names mentioned here with the layer
+    ; name present in your library
+    cv = slotValue(device 'cvId)
+    ring = dbCreatePolygon(cv list("numbers" "drawing") pts)
+    callNextMethod()
+    );let
+);defmethod
+
+;#################################################################
+; This method is called when RING is used on its own
+; Returns and empty box
+;#################################################################
+defmethod(getCoreBBox ((device RING))
+  list(0:0 0:0)
+);defmethod
+;#################################################################
+;#################################################################
+;#################################################################
+
+;#####################################################################
+; CORE.ils: core pcell class inheriting from PcellParam class
+; Note: Parameter created via defineParam will be treated as
+;       a Pcell parameter; otherwise it is treated as a normal
+;       class slot (e.g. coreBBox is not a Pcell parameter)
+;#####################################################################
+; cyanW: Width of the verticle cross block
+; cyanL: Lenth of the verticle cross blcok
+; greenW: Width of the verticle cross block
+; greenL: Lenth of the verticle cross blcok
+;#####################################################################
+defclass( CORE (PcellParam)
+  (
+	( cyanW @initform defineParam("float" 0.6) )
+	( cyanL @initform defineParam("float" 0.8) )
+	( greenW @initform defineParam("float" 0.2) )
+	( greenL @initform defineParam("float" 0.2) )
+	( coreBBox @initarg coreBBox )
+  )
+);defclass
+
+;######################################################################
+; Draw a simple cross represented by two rectangles
+;######################################################################
+defmethod( draw ((device CORE))
+  let((cv cyanW cyanL greenW greenL rectId llx lly urx ury)
+    cyanW = getParamValue(device 'cyanW)
+    cyanL = getParamValue(device, 'cyanL)
+    greenW = getParamValue(device, 'greenW)
+    greenL = getParamValue(device, 'greenL)
+    ; layers are choosen for their color's visibility
+    ; you can replace the layer names here with the 
+    ; the layer names present in the library
+    cv = slotValue(device 'cvId)
+    rectId = dbCreateRect(cv list("numbers" "drawing") list(0:0 greenL:greenW))
+    llx = 0.5 * greenL - 0.5 * cyanL
+    lly = 0.5 * greenW - 0.5 * cyanW
+    urx = 0.5 * greenL + 0.5 * cyanL
+    ury = 0.5 * greenW + 0.5 * cyanW
+    rectId = dbCreateRect(cv list("numbers" "drawing") list(llx:lly urx:ury))
+    setSlotValue(device 'coreBBox list( 0.0:lly greenL:ury))
+    callNextMethod()
+    );let
+);defmethod
+
+;######################################################################
+; Returns CORE's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((device CORE))
+  slotValue(device 'coreBBox)
+);defmethod
+
+;#######################################################################
+;#######################################################################
+;#######################################################################
+;#############################################################
+; WRAP.ils: Defines a wrapped core class that inherits both
+;           CORE and RING classes
+;
+; Used for testing the Skill++ PCELL API 
+;#############################################################
+defclass( WRAP (CORE RING)
+	  ()
+);defclass
+;#############################################################
+; Draw method for WRAP is just a simple call to callNextMethod()
+; Due to the specificity of WRAP's superclasses, the draw
+; methods for CORE and RING will be called in this order
+;#############################################################
+defmethod(draw ((device WRAP))
+  callNextMethod()
+);defmethod
+;#############################################################
+;#############################################################
+;#############################################################
+;######################################################
+; gate.ils: fet gate PCELL class. Inherits from PcellParam
+;           making it a Cadence PCELL class
+;######################################################
+defclass( gate (PcellParam)
+  (
+    ( width  @initform defineParam("float" 50.0) )
+    ( length @initform defineParam("float" 0.25) )
+    ( stem )
+    ( pad )
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj gate)) 
+	   obj->stem = makeInstance( 'gateStem )
+	   obj->pad = makeInstance( 'gatePad )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( draw (( gt gate ))
+  let( (width length stemRectTran padRectTran)
+    width = getParamValue(gt 'width)
+    length = getParamValue(gt 'length)
+    setWidthInner(gt->pad 13.5)
+    setHeightInner(gt->pad 4.0)
+    setWidthOutter(gt->pad 13.5)
+    setHeightOutter(gt->pad 5.6)
+    setInnerLayer(gt->pad "resistor")
+    setOutterLayer(gt->pad "membrane")
+    setBsegLayer(gt->pad "thick")
+    setRef(gt->pad getRef(gt))
+    generate(gt->pad)
+    render(gt->pad)
+    setWidth(gt->stem width)
+    setLength(gt->stem length)
+    setWidthTaper(gt->stem 2.5)
+    setLayer(gt->stem "membrane")
+    setRef(gt->stem getRef(gt))
+    generate(gt->stem)
+    render(gt->stem)
+    stemRectTran = getRectTran(gt->stem)
+    padRectTran = getRectTran(gt->pad)
+    rtsAdd(gt->rtrans stemRectTran) 
+    rtsAdd(gt->rtrans padRectTran)
+    rtsUnion(gt->rtrans)
+    setSlotValue(gt 'coreBBox list( getLowerLeft(gt->rtrans->rtran) getUpperRight(gt->rtrans->rtran)))
+    callNextMethod()
+  );let
+);defmethod
+
+;######################################################################
+; Returns gates's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((gt gate))
+  slotValue(gt 'coreBBox)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

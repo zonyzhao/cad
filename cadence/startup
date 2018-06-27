@@ -5,11 +5,15 @@ setenv REFLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
 setenv PROCLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
 setenv PROJDIR ~/cad_layout_61
 setenv DESDIR ~/deslibs_oa
-setenv SETUPDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/raytheon/trunk
+setenv SETUPDIRRAY /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/raytheon/trunk
+setenv SETUPDIRDEF /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/default/trunk
 setenv EDITOR /usr/bin/emacs
 setenv TERM konsole
 setenv CDS_CMI_COMPLEVEL 0
-setenv SETUP 0
+
+#if(!exist(SETUP) then
+#   setenv SETUP 0
+#endif
 
 # This setup is Cadence Raytheon Environment
 # Users can modify the local .cdsinit and .cdsenv
@@ -19,8 +23,14 @@ if !(-d $PROJDIR) then
   mkdir $PROJDIR
   cp $SETUPDIR/cds.lib $PROJDIR/cds.lib
   cp $SETUPDIR/display.drf $PROJDIR/display.drf
-  cp $SETUPDIR/.cdsinit $PROJDIR/.cdsinit
-  cp $SETUPDIR/.cdsenv $PROJDIR/.cdsenv
+#  if $SETUPENV == default then
+#    cp $SETUPDIRDEF/.cdsinit $PROJDIR/.cdsinit
+#    cp $SETUPDIRDEF/.cdsenv $PROJDIR/.cdsenv
+#  endif
+#  if $SETUPENV == default then
+  cp $SETUPDIRRAY/.cdsinit $PROJDIRRAY/.cdsinit
+  cp $SETUPDIRRAY/.cdsenv $PROJDIRRAY/.cdsenv
+#  endif
 #  cp $SETUPDIR/assura_tech.lib $PROJDIR/assura_tech.lib
   cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
   cp $SETUPDIR/.simrc $PROJDIR/.simrc
@@ -30,7 +40,6 @@ endif
 if !(-d $DESDIR) then
   mkdir $DESDIR
 endif
-
 
 # Environement setup for cadence virtuos 6.1.6
 setenv CDS_AUTO_64BIT ALL

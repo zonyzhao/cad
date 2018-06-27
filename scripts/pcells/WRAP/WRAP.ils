@@ -1,6 +1,8 @@
 ;#############################################################
 ; WRAP.ils: Defines a wrapped core class that inherits both
 ;           CORE and RING classes
+;
+; Used for testing the Skill++ PCELL API 
 ;#############################################################
 defclass( WRAP (CORE RING)
 	  ()

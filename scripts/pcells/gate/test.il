@@ -1,12 +1,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-0: Check for object Existence
+; UT-0: Check for object Dependency Existence
 ;       and construction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'pcgate )
-gt = makeInstance( 'pcgate )
-classp( gt 'pcgate)
+findClass( 'gateStem )
+gs = makeInstance( 'gateStem )
+classp( gs 'gateStem)
+classOf(gs)
+className(findClass( 'gateStem ))
+superclassesOf(classOf(gs))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+findClass( 'gatePad )
+gp = makeInstance( 'gatePad )
+classp( gp 'gatePad)
+classOf(gp)
+className(findClass( 'gatePad ))
+superclassesOf(classOf(gp))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-1: Check for object Existence
+;       and construction
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+findClass( 'gate )
+gt = makeInstance( 'gate )
+classp( gt 'gate)
 classOf(gt)
-className(findClass( 'pcgate ))
+className(findClass( 'gate ))
 superclassesOf(classOf(gt))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

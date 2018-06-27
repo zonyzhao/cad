@@ -1,0 +1,170 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; planarResistor.il: Base planar resistor class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( planarResistor (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( minWidth @reader getMinLength @writer setMinWidth )
+		( minLength @reader getMinLength @writer setMinLength )
+		( termLen @reader getTermLen @writer setTermLen )
+		( termEnc @reader getTermEnc @writer setTermEnc )
+		( bodyLayer @reader getBodyLayer @writer setBodyLayer )
+	  	( bodyPurpose @reader getBodyPurpose @writer setBodyPurpose )
+		( contLayer @reader getContLayer @writer setContLayer )
+	  	( contPurpose @reader getContPurpose @writer setContPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj planarResistor)) 
+	   obj->width  = 1.0
+           obj->length = 1.0
+	   obj->minWidth = 0.5
+	   obj->minLength = 0.5
+	   obj->termEnc = 0.5
+	   obj->termLen = 1.0
+	   obj->bodyLayer = "text"
+	   obj->bodyPurpose = "drawing"
+	   obj->ContLayer = "text"
+	   obj->ContPurpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( res planarResistor ))
+  let((termWid cptrn cntrn body cont bTran pConTran nConTran
+       cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    termWid = width-2.0*res->termEnc 
+    ; Contact Transforms
+    cptrn = -1.0*length/2.0+res->termLen/2.0+res->termEnc
+    cntrn = -1.0*cptrn
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the resistor body
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    body = makeInstance( 'rectangle )
+    setWidth(resBody res->width)
+    setHeight(resBody res->length)
+    generate(body)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the end contacts
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    cont = makeInstance( 'rectangle )
+    setWidth(cont electrodeConWid)
+    setHeight(cont electrodeConLen)
+    generate(cont)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; body Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(body))
+    setCentroid(bTran getCentroid(body))
+    cloneRectTran(bTran)
+    setLayer(bTran getBodyLayer(res))
+    setPurpose(bTran getBodyPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; P Contact Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pConTran = makeInstance( 'transform2 )
+    setVertices(pConTran getVertices(cont))
+    setCentroid(pConTran getCentroid(cont))
+    cloneRectTran(pConTran)
+    setLayer(pConTran getContLayer(res))
+    setPurpose(pConTran getContPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; N Contact Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    nConTran = makeInstance( 'transform2 )
+    setVertices(nConTran getVertices(cont))
+    setCentroid(nConTran getCentroid(cont))
+    cloneRectTran(nConTran)
+    setLayer(nConTran getContLayer(res))
+    setPurpose(nConTran getContPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate the P and N contacts to 
+    ; the proper position
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; ELECTRODE POS Contact Shape
+  electrodeConShpP = makeInstance( 'shape )
+  setVertices(electrodeConShpP generate(electrodeContact))
+  setLayer(electrodeConShpP "electrode")
+  setPurpose(electrodeConShpP "drawing")
+  ; Translate POS Contact to proper position
+  shapeTranslate(electrodeConShpP list(cptrn 0))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; ELECTRODE NEG Contact Shape
+  electrodeConShpN = makeInstance( 'shape )
+  setVertices(electrodeConShpN generate(electrodeContact))
+  setLayer(electrodeConShpN "electrode")
+  setPurpose(electrodeConShpN "drawing")
+  ; Translate NEG Contact to proper position
+  shapeTranslate(electrodeConShpN list(cntrn 
+  
+
+  ; This is the target cellview to render to ...
+  cv = getRef(res)
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in electrical nets and
+  ; pins - Need to have net and
+  ; purposes set on target layers
+  ; in TF
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  pNet = dbMakeNet(cv "POS")
+;  dbCreateTerm(pNet "P" "inputOutput")
+;  nNet = dbMakeNet(cv "NEG")
+;  dbCreateTerm(nNet "N" "inputOutput")
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Make a pin rectangle
+;  pr = makeInstance( 'rectangle )
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in POS pin shape
+  ; FIXME: Replace shape with new  flow
+;  ppShp = makeInstance( 'shape )
+;  setVertices(ppShp genRect(pr))
+;  setLayer(ppShp "sd")
+;  setPurpose(ppShp "net")
+  ; Translate POS Pin Shape to proper position
+;  shapeTranslate(ppShp list(cptrn  0))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in POS pin shape
+  ; FIXME: Replace shape with new  flow
+;  pnShp = makeInstance( 'shape )
+;  setVertices(pnShp genRect(pr))
+;  setLayer(pnShp "sd")	
+;  setPurpose(pnShp "net")
+  ; Translate POS Pin Shape to proper position
+;  shapeTranslate(pnShp list(cntrn  0))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Set the shape references to the
+  ; cv
+;  setCvRef(ppShp  cv)
+;  setCvRef(pnShp  cv)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Render the two pin shapes
+;  pp = render(ppShp)
+;  pn = render(pnShp)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add Electrical Pins to the Pin Shapes
+;  dbCreatePin(pNet pp "pp")
+;  dbCreatePin(nNet pp "pn")
+  
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################

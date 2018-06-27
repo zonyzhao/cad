@@ -1,0 +1,54 @@
+;######################################################
+; trirect.ils: Triangle/Rectangle combination geometry class
+;              Overall centroid of this geometry is defined
+;              as the centroid of the rectangular body (not 
+;              the actual centroid, but conveniently defined
+;              for translation and rotation purposes)
+;######################################################
+defclass( trirect (geometry)
+   (
+	  ( width @reader getWidth @writer setWidth )
+	  ( height @reader getHeight @writer setHeight )
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj trirect)) 
+	   obj->width  = 1.0
+	   obj->height = 1.0 		     
+);defmethod
+
+;######################################################
+; Generates the trirect geometry
+;######################################################
+defmethod( generate (( tr trirect ))
+  let((body head bodyTran headTran)
+    body = makeInstance( 'rectangle )			
+    setHeight(body tr->height)
+    setWidth(body tr->width)
+    generate(body)
+    setCentroid(tr getCentroid(body))
+    head = makeInstance( 'triangle )
+    setBase(head tr->height)
+    setHeight(head tr->height)
+    generate(head)
+    bodyTran = makeInstance( 'transform2 )
+    setVertices(bodyTran getVertices(body))
+    setCentroid(bodyTran getCentroid(body))
+    cloneRectTran(bodyTran)
+    headTran = makeInstance( 'transform2 )
+    setVertices(headTran getVertices(head))
+    setCentroid(headTran getCentroid(head))
+    cloneRectTran(headTran)
+    rotate(headTran 270.0)
+    translate(headTran list((tr->width+tr->height)/2.0 0.0)) 
+    addTransform(tr bodyTran)
+    addTransform(tr headTran)
+    rectTranUnion(tr) 	   
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################

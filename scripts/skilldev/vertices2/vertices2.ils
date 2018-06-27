@@ -1,0 +1,21 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  vertices2.ils: Layout Shape Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( vertices2 ()
+	  (
+		( vertices )
+	  )				  
+) ; defclass
+
+defmethod( initializeInstance @after ((obj vertices2)) 
+	   obj->geometries = makeInstance( 'collection )
+)
+
+defmethod( addToVerticesList (( vert vertices2 ) vertex )
+	   vert->vertexList = cons(vertex vert->vertexList)	   
+);defmethod
+
+defmethod( getFromVerticesList (( vert vertices2 ) index )
+	   nth(index vert->vertexList)	   
+);defmethod
+

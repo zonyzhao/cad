@@ -1,0 +1,109 @@
+;######################################################
+;# rectangle.ils: Rectangle class
+;######################################################
+defclass( rectangle (polygon2)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+	  )				  
+) ; defclass
+
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj rectangle)) 
+	   obj->width  = 1.0
+           obj->height = 1.0
+);defmethod
+
+;######################################################
+;######################################################
+defmethod( generate (( rect rectangle ))
+  let( ( vertices )
+	   vertices = '()
+	   ;ll
+	   vertices = cons(list(-abs(rect->width)/2 -abs(rect->height)/2) vertices)
+	   ;lr
+	   vertices = cons(list( abs(rect->width)/2 -abs(rect->height)/2) vertices)
+	   ;ur
+	   vertices = cons(list( abs(rect->width)/2  abs(rect->height)/2) vertices)
+	   ;ul
+	   vertices = cons(list(-abs(rect->width)/2  abs(rect->height)/2) vertices)
+	   ;ll (again to close the polygon)
+	   vertices = cons(list(-abs(rect->width)/2 -abs(rect->height/2)) vertices)
+	   vertice = reverse(vertices)
+	   setVertices(rect reverse(vertices))
+	   setCentroid(rect list(0.0 0.0))
+	   setRectTran(rect)
+	   getCentroid(rect)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method chamfers the upper right and left corners
+; of the rectangle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( chamfer (( rect rectangle ) arg)
+  let( (ur nur0 nur1 ul nul0 nul1 xd newVertices)
+    ur = nth(2 getVertices(rect))
+    ul = nth(3 getVertices(rect))
+    xd = abs(xCoord(ul))+abs(xCoord(ur))-2*abs(arg)
+    if( xd >= 0.0 then
+      nur0 = list( xCoord(ur)     yCoord(ur)-arg)
+      nur1 = list( xCoord(ur)-arg yCoord(ur))
+      nul0 = list( xCoord(ul)+arg yCoord(ul))
+      nul1 = list( xCoord(ul)     yCoord(ul)-arg)
+      newVertices = '()
+      ;ll (same)
+      newVertices = cons(list(-rect->width/2 -rect->height/2) newVertices)
+      ;lr (same )
+      newVertices = cons(list( rect->width/2 -rect->height/2) newVertices)
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;chamfered ur start
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;nur0
+      newVertices = cons(nur0 newVertices)
+      ;nur1
+      newVertices = cons(nur1 newVertices)
+      ;;;;;;;;;;;;;;;;;;;
+      ;chamfered ur end 
+      ;;;;;;;;;;;;;;;;;;;
+      ;ur (deleted)
+      ;newVertices = cons(list( rect->width/2  rect->height/2) newVertices)
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;chamfered ul start
+      ;;;;;;;;;;;;;;;;;;;;;;
+      ;nul0
+      newVertices = cons(nul0 newVertices)
+      ;nul1
+      newVertices = cons(nul1 newVertices)
+      ;;;;;;;;;;;;;;;;;;;
+      ;chamfered ul end 
+      ;;;;;;;;;;;;;;;;;;;
+      ;ul (deleted)
+      ;newVertices = cons(list(-rect->width/2  rect->height/2) newVertices)
+      ;ll (same)
+      newVertices = cons(list(-rect->width/2 -rect->height/2) newVertices)
+      setVertices(rect newVertices) 
+    else
+      println("ERROR(rectangle): Intersecting chamfers - operation aborted")
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method tapers the rigtht side of the rectangle
+; using chamferUr and chamferLr above.
+; Fixme: A square that is chamfered becomes a triangle
+;        which could take the place of the triangle class
+;        (centroid remains the same)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( taperLeft (( rect rectangle ) )
+  nil
+);defmethod
+
+
+
+;######################################################
+;######################################################
+;######################################################

@@ -1,6 +1,6 @@
 ;######################################################
-;# gate.ils: fet gate PCELL class. Inherits from PcellParam
-;            making it a Cadence PCELL class
+; gate.ils: fet gate PCELL class. Inherits from PcellParam
+;           making it a Cadence PCELL class
 ;######################################################
 defclass( gate (PcellParam)
   (
@@ -36,16 +36,16 @@ defmethod( draw (( gt gate ))
     setHeightInner(gt->pad 4.0)
     setWidthOutter(gt->pad 13.5)
     setHeightOutter(gt->pad 5.6)
-    setInnerLayer(gt->pad "leGatePad")
-    setOutterLayer(gt->pad "TgateTop")
-    setBsegLayer(gt->pad "capBot")
+    setInnerLayer(gt->pad "resistor")
+    setOutterLayer(gt->pad "membrane")
+    setBsegLayer(gt->pad "thick")
     setRef(gt->pad getRef(gt))
     generate(gt->pad)
     render(gt->pad)
     setWidth(gt->stem width)
     setLength(gt->stem length)
     setWidthTaper(gt->stem 2.5)
-    setLayer(gt->stem "gateStem")
+    setLayer(gt->stem "membrane")
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     render(gt->stem)
@@ -66,6 +66,6 @@ defmethod( getCoreBBox ((gt gate))
   slotValue(gt 'coreBBox)
 );defmethod
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

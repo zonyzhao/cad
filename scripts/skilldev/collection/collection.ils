@@ -1,0 +1,122 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; collection.ils: object collection class. Collections are
+;                  lists of objects that can be homegeneous or homogeneous object
+;                  lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
+;IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( collection (cadObj)
+	  (
+		( n @reader getN @writer setN )
+		( list @reader getList @writer setList )
+		( cList )		  
+	  )
+);defclass
+
+;############################################################
+; Class Constructor 
+;#############################################################
+defmethod( initializeInstance @after ((obj collection)) 
+	   obj->n = 1
+           obj->list = makeInstance( 'listfun )
+	   obj->cList = '()
+	   obj->cid="col"
+	   obj->oid=""
+);defmethod
+
+
+
+;############################################################
+; Resets the collection list to empty list
+;#############################################################
+defmethod( resetCollection ((col collection))
+       resetList(col->list)
+);defmethod
+
+;############################################################
+; Returns a reference to the collection list
+;#############################################################
+defmethod( getCollection ((col collection))
+       col->list->elems
+);defmethod
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+defmethod( genCollection ((col collection) arg)
+       for( i 0 sub1(col->n)
+       	  lappendBeg(col->list makeInstance(stringToSymbol(arg)))
+       );for
+);defmethod
+
+;############################################################
+; Generate a listing of the class the objects belong to in
+; the collection
+;#############################################################
+defmethod( class ((col collection))
+  let( (i)
+    i=0
+    col->cList = '()
+    foreach( obs getElems(col->list)
+      col->cList = cons(classOf(obs) col->cList) 
+      printf("%L\n" classOf(obs)) 
+      i++   	  
+    );foreach
+  );let
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( add ((col collection) arg)
+   addTail(col->list arg)
+);defmethod
+
+;############################################################
+; Is collection list empty
+;#############################################################
+defmethod( isEmpty ((col collection))
+    null(col->list->elems)
+);defmethod
+
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+;defmethod( genCon ((cont collection) obj)
+;  let( (  vName
+;	  estrng )
+;       for( i 0 sub1(cont->num)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;       );for
+;     );let
+;);defmethod
+
+;############################################################
+; Adds an object to the container list 
+; FIXME: WIP!
+;#############################################################
+;defmethod( add ((obj collection))
+;  let( (  vName
+;	  estrng 
+;;	  i)
+;	  sprintf(estrng strcat("i = length(" obj->cid "->objList"))
+;	  evalstring(estrng)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;	  obj->objNum=obj->objNum+1
+;     );let
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

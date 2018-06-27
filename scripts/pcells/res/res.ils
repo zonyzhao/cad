@@ -1,0 +1,36 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  list.il: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( res (PcellParam)
+	  (
+		( wid @initform defineParam("float" 1.0))	
+		( len @initform defineParam("float" 1.0))
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )	  
+	  )
+) ; defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj gate)) 
+	   obj->plRes = makeInstance( 'planarResistor )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mesa resistor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device res))
+  let( (wid len)
+	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	   ;; Formal Parameters
+	   wid = getParamValue(device 'wid)
+    	   len = getParamValue(device 'len)
+	   setWidth(device->plRes)
+	   setLength(device->plRes)
+  );let
+);defmethod

@@ -1,6 +1,6 @@
 ; pcMesaResistor.il 
 ; Code to create a Pcell super master for mesaResistor
-pcDefinePCell(list(ddGetObj("test") "mesaResistor" "layout")
+pcDefinePCell(list(ddGetObj("D91") "res" "layout")
   (
 	( wid  "float" 5)
 	( len  "float" 15)

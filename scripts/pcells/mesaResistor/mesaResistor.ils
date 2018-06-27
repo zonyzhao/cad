@@ -12,7 +12,9 @@ defclass( mesaResistor (PcellParam)
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device mesaResistor))
-  let( (wid len)
+  let( (wid len sdEnc minW minL sdConLen sdConLen sdConWid cptrn cntrn
+        mesaFilm  mesaFilmShp sdConShp sub cp cn pNet nNet pr ppShp pnShp
+	pp pp)
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	   ;; Formal Parameters
 	   wid = getParamValue(device 'wid)
@@ -21,9 +23,10 @@ defmethod( draw ((device mesaResistor))
 	   ; set the cellview reference	
 	   cv = slotValue(device 'cvId)
 	   ; Access the techfile
-	   tf = makeInstance( 'techfile)
-	   setName(tf cv~>libName)
-	   getTechFileRef(tf)
+	   ; FIXME: TF not set up for this yet
+	   ;tf = makeInstance( 'techfile)
+	   ;setName(tf cv~>libName)
+	   ;getTechFileRef(tf)
 	   ; FIME: Need to get mfg grid
            ;       from tf and check foral
            ;       parameters for proper 
@@ -36,9 +39,13 @@ defmethod( draw ((device mesaResistor))
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	   ;FIXME: getEnclosureRule("sd" "mesa")
 	   sdEnc = 1.0
-	   minW = getWidthRule(tf "sd")+2*sdEnc	   
+	   ; FIXME: TF not set up
+	   ;minW = getWidthRule(tf "sd")+2*sdEnc
+	   minW = 0.5	   
 	   minL = 3*minW
-	   sdConLen = getWidthRule(tf "sd")	
+	   ; FIXME: TF not set up
+	   ;sdConLen = getWidthRule(tf "sd")
+	   sdConLen = 1.0	
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	   ; Calculations
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,31 +54,36 @@ defmethod( draw ((device mesaResistor))
 	   cptrn = -1.0*len/2.0+sdConLen/2.0+sdEnc
 	   cntrn = -1.0*cptrn
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	   ; Resistor Body
 	   mesaFilm = makeInstance( 'rectangle )
-	   setWid(mesaFilm wid)
-	   setLen(mesaFilm len)
+	   setWidth(mesaFilm wid)
+	   setHeight(mesaFilm len)
+	   generate(mesaFilm)
+	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	   ; Resistor Contacts
 	   sdContact = makeInstance( 'rectangle )
-	   setWid(sdContact sdConWid)
-	   setLen(sdContact sdConLen)
+	   setWidth(sdContact sdConWid)
+	   setHeight(sdContact sdConLen)
+	   generate(mesaFilm)
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	   ; Mesa Film Shape
-	   mesaFilmShp = makeInstance( 'shape )
-	   setVertices(mesaFilmShp genRect(mesaFilm))
-	   setLayer(mesaFilmShp "mesa")
+	   ; Mesa Film Polygon
+	   mesaFilmShp = makeInstance( 'polygon2 )
+	   setVertices(mesaFilmShp getVertices(mesaFilm))
+	   setLayer(mesaFilmShp "resistor")
 	   setPurpose(mesaFilmShp "drawing")
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	   ; SD POS Contact Shape
-	   sdConShpP = makeInstance( 'shape )
-	   setVertices(sdConShpP genRect(sdContact))
-	   setLayer(sdConShpP "sd")
+	   sdConShp = makeInstance( 'shape )
+	   setVertices(sdConShpP getVertices(sdContact))
+	   setLayer(sdConShpP "electrode")
 	   setPurpose(sdConShpP "drawing")
 	   ; Translate POS Contact to proper position
 	   shapeTranslate(sdConShpP list(cptrn 0))
 	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	   ; SD NEG Contact Shape
 	   sdConShpN = makeInstance( 'shape )
-	   setVertices(sdConShpN genRect(sdContact))
-	   setLayer(sdConShpN "sd")
+	   setVertices(sdConShpN getVertices(sdContact))
+	   setLayer(sdConShpN "electrode")
 	   setPurpose(sdConShpN "drawing")
 	   ; Translate NEG Contact to proper position
 	   shapeTranslate(sdConShpN list(cntrn 0))

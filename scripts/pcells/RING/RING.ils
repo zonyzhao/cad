@@ -39,7 +39,7 @@ defmethod( draw ((device RING))
     ; you can replace the layer names mentioned here with the layer
     ; name present in your library
     cv = slotValue(device 'cvId)
-    ring = dbCreatePolygon(cv list("GRID" "drawing") pts)
+    ring = dbCreatePolygon(cv list("numbers" "drawing") pts)
     callNextMethod()
     );let
 );defmethod
