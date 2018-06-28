@@ -62,7 +62,8 @@ defmethod( generate (( gs gateStem ))
 );defmethod
 
 ;######################################################
-; Translates the geometry
+; FIXME: This should be in the assembly class
+; Translates the entire assembly
 ;######################################################
 defmethod( translate (( gs gateStem ) arg)
   foreach(geom getCollection(gs->geometries)

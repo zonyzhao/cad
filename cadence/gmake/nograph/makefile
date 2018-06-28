@@ -21,19 +21,19 @@ sdir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/"
 #########################################################################
 #  Package File Names
 #########################################################################
-skillDevPackage = cadObj coord2 point2 points2 polygon2 shape2 rectTran \
-                  rectTrans transform2 transformation2 geometry assembly \
-                  collection
+skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
+                  polygon2 shape2 rectTran rectTrans transform2 transformation2 \
+                  geometry assembly 
 #########################################################################
 polygons = rectangle triangle circle     
 #########################################################################
 geometries = trirect capsule  
 #########################################################################
-assemblies = gatePad gateStem 
+assemblies = gatePad gateStem planarResistor
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################
-pcells = RING CORE WRAP gate
+pcells = RING CORE WRAP gate res
 #########################################################################
 # Class Name
 #########################################################################

@@ -5,6 +5,7 @@ defclass( res (PcellParam)
 	  (
 		( wid @initform defineParam("float" 1.0))	
 		( len @initform defineParam("float" 1.0))
+		( plRes )
 		( centroid )
 		( ref @reader getRef @writer setRef )
 		( rtrans )
@@ -15,7 +16,7 @@ defclass( res (PcellParam)
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
-defmethod( initializeInstance @after ((obj gate)) 
+defmethod( initializeInstance @after ((obj res)) 
 	   obj->plRes = makeInstance( 'planarResistor )
 	   obj->centroid = makeInstance('point2)
 	   obj->rtrans = makeInstance('rectTrans)
@@ -25,12 +26,31 @@ defmethod( initializeInstance @after ((obj gate))
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device res))
-  let( (wid len)
-	   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	   ;; Formal Parameters
-	   wid = getParamValue(device 'wid)
-    	   len = getParamValue(device 'len)
-	   setWidth(device->plRes)
-	   setLength(device->plRes)
+  let( (wid len pr resRectTran )
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters
+   wid = getParamValue(device 'wid)
+   len = getParamValue(device 'len)
+   setWidth(device->plRes wid)
+   setLength(device->plRes len)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; FIXME: Get these from TF
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setMinWidth(device->plRes 1.0)
+   setMinLength(device->plRes 1.0)
+   setTermLen(device->plRes 1.0)
+   setTermEnc(device->plRes 0.5)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setBodyLayer(device->plRes "resistor")
+   setBodyPurpose(device->plRes "drawing")
+   setContLayer(device->plRes "electrode")
+   setContPurpose(device->plRes "drawing")
+   setRef(device->plRes getRef(device))
+   generate(device->plRes)
+   render(device->plRes)
+   resRectTran = getRectTran(device->plRes)
+   rtsAdd(device->rtrans resRectTran)
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   callNextMethod()
   );let
 );defmethod

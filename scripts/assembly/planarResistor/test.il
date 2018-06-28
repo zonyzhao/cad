@@ -1,4 +1,4 @@
-1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-0: Check for object Existence
 ;       and construction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,14 +12,21 @@ classOf(pr)
 ;       gate stem
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pr = makeInstance( 'planarResistor )
-setWidth(gs 65.0)
-setLength(gs 0.25)
-lib = "cadTest"
-name = "planarResistor"
+setWidth(pr 1.0)
+setLength(pr 10.0)
+setMinWidth(pr 1.0)
+setMinLength(pr 1.0)
+setTermLen(pr 1.0)
+setTermEnc(pr 0.5)
+setBodyLayer(pr "resistor")
+setBodyPurpose(pr "drawing")
+setContLayer(pr "electrode")
+setContPurpose(pr "drawing")
+generate(pr)
+lib = "D91"
+name = "resTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(pr cv)
 render(pr)
-setRef(pr->rtrans cv)
-render(pr->rtrans)
 dbSave(cv)
 dbClose(cv)

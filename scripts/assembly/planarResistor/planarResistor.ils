@@ -5,7 +5,7 @@ defclass( planarResistor (assembly)
 	  (
 		( width @reader getWidth @writer setWidth )
 		( length @reader getLength @writer setLength )
-		( minWidth @reader getMinLength @writer setMinWidth )
+		( minWidth @reader getMinWidth @writer setMinWidth )
 		( minLength @reader getMinLength @writer setMinLength )
 		( termLen @reader getTermLen @writer setTermLen )
 		( termEnc @reader getTermEnc @writer setTermEnc )
@@ -28,36 +28,38 @@ defmethod( initializeInstance @after ((obj planarResistor))
 	   obj->termLen = 1.0
 	   obj->bodyLayer = "text"
 	   obj->bodyPurpose = "drawing"
-	   obj->ContLayer = "text"
-	   obj->ContPurpose = "drawing"
+	   obj->contLayer = "text"
+	   obj->contPurpose = "drawing"
 	   obj->centroid = makeInstance( 'point2 )
 );defmethod
 ;######################################################
 ; Generates the assembly
 ;######################################################
 defmethod( generate (( res planarResistor ))
-  let((termWid cptrn cntrn body cont bTran pConTran nConTran
-       cv)	
+  let((termWid termLen bodyLen cptrn cntrn body cont bTran 
+       pConTran nConTran cv)	
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Dimension Calculations
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    termWid = width-2.0*res->termEnc 
-    ; Contact Transforms
-    cptrn = -1.0*length/2.0+res->termLen/2.0+res->termEnc
+    termWid = res->width+2.0*res->termEnc
+    termLen = res->termLen+res->termEnc
+    bodyLen = res->length+2*res->termLen 
+    ; Contact transform shifts from Centroid of resistor body
+    cptrn = -1.0*(res->termLen+res->termEnc+res->length)/2.0
     cntrn = -1.0*cptrn
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Create the resistor body
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     body = makeInstance( 'rectangle )
-    setWidth(resBody res->width)
-    setHeight(resBody res->length)
+    setWidth(body bodyLen)
+    setHeight(body res->width)
     generate(body)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Create the end contacts
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     cont = makeInstance( 'rectangle )
-    setWidth(cont electrodeConWid)
-    setHeight(cont electrodeConLen)
+    setWidth(cont termLen)
+    setHeight(cont termWid)
     generate(cont)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; body Transform
@@ -90,33 +92,22 @@ defmethod( generate (( res planarResistor ))
     ; Translate the P and N contacts to 
     ; the proper position
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(pConTran list(cptrn 0))
+    translate(nConTran list(cntrn 0))
+    ; Add the transforms to a geometry
+    ; group
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup pConTran)
+    addTransform(geomGroup nConTran )
+    rectTranUnion(geomGroup)
+    addGeometry(res geomGroup)
+    rtsAdd(res->rtrans getRectTran(geomGroup))
+    rtsUnion(res->rtrans)
 
-
-
-
-  
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; ELECTRODE POS Contact Shape
-  electrodeConShpP = makeInstance( 'shape )
-  setVertices(electrodeConShpP generate(electrodeContact))
-  setLayer(electrodeConShpP "electrode")
-  setPurpose(electrodeConShpP "drawing")
-  ; Translate POS Contact to proper position
-  shapeTranslate(electrodeConShpP list(cptrn 0))
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; ELECTRODE NEG Contact Shape
-  electrodeConShpN = makeInstance( 'shape )
-  setVertices(electrodeConShpN generate(electrodeContact))
-  setLayer(electrodeConShpN "electrode")
-  setPurpose(electrodeConShpN "drawing")
-  ; Translate NEG Contact to proper position
-  shapeTranslate(electrodeConShpN list(cntrn 
-  
-
-  ; This is the target cellview to render to ...
-  cv = getRef(res)
-
-
+  ; This is the target cellview add pins and
+  ; nets to ...
+  ;  cv = getRef(res)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Add in electrical nets and
   ; pins - Need to have net and

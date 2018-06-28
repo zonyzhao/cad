@@ -98,7 +98,427 @@ defmethod( getAttrValueByKey (( cobj cadObj ) key)
 ;############################################################
 ;############################################################
 ;############################################################
-;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  list.ils: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( listfun ()
+	  (
+		( elems @reader getElems)
+		( len )	
+		( cid )
+		( oid )	  
+	  )
+);defClass
+
+;#########################################################
+; Class Constructor
+;#########################################################
+defmethod( initializeInstance @after ((obj listfun)) 
+	   obj->elems = '()
+	   obj->len = 0
+	   obj->oid = nil
+	   obj->cid = "lst"
+);defmethod
+
+;#########################################################
+; Initializes the elems and len
+;#########################################################
+defmethod( setElems (( list listfun ) elems)
+	   list->elems = elems
+	   list->len = sub1(length(list->elems))
+	   length(elems)
+);defmethod
+
+;#########################################################
+; Updates the list length member
+;#########################################################
+defmethod( getLen (( list listfun ))
+	   list->len = sub1(length(list->elems))
+);defmethod
+
+;#########################################################
+; Returns the "head" of a list at the index position
+;#########################################################
+defmethod( head (( list listfun ) ind)
+	   let( (lis
+	   	 tmp)
+             if(ind > sub1(length(list->elems)) then
+	          nil
+             else
+	       lis=list->elems
+	       tmp='()
+	       for( i 1 ind+1
+     	     	  tmp = cons(popf(lis) tmp)
+	       );for
+	       list->len = sub1(length(list->elems))
+	       tmp=reverse(tmp)
+	     );if
+	   );let
+);defmethod
+
+;#########################################################
+; Returns the "tail" of a list at the index position.
+;#########################################################
+defmethod( tail (( list listfun ) ind)
+	   if(ind > sub1(length(list->elems)) then
+	          nil
+           else
+	     nthcdr(ind+1 list->elems)
+	   );if
+);defmethod
+
+;#########################################################
+; Replaces an item in the list at the index with the method
+; argument - list is zero indexed
+;#########################################################
+defmethod( replace (( list listfun ) @key (ind 0) (val 0)) 
+	   let( (tmp0 tmp1)
+	   	if(ind > sub1(length(list->elems)) then
+	          nil
+		else
+		  tmp0 = head(list sub1(ind))
+		  tmp1 = rplaca(tail(list sub1(ind)) val)
+		  list->len = sub1(length(list->elems))
+		  list->elems = append(tmp0 tmp1)
+		);if
+	   );let
+);defmethod
+
+;#########################################################
+; Inserts an item in the list at the index with the method
+; argument - list is 0 indexed
+;#########################################################
+defmethod( insert (( list listfun ) @key (ind 0) (val 0))
+	   let( (tmp0 tmp1)
+	   	if(ind > sub1(length(list->elems)) then
+	          nil
+		else
+	   	  tmp0 = head(list ind)
+		  tmp1 = cons(val tail(list ind))
+		  list->elems = append(tmp0 tmp1)
+		  list->len = sub1(length(list->elems))
+		  list->elems
+		);if
+	  );let
+);defmethod
+
+;#########################################################
+; Appends to end of list 
+;#########################################################
+defmethod( addTail (( list listfun ) elem)
+	   list->elems = append1(list->elems elem )
+);defmethod
+
+;#########################################################
+; Appends to beginning of list 
+;#########################################################
+defmethod( addHead (( list listfun ) elem)
+	   list->elems = cons(elem list->elems)
+);defmethod
+
+;#########################################################
+; Auxilliarry method Redundant item remover in a list (needs to be a flat list)
+; If a recursive list use recursive flattenin method
+;#########################################################
+defmethod( removeRedundantItems (( list listfun ) @key elist rlist)
+  prog( (item retList)
+    retList = rlist
+    printf("INFO: Entry List: %L\n" elist)
+    if(length(elist)>0 then
+      item = nth(0 elist)
+      printf("INFO: Adding Item: %s\n" item)
+      retList = cons(item retList)
+      retList = append(removeRedundantItems(list ?elist remove(item elist) ?rlist '()) retList) 
+      return(retList)
+    else
+      println("INFO: List expired. Redundancy Removed.")
+      return(retList)	
+    );if
+  );prog
+);defmethod
+
+;#########################################################
+; Remove Redundant Items - uses recursive method "removeRedundantItems"
+;#########################################################
+defmethod( removeRedundant (( list listfun ))
+  list->elems = removeRedundantItems(list ?elist list->elems ?rlist '())
+);defmethod
+
+;#########################################################
+; Auxilliary method for flatting a recursive list
+;#########################################################
+defmethod( flattenRecurseList (( list listfun ) @key hlist flist)
+  prog( (retList)
+    retList = '()
+    printf("Recursed List: %L\n" flist)
+    if(listp(hlist) then
+      if( length(hlist) != 1 then
+        for( i 0 sub1(length(hlist))
+          if( listp(nth(i hlist)) then
+	    printf("Detected List %L\n", nth(i hlist))
+	    retList = append(flattenRecurseList(list ?hlist nth(i hlist) ?flist flist) retList)
+	  else
+            printf("Nested Layer added %L\n", nth(i hlist))
+	    retList = cons(nth(i hlist) retList)		    
+	  );if
+        );for
+        return(append(flist retList))
+      else
+        println("Nested List Detected")
+        retList = append(flattenRecurseList(list ?hlist nth(0 hlist) ?flist flist) retList)
+        return(retList)
+      );if
+      else 
+        return(cons(hlist retList))
+    );if
+  );prog
+);defmethod
+
+;#########################################################
+; Flattens a Recursive List - uses recursive method "flattenRecurseList"
+;#########################################################
+defmethod( flattenRecursive (( list listfun ))
+  list->elems = flattenRecurseList(list ?hlist list->elems ?flist '())
+);defmethod
+
+;#########################################################
+; Intersection of two lists
+;#########################################################
+defmethod( intersection (( list listfun ) lst)
+  setof( element list->elems
+  	 member( element lst )
+  );setof
+);defmethod
+
+;#########################################################
+; Removes one  elem from the class member's list
+;#########################################################
+defmethod( removeElem (( list listfun ) arg)
+  list->elems = remove(arg list->elems)
+  ;printf("%L\n" list->elems)
+);defmethod
+
+;#########################################################
+; Removes elems of arg list from the class member's list
+;#########################################################
+defmethod( removeElems (( list listfun ) arglist)
+  let( (i)
+    i=0
+    foreach(el arglist
+      printf("Removing %L\n" el)
+      removeElem(list el)
+      i++
+    );foreach
+    printf("Removed %d elems from list\n" i)
+    list->elems
+  );let
+);defmethod
+
+;#########################################################
+; Intersection "NOT" of two lists
+; FIXME: Not working correctly
+;#########################################################
+;defmethod( intersectionNot (( list listfun ) lst)
+;  let( (ilist nlist)
+;   nlist = lst
+;   ;first find the intersection of the two lists
+;   ilist = intersection(list lst)
+;   ; now remove the list intersection elems from the input
+;   ; arg's elems
+;   foreach(el ilist
+;     printf("Removing intersecting element %s\n" el)
+;     nlist = remove(el nlist)
+;     ;printf("%L\n" nlist)
+;   );foreach
+;   nlist
+;  );let
+;);defmethod
+
+;#########################################################
+; Union of two lists
+; FIXME: Does not return proper union - repeated elems!!
+; proper union should represent the concatenation of
+; the two lists with redundant elems removed
+; 1.) Append the two lists 
+; 2.) remove redundant elems
+;#########################################################
+defmethod( union (( list listfun ) lst)
+  list->elems = nconc(
+	setof( element lst
+  	        member( element list->elems )
+  	);setof
+  );nconc
+  list->elems
+);defmethod
+
+;#########################################################
+; Is the elem arg an elem of the class memeber list
+; returns nil if not in list or the index of the
+; arguments position in the class member's list
+;#########################################################
+defmethod( isElem (( list listfun ) elem)
+  lindex(list->elems elem)
+);defmethod
+
+;#########################################################
+; Remove redundant items from a flat list
+;#########################################################
+;defmethod( removeRedundantFlat (( list listfun ))
+;  let( (rlist nlist)
+;       rlist = list->elems
+;       nlist = '()
+;       foreach(el list->elems
+;         
+;;         nlist = cons(el nlist)
+ ;        tlist = remove(el tlist)
+;       );
+;       list->elems = tlist
+;  );let
+;);defmethod
+
+;#########################################################
+; Checks to see if the arg is a Disembodied Property List
+; The list needs to be odd and start with nil
+;#########################################################
+defmethod( isDPL (( list listfun ) arg)
+  dplp(arg)
+);defmethod
+
+;#########################################################
+; Resets the list contents to empy list
+;#########################################################
+defmethod( resetList (( list listfun ))
+  list->elems = '()
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; collection.ils: object collection class. Collections are
+;                  lists of objects that can be homegeneous or homogeneous object
+;                  lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
+;IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( collection (cadObj)
+	  (
+		( n @reader getN @writer setN )
+		( list @reader getList @writer setList )
+		( cList )		  
+	  )
+);defclass
+
+;############################################################
+; Class Constructor 
+;#############################################################
+defmethod( initializeInstance @after ((obj collection)) 
+	   obj->n = 1
+           obj->list = makeInstance( 'listfun )
+	   obj->cList = '()
+	   obj->cid="col"
+	   obj->oid=""
+);defmethod
+
+
+
+;############################################################
+; Resets the collection list to empty list
+;#############################################################
+defmethod( resetCollection ((col collection))
+       resetList(col->list)
+);defmethod
+
+;############################################################
+; Returns a reference to the collection list
+;#############################################################
+defmethod( getCollection ((col collection))
+       col->list->elems
+);defmethod
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+defmethod( genCollection ((col collection) arg)
+       for( i 0 sub1(col->n)
+       	  lappendBeg(col->list makeInstance(stringToSymbol(arg)))
+       );for
+);defmethod
+
+;############################################################
+; Generate a listing of the class the objects belong to in
+; the collection
+;#############################################################
+defmethod( class ((col collection))
+  let( (i)
+    i=0
+    col->cList = '()
+    foreach( obs getElems(col->list)
+      col->cList = cons(classOf(obs) col->cList) 
+      printf("%L\n" classOf(obs)) 
+      i++   	  
+    );foreach
+  );let
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( add ((col collection) arg)
+   addTail(col->list arg)
+);defmethod
+
+;############################################################
+; Is collection list empty
+;#############################################################
+defmethod( isEmpty ((col collection))
+    null(col->list->elems)
+);defmethod
+
+
+;############################################################
+; Creates a list of N (objNum) unpopulated lib objects 
+; in sequential order 
+;#############################################################
+;defmethod( genCon ((cont collection) obj)
+;  let( (  vName
+;	  estrng )
+;       for( i 0 sub1(cont->num)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;       );for
+;     );let
+;);defmethod
+
+;############################################################
+; Adds an object to the container list 
+; FIXME: WIP!
+;#############################################################
+;defmethod( add ((obj collection))
+;  let( (  vName
+;	  estrng 
+;;	  i)
+;	  sprintf(estrng strcat("i = length(" obj->cid "->objList"))
+;	  evalstring(estrng)
+;	  sprintf(vName "obj%d" i)
+;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
+;	  evalstring(estrng)
+;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
+;	  evalstring(estrng)
+;	  obj->objNum=obj->objNum+1
+;     );let
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
 ;# 2-D Coordinate Class
 ;######################################################
 defclass( coord2 ()
@@ -403,6 +823,27 @@ defmethod( mirrorx ((pts points2))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; rotation2: Generic Point Class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( rotation2 ()
+	  (
+	  	( radius @reader getRadius @writer setRadius)
+	  	( theta @reader getTheta @writer setTheta)
+	  )				  
+) ; defclass
+;#####################################################
+;
+;#####################################################
+defmethod( initializeInstance @after ((obj rotation2)) 
+	   obj->radius=nil
+	   obj->theta=nil	   
+)
+;######################################################
+;######################################################
+;######################################################
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  polygon2.ils: Layout Polygon Object 
@@ -909,354 +1350,6 @@ defmethod( isPointInside (( poly polygon2 ) pnt )
 defmethod( isRectangle (( poly polygon2 ))
   nil
 )
-
-;###############################################################################
-;###############################################################################
-;###############################################################################
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  shape2.ils: Layout Shape Object 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( shape2 (cadObj)
-	  (	
-	  	( geometries )	
-		( layer @writer setLayer @reader getLayer )
-		( purpose @writer setPurpose @reader getPurpose )
-		( dbg )
-		( mfg )				
-	  )
-) ; defClass
-
-;#####################################################
-; This method initializes the class
-;#####################################################
-defmethod( initializeInstance @after ((obj shape2))
-	   obj->geometries = makeInstance( 'collection )  
-	   obj->layer = nil 
-	   obj->purpose = nil 
-	   obj->dbg = nil
-	   obj->mfg = nil	     
-);defmethod
-
-;#####################################################
-; Add polygon to polygons collection of the shape2
-;#####################################################
-defmethod( addGeometry (( shp shape2 ) arg)
-  add(shp->geometries arg)
-);defmethod
-
-;#####################################################
-; Shape2 is the "foundation" Rendering Class for all
-; higher "layer" classes above shape2 - assembly, layer,
-; stackup and layout ...
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Renders the shape2 using the contained geometries
-; in the the focus cv reference
-;#####################################################
-defmethod( render (( shp shape2 ))
-  if( !null(shp->geometries->list) then
-    foreach( geom shp->geometries->list->elems
-      foreach( polygon geom->polygons->list->elems
-        printf("INFO(shape2): Rendering Shape2 Polygon\n")
-        dbCreatePolygon(shp->ref
-	     	        list(shp->layer shp->purpose)
-		        polygon->vertices
-		        );dbCreatePolygon
-      );foreach
-    );foreach
-  else
-    printf("ERROR(shape2): Shape2 Null Vertices - ")
- );if   
-);defmethod
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; FIXME: Need to update code below to process multiple 
-;        polygons in the new polygons collection 
-;        member. Most of this code should drop down
-;        into the geometry and polygon2 class definitions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;#####################################################
-; Reset the shape2's transform
-;#####################################################
-;defmethod( shape2Reset (( shp shape2 ))
-;	   shp->transform->vertices = shp->vertices
-;	   shp->transform->area = shp->area
-;	   shp->transform->centroid->x = shp->centroid->x
-;	   shp->transform->centroid->y = shp->centroid->y
-;);defmethod
-
-;#####################################################
-; This method sets the virtex list the the vertices
-; argument
-;#####################################################
-defmethod( setVertices (( shp shape2 ) vertices)
-	   shp->vertices = vertices
-	   shp->transform->vertices = vertices
-	   area(shp)
-	   shp->transform->area = shp->area
-	   centroid(shp)
-	   shp->transform->centroid->x = shp->centroid->x
-	   shp->transform->centroid->y = shp->centroid->y
-	   length(shp->transform->vertices)
-);defmethod
-
-;#####################################################
-; This method works on an existing Cadence layout, and
-; creates polygons for all layout shape2s
-;#####################################################
-;
-; FIXME: This needs to go into a new "snapshot" class
-;
-;defmethod( genVertices (( shp shape2 ))
-;	   let( (bbox
-;	   	 v0
-;		 v1
-;		 v2
-;		 v3)
-;	   	shp->type = shp->ref~>objType 
-;		shp->vertices='()
-;		shp->transform->vertices='()
-;		case( shp~>ref~>objType 
-;		  ( ( "polygon" )
-;		    println("polygon detected")
-;	   	    foreach(point shp~>ref~>points
-;	      	      shp~>vertices=cons(point shp~>vertices)
-;		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
-;	    	    )	     
-;	   	  );polygon
-;		  ( ( "dot" )
-;		    println("dot detected")
-;	   	    foreach(point shp~>ref~>points
-;	      	      shp~>vertices=cons(point shp~>vertices)
-;		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
-;	    	    )	     
-;	   	  );dot
-;		  ( ( "line" )
-;		    println("line detected")
-;		    bbox=shp~>ref~>bBox
-;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
-;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
-;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
-;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
-;		    shp->vertices=list(v0 v1 v2 v3)
-;		    shp->transform->vertices=list(v0 v1 v2 v3)
-;		    shp->layer = shp~>ref~>layerName
-;		    shp->purpose = shp~>ref~>purpose
-;		    shp->type = shp~>ref~>objType
-;		  );line
-;		  ( ( "rect" )
-;		    println("rect dectected")
-;		    bbox=shp~>ref~>bBox
-;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
-;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
-;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
-;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
-;		    shp->vertices=list(v0 v1 v2 v3)
-;		    shp->transform->vertices=list(v0 v1 v2 v3)
-;		    shp->layer = shp~>ref~>layerName
-;		    shp->purpose = shp~>ref~>purpose
-;		    shp->type = shp~>ref~>objType
-;		  );rect
-;		  ( ( "path" )
-;		    println("path detected")
-;		    bbox=shp~>ref~>bBox
-;		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
-;		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
-;		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
-;		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
-;		    shp->vertices=list(v0 v1 v2 v3)
-;		    shp->transform->vertices=list(v0 v1 v2 v3)
-;		    shp->layer = shp~>ref~>layerName
-;		    shp->purpose = shp~>ref~>purpose
-;		    shp->type = shp~>ref~>objType
-;		  );path
-;		  ( "label"
-;		    println("label detected")
-;		    shp->vertices=nil
-;		  );label
-;		  ( t
-;			error( "ERROR SHAPE2: Encountered unknown shape2" )
-;			return()
-;		  );t
-;		);case	
-;		area(shp)
-;		shp->transform->area = shp->area
-;		centroid(shp)
-;		shp->transform->centroid->x = shp->centroid->x
-;		shp->transform->centroid->y = shp->centroid->y
-;		list(shp->transform->centroid->x shp->transform->centroid->y)
-;	   );let	   
-;);defmethod
-
-;#####################################################
-; Translates the shape2's transform
-;#####################################################
-; Note: Class no longer inherits from polygon2
-;defmethod( shape2Translate (( shp shape2 ) trn)
-;	   if( listp(trn) then
-;	   ;FIXME: Need to check that inputs are in on grid increments
-;	     translate(shp->transform trn)
-;	     list(shp->transform->centroid->x shp->transform->centroid->y)
-;	   else
-;	      println("ERROR(shape2): argument must be a coordinate list")
-;           );if
-;);defmethod
-
-;#####################################################
-; Scales the shape2's transform
-;#####################################################
-; NOTE: Class no longer inherits from polygon2
-;defmethod( shape2Scale (( shp shape2 ) arg)
-;	   ;FIXME: Need to check that inputs are in on grid increments
-;	   scale(shp->transform arg)
-;	   list(shp->transform->centroid->x shp->transform->centroid->y)
-;);defmethod
-
-;#####################################################
-; Rotate the shape2's transform (rot is in degrees
-; with positive being counter-clockwise about the origin)
-;#####################################################
-; Note: Class no longer inherits from polygon2
-;defmethod( shape2Rotate (( shp shape2 ) rot)
-;  ;FIXME: Need to check that input arg in on grid increments
-;  rotate(shp->transform rot/180*3.14159)
-;);defmethod
-
-;#####################################################
-; Returns the transform's centroid
-;#####################################################
-;  Note: Class no longer inherits from polygon2
-;defmethod( shape2Centroid (( shp shape2 ))
-;	   list( shp->transform->centroid->x shp->transform->centroid->y)
-;);defmethod
-
-;#####################################################
-; Returns the transform's area
-;#####################################################
-; Note: Class no longer inherits from polygon2
-;defmethod( shape2Area (( shp shape2 ))
-;	   shp->transform->area 
-;);defmethod
-
-;#####################################################
-;
-;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnDbg (( shp shape2 ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
-;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
-
-;#####################################################
-;
-;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnMfg (( shp shape2 ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
-;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
-
-;#####################################################
-; Center the shape2's transform centroid to align to the 
-; origin
-;#####################################################
-;defmethod( shape2Center (( shp shape2 ))
-;	   let( (delx dely)
-;	   	delx = shp->transform->origin->x - shp->centroid->x
-;	   	dely = shp->transform->origin->y - shp->centroid->y 
-;	   	shape2Translate(shp list(delx dely))
-;	   	shp->transform->centroid->x = shp->transform->origin->x
-;	   	shp->transform->centroid->y = shp->transform->origin->y
-;		list(shp->transform->centroid->x shp->transform->centroid->y)
-;	   );let
-;);defmethod
-
-;#####################################################
-; Generate a bounding box for the shape2
-;#####################################################
-;defmethod( genBbox (( shp shape2 ))
-;	   nil
-;);defmethod
-
-;#####################################################
-; Does the bbox exactly match the veritices. If it
-; does the bbox is a rectangle
-;#####################################################
-;defmethod( isRect (( shp shape2 ))
-;	   nil
-;);defmethod
-
-;#####################################################
-; Merge the two shape2s into one 
-; argument is another shape2 reference
-;#####################################################
-;defmethod( mergeShape2s (( shp shape2 ) arg)
-;	  shp->ref = leMergeShape2s(list(shp->ref arg))
-;);defmethod
-
-;#####################################################
-; Union of two shape2s
-;#####################################################
-;defmethod( unionShape2s (( shp shape2 ) arg)
-;	  leOr(shp->ref shp->ref arg)
-;);defmethod
-
-;#####################################################
-; Union minus intersection of two shape2s
-;#####################################################
-;defmethod( intersectionShape2s (( shp shape2 ) arg)
-;	  leXor(shp->ref shp->ref arg)
-;);defmethod
-
-;#####################################################
-; Union minus intersection of two shape2s
-;#####################################################
-;defmethod( unionMinusintersectionShape2s (( shp shape2 ) arg)
-;	   leXor(shp->ref shp->ref arg)
-;);defmethod
-
-;#####################################################
-; Fiter out redundant adjacent vertexes
-;#####################################################
-;defmethod( filter (( shp shape2 ) )
-;	   nil
-;);defmethod
-
-;#####################################################
-; Determines if two shape2s have collided. the second
-; shape2 is arg
-;#####################################################
-;defmethod( collide (( shp shape2 ) arg)
-;  if( null(dbStraddle(shp->ref "text" shp->ref  arg))
-;    nil
-;  else	       
-;    t
-;  );if
-;);defmethod
 
 ;###############################################################################
 ;###############################################################################
@@ -2147,21 +2240,6 @@ defmethod( setShapesOnLayers (( ass assembly ))
 );defmethod
 
 ;#####################################################
-; Renders the layer stackup consisting of the layer
-; shapes of the assembly
-;#####################################################
-defmethod( renderAssembly (( ass assembly ))
-  if( !null(arg) then
-    setLayers(ass)
-    setShapesOnLayers(ass)
-    renderStack(ass)
-  else
-    printf("ERROR: Cannot add null shape" )	       
-    t
-  );if
-);defmethod
-
-;#####################################################
 ; Translates the assembly
 ;#####################################################
 defmethod( translate (( ass assembly ) arg )
@@ -2190,6 +2268,21 @@ defmethod( rotate (( ass assembly ) arg )
 ; Renders the layer stackup consisting of the layer
 ; shapes of the assembly
 ;#####################################################
+defmethod( renderAssembly (( ass assembly ))
+  if( !null(arg) then
+    setLayers(ass)
+    setShapesOnLayers(ass)
+    renderStack(ass)
+  else
+    printf("ERROR: Cannot add null shape" )	       
+    t
+  );if
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
 defmethod( render (( ass assembly ))
   if( !isEmpty(ass->geometries) then
     foreach( geom getCollection(ass->geometries)
@@ -2208,128 +2301,7 @@ defmethod( render (( ass assembly ))
 ;######################################################
 ;######################################################
 ;######################################################
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; collection.ils: object collection class. Collections are
-;                  lists of objects that can be homegeneous or homogeneous object
-;                  lists
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
-;IQ score is 100 (best is 100).
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( collection (cadObj)
-	  (
-		( n @reader getN @writer setN )
-		( list @reader getList @writer setList )
-		( cList )		  
-	  )
-);defclass
-
-;############################################################
-; Class Constructor 
-;#############################################################
-defmethod( initializeInstance @after ((obj collection)) 
-	   obj->n = 1
-           obj->list = makeInstance( 'listfun )
-	   obj->cList = '()
-	   obj->cid="col"
-	   obj->oid=""
-);defmethod
-
-
-
-;############################################################
-; Resets the collection list to empty list
-;#############################################################
-defmethod( resetCollection ((col collection))
-       resetList(col->list)
-);defmethod
-
-;############################################################
-; Returns a reference to the collection list
-;#############################################################
-defmethod( getCollection ((col collection))
-       col->list->elems
-);defmethod
-
-;############################################################
-; Creates a list of N (objNum) unpopulated lib objects 
-; in sequential order 
-;#############################################################
-defmethod( genCollection ((col collection) arg)
-       for( i 0 sub1(col->n)
-       	  lappendBeg(col->list makeInstance(stringToSymbol(arg)))
-       );for
-);defmethod
-
-;############################################################
-; Generate a listing of the class the objects belong to in
-; the collection
-;#############################################################
-defmethod( class ((col collection))
-  let( (i)
-    i=0
-    col->cList = '()
-    foreach( obs getElems(col->list)
-      col->cList = cons(classOf(obs) col->cList) 
-      printf("%L\n" classOf(obs)) 
-      i++   	  
-    );foreach
-  );let
-);defmethod
-
-;############################################################
-; Add and object to the collection's list
-;#############################################################
-defmethod( add ((col collection) arg)
-   addTail(col->list arg)
-);defmethod
-
-;############################################################
-; Is collection list empty
-;#############################################################
-defmethod( isEmpty ((col collection))
-    null(col->list->elems)
-);defmethod
-
-
-;############################################################
-; Creates a list of N (objNum) unpopulated lib objects 
-; in sequential order 
-;#############################################################
-;defmethod( genCon ((cont collection) obj)
-;  let( (  vName
-;	  estrng )
-;       for( i 0 sub1(cont->num)
-;	  sprintf(vName "obj%d" i)
-;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
-;	  evalstring(estrng)
-;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
-;	  evalstring(estrng)
-;       );for
-;     );let
-;);defmethod
-
-;############################################################
-; Adds an object to the container list 
-; FIXME: WIP!
-;#############################################################
-;defmethod( add ((obj collection))
-;  let( (  vName
-;	  estrng 
-;;	  i)
-;	  sprintf(estrng strcat("i = length(" obj->cid "->objList"))
-;	  evalstring(estrng)
-;	  sprintf(vName "obj%d" i)
-;	  sprintf(estrng strcat(vName "=makeInstance( '" obj->cid " )"))
-;	  evalstring(estrng)
-;	  sprintf(estrng strcat(obj->cid "->objList=cons(" vName " " obj->cid "->objList)"))
-;	  evalstring(estrng)
-;	  obj->objNum=obj->objNum+1
-;     );let
-;);defmethod
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
+;######################################################
 ;# rectangle.ils: Rectangle class
 ;######################################################
 defclass( rectangle (polygon2)
@@ -3121,7 +3093,8 @@ defmethod( generate (( gs gateStem ))
 );defmethod
 
 ;######################################################
-; Translates the geometry
+; FIXME: This should be in the assembly class
+; Translates the entire assembly
 ;######################################################
 defmethod( translate (( gs gateStem ) arg)
   foreach(geom getCollection(gs->geometries)
@@ -3130,7 +3103,168 @@ defmethod( translate (( gs gateStem ) arg)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; generic.ils: generic functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; planarResistor.il: Base planar resistor class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( planarResistor (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( minWidth @reader getMinWidth @writer setMinWidth )
+		( minLength @reader getMinLength @writer setMinLength )
+		( termLen @reader getTermLen @writer setTermLen )
+		( termEnc @reader getTermEnc @writer setTermEnc )
+		( bodyLayer @reader getBodyLayer @writer setBodyLayer )
+	  	( bodyPurpose @reader getBodyPurpose @writer setBodyPurpose )
+		( contLayer @reader getContLayer @writer setContLayer )
+	  	( contPurpose @reader getContPurpose @writer setContPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj planarResistor)) 
+	   obj->width  = 1.0
+           obj->length = 1.0
+	   obj->minWidth = 0.5
+	   obj->minLength = 0.5
+	   obj->termEnc = 0.5
+	   obj->termLen = 1.0
+	   obj->bodyLayer = "text"
+	   obj->bodyPurpose = "drawing"
+	   obj->contLayer = "text"
+	   obj->contPurpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( res planarResistor ))
+  let((termWid termLen bodyLen cptrn cntrn body cont bTran 
+       pConTran nConTran cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    termWid = res->width+2.0*res->termEnc
+    termLen = res->termLen+res->termEnc
+    bodyLen = res->length+2*res->termLen 
+    ; Contact transform shifts from Centroid of resistor body
+    cptrn = -1.0*(res->termLen+res->termEnc+res->length)/2.0
+    cntrn = -1.0*cptrn
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the resistor body
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    body = makeInstance( 'rectangle )
+    setWidth(body bodyLen)
+    setHeight(body res->width)
+    generate(body)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the end contacts
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    cont = makeInstance( 'rectangle )
+    setWidth(cont termLen)
+    setHeight(cont termWid)
+    generate(cont)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; body Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(body))
+    setCentroid(bTran getCentroid(body))
+    cloneRectTran(bTran)
+    setLayer(bTran getBodyLayer(res))
+    setPurpose(bTran getBodyPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; P Contact Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pConTran = makeInstance( 'transform2 )
+    setVertices(pConTran getVertices(cont))
+    setCentroid(pConTran getCentroid(cont))
+    cloneRectTran(pConTran)
+    setLayer(pConTran getContLayer(res))
+    setPurpose(pConTran getContPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; N Contact Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    nConTran = makeInstance( 'transform2 )
+    setVertices(nConTran getVertices(cont))
+    setCentroid(nConTran getCentroid(cont))
+    cloneRectTran(nConTran)
+    setLayer(nConTran getContLayer(res))
+    setPurpose(nConTran getContPurpose(res))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate the P and N contacts to 
+    ; the proper position
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(pConTran list(cptrn 0))
+    translate(nConTran list(cntrn 0))
+    ; Add the transforms to a geometry
+    ; group
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup pConTran)
+    addTransform(geomGroup nConTran )
+    rectTranUnion(geomGroup)
+    addGeometry(res geomGroup)
+    rtsAdd(res->rtrans getRectTran(geomGroup))
+    rtsUnion(res->rtrans)
+
+  ; This is the target cellview add pins and
+  ; nets to ...
+  ;  cv = getRef(res)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in electrical nets and
+  ; pins - Need to have net and
+  ; purposes set on target layers
+  ; in TF
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  pNet = dbMakeNet(cv "POS")
+;  dbCreateTerm(pNet "P" "inputOutput")
+;  nNet = dbMakeNet(cv "NEG")
+;  dbCreateTerm(nNet "N" "inputOutput")
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Make a pin rectangle
+;  pr = makeInstance( 'rectangle )
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in POS pin shape
+  ; FIXME: Replace shape with new  flow
+;  ppShp = makeInstance( 'shape )
+;  setVertices(ppShp genRect(pr))
+;  setLayer(ppShp "sd")
+;  setPurpose(ppShp "net")
+  ; Translate POS Pin Shape to proper position
+;  shapeTranslate(ppShp list(cptrn  0))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add in POS pin shape
+  ; FIXME: Replace shape with new  flow
+;  pnShp = makeInstance( 'shape )
+;  setVertices(pnShp genRect(pr))
+;  setLayer(pnShp "sd")	
+;  setPurpose(pnShp "net")
+  ; Translate POS Pin Shape to proper position
+;  shapeTranslate(pnShp list(cntrn  0))
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Set the shape references to the
+  ; cv
+;  setCvRef(ppShp  cv)
+;  setCvRef(pnShp  cv)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Render the two pin shapes
+;  pp = render(ppShp)
+;  pn = render(pnShp)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Add Electrical Pins to the Pin Shapes
+;  dbCreatePin(pNet pp "pp")
+;  dbCreatePin(nNet pp "pn")
+  
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+; generic.ils: generic functions
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function
@@ -3145,7 +3279,9 @@ defgeneric( draw (devicd)
 ; the pcCellView variable using in the a standard SKILL Pcell
 ;..................................................................
 ; cvId will hold the pcCellView reference which is set in the 
-; extremely important "setPcellParams" method
+; extremely important "setPcellParams" method.
+; The cvId is the reference to the Pcell Supermaster Cellview
+; in the Pcell Libarary
 ;#################################################################
 defclass( PcellParam ()
   (
@@ -3155,11 +3291,11 @@ defclass( PcellParam ()
 
 ;#################################################################
 ; Transfers the Pcell parameters from the super master cell view to 
-; a Pcell device's slots.
+; a Pcell API Call device's slots.
 ;
-; input argument cv is the built in "pcCellView" class object's
+; Input argument cv is the built in "pcCellView" class object's
 ; reference . The "pcCellView" is the standard variable, representing
-; the PCELL master ID,  used in a standard SKILL Pcell.
+; the PCELL master ID,  used in a standard SKILL++ Pcell.
 ; 
 ; NOTE: 
 ; This important method does the mapping of the desired user
@@ -3231,7 +3367,6 @@ defmethod( getPcellParams ((device PcellParam) )
 	     );foreach
   );let
 );defmethod
-
 ;#################################################################
 ;#################################################################
 ;#################################################################;############################################################################
@@ -3436,4 +3571,59 @@ defmethod( getCoreBBox ((gt gate))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  list.il: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( res (PcellParam)
+	  (
+		( wid @initform defineParam("float" 1.0))	
+		( len @initform defineParam("float" 1.0))
+		( plRes )
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )	  
+	  )
+) ; defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj res)) 
+	   obj->plRes = makeInstance( 'planarResistor )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mesa resistor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device res))
+  let( (wid len pr resRectTran )
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters
+   wid = getParamValue(device 'wid)
+   len = getParamValue(device 'len)
+   setWidth(device->plRes wid)
+   setLength(device->plRes len)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; FIXME: Get these from TF
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setMinWidth(device->plRes 1.0)
+   setMinLength(device->plRes 1.0)
+   setTermLen(device->plRes 1.0)
+   setTermEnc(device->plRes 0.5)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setBodyLayer(device->plRes "resistor")
+   setBodyPurpose(device->plRes "drawing")
+   setContLayer(device->plRes "electrode")
+   setContPurpose(device->plRes "drawing")
+   setRef(device->plRes getRef(device))
+   generate(device->plRes)
+   render(device->plRes)
+   resRectTran = getRectTran(device->plRes)
+   rtsAdd(device->rtrans resRectTran)
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   callNextMethod()
+  );let
+);defmethod

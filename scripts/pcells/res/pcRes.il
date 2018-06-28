@@ -4,7 +4,13 @@
 ;  for creating the MEMS resistor
 ;  supermaster Pcell Cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Code to create a Pcell super master for MEMS resistor
+; FIXME:
+;       1.) Need to generate the resistor on the grid
+;           defined in the TF
+;       2.) Need guard rails for minLen and minWid as
+;           defined in the TF
+;       3.) Need contact end length and enclosures as
+;           defined in the TF
 pcDefinePCell(
   list(ddGetObj("D91") "res" "layout")
   (

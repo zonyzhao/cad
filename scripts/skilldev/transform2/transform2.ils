@@ -75,7 +75,11 @@ defmethod( render (( tran transform2 ))
         foreach( point getCollection(tran->vertices->points)
 	  verts = cons(getCoord(point) verts)
         );foreach
-        println("INFO(transform2): Rendering Transform")
+	println("INFO(transform2): Rendering Transform")
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;println is ok in a pcell, but printf may break it :(
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;printf("INFO(transform2): Rendering Transform: Layers %s, Lib %s, Cell %s", tran->layer tran->ref~>libName tran->ref~>cellName)
         dbCreatePolygon(tran->ref
 	     	        list(tran->layer tran->purpose)
 		        verts

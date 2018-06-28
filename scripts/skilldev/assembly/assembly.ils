@@ -99,21 +99,6 @@ defmethod( setShapesOnLayers (( ass assembly ))
 );defmethod
 
 ;#####################################################
-; Renders the layer stackup consisting of the layer
-; shapes of the assembly
-;#####################################################
-defmethod( renderAssembly (( ass assembly ))
-  if( !null(arg) then
-    setLayers(ass)
-    setShapesOnLayers(ass)
-    renderStack(ass)
-  else
-    printf("ERROR: Cannot add null shape" )	       
-    t
-  );if
-);defmethod
-
-;#####################################################
 ; Translates the assembly
 ;#####################################################
 defmethod( translate (( ass assembly ) arg )
@@ -136,6 +121,21 @@ defmethod( rotate (( ass assembly ) arg )
       rotate(geom arg)
     );foreach
     rotate(geom->rtran arg)
+);defmethod
+
+;#####################################################
+; Renders the layer stackup consisting of the layer
+; shapes of the assembly
+;#####################################################
+defmethod( renderAssembly (( ass assembly ))
+  if( !null(arg) then
+    setLayers(ass)
+    setShapesOnLayers(ass)
+    renderStack(ass)
+  else
+    printf("ERROR: Cannot add null shape" )	       
+    t
+  );if
 );defmethod
 
 ;#####################################################
