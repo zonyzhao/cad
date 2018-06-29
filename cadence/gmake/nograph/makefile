@@ -25,7 +25,7 @@ skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   polygon2 shape2 rectTran rectTrans transform2 transformation2 \
                   geometry assembly 
 #########################################################################
-polygons = rectangle triangle circle     
+polygons = rectangle triangle circle frame    
 #########################################################################
 geometries = trirect capsule  
 #########################################################################

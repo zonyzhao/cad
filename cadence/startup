@@ -5,8 +5,8 @@ setenv REFLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
 setenv PROCLIBDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa
 setenv PROJDIR ~/cad_layout_61
 setenv DESDIR ~/deslibs_oa
-setenv SETUPDIRRAY /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/raytheon/trunk
-setenv SETUPDIRDEF /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/default/trunk
+setenv SETUPDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/raytheon/trunk
+setenv SETUPDIR0 /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/env/default/trunk
 setenv EDITOR /usr/bin/emacs
 setenv TERM konsole
 setenv CDS_CMI_COMPLEVEL 0
@@ -19,18 +19,23 @@ setenv CDS_CMI_COMPLEVEL 0
 # Users can modify the local .cdsinit and .cdsenv
 # to their preferences and they will not get 
 # overwritten
+
 if !(-d $PROJDIR) then
+  set bko = R
+  echo "First time setup. Please Select bindkey option: C: Cadence R: Raytheon"
+  set bko = $<
   mkdir $PROJDIR
   cp $SETUPDIR/cds.lib $PROJDIR/cds.lib
   cp $SETUPDIR/display.drf $PROJDIR/display.drf
-#  if $SETUPENV == default then
-#    cp $SETUPDIRDEF/.cdsinit $PROJDIR/.cdsinit
-#    cp $SETUPDIRDEF/.cdsenv $PROJDIR/.cdsenv
-#  endif
-#  if $SETUPENV == default then
-  cp $SETUPDIRRAY/.cdsinit $PROJDIRRAY/.cdsinit
-  cp $SETUPDIRRAY/.cdsenv $PROJDIRRAY/.cdsenv
-#  endif
+  if ($bko = C) then 
+    cp $SETUPDIR0/.cdsinit $PROJDIR/.cdsinit
+    cp $SETUPDIR0/.cdsenv $PROJDIR/.cdsenv
+    echo "Cadence Default Bindkeys Selected"
+  else
+    cp $SETUPDIR/.cdsinit $PROJDIR/.cdsinit
+    cp $SETUPDIR/.cdsenv $PROJDIR/.cdsenv
+     echo "Raytheon Default Bindkeys Selected"
+  endif
 #  cp $SETUPDIR/assura_tech.lib $PROJDIR/assura_tech.lib
   cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
   cp $SETUPDIR/.simrc $PROJDIR/.simrc
