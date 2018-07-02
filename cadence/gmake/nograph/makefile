@@ -33,7 +33,7 @@ assemblies = gatePad gateStem planarResistor outline
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################
-pcells = RING CORE WRAP gate res
+pcells = RING CORE WRAP gate res outlineChip
 #########################################################################
 # Class Name
 #########################################################################

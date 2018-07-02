@@ -3376,10 +3376,10 @@ defclass( outline (assembly)
 ;# Constructor
 ;######################################################
 defmethod( initializeInstance @after ((obj outline)) 
-	   obj->width     = 10.0
-           obj->length    = 10.0
-	   obj->edgeWidth = 1.0
-	   obj->overlap   = 0.5
+	   obj->width     = 10000.0
+           obj->length    = 10000.0
+	   obj->edgeWidth = 95.0
+	   obj->overlap   = 4.0
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 	   obj->centroid = makeInstance( 'point2 )
@@ -3450,7 +3450,7 @@ defmethod( generate (( ol outline ))
     cloneRectTran(lrTran)
     setLayer(lrTran getLayer(ol))
     setPurpose(lrTran getPurpose(ol))
-    delx = -(wido-mwid)/2.0
+    delx = (wido-mwid)/2.0
     dely = -(hgto-mlen)/2.0
     translate(lrTran list(delx dely))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3477,6 +3477,10 @@ defmethod( generate (( ol outline ))
     addGeometry(ol geomGroup)
     rtsAdd(ol->rtrans getRectTran(geomGroup))
     ;FIXME: bug in the this union!
+    ; probably don't have a check to see if the markers
+    ; are fully enclosed in the frame. Not checking that
+    ; the union of a smaller poly contained fully in a 
+    ; larger poly is simply the larger poly ...
     ;rtsUnion(ol->rtrans)
   );let
 );defmethod
@@ -3841,6 +3845,54 @@ defmethod( draw ((device res))
    render(device->plRes)
    resRectTran = getRectTran(device->plRes)
    rtsAdd(device->rtrans resRectTran)
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   callNextMethod()
+  );let
+);defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  outlineChip.ils: Chip outline Pcell Skill++ code 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( outlineChip (PcellParam)
+	  (
+		( width @initform defineParam("float" 1000.0))	
+		( length @initform defineParam("float" 1000.0))
+		( edgeWidth @initform defineParam("float" 95.0))
+		( col )
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )	  
+	  )
+) ; defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj outlineChip)) 
+	   obj->col = makeInstance( 'outline )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mesa resistor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device outlineChip))
+  let( (width length edgeWidth colRectTran )
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters
+   width = getParamValue(device 'width)
+   length = getParamValue(device 'length)
+   edgeWidth = getParamValue(device 'edgeWidth)
+   setWidth(device->col width)
+   setLength(device->col length)
+   setEdgeWidth(device->col edgeWidth)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setLayer(device->col "GRID")
+   setPurpose(device->col "drawing")
+   setRef(device->col getRef(device))
+   generate(device->col)
+   render(device->col)
+   colRectTran = getRectTran(device->col)
+   rtsAdd(device->rtrans colRectTran)
    setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
    callNextMethod()
   );let

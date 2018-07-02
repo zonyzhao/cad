@@ -16,10 +16,10 @@ defclass( outline (assembly)
 ;# Constructor
 ;######################################################
 defmethod( initializeInstance @after ((obj outline)) 
-	   obj->width     = 10.0
-           obj->length    = 10.0
-	   obj->edgeWidth = 1.0
-	   obj->overlap   = 0.5
+	   obj->width     = 10000.0
+           obj->length    = 10000.0
+	   obj->edgeWidth = 95.0
+	   obj->overlap   = 4.0
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 	   obj->centroid = makeInstance( 'point2 )
