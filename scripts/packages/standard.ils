@@ -1811,7 +1811,11 @@ defmethod( render (( tran transform2 ))
         foreach( point getCollection(tran->vertices->points)
 	  verts = cons(getCoord(point) verts)
         );foreach
-        println("INFO(transform2): Rendering Transform")
+	println("INFO(transform2): Rendering Transform")
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;println is ok in a pcell, but printf may break it :(
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;printf("INFO(transform2): Rendering Transform: Layers %s, Lib %s, Cell %s", tran->layer tran->ref~>libName tran->ref~>cellName)
         dbCreatePolygon(tran->ref
 	     	        list(tran->layer tran->purpose)
 		        verts
@@ -2410,6 +2414,9 @@ defmethod( taperLeft (( rect rectangle ) )
 ;######################################################
 ;######################################################
 ;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  triangle.ils: Trianlge Class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( triangle (polygon2)
 	  (
 		( base @reader getBase @writer setBase )
@@ -2821,6 +2828,93 @@ defmethod( generateQuarterCircle (( cir circle ))
 
 
 	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  frame.il: Frame Vertex Generator Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;      v1 -----------------------v2  v7--v8
+;      |                           ||     |
+;      |    v4_____________________||     |
+;      |     |        origin      v3|     |
+;      |     |          +           |     |
+;      |    v5-----------------------v6   |
+;      |                                  |
+;      v0--------------------------------v9
+;      
+; wido = outter frame width: V1 to V8
+; widi = inner frame width: V4 to V3
+; hgto = outter frame height: V0 to V1
+; hgti = inner fram height: V5 to V4
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( frame (polygon2)
+	  (
+		( wido @reader getWido @writer setWido )
+		( widi @reader getWidi @writer setWidi )
+		( hgto @reader getHgto @writer setHgto )		
+		( hgti @reader getHgti @writer setHgti )
+		( v0 )
+		( v1 )
+		( v2 )
+		( v3 )
+		( v4 )
+		( v5 )
+		( v6 )
+		( v7 )
+		( v8 )
+   		( v9 )		  
+	  )
+) ; defClass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj frame)) 
+	   obj->wido = 4.0
+	   obj->hgto = 4.0
+	   obj->widi = 1.0
+           obj->hgti = 1.0
+	   obj->v0=list(-obj->wido/2.0 -obj->hgto/2.0)
+	   obj->v1=list(xCoord(obj->v0)  yCoord(obj->v0)+obj->hgto)
+	   obj->v2=list(xCoord(obj->v1)+obj->wido-(obj->wido-obj->widi)/2.0 yCoord(obj->v1))
+	   obj->v3=list(xCoord(obj->v2) yCoord(obj->v2)-(obj->hgto-obj->hgti)/2.0)
+	   obj->v4=list(xCoord(obj->v3)-obj->wido+(obj->wido-obj->widi) yCoord(obj->v3))
+	   obj->v5=list(xCoord(obj->v4) yCoord(obj->v4)-obj->hgti)
+	   obj->v6=list(xCoord(obj->v5)+obj->widi yCoord(obj->v5))
+	   obj->v7=list(xCoord(obj->v6) yCoord(obj->v1))
+	   obj->v8=list(xCoord(obj->v1)+obj->wido yCoord(obj->v7))
+	   obj->v9=list(xCoord(obj->v0)+obj->wido yCoord(obj->v0))
+	   obj->vertices = list(obj->v0 obj->v1 obj->v2 obj->v3 obj->v4
+                                obj->v5 obj->v6 obj->v7 obj->v8 obj->v9)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generate frame method
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate ((frm frame))
+  let((v0 v1 v2 v3 v4 v5 v6 v7 v8 v9)
+	   v0=list(-frm->wido/2.0 -frm->hgto/2.0)
+	   v1=list(xCoord(v0)  yCoord(v0)+frm->hgto)
+	   v2=list(xCoord(v1)+frm->wido-(frm->wido-frm->widi)/2.0 yCoord(v1))
+	   v3=list(xCoord(v2) yCoord(v2)-(frm->hgto-frm->hgti)/2.0)
+	   v4=list(xCoord(v3)-frm->wido+(frm->wido-frm->widi) yCoord(v3))
+	   v5=list(xCoord(v4) yCoord(v4)-frm->hgti)
+	   v6=list(xCoord(v5)+frm->widi yCoord(v5))
+	   v7=list(xCoord(v6) yCoord(v1))
+	   v8=list(xCoord(v1)+frm->wido yCoord(v7))
+	   v9=list(xCoord(v0)+frm->wido yCoord(v0))
+	   frm->vertices = list(v0 v1 v2 v3 v4
+                                v5 v6 v7 v8 v9)
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets the vertices of the polygon
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getVertices ((frm frame))
+   frm->vertices
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ; trirect.ils: Triangle/Rectangle combination geometry class
 ;              Overall centroid of this geometry is defined
@@ -3104,7 +3198,7 @@ defmethod( translate (( gs gateStem ) arg)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; planarResistor.il: Base planar resistor class 
+; planarResistor.ils: Base planar resistor class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( planarResistor (assembly)
 	  (
@@ -3264,7 +3358,131 @@ defmethod( generate (( res planarResistor ))
 ;######################################################
 ;######################################################
 ;######################################################
-; generic.ils: generic functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; outline.ils: Chip/Reticle Outline class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( outline (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
+		( overlap @reader getOverlap @writer setOverlap )
+		( layer @reader getLayer @writer setLayer )
+	  	( purpose @reader getPurpose @writer setPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj outline)) 
+	   obj->width     = 10.0
+           obj->length    = 10.0
+	   obj->edgeWidth = 1.0
+	   obj->overlap   = 0.5
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( ol outline ))
+  let((frm0 wido widi hgto hgti delx delyi mwid mlen)
+    wido = ol->width 
+    widi = wido-2*ol->edgeWidth
+    hgto = ol->length
+    hgti = hgto-2*ol->edgeWidth
+    frm0 = makeInstance( 'frame )
+    setWido(frm0 wido)
+    setWidi(frm0 widi)
+    setHgto(frm0 hgto)
+    setHgti(frm0 hgti)
+    generate(frm0)
+    mwid = 4.0
+    mlen = 4.0
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame 0 transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    f0Tran = makeInstance( 'transform2 )
+    setVertices(f0Tran getVertices(frm0))
+    setCentroid(f0Tran getCentroid(frm0))
+    cloneRectTran(f0Tran)
+    setLayer(f0Tran getLayer(ol))
+    setPurpose(f0Tran getPurpose(ol))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Alignment marker
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    am = makeInstance( 'rectangle )
+    setWidth(am mwid)
+    setHeight(am mlen)
+    generate(am)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    urTran = makeInstance( 'transform2 )
+    setVertices(urTran getVertices(am))
+    setCentroid(urTran getCentroid(am))
+    cloneRectTran(urTran)
+    setLayer(urTran getLayer(ol))
+    setPurpose(urTran getPurpose(ol))
+    delx = (wido-mwid)/2.0
+    dely = (hgto-mlen)/2.0
+    translate(urTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ulTran = makeInstance( 'transform2 )
+    setVertices(ulTran getVertices(am))
+    setCentroid(ulTran getCentroid(am))
+    cloneRectTran(ulTran)
+    setLayer(ulTran getLayer(ol))
+    setPurpose(ulTran getPurpose(ol))
+    delx = -(wido-mwid)/2.0
+    dely = (hgto-mlen)/2.0
+    translate(ulTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lrTran = makeInstance( 'transform2 )
+    setVertices(lrTran getVertices(am))
+    setCentroid(lrTran getCentroid(am))
+    cloneRectTran(lrTran)
+    setLayer(lrTran getLayer(ol))
+    setPurpose(lrTran getPurpose(ol))
+    delx = -(wido-mwid)/2.0
+    dely = -(hgto-mlen)/2.0
+    translate(lrTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    llTran = makeInstance( 'transform2 )
+    setVertices(llTran getVertices(am))
+    setCentroid(llTran getCentroid(am))
+    cloneRectTran(llTran)
+    setLayer(llTran getLayer(ol))
+    setPurpose(llTran getPurpose(ol))
+    delx = -(wido-mwid)/2.0
+    dely = -(hgto-mlen)/2.0
+    translate(llTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup f0Tran)
+    addTransform(geomGroup urTran)
+    addTransform(geomGroup ulTran)
+    addTransform(geomGroup lrTran)
+    addTransform(geomGroup llTran)
+    addGeometry(ol geomGroup)
+    rtsAdd(ol->rtrans getRectTran(geomGroup))
+    ;FIXME: bug in the this union!
+    ;rtsUnion(ol->rtrans)
+  );let
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################; generic.ils: generic functions
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function

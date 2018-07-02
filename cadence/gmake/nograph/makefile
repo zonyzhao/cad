@@ -29,7 +29,7 @@ polygons = rectangle triangle circle frame
 #########################################################################
 geometries = trirect capsule  
 #########################################################################
-assemblies = gatePad gateStem planarResistor
+assemblies = gatePad gateStem planarResistor outline
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################

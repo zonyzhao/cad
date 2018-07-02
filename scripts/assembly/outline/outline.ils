@@ -1,0 +1,129 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; outline.ils: Chip/Reticle Outline class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( outline (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
+		( overlap @reader getOverlap @writer setOverlap )
+		( layer @reader getLayer @writer setLayer )
+	  	( purpose @reader getPurpose @writer setPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj outline)) 
+	   obj->width     = 10.0
+           obj->length    = 10.0
+	   obj->edgeWidth = 1.0
+	   obj->overlap   = 0.5
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( ol outline ))
+  let((frm0 wido widi hgto hgti delx delyi mwid mlen)
+    wido = ol->width 
+    widi = wido-2*ol->edgeWidth
+    hgto = ol->length
+    hgti = hgto-2*ol->edgeWidth
+    frm0 = makeInstance( 'frame )
+    setWido(frm0 wido)
+    setWidi(frm0 widi)
+    setHgto(frm0 hgto)
+    setHgti(frm0 hgti)
+    generate(frm0)
+    mwid = 4.0
+    mlen = 4.0
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame 0 transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    f0Tran = makeInstance( 'transform2 )
+    setVertices(f0Tran getVertices(frm0))
+    setCentroid(f0Tran getCentroid(frm0))
+    cloneRectTran(f0Tran)
+    setLayer(f0Tran getLayer(ol))
+    setPurpose(f0Tran getPurpose(ol))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Alignment marker
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    am = makeInstance( 'rectangle )
+    setWidth(am mwid)
+    setHeight(am mlen)
+    generate(am)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    urTran = makeInstance( 'transform2 )
+    setVertices(urTran getVertices(am))
+    setCentroid(urTran getCentroid(am))
+    cloneRectTran(urTran)
+    setLayer(urTran getLayer(ol))
+    setPurpose(urTran getPurpose(ol))
+    delx = (wido-mwid)/2.0
+    dely = (hgto-mlen)/2.0
+    translate(urTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ulTran = makeInstance( 'transform2 )
+    setVertices(ulTran getVertices(am))
+    setCentroid(ulTran getCentroid(am))
+    cloneRectTran(ulTran)
+    setLayer(ulTran getLayer(ol))
+    setPurpose(ulTran getPurpose(ol))
+    delx = -(wido-mwid)/2.0
+    dely = (hgto-mlen)/2.0
+    translate(ulTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lrTran = makeInstance( 'transform2 )
+    setVertices(lrTran getVertices(am))
+    setCentroid(lrTran getCentroid(am))
+    cloneRectTran(lrTran)
+    setLayer(lrTran getLayer(ol))
+    setPurpose(lrTran getPurpose(ol))
+    delx = (wido-mwid)/2.0
+    dely = -(hgto-mlen)/2.0
+    translate(lrTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL marker transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    llTran = makeInstance( 'transform2 )
+    setVertices(llTran getVertices(am))
+    setCentroid(llTran getCentroid(am))
+    cloneRectTran(llTran)
+    setLayer(llTran getLayer(ol))
+    setPurpose(llTran getPurpose(ol))
+    delx = -(wido-mwid)/2.0
+    dely = -(hgto-mlen)/2.0
+    translate(llTran list(delx dely))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup f0Tran)
+    addTransform(geomGroup urTran)
+    addTransform(geomGroup ulTran)
+    addTransform(geomGroup lrTran)
+    addTransform(geomGroup llTran)
+    addGeometry(ol geomGroup)
+    rtsAdd(ol->rtrans getRectTran(geomGroup))
+    ;FIXME: bug in the this union!
+    ; probably don't have a check to see if the markers
+    ; are fully enclosed in the frame. Not checking that
+    ; the union of a smaller poly contained fully in a 
+    ; larger poly is simply the larger poly ...
+    ;rtsUnion(ol->rtrans)
+  );let
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################
