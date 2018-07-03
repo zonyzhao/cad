@@ -186,8 +186,8 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	logfn			"xyn.log"	; log file name
 
 	chipListFile		"chiplist.dat"	; chip list dump file
-	waferLib		"XYnumbers"	; library for wafer outlines
-	numberLib		"XYnumbers"     ; library with pads & numbers
+	waferLib		"reticle"	; library for wafer outlines
+	numberLib		"reticle"     ; library with pads & numbers
 
 	procTypes				; whatever this means
 	  ( "RF" "DC" "RFDC" )
@@ -197,7 +197,7 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 				)
 
 	numTypes		( 		; types of number cells
-	  "aeble" "nitride" "s/d" "reverse"	; for different process families
+	  "numbers" "nitride" "s/d" "reverse"	; for different process families
 				)
 
 	numOffsets		( nil		; number placement positions:
@@ -224,8 +224,8 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	tmpLyr2			"y2"		; overlaps tests, these are
 	tmpLyr3			"y3"		; system layers
 
-	reticleLayer		"mesa"		; reticle layer on wafer map
-	dropinLayer		"sdText"	; drop-in layer on wafer map
+	reticleLayer		"resistor"      ; reticle layer on wafer map
+	dropinLayer		"numbers"	; drop-in layer on wafer map
 	crossLayer		"text"		; layer for cross at drop-in sites
 	ffsmapLayer1		"thick"		; rects in ffsmap drawings
 	ffsmapChipLabelSize	3000		; height of chip_?? label
@@ -320,9 +320,6 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	retChipList		nil		; reticle chip data
 	dropinChipList		nil		; drop-in chip data
 	mergedChipList		nil
-
-
-
     )
 )
 
@@ -2393,7 +2390,7 @@ procedure( xynFindNumberPadCells()
 ;	deciphering the last part of the name into
 ;	chip-type, number-type, and size
 
-procedure( xynGetNumberPadInfo( cellName)
+procedure( xynGetNumberPadInfo( cellName )
   let( ( des chiptype numtype size)
 
 ;   get the last part of the cell name:
