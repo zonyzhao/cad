@@ -1,0 +1,245 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  bbox.ils: Boundary Box Class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( bbox (cadObj)
+	  (
+		( ur @reader getUr @writer setUr )
+		( ll @reader getLl @writer setLl )
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )		
+		( bb @reader getBb @writer setBb)
+		( transformation )			  
+	  )
+) ; defClass
+
+;#####################################################
+; Constructor method
+;#####################################################
+defmethod( initializeInstance @after ((obj bbox)) 
+	   obj->ur = 0.0
+	   obj->ll = 0.0
+	   obj->width = 0.0
+	   obj->height = 0.0
+	   obj->bb = nil
+	   obj->transformation = makeInstance( 'transformation2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Populates Boundary Box Member
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getbb (( bb bbox ))
+	setBb(bb getRef(bb)~>bBox) 
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets The Width and Height cell's boundary box 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getDim (( bb bbox ))
+	getbb(bb) 
+	bb->width  = caadr( bb->bb ) - caar( bb->bb )
+	bb->height = cadadr( bb->bb ) - cadar( bb->bb) 
+	list(bb->width bb->height)
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets the Cell's Origin - defined as lower left (minx,miny)
+; for a black box
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;defmethod( getOriginFromCellView (( bb bbox ))
+;	       getbb(bb) 
+;	       bb->origin->x=caar(bb->bbox) 
+;               bb->origin->y=cadar(bb->bbox)
+;	       list(bb->origin->x bb->origin->y)
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Finds the center of the cell's boundary box
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( getCentroidFromCellView (( bb bbox ))
+;	let( ( llx
+;	       lly
+;	       urx
+;	       ury )
+;	getbb(bb)
+;	ury = yCoord( upperRight( bb->bbox ))
+;	urx = xCoord( upperRight( bb->bbox ))
+;	llx = xCoord( lowerLeft( bb->bbox ))
+;	lly = yCoord( lowerLeft( bb->bbox ))
+;	bb->bbCentroid->x = (urx+llx)/2 
+;	bb->bbCentroid->y = (ury+lly)/2
+;	list(bb->bbCentroid->x bb->bbCentroid->y)
+;    ) ; let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method converts bbox coordinates to vertices
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( bb2vert (( bb bbox ))
+;  let( (ury urx llx lly vo v1 v2 v3)
+;;        getbb(bb)
+;       	ury = yCoord( upperRight( bb->bbox ))
+;	urx = xCoord( upperRight( bb->bbox ))
+;	llx = xCoord( lowerLeft( bb->bbox ))
+;	lly = yCoord( lowerLeft( bb->bbox ))
+;	v0 = list(llx lly)
+;	v1 = list(urx lly)
+;	v2 = list(urx ury)
+;	v3 = list(llx ury)
+;	setVertices(bb list(v0 v1 v2 v3 v0))
+;  );let
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Finds the area of the cell's boundary box in square meters
+; FIXME: need to get UserUnits from the techfile to do proper
+;        unit conversion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( getBboxArea (( bb bbox ))
+;	bb2vert(bb)
+;	area(bb)*1e-12
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method calculates the upper right and lower left of a new bounding 
+; centered at a new location with widths and heights given by 0.5*deltaX
+; and 0.5*deltaY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( setCenter (( bb bbox ) aPoint @key (deltaX 1) (deltaY 1))
+; let( (llx lly urx ury aPointX aPointY)
+;      apointX = xCoord( aPoint )
+;      apointY = yCoord( aPoint )
+;      llx = aPointX - deltaX
+;      urx = aPointX + deltaX
+;      ury = sPointY + deltaY
+;      list( llx:lly urx:ury ) 
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method translates the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( translate (( bb bbox ) arg )
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method rotates the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( rotate (( bb bbox ) arg )
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method scales the bbox about its centroid
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( scale (( bb bbox ) arg)
+;	nil
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the smallest bounding box coordinates containing
+; all boxes given in a list with the class box's object - Merge!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( union (( bb bbox ) box)
+; let( ( llxList llyList urxList uryList minllx minlly maxurx maxury )
+;      llxList = foreach(mapcar bb->bbox box xCoord( lowerLeft( bb->bbox )))
+;      llyList = foreach(mapcar bb->bbox box yCoord( lowerLeft( bb->bbox )))
+;      urxList = foreach(mapcar bb->bbox box xCoord( upperRight( bb->bbox )))
+;      uryList = foreach(mapcar bb->bbox box yCoord( upperRight( bb->bbox )))
+;      minllx = apply( 'min llxList )
+;      minlly = apply( 'min llyList )
+;      minllx = apply( 'max urxList )
+;      minlly = apply( 'max uryList )
+;  );let
+;);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the intersection of two class box's object and a 
+; list of bboxs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( intersection (( bb bbox ) box)
+;  let( (llxList llyList urxList uryList maxllx maxlly minurx minury )
+;       llxList = foreach(mapcar bb->bbox box xCoord( lowerLeft( bb->bbox )))
+;       llyList = foreach(mapcar bb->bbox box yCoord( lowerLeft( bb->bbox )))
+;       urxList = foreach(mapcar bb->bbox box xCoord( upperRight( bb->bbox )))
+;       uryList = foreach(mapcar bb->bbox box yCoord( upperRight( bb->bbox )))
+;       minurx = apply( 'min urxList )
+;       minury = apply( 'min uryList )
+;       maxllx = apply( 'max llxList )
+;       maxlly = apply( 'max llyList )
+;       cond(
+;		( maxllx >= minurx 
+;	  	  nil
+;		);maxllx
+;		( maxlly >= minury 
+;	  	  nil
+;		);maxlly
+;		( t
+;	  	  list(maxllx:maxlly minurx:minury)
+;		);t
+;  	);cond
+;  );let
+;);defmethod
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts The bbox Origin To the Upper Right Quadrant of the 
+; cellviews master grid field
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( shiftURQ (( bb bbox ))
+;  let( ( shift dx dy) 
+;	  getbBox(bb)
+;	  unless( caar( bb->bbox) == 0 && cadar( bb->bbox) == 0
+;		  dx = 0 - bb->origin->x
+;      		  dy = 0 - bb->origin->y
+;      		  shift = list( list( dx dy) "R0")
+;      		  printf( "NOTE:  shifting %s to upper-right quadrant" name)
+;      		  printf( "       shift is: %f by %f" caar( shift) cadar( shift))
+;		  dbReopen( bb->cvRef "a")
+;		  foreach( inst cvRef~>instances dbMoveFig( inst bb->cvRef shift))
+;    		  foreach( shape cvRef~>shapes   dbMoveFig( shape bb->cvRef shift))
+;      		  dbSave(bb->cvRef)
+;		  dbClose(bb->cvRef)
+;	  );unless
+;	  getbBox(bb)
+;  );let
+;);defMethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( setCentroid (( bb bbox ) arg)
+;  let( ( sx sy )	
+;  );let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts cellview bbox Origin by provided dx and dy values
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+;defmethod( shiftCentroidCellView (( bb bbox ) dx dy)
+;	let( ( (name bb->cellName)
+;		   (lib  bb->library)
+;		   shift
+;		   sx
+;                  sy
+;		   cvRef )
+;		getbBox(bb)
+;		cvRef = dbOpenCellViewByType( lib name "layout" "maskLayout")
+;		sx = bb->x0 + dx
+;      	sy = bb->y0 + dy
+;      	shift = list( list( sx sy) "R0")
+;		dbReopen( cvRef "a")
+;		foreach( inst cvRef~>instances dbMoveFig( inst cvRef shift))
+;    	foreach( shape cvRef~>shapes   dbMoveFig( shape cvRef shift))
+;      	dbSave(cvRef)
+;		dbClose(cvRef)
+;		getbBox(bb)
+;		)
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+	

@@ -1,0 +1,91 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( reticle (cv)
+	  (
+		( srRes @reader getRes @writer setRes)
+		( maxDim @reader getMaxDim @writer setMaxDim)
+		( validDim @reader getDimValid)
+		( validRes @reader getResValid)
+		( dieList )
+		( couponList )					
+	  )
+) ; defClass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj reticle)) 
+	   obj->srRes = nil
+	   obj->maxDim = nil
+	   obj->validDim = nil
+	   obj->validRes = nil
+	   obj->dieList = nil  
+	   obj->couponList = nil   
+);defmethod
+
+;######################################################
+; This method checks to make sure reticle width and 
+; height do not exceed the maximum dimension (maxDim)
+;######################################################
+defmethod( checkDim ((ret reticle))
+  ret->validDim = 't
+  getDim(ret)
+  if(ret->bb->width > ret->maxDim then
+    printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+    ret->validDim = nil
+  else
+    printf("INFO: Reticle Width %8.1f is less than maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+  );if
+  if(ret->bb->height > ret->maxDim then
+    printf("ERROR: Reticle Length %8.1f exceeds maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+    ret->validDim = nil
+  else
+    printf("INFO: Reticle Length %8.1f is less than maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+  );if
+);defmethod
+
+;#####################################################
+; This method checks the reticle's bbox dimensions
+; (width and height) for grid requirements????
+; FIXME: Get grid information from TF via grid class 
+;#####################################################
+;defmethod( checkGrid ((ret reticle))
+;  if( (ret->bb->width-floor(ret->bb->width)) > 0.0 then
+;    printf("ERROR: Reticle width %g step resolution NOT ON a 1u grid\n" ret->bb->width)
+;  else
+;  );if
+;  if( (ret->bb->height-floor(ret->bb->height)) > 0.0 then
+;    printf("ERROR: Reticle width %g step resolution NOT ON a 1u grid\n" ret->bb->height)
+;  else
+;  );if
+;);defmethod
+
+;#####################################################
+; This method checks the reticle's bbox dimensions
+; (width and height) for Step and Repeat (S&R) value 
+; provided
+;#####################################################
+defmethod( checkRes (( ret reticle ))
+    ret->validRes = 't
+    getDim(ret)
+    if( equal( modulo( int(ret->bb->width) ret->srRes) 0) then
+      printf("INFO: Reticle Width %5.1f MEETS required S&R step resolution of %3.1f\n" float(ret->bb->width) float(ret->srRes))
+    else
+      printf("ERROR: Reticle Width %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(ret->bb->width) float(ret->srRes))
+      ret->validRes = nil
+    );if
+    if( equal( modulo( int(ret->bb->height) ret->srRes) 0) then
+      printf("INFO: Reticle Length %5.1f MEETS required S&R step resolution of %3.1f\n" float(ret->bb->height) float(ret->srRes))
+    else
+      printf("ERROR: Reticle Length %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(ret->bb->height) float(ret->srRes))
+      ret->validRes = nil
+    );if
+); defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+	

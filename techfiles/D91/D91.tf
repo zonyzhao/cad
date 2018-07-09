@@ -1,9 +1,5 @@
-; Technology File TS0447_Clay
+; D91 Technology File
 ; Generated on Jun 14 15:31:43 2018
-;     with @(#)$CDS: layout.exe_64 version 5.1.0-64b 06/20/2007 03:00 (cicamd4) $
-
-; Technology File D91
-; Generated on June 27 2018
 ;********************************
 ; Controls
 ;********************************
@@ -405,8 +401,6 @@ constraintGroups(
     );interconnect
 
   ) ;foundry
-
-  
 
 ) ;constraintGroups
 

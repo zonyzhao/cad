@@ -156,26 +156,32 @@ Prefix        :         xyn
 	I s s u e s
 
 
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	C o d e   O u t l i n e
 
-	initialization of global symbol 'xynpl
-	main program
-	main ui form definition and callback procedures
-	wafer map generation
-	wafer location tests
-	interactive code for drop-in site selection
-	number pad procedures
-	search for chips in the primary and drop-in reticles
-	full-wafer drawing generation
-	wafer offset position selection
-	numbers drawing generation
-	sort methods
-	log file support
+	1.) Initialization of global symbol 'xynpl holding global state variables
+	2.) Main program
+	3.) Main ui form definition and callback procedures
+	4.) Wafer map generation
+	5.) Wafer location tests
+	6.) Interactive code for drop-in site selection
+	7.) Number pad procedures
+	8.) Search for chips in the primary and drop-in reticles
+	9.) Full-wafer drawing generation
+	10.) Wafer offset position selection
+	11.) Numbers drawing generation
+	12.) Sort methods
+	13.) Log file support
 
 */
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
-;   	global data structure
+;   1.)	Global data structure (list) definition of xynpl 
+;       (npl is a disembodied property list or dpl - first entry nil)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 unless( and( boundp( 'xynpl) listp( xynpl))
   xynpl = '( nil
@@ -189,25 +195,25 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	waferLib		"reticle"	; library for wafer outlines
 	numberLib		"reticle"     ; library with pads & numbers
 
-	procTypes				; whatever this means
+	procTypes				; FIXME: whatever this means
 	  ( "RF" "DC" "RFDC" )
 
 	waferSizes		(		; wafer sizes in inches
-	  "2" "3" "4"
+	  "4"
 				)
 
 	numTypes		( 		; types of number cells
-	  "numbers" "nitride" "s/d" "reverse"	; for different process families
+	  "numbers" "reverse"	                ; for different process families
 				)
 
-	numOffsets		( nil		; number placement positions:
-		L		( 40 100)
-		M		( 30 70 110)
+	numOffsets		( nil		; number placement positions offsets
+		L		( 40 100)       ; on the xynNumPad for the different
+		M		( 30 70 110)    ; sized xyn number pads
 		S		( 20 45 70)
 				)
 
-	retOlap			4.		; reticle overlap in um
-	exclusionRing		5000.		; wafer handling ring width
+	retOlap			4.0		; reticle overlap in um
+	exclusionRing		5000.0		; wafer handling ring width
 	outlineLyr		"outline"	; wafer outline shape layer
 	inclusionLyr		"y1"		; temporary shape layer
 	exclusionLyr		"outline"	; layer for exclusion ring
@@ -215,7 +221,7 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	cornerBlockLyr		"nplus"		; 1um boxes for ebeam guys
 	stepRepeatResolution	10		; expected s&r resolution
 
-	rectUndersize		500.		; undersize aeblemap site rects
+	rectUndersize		500.0		; FIXME: undersize aeblemap site rects
 
 	searchSteps		10		; steps used in wafer position search, 0 setting overrides search
 	stepResolution		0.1		; min search step resolution, um
@@ -250,7 +256,9 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	  dropinLayer crossLayer rectUndersize
 	  chipListFile version 
 	)
-;-----	parameters set during run (listed here for info):
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;-----	parameters set during run (listed here for info):
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	logfp			nil		; log file port
 
@@ -303,29 +311,31 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	cYOffset		nil		; character y offset
 
 						; set in WaferSetup:
-	ret00X			nil		; xy coords of site (0 0)
-	ret00Y			nil
-	waf00X			nil		; start position of wafer outline
-	waf00Y			nil
-	wafOfsX			0.0		; xy offset for max chip count
-	wafOfsY			0.0
+	ret00X			nil		; x coord of site (0 0)
+	ret00Y			nil             ; y coord of site (0 0)
+	waf00X			nil		; x start position of wafer outline
+	waf00Y			nil             ; y start position of wafer outline
+	wafOfsX			0.0		; x offset for max chip count
+	wafOfsY			0.0             ; x offset for max chip count
 	nCols			nil		; number of sites horizontally
 	nRows			nil		; number of sites vertically
-	aebleNC			nil		; number of drawn sites horiz
-	aebleNR			nil		; number of drawn sites vert
+	aebleNC			nil		; FIXME: number of drawn sites horiz
+	aebleNR			nil		; FIXME: number of drawn sites vert
 
 	dropinSites		nil		; i/j pairs of drop-in sites
 
 						; set in BuildChipLists:
-	retChipList		nil		; reticle chip data
-	dropinChipList		nil		; drop-in chip data
-	mergedChipList		nil
+	retChipList		nil		; reticle chip data list
+	dropinChipList		nil		; drop-in chip data list
+	mergedChipList		nil             ; primary/secondary combined chip data list
     )
-)
+);unless xynp
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynWriteDPL
 ;	writes a property list with data necessary for prb.il
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWriteDPL()
   let( ( fn fp pl)
 
@@ -354,11 +364,12 @@ procedure( xynWriteDPL()
       )
     )
   )
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynLogGlobals
 ;	writes global data dpl to log file
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLogGlobals()
   let( ( p)
 
@@ -373,14 +384,14 @@ procedure( xynLogGlobals()
     )
     xynLog( "end of global parameters:")
   )
-)
+);procedure
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	main program
-;-----------------------------------------------------------------------
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynums()
-
 ;   create the form the first time through,
 ;   also preset any fields we can guess:
     unless( xynpl->form1 
@@ -412,13 +423,12 @@ procedure( xynums()
     xynSaveForm1()
 
     when( xynConfirm( "Run probe file generation now?") prbout())
-)
+);procedure
 
 
-;-----------------------------------------------------------------------
-;	main ui form
-;-----------------------------------------------------------------------
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	MAIN UI FORM WITH CALLBACKS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateForm1()
   let( ( w1 w2 w3 y1 y2)
 
@@ -539,12 +549,14 @@ procedure( xynCreateForm1()
 
     hiSetFormMinMaxSize( xynpl->form1 '( 370  365) '( 370 365))
   )
-)
+);procedure
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynPresetForm1
 ;	considers that any open layout window is likely to be the reticle,
 ;	this presets the form's lib and cell to the current cellview
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPresetForm1()
   let( ( win cv)
 
@@ -559,8 +571,12 @@ procedure( xynPresetForm1()
       xynpl->form1->retName->value = cv~>cellName
     )
   )
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	xynTriggerCBs1
+;	Invalidation call backs based upon latent user inputs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynTriggerCBs1()
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -584,11 +600,12 @@ procedure( xynTriggerCBs1()
     xynDropinCB()
     ; Everything is valid??
     xynpl->notInvalid = nil
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynSaveForm1
 ;	writes the form1 values in the library's release dir
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSaveForm1()
   let( ( fn fp p)
 
@@ -628,13 +645,13 @@ procedure( xynSaveForm1()
     )
   )
   )
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynFormatList
 ;	formats a list, which may contain nested lists, to a file port
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFormatList( op l)
-
   cond(
     ( l
       fprintf( op "( ")
@@ -660,11 +677,12 @@ procedure( xynFormatList( op l)
       fprintf( op "nil ")
     )
   )
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynLoadForm1
 ;	reads the form1 values from the library's release dir
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLoadForm1()
   let( ( fn fp dpl v p)
 
@@ -689,11 +707,13 @@ procedure( xynLoadForm1()
       xynUpdateDropinsField()
     )
   )
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	xynUpdateDropinsField
+;	Update the drop-in sites field.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynUpdateDropinsField()
-
-;   update the drop-in sites field:
     cond(
       ( xynpl->dropinSites
 	xynpl->form1->dropIns->value = sprintf( nil "%L" xynpl->dropinSites)
@@ -702,12 +722,12 @@ procedure( xynUpdateDropinsField()
 	xynpl->form1->dropIns->value = ""
       )
     )
-)
+);procedure
 
-
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       xynPLForm
 ;	form for modifying global property list values
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPLForm()
   let( ( pl fl v x y fw pw form)
 
@@ -763,61 +783,73 @@ procedure( xynPLForm()
       )
     )
 
-
-;   create the form:
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;   create the properties form here and display it
+    ;   when it's OK'ed by the user, copy values back to the property list
+    ;   and then deleted the ui form
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     form = hiCreateForm( 'xynProps "XYN Properties" "" fl "")
-
-;   display it:
     when( hiDisplayForm( form)
-
-;     when it's OK'ed, copy values back to the property list:
       foreach( p form->fieldList
 	putprop( xynpl get( form p)->value p)
-      )
-    )
-
-;   delete the form:
+      );foreach
+    );when
     hiDeleteForm( form)
-  )
-)
+  );let
+);procedure
 
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       xynLibSelCB
 ;	callback procs for the select buttons:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLibSelCB()
-
   xynpl->form1->libName->value = ""
   xynLBPopUp( xynpl->form1 'libName "Select Library" 
 	      sort( ddGetLibList()~>name 'alphalessp))
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       xynRetSelCB
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynRetSelCB()
-
   xynpl->form1->retName->value = ""
   xynLBPopUp( xynpl->form1 'retName "Select Primary Reticle" xynLibCellList())
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;      xynDropSelCB 
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynDropSelCB()
-
   xynpl->form1->dropinName->value = ""
   xynLBPopUp( xynpl->form1 'dropinName "Select Drop-in" xynLibCellList())
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPadSelCB()
-
   xynLBPopUp( xynpl->form1 'padName "Select Number Pad Cell" xynLibCellList())
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLibCellList()
-
   when( parseString( xynpl->libName) 
     sort( ddGetObj( xynpl->libName)~>cells~>name 'alphalessp))
-)
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLBPopUp( form1 symbol title choices)
   let( ( form2 v)
-
 ;   create the raw form the first time through:
     unless( xynpl->form2
       xynpl->form2 = hiCreateForm( 'XYNFORM2 "" ""
@@ -825,10 +857,8 @@ procedure( xynLBPopUp( form1 symbol title choices)
 			?choices '("") ?value nil)
 		10:10 250:250 0)))
     )
-
 ;   inhibit this callback when the form is already up:
     unless( hiIsFormDisplayed( xynpl->form2)
-
 ;     reconfigure the form:
       form2 = xynpl->form2
       hiSetFormName( form2 title)
@@ -843,7 +873,6 @@ procedure( xynLBPopUp( form1 symbol title choices)
 	  get( form1 symbol)->value = ""
 	)
       )
-
       cond(
 ;	  if the form is cancelled, do nothing:
 	( null( hiDisplayForm( form2))
@@ -860,12 +889,12 @@ procedure( xynLBPopUp( form1 symbol title choices)
       )
     )
   )
-)
+);procedure
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	callback procs for the modifyable form fields:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynInchCB()
 
 ;   copy the wafer size from the form, invalidate anything already completed:
@@ -876,6 +905,10 @@ procedure( xynInchCB()
     xynpl->waferCell = xynWaferCellName( xynpl->wafInch)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynProcTypeCB()
 
 ;   copy the process type from the form:
@@ -885,6 +918,10 @@ procedure( xynProcTypeCB()
 ;   xynInvalidate()
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNumsTypeCB()
 
 ;   copy the numbers-type from the form:
@@ -894,6 +931,10 @@ procedure( xynNumsTypeCB()
     xynInvalidate()
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLibCB()
 
     xynpl->libName = xynpl->form1->libName->value
@@ -1047,6 +1088,10 @@ procedure( xynRetCB()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCheckRes( distance resolution)
 
   equal( fix( distance / resolution) * resolution 
@@ -1129,7 +1174,6 @@ procedure( xynDropinCB()
   )
 )
 
-procedure( xynInvalidate()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : ---
 ; Revised : 06/19/09
@@ -1147,7 +1191,7 @@ procedure( xynInvalidate()
 ;               
 ; Usage: xynInvalidate()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynInvalidate()
   unless( xynpl->notInvalid
 
     xynCloseCVs()
@@ -1173,6 +1217,10 @@ procedure( xynInvalidate()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCloseCVs()
   let( ( cv)
 
@@ -1185,13 +1233,12 @@ procedure( xynCloseCVs()
 )
 
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	callback procs for the major operations
-
 ;	SitesCB
 ;	creates the wafer site map and opens it in a window 
 ;       so user can modify the drop-in sites:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSitesCB()
 
 ;   write info we have so far to the log file:
@@ -1234,6 +1281,10 @@ procedure( xynSitesCB()
 ;	MapCB
 ;	creates the aeble wafer site map
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMapCB()
 
     cond(
@@ -1255,9 +1306,10 @@ procedure( xynMapCB()
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	BuildChipListCB
 ;	identifies the chips from the list of number pads
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynBuildChipListCB()
 
     xynMsg( "[Button]  Build chip lists")
@@ -1288,12 +1340,12 @@ procedure( xynBuildChipListCB()
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	WafCB
 ;	creates the wafer-size drawing containing the reticles
 ;	with the numbers drawing overlaid
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWafCB()
-
     xynMsg( "[Button]  Create wafer drawings")
     cond(
 ;	must have the reticle loaded:
@@ -1338,10 +1390,11 @@ procedure( xynWafCB()
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	NumCB
 ;	generates the individual number cells,
 ;	then creates the wafer-size numbers drawing
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNumCB()
 
     xynMsg( "[Button]  Create numbers drawing")
@@ -1378,10 +1431,10 @@ procedure( xynNumCB()
     )
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	callbacks for viewing results
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMapVCB()
   let( ( win)
 
@@ -1393,6 +1446,10 @@ procedure( xynMapVCB()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynListVCB()
 
   when( xynpl->chipListFile 
@@ -1400,6 +1457,10 @@ procedure( xynListVCB()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWafVCB()
   let( ( win)
     xynMsg( "Entered xynWafVCB")
@@ -1415,6 +1476,10 @@ procedure( xynWafVCB()
   );let
 );procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNumVCB()
   let( ( win)
 
@@ -1425,7 +1490,10 @@ procedure( xynNumVCB()
     )
   )
 )
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynChipDataVCB()
 
     when( xynpl->chipDataFile
@@ -1434,13 +1502,12 @@ procedure( xynChipDataVCB()
 )
 
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	wafer map generation
-
 ;	xynCreateSitesMap
 ;	creates a wafer map using colored rectangles to represent
 ;	reticle and drop-in sites
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateSitesMap()
   let( ( cv)
 
@@ -1486,10 +1553,11 @@ procedure( xynCreateSitesMap()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynCreateAebleMap
 ;	creates a wafer map using colored rectangles to represent
 ;	reticle and drop-in sites
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateAebleMap()
   let( ( cv)
 
@@ -1529,14 +1597,19 @@ procedure( xynCreateAebleMap()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWaferCellName( inches)
 
   xynpl->waferCell = strcat( "wafer_" inches)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynPlaceOutline
 ;	instantiates the wafer outline drawing on the given wafer map
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceOutline( cv)
   let( ( master inst dx dy w)
 
@@ -1594,10 +1667,11 @@ procedure( xynPlaceOutline( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynOffsetWaferOutline
 ;	given the aeble map or the wafer drawing,
 ;	shift the outline shapes and the center cross by wafOfsX/Y
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynOffsetWaferOutline( cv)
   let( ( tform outlines ring wafer cross ASMLcapPad ASMLtext ASMLsdText ASMLglass ASMLBCBCorral ASMLBCBLid shape
          inst cd_cross ASMLgateBus)
@@ -1688,11 +1762,12 @@ procedure( xynOffsetWaferOutline( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynFindCenterCross
 ;	given the aeble map or the wafer drawing,
 ;	find the center cross shape considering that there may be
 ;	other shapes on the same layer due to partial reticle flattening
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindCenterCross( cv)
   let( ( grids cross)
 
@@ -1716,12 +1791,13 @@ procedure( xynFindCenterCross( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynSetWaferPosition
 ;	moves wafer outline instance to waf00
 ;	outline is assumed to be on layer xynpl->outlineLyr
 ;	the outline shape is copied and downsized by xynpl->exclusionRing (um),
 ;	then a ring-shape is created covering the exclusion zone
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSetWaferPosition( cv)
   let( ( inst wafer ring)
 
@@ -1770,8 +1846,10 @@ procedure( xynSetWaferPosition( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynWaferSetup
-
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWaferSetup()
   let( ( x y nc nr)
 
@@ -1798,10 +1876,10 @@ procedure( xynWaferSetup()
   )
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynDrawWaferSites
 ;	draws rects for wafer sites with iX/jY properties
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynDrawWaferSites( cv)
   let( ( l r b m)
 
@@ -1849,9 +1927,10 @@ procedure( xynDrawWaferSites( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynDefaultDropSites
 ;	creates the initial list of drop-in sites using rules
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynDefaultDropSites()
   let( ( j row i k)
 
@@ -1877,9 +1956,10 @@ procedure( xynDefaultDropSites()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynLabelWaferDwg
 ;	adds text annotation to the given wafer map
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLabelWaferDwg( cv)
   let( ( x y s xa ya xw yw waferShiftX waferShiftY site retOfsX retOfsY nr nc)
 
@@ -1981,6 +2061,10 @@ procedure( xynLabelWaferDwg( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLabelDropinSites( cv x y s)
   let( ( fn fp)
 
@@ -2012,6 +2096,10 @@ procedure( xynLabelDropinSites( cv x y s)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindNearestDropinByCenter( x y)
   let( ( site d dmin)
 
@@ -2030,6 +2118,10 @@ procedure( xynFindNearestDropinByCenter( x y)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynUpperRightQuadrant( cv)
   let( ( box dx dy shift)
 
@@ -2047,16 +2139,20 @@ procedure( xynUpperRightQuadrant( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynShiftCV( cv shift)
 
     foreach( inst cv~>instances dbMoveFig( inst cv shift))
     foreach( shape cv~>shapes   dbMoveFig( shape cv shift))
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	wafer location tests
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsDropInSite( i j)
   let( ( pair)
 
@@ -2065,10 +2161,11 @@ procedure( xynIsDropInSite( i j)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynIsFullRect
 ;	to be fully "on-wafer", the object must overlap the effective wafer 
 ;	and must not overlap the exclusion ring:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsFullRect( box)
 
   or(
@@ -2089,20 +2186,29 @@ procedure( xynIsFullRect( box)
    )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsFullObject( object)
 
     xynIsFullRect( object~>bBox)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsFullSite( i j)
 
     xynIsFullRect( xynSiteBox( i j))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynIsPartialRect
 ;	to be partly "on-wafer", the object must overlap the exclusion ring
 ;	and the effective wafer outline:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsPartialRect( box)
 
     and(
@@ -2111,19 +2217,28 @@ procedure( xynIsPartialRect( box)
        )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsPartialObject( object)
 
     xynIsPartialRect( object~>bBox)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynIsPartialSite( i j)
 
     xynIsPartialRect( xynSiteBox( i j))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynSiteBox
 ;	returns the bBox of the given site
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSiteBox( i j)
   let( ( x y)
 
@@ -2133,6 +2248,10 @@ procedure( xynSiteBox( i j)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	xynSiteBox
+;	returns the bBox of the given site
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSizeBox( box offset)
 
   list( list( caar( box) - offset	cadar( box) - offset)
@@ -2140,9 +2259,10 @@ procedure( xynSizeBox( box offset)
       )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynOverlaps
 ;	determines if the given bBox overlaps the polygon
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynOverlaps( box poly)
   let( ( cv)
 
@@ -2173,6 +2293,10 @@ procedure( xynOverlaps( box poly)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	
+;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynOverlapsCleanup( cv)
 
     foreach( lsym '( tmpLyr1 tmpLyr2 tmpLyr3)
@@ -2180,9 +2304,10 @@ procedure( xynOverlapsCleanup( cv)
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynDeleteLayer
 ;	deletes all shapes in cellview on specified layer
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynDeleteLayer( cv layerName)
   let( ( lpp)
 
@@ -2191,15 +2316,13 @@ procedure( xynDeleteLayer( cv layerName)
   )
 )
 
-
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	interactive code for drop-in site selection
-
 ;	xynWaferMapMod
 ;	opens a window so that the wafer outline map can be "edited",
 ;	edits should be restricted to using the 'q' key which is
 ;	redefined temporarily
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWaferMapMod()
 
     xynMsg( "Entering interactive map-edit mode...")
@@ -2221,25 +2344,31 @@ procedure( xynWaferMapMod()
 ;	xynMapModClose
 ;	forces the window closed when it is no longer valid
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	
+;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMapModClose()
 
     when( windowp( xynpl->wafmodWin) hiUnmapWindow( xynpl->wafmodWin))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynMapModCloseCB
 ;	dfII calls this when the wafer map mod window is closed
 ;	to reset the bindkey
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMapModCloseCB( win)
 
     xynMsg( "Exiting interactive map-edit mode.")
     hiSetBindKey( "Layout" "<Key>q" "leHiEditProp()")
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynWaferMapModCB
 ;	this is called in placed of the usual bindkey function,
 ;	pops-up a form to allow the selected site's use to be changed
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWaferMapModCB()
   let( ( ss r1 r2 iX jY form lyr m)
 
@@ -2338,6 +2467,10 @@ procedure( xynWaferMapModCB()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	
+;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateForm3()
 
   xynpl->form3 = hiCreateForm( 'XYNFORM3 "Site Usage" ""
@@ -2355,13 +2488,12 @@ procedure( xynCreateForm3()
 )
 
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	number pad procedures
-
 ;	xynGetNumberPads
 ;	searches the design lib for number pads,
 ;	builds a list of dpl describing each pad cell
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetNumberPads()
 
     xynMsg( "acquiring number pads...")
@@ -2374,22 +2506,24 @@ procedure( xynGetNumberPads()
     xynPrintNumberPads()
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynFindNumberPadCells
 ;	find the number pads in the current library
 ;	assumes name pattern "DESIGN_REV_xynum_XXX"
 ;	returns a list of the number padd cell names
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindNumberPadCells()
 
     setof( c xynLibCellList()
 	   caddr( parseString( c "_")) == "xyPad")
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynGetNumberPadInfo
 ;	returns a dpl for the given number pad name
 ;	deciphering the last part of the name into
 ;	chip-type, number-type, and size
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetNumberPadInfo( cellName )
   let( ( des chiptype numtype size)
 
@@ -2429,6 +2563,10 @@ procedure( xynGetNumberPadInfo( cellName )
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;	
+;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPrintNumberPads()
 
     xynMsg( "Number Pads found in library:")
@@ -2439,9 +2577,10 @@ procedure( xynPrintNumberPads()
 )
 
 
-;-----------------------------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	search for chips in the primary and drop-in reticles
-
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynBuildChipLists()
 
 ;   find the number pad cells in the design lib:
@@ -2465,7 +2604,6 @@ procedure( xynBuildChipLists()
     t
 )
 
-procedure( xynBuildChipList( cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : ---
 ; Revised : 06/05/08
@@ -2489,8 +2627,7 @@ procedure( xynBuildChipList( cv)
 ;               
 ; Usage: xynBuildChipList( cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+procedure( xynBuildChipList( cv)
   let( ( pi cl sites nc nd ns)
 
 ;   search for each number pad, return the list of pads with their chips:
@@ -2543,12 +2680,13 @@ procedure( xynBuildChipList( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynEstimateMaxChipCount
 ;	sites are assumed to have already been sorted by xy.
 ;	figures out how high x and y chip numbers will go based on
 ;	the chip positions in the reticle and the nRows/nCols on the wafer,
 ;	returns the larger number (x or y)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynEstimateMaxChipCount( reticleSites)
   let( ( y nx ny ix sl)
 
@@ -2573,6 +2711,10 @@ procedure( xynEstimateMaxChipCount( reticleSites)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPrintChipLists()
   let( ( fn op)
 
@@ -2627,7 +2769,10 @@ procedure( xynPrintChipLists()
     fn
   )
 )
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMergeChipLists()
   let( ( cl cd)
 
@@ -2655,11 +2800,12 @@ procedure( xynMergeChipLists()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynCheckNumberPads
 ;	the merged chip list identifies primary & drop-in chips
 ;	along with their number pad type (among other things),
 ;	this proc compares that info with the number type selected in ui
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCheckNumberPads()
   let( ( err)
 
@@ -2675,6 +2821,10 @@ procedure( xynCheckNumberPads()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCheckForCoupons()
   let( ( coupons)
 
@@ -2687,12 +2837,11 @@ procedure( xynCheckForCoupons()
   )
 )
 
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynListAllChips
 ;	returns a list of all the chip names found in reticle and drop-in
 ;	this is used to select chips for a probe pass
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynListAllChips()
   let( ( cl)
 
@@ -2709,21 +2858,20 @@ procedure( xynListAllChips()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynGetChipSiteData
 ;	extract the sites dpl for the given chip
 ;	from either the reticle or drop-in chip list
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetChipSiteData( chipName chipListName)
 
   car( exists( chip get( xynpl chipListName) chip->name == chipName))
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	full-wafer drawing generation
-
-procedure( xynCreateWaferDwg()
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : ---
 ; Revised : 06/19/09
 ; Revised : ---
@@ -2738,11 +2886,9 @@ procedure( xynCreateWaferDwg()
 ;                      allow for user defined setting in the options menu.
 ;               
 ; Usage: xynCreateWaferDwg()
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure( xynCreateWaferDwg()
   prog( ( cv urb urx ury)
-
 ;   create the flat wafer drawing:
     cv = dbOpenCellViewByType( xynpl->libName xynpl->flatName "layout"
 			       "maskLayout" "w")
@@ -2833,9 +2979,10 @@ procedure( xynCreateWaferDwg()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynPlaceWaferSites
 ;	populates the given wafer drawing with reticle & drop-in instances
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceWaferSites( cv @optional (all nil))
   let( ( x y)
 
@@ -2874,6 +3021,10 @@ procedure( xynPlaceWaferSites( cv @optional (all nil))
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFlattenPartialInstances( cv)
   let( ( instances box)
 
@@ -2894,6 +3045,10 @@ procedure( xynFlattenPartialInstances( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFlattenInstances( cv)
   let( ( instances exc)
 
@@ -2911,9 +3066,10 @@ procedure( xynFlattenInstances( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynOverlayNumbers
 ;	instantiates the numbers drawing over the wafer cellviews
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynOverlayNumbers()
 
 ;   if numbers are regenerated, no need to re-instantiate:
@@ -2941,10 +3097,10 @@ procedure( xynOverlayNumbers()
     xynLog( "%s re-saved." xynpl->flatName)
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	wafer offset search for max die count
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynSelectWaferOffset( cv)
   prog( ( chip dx dy res ofs count y x n)
 
@@ -3028,6 +3184,10 @@ procedure( xynSelectWaferOffset( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynConfirmOffsetSettings( chip)
   let( ( fn fp ok ln)
 
@@ -3087,6 +3247,10 @@ procedure( xynConfirmOffsetSettings( chip)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWriteFlatOffsetsFile( fn)
   let( ( fp)
 
@@ -3108,6 +3272,10 @@ procedure( xynWriteFlatOffsetsFile( fn)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindProductionDie()
   let( ( die ndie n)
 
@@ -3123,6 +3291,10 @@ procedure( xynFindProductionDie()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCountFullDie( cv name)
   let( ( ih)
 
@@ -3131,6 +3303,10 @@ procedure( xynCountFullDie( cv name)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindWaferCenter( cv)
   let( ( cross cx cy)
 
@@ -3147,6 +3323,10 @@ procedure( xynFindWaferCenter( cv)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindCentermostSecondaryOffset( cv)
   let( ( cross cx cy md b d dx dy cs xm ym)
 
@@ -3185,11 +3365,10 @@ procedure( xynFindCentermostSecondaryOffset( cv)
   )
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;	numbers drawing generation
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateNumbersDwg()
   let( ( cv urb urx ury)
 
@@ -3231,6 +3410,10 @@ procedure( xynCreateNumbersDwg()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceChipNumbers()
   let( ( nonCoupons chipNames sl instances ix xs jy ly x lx chip orient pp 
          nChips nd ns)
@@ -3357,11 +3540,12 @@ procedure( xynPlaceChipNumbers()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynGetVerticalScribes
 ;	gets the list of vertical scribe coordinates for production
 ;	chips in the primary reticle, used to handle "odd" rows of chips
 ;	during numbering
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetVerticalScribes()
   let( ( sl)
 
@@ -3376,6 +3560,10 @@ procedure( xynGetVerticalScribes()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceCouponNumbers()
   let( ( orient inst pp nd ns)
 
@@ -3442,10 +3630,11 @@ procedure( xynPlaceCouponNumbers()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynMapPadOrient
 ;	vaguely sums the pad and chip orientations,
 ;	always returns either "R0" or "R270"
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMapPadOrient( chipOrient padOrient)
   let( ( no90)
 
@@ -3467,6 +3656,10 @@ procedure( xynMapPadOrient( chipOrient padOrient)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNumberChip( ix jy xp yp digits numOrient numType numSize)
   let( ( ofsl format xl yl ofp)
 
@@ -3514,6 +3707,10 @@ procedure( xynNumberChip( ix jy xp yp digits numOrient numType numSize)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceDigit( cv xy orient digit ntype size)
   let( ( cellName master)
 
@@ -3525,6 +3722,10 @@ procedure( xynPlaceDigit( cv xy orient digit ntype size)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetDigitWidth( digit ntype size)
   let( ( cellName cv w)
 
@@ -3536,6 +3737,10 @@ procedure( xynGetDigitWidth( digit ntype size)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetDigitCellName( digit ntype size)
 
     sprintf( nil "wpnums_xynum_%s%s%s"
@@ -3543,12 +3748,10 @@ procedure( xynGetDigitCellName( digit ntype size)
 	     size digit)
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;  new chip database output file generation
-
-procedure( xynChipListFile()
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : ---
 ; Revised : 06/10/08
 ; Version : 1.1
@@ -3576,7 +3779,7 @@ procedure( xynChipListFile()
 ;    NOTE: The output file location is hard-coded to the release directory of the
 ;          library.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynChipListFile()
   let( ( fn op x params formatList)
 
     fn = strcat( xynpl->relDir xynpl->libName "_chips.dat")
@@ -3624,6 +3827,10 @@ procedure( xynChipListFile()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynTimeStamp()
   let( ( dl ml mn)
 
@@ -3636,7 +3843,6 @@ procedure( xynTimeStamp()
   )
 )
 
-procedure( xynChipListWrite( op chipType formatList)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : ---
 ; Revised : 06/10/08
@@ -3663,7 +3869,7 @@ procedure( xynChipListWrite( op chipType formatList)
 ;    NOTE: Must be called from xynChipListFile() to set header, parameter line,
 ;          and formatList variable correctly.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynChipListWrite( op chipType formatList)
   let( ( cn cX cY ow rf outputs)
 
 ;   step through all the reticle sites:
@@ -3723,7 +3929,6 @@ procedure( xynChipListWrite( op chipType formatList)
   )
 )
 
-procedure( xynValidChip( chip)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : 06/09/08
 ; Revised : ---
@@ -3743,7 +3948,7 @@ procedure( xynValidChip( chip)
 ;
 ; Usage: if( xynValidChip(chip) println("Valid") println("Not Valid") )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynValidChip( chip)
   cond(
     ( ( (strlen(chip) >= 2) && (strlen(chip) <= 3) ) ;Handles chips and legacy coupons
       cond(
@@ -3759,7 +3964,6 @@ procedure( xynValidChip( chip)
   )
 )
 
-procedure( xynWriteFormat( x)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : 06/09/08
 ; Revised : ---
@@ -3774,7 +3978,7 @@ procedure( xynWriteFormat( x)
 ;          evaluation of the '%' until the 'fprintf' function (instead of inside
 ;          the 'sprintf' function).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynWriteFormat( x)
   cond(
     ( null(numberp(x)) 's)
     ( integerp(x)      'd)
@@ -3782,6 +3986,10 @@ procedure( xynWriteFormat( x)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetReticleSiteChipInstances( iX jY chipType)
 
   setof( i
@@ -3812,22 +4020,28 @@ procedure( xynXySort( a b)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynInstXySort
 ;	use with:  sort( listCoordinatePairs 'xynInstXySort)
 ;	sorts instances by their xy coordinates
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynInstXySort( i1 i2)
-
   xynXySort( i1~>xy i2~>xy)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynChipPosnSort( i1 i2)
-
   xynXySort( i1->chipPosn i2->chipPosn)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynYxSort( a b)
-
   cond(
     ( car( a) < car( b)		t)
     ( car( a) > car( b)		nil)
@@ -3836,21 +4050,29 @@ procedure( xynYxSort( a b)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynInstYxSort( i1 i2)
 
   xynYxSort( i1~>xy i2~>xy)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynNameLessp
 ;       use with:  sort( listOfPropListsWithName 'xynNameLessp)
 ;	sorts property lists alphabetically by 'name attribute
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNameLessp( a b)
 
   alphalessp( a->name b->name)
 )
 
-procedure( xynChipSort( a b)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Created : 06/05/08
 ; Revised : ---
@@ -3870,9 +4092,8 @@ procedure( xynChipSort( a b)
 ;
 ; Usage: sortedChipList = sort(unsortedChipList 'xynChipSort)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+procedure( xynChipSort( a b)
   let( ( x cnums)
-
     cond(
       ( negativep(strcmp(a->chipType b->chipType)) t) ;   Chip < Coupon
       ( plusp(strcmp(a->chipType b->chipType)) nil)   ; Coupon > Chip
@@ -3897,18 +4118,17 @@ procedure( xynChipSort( a b)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;-----------------------------------------------------------------------
 ;  	log file and messaging
-
 ;	xynLogOpen		opens the main log file
 ;	xynLogClose		closes it
 ;	xynConfirm		prompts user to confirm w dialog box
 ;	xynMsg			writes message to ciw and log file
 ;	xynLog			writes message to log file only
 ;	xynErr			writes error to ciw and log file
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLogOpen()
-
     xynLogClose()
     cond(
       ( (xynpl->logfp = outfile( strcat( xynpl->relDir xynpl->logfn)))
@@ -3923,6 +4143,10 @@ procedure( xynLogOpen()
     xynpl->errMsg = ""
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLogClose()
 
     when( portp( xynpl->logfp)
@@ -3932,12 +4156,20 @@ procedure( xynLogClose()
     )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynConfirm( s @rest r)
 
     s = apply( 'sprintf cons( nil cons( s r)))
     hiDisplayModalDBox( 'xynCONF "WARNING!" s "" "")
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynMsg( s @rest r)
 
     s = apply( 'sprintf cons( nil cons( s r)))
@@ -3946,6 +4178,10 @@ procedure( xynMsg( s @rest r)
     xynpl->errMsg = ""
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynLog( s @rest r)
 
     s = apply( 'sprintf cons( nil cons( s r)))
@@ -3953,6 +4189,10 @@ procedure( xynLog( s @rest r)
     xynpl->errMsg = ""
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynErr( s @rest r)
 
     s = apply( 'sprintf cons( nil cons( s r)))
@@ -3965,5 +4205,27 @@ procedure( xynErr( s @rest r)
     nil
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;---- end of xyn.il
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  STAGES:
+; 
+;        1.) Primary and Secondary CV Entry Checks
+; 
+;        2.) Primary and Secondary CV pre-processing
+;
+;        3.) Generate a preliminary reticle array across the wafer drawing (non chip count optimized)
+;
+;        4.) Interactive selection of secondary position in array to meet wafer alignment mark 
+;            requirements FIME: What exactly are these???
+;
+;        5.) Identify all chips and test coupons within the primary and secondary based upon
+;            the name of the xynNumberPad cell
+; 
+;        6.) Generate a list of primary and secondary die. Chips, PMBs, Test Coupons (breakouts), and markers.
+;            this list contains the origin of each of the items above
+;

@@ -1,0 +1,552 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cv.ils: Cell view class inheriting from cadObj 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cv (cadObj)
+	  (
+		( name @reader getName @writer setName)
+        	( view @reader getView @writer setView )
+		( lib @reader getLib @writer setLib )
+		( cvLeaf )
+                ( cvPcell )
+		( instances )
+		( leafs )
+		( stack )
+		( layers )
+		( pcells )
+		( bb )	
+		( iRefs )
+                ( iCnt )
+                ( iNames )
+		( iLibNames )
+		( iLevels )
+		( iLayers )
+		( uLayers @reader getuLayers )
+		( width @reader getWidth @writer setWidth)
+		( height @reader getHeight @writer setHeight)			  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj cv)) 
+	   obj->name      = nil
+	   obj->view      = nil
+	   obj->lib       = nil
+	   obj->cvLeaf    = nil
+           obj->cvPcell   = nil
+	   obj->instances = makeInstance('collection)
+	   obj->leafs     = nil
+	   obj->layers    = nil
+	   obj->stack     = makeInstance('stackup)
+	   obj->pcells    = nil
+	   obj->bb        = makeInstance('bbox) 
+	   obj->iRefs     = nil
+	   obj->iCnt      = nil
+	   obj->iNames    = nil
+	   obj->iLibNames = nil
+           obj->iLevels   = nil
+	   obj->iLayers   = makeInstance('listfun)
+	   obj->uLayers   = nil
+	   obj->width     = nil
+	   obj->height    = nil
+);defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the cellview has instances
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( hasInstance (( cell cv ))
+  dbHasInstance(getRef(cell))
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Completely flatten the entire cellview hierarchy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( smash (( cell cv ))
+  foreach( inst cell->instances->list->elems
+     flattenInstance(inst)
+  )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get all the instances in the current cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getInstances (( cell cv ))
+  let( (instances temp)
+	  instances = cell->ref~>instances
+	  foreach( inst instances
+	  	   temp = makeInstance( 'instance )
+		   setRef(temp inst)
+	  	   add(cell->instances temp)
+	  );foreach
+  );let
+);defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a new instance in the cellview
+; FIXME: Create and container of instances
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( createInstance (( cell cv ) inst )
+	   	cell->instances = const(dbCreateInst( inst cv->ref nil 0:0 "R0" 1) cell->instances)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Gets Cell Grid Information
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getGridInfo (( cell cv ))
+		dbGetGlobalGridOffsetReferenceType(cell->ref)
+		dbGetGlobalGridDefaultRepeatMode(cell->ref)
+		dbGetGlobalGridRepeatMode(cell->ref "wsspDefName" "wspName")
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Removes layout cell from library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( removeCell (( cell cv ))
+		let( ( (name cell->name)
+		       (lib  cell->lib) )
+		if( !null(ddGetObj(cell->lib cell->name cell->view)) then
+		    if(!null(ddDeleteObj(ddGetObj(cell->lib cell->name cell->view))) then
+		      printf("INFO: Removing cell view: %s\n" cell->name)
+		      t
+		    else
+		      printf("ERROR: Could not deleted cell view: %s\n" cell->name)
+		      nil
+		    );if
+		else
+	            printf("ERROR: Cell view not found: %s\n" cell->name)
+		    nil
+                );if
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copys layout view from another library into the cell object's library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( copyCell (( cell cv ) copyLib copyCell)
+  if( !ddGetObj(copyLib copyCell "layout") then
+    dbCopyCellView(cell->ref copyLib copyCell "layout" "" nil t)
+  else
+    printf("ERROR: layout cell %s exists in library\n" copyCell)
+    nil
+  );if 
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Creates a new cell in the target library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( createCell (( cell cv ))
+	let( ( (name cell->name)
+		       (lib  cell->lib) 
+		       cv)
+		if( !ddGetObj(lib name "layout") then
+		    cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+		    dbSave(cv)
+		    dbClose(cv)
+		    t
+		else
+		    printf("ERROR: layout cell %s exists in library\n" name)
+		    nil
+		);if 
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copies a cellview instance into the a new cell in the target library
+; at the origin of the object's cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( newCellInstance (( cell cv ) instLib instCell)
+	let( ( (name cell->name)
+		       (lib  cell->lib)
+		       (chlst  cell->children) 
+		       cvp
+                       cvc)
+		if( ddGetObj(lib name "layout") then
+		    cvp = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+		    if( ddGetObj(instLib instCell "layout") then
+		    	cvc = dbOpenCellViewByType(instLib instCell "layout" "maskLayout")
+			;FIXME: need a constructor which provides an initial empty list for children member
+                        ;       append this child to the children list list
+			cons( child = dbCreateInst( cvp cvc nil 0:0 "R0" 1) chlst )
+		    	dbSave(cvp)
+			dbClose(cvp)
+			dbClose(cvc)
+		    	t
+	             else
+			printf("ERROR: layout cell %s exists in library %s" instCell instLib)
+		    	nil
+		    );if
+		else
+		   printf("ERROR: layout cell %s exists in library %s" name lib)
+		   nil	
+		);if 
+	); let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method determines if the cv is a leaf cell
+; returns t if it is and nil if it is not
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isLeaf (( cell cv ))
+   if( length(cell->ref~>instances) > 0 then 
+     nil
+   else
+     t
+   )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method determines if the cv is a Pcell
+; returns t if it is and nil if it is not
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isPcell (( cell cv ))
+   if( length(cell->ref~>instances) > 0 then 
+     nil
+   else
+     t
+   )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv bbox
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getbBox (( cell cv ))
+  setRef(cell->bb cell->ref)
+  getbb(cell->bb)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv bbox
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getDim (( cell cv ))
+  setRef(cell->bb getRef(cell))
+  getDim(cell->bb)
+  cell->width  = getWidth(cell->bb)
+  cell->height = getHeight(cell->bb)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv recursive instance tree
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
+  prog( (instRef llist rlist)
+       cLst = cons(cv cLst)
+       if(!null(cv~>instances) then
+         if( length(cv~>instances) > 0 then
+           llist = '()
+	   rlist = '()
+       	   foreach( instance cv~>instances
+	     printf("Sniffing ID->[%L]: CV->%s: INST->%s(%s)\n" instance cv~>cellName instance~>cellName instance~>name)
+	     instRef = dbOpenCellViewByType(instance~>libName instance~>cellName "layout" "maskLayout")
+             rlist = cons(getRecursiveTree(cell ?cv instRef ?cLst llist) rlist)  
+	     ;dbClose(instRef)
+	   );foreach
+	   return(cons(rlist cLst))
+         else
+           printf("INFO: Leaf Cell: ID->[%L]: %s\n" cv cv~>cellName)
+           return(cv)
+         );if
+       else
+         printf("INFO: Leaf cell: ID->[%L] %s\n" cv cv~>cellName)
+	 return(cv)
+       );if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get cv instance tree
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getTree (( cell cv ))
+  cell->iRefs = '()
+  cell->iRefs = getRecursiveTree(cell ?cv cell->ref ?cLst '())
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Print cv instance tree 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( printRecursiveTree (( cell cv ) @key hlist nlev cnt)
+    prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    plist = nth(0 cdr(revlist))
+	    printf("%s NUMBER OF CELLVIEW INSTANCES: %d\n" nth(0 revlist)~>libName length(plist))
+	    for(i 0 sub1(length(plist))
+	    	if(listp(nth(i plist)) then
+		  printf("L%d: %s INST %d (ROOT) : %s, " sub1(nlev) nth(0 revlist)~>libName i nth(0 reverse(nth(i plist)))~>libName)
+		else
+	          printf("L%d: %s INST %d : %s" sub1(nlev) nth(0 revlist)~>cellName i nth(i plist)~>libName)
+		);if
+	        cnt = printRecursiveTree(cell ?hlist nth(i plist) ?nlev nlev ?cnt 0) + cnt
+	    );for
+	    return(cnt)
+	   else
+	     printf("HLeaf Cell: %s\n"  nth(0 hlist)~>cellName)
+	     return(cnt)
+	   );if
+	else
+	   cnt++
+	   printf(" (LEAF)\n")
+	   return(cnt)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Prints recursive Instance Tree (Uses Auxilliary method " printRecursiveTree"                            
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( printTree (( cell cv ))
+  cell->iCnt = 0
+  cell->iCnt = printRecursiveTree(cell ?hlist cell->iRefs ?nlev 0 ?cnt 0)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Get the instance names of the cv (recursive)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveTreeNames (( cell cv ) @key hlist nlev nList)
+  prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    nList = cons(nth(0 revlist)~>cellName nList) 
+	    plist = nth(0 cdr(revlist))
+	    for(i 0 sub1(length(plist))
+	        nList = cons(getRecursiveTreeNames(cell ?hlist nth(i plist) ?nlev nlev ?nList '()) nList)
+	    );for
+	    return(nList)
+	   else
+	     nList = cons(nth(0 hlist)~>cellName nList) 
+	     return(nList)
+	   );if
+	else
+	   nList = cons(hlist~>cellName nList)
+	   return(nList)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getTreeNames (( cell cv ))
+  cell->iNames = ()
+  cell->iNames = reverse(getRecursiveTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Auxilliary Get the instance names of the cv (recursive)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getRecursiveLibTreeNames (( cell cv ) @key hlist nlev nList)
+  prog( (revlist plist)
+  	nlev++
+	if( listp(hlist) then
+	  revlist = reverse(hlist)
+	  if( !listp(nth(0 revlist)) && listp(nth(1 revlist)) then
+	    nList = cons(nth(0 revlist)~>libName nList) 
+	    plist = nth(0 cdr(revlist))
+	    for(i 0 sub1(length(plist))
+	        nList = cons(getRecursiveLibTreeNames(cell ?hlist nth(i plist) ?nlev nlev ?nList '()) nList)
+	    );for
+	    return(nList)
+	   else
+	     nList = cons(nth(0 hlist)~>libName nList) 
+	     return(nList)
+	   );if
+	else
+	   nList = cons(hlist~>libName nList)
+	   return(nList)
+	);if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLibTreeNames (( cell cv ))
+  cell->iLibNames = ()
+  cell->iLibNames = reverse(getRecursiveLibTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers used in the cv 
+; (use list remove() function to filter out repeated layers - lstFun??)                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLpps (( cell cv ) @key cv cLst)
+  prog( (instRef rlist)
+       if(!null(cv~>instances) then
+         if( length(cv~>instances) > 0 then
+	   rlist = '()
+       	   foreach( instance cv~>instances
+	     printf("Sniffing ID->[%L]: CV->%s: INST->%s(%s)\n" instance cv~>cellName instance~>cellName instance~>name)
+	     instRef = dbOpenCellViewByType(instance~>libName instance~>cellName "layout" "maskLayout")
+	     if(!null(instRef)  then
+	        rlist = cons(getLpps(cell ?cv instRef ?cLst '()) rlist)
+	     else
+		printf("WARNING: cellview instance not found!")
+	     );if  
+	   );foreach
+	   return(cons(rlist cLst))
+         else
+	   if(!null(cv~>cellName) then
+             printf("Leaf Cell: ID->[%L]: %s\n" cv cv~>cellName)
+	     foreach( lpp cv~>lpps
+	   	 printf("Leaf Cell Layer: %s: %s\n" cv lpp~>layerName)
+		 if(!null(lpp~>layerName) then
+		   rlist = cons(lpp~>layerName rlist)
+                 else
+		   return(rlist)
+		 );if 
+	     );foreach
+             return(rlist)
+	   else
+	     printf("WARNING: Cell View not found!")
+	     return(rlist)
+           ):if
+         );if
+      else
+         if(!null(cv~>cellName) then
+           printf("INFO (getLpps): No cellview instances found - leaf cell: %s\n" cv~>cellName)
+	   foreach( lpp cv~>lpps
+	   	 printf("Leaf Cell Layer: %s: %s\n" cv lpp~>layerName) 
+		 if(!null(lpp~>layerName) then
+		   rlist = cons(lpp~>layerName rlist) 
+		 else
+		   return(rlist)
+		 );if   
+	   );foreach
+	   return(rlist)
+	  else
+	    printf("WARNING: Cell View not found!")
+	    return(rlist)
+          );if
+      );if
+  );prog
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers in the cv                                         
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLayers (( cell cv ))
+  cell->layers = getLpps( cell ?cv cell->ref ?cLst '())
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the layers used in the cv 
+; (use list remove() function to filter out repeated layers )                                        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getUsedLayers (( cell cv ))
+    getLayers(cell)
+    setElems(cell->iLayers cell->layers)
+    flattenRecursive(cell->iLayers)
+    cell->uLayers = removeRedundant(cell->iLayers)
+    cell->uLayers
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets the technology layer stackup from the target cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getStackUp (( cell cv ))
+    setRef(cell->stack cell->ref)
+    getStackUp(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a snapshot using a currently targeted smashed (fully flattened) 
+; cellview object reference. Argument is a freshly opened layout cellview
+; reference.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( snapshot (( cell cv ))
+    setRef(cell->stack cell->ref)
+    renderStack(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Removes layers from the stackup object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod(  removeLayerFromStackup (( cell cv ) arg)
+    deleteLayer(cell->stack arg)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Prints the stackup layer contents
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod(  printStackUp (( cell cv ))
+    printStackUp(cell->stack)
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the leaf cells used in the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getLeafCells (( cell cv ))
+    nil
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the pcells used in the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getPcells (( cell cv ))
+    nil
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  close and purge the cv
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( closeAndPurge (( cell cv ))
+    cell->ref = dbOpenCellViewByType( cell->lib cell->name cell->view "maskLayout")
+    if(!null(cell->ref) then
+      if( !null(dbPurge(cell->ref)) then
+        printf("INFO: Closing and Purging: %s\n:" cell->name )
+      else
+        printf("WARNING: Cellview not found: %s\n:" cell->name )
+      );if
+    else
+      printf("WARNING: Cellview not found: %s\n:" cell->name )
+    );if
+);
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  "Cleans" up a list of cellviews. Open's, closes, purges and then 
+;   deletes the list of cellviews in the input argument list.
+;   Cellview list must be in the same library as the current cv object's
+;   cellview member as determined by the cv->lib member.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( clean (( cell cv ) arg )
+  let( (cvName)
+           cvName = cell->name
+	   foreach( ar arg
+	     cell->name = ar
+	     closeAndPurge(cell)
+	   );foreach	   
+	   cell->name = cvName
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method recursively finds all the instances of the given name in
+; a cellview heirarchy (See reference procedure in test.il)
+; FIXME: Refer to tree view recursive behavior above to get the 
+;        recursion right in this method
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( getAllInstances (( cell cv ) name @optional (transform list(0:0 "R0" 1))
+;  let( (localCellInfo globalCellInfo iname)
+;    localCellInfo = '()
+;    iname = lowerCase(name)
+;    foreach(inst cv~>instances
+;      when(inst~>objType=="inst"
+;	printf("Checking instance: %s\n" inst~>cellName)
+;	if(rexMatchp(iname lowerCase(inst~>cellName)) then
+;	  InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
+;	  globalCellInfo = cons(InternalCellInfo GLOBAL_INST)
+;	  printf("Adding %s to list" inst~>cellName)
+;	);if 
+;	getAllInstances(cv inst~>master iname dbConcatTransform(inst~>transform transform) strcat(hierInstPath inst~>cellName "/"))
+;      );while
+;    );foreach
+;    t
+;  );let
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
