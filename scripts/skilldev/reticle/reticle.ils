@@ -1,3 +1,4 @@
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5,6 +6,8 @@ defclass( reticle (cv)
 	  (
 		( srRes @reader getRes @writer setRes)
 		( maxDim @reader getMaxDim @writer setMaxDim)
+		( xynPadDie @reader getPadDie @writer setPadDie)
+		( xynPadCoupon @reader getPadCoupon @writer setPadCoupon)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
 		( dieList )
@@ -18,6 +21,8 @@ defclass( reticle (cv)
 defmethod( initializeInstance @after ((obj reticle)) 
 	   obj->srRes = nil
 	   obj->maxDim = nil
+	   obj->xynPadDie = nil
+	   obj->xynPadCoupon = nil
 	   obj->validDim = nil
 	   obj->validRes = nil
 	   obj->dieList = nil  
@@ -82,10 +87,64 @@ defmethod( checkRes (( ret reticle ))
       ret->validRes = nil
     );if
 ); defmethod
-;######################################################
-;######################################################
-;######################################################
 
+;#####################################################
+; This method checks the reticle's bbox dimensions
+; (width and height) for Step and Repeat (S&R) value 
+; provided
+;#####################################################
+defmethod( chipId (( ret reticle ))
+  nil
+);
+
+;#####################################################
+; This method searches the reticle instances for the
+; xynPad. It only searches for the pad in instances
+; one level below the top level reticle cellview
+;#####################################################
+defmethod( findXynPads (( ret reticle ))
+  let((dlist cv)
+    dlist = '()
+    clist = '()
+    cv = getRef(ret)
+    foreach( ih cv~>instHeaders
+      printf("Instance Header Name: %s \n" ih~>cellName)
+      foreach( inst ih~>instances
+        printf("Instance Name: %s \n" inst~>cellName)
+        foreach( cell inst~>master~>instances
+          printf("Cell Name: %s \n" cell~>cellName)
+          if(cell~>cellName == ret->xynPadDie then
+            printf("XYN DIE PAD FOUND!: %s, In die: %s \n" cell~>cellName inst~>cellName)
+	    dlist = cons(inst~>cellName dlist)
+          );
+	  if(cell~>cellName == ret->xynPadCoupon then
+            printf("XYN COUPON PAD FOUND!: %s, In die: %s \n" cell~>cellName inst~>cellName)
+	    clist = cons(inst~>cellName clist)
+          );
+        );foreach
+      );foreach
+    );foreach
+    dlist = sort(dlist nil)
+    clist = sort(clist nil)
+    ret->dieList = dlist
+    ret->couponList = clist
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Description: Sorts chips based on the whether the chip is a chip or a coupon,
+;              then on the naming convention adopted on 06/08
+;                    Chips/Legacy Coupons: NN[N]  (e.g.  99, 970)
+;                    New Standard Coupons: PPNNR  (e.g. 8099A)
+;                New Experimental Coupons: XPPNNR (e.g. X8001A)
+;                         Legend -  N - Number
+;                                   P - Process
+;                                   R - Revision
+;                                  [] - Optional
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;######################################################
+;######################################################
+;######################################################
 
 
 	

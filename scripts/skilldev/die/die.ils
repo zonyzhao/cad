@@ -1,0 +1,51 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  die.ils: die class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( die (cv)
+	  (
+		( number @reader getNum @writer setnum)
+		( padName )
+		( type )
+		( padSize )
+		( numType )
+		( numSize )
+		( padLocn )
+		( padOrient )
+		( digits )
+		( dieOrient )
+		( diePosn )
+		( chipBox )
+	  )
+) ; defClass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj die)) 
+  obj->number = nil
+  obj->padName = nil
+  obj->type = nil
+  obj->padSize = nil
+  obj->numType = nil
+  obj->padLocn = nil
+  obj->padOrient = nil
+  obj->digits = nil
+  obj->dieOrient = nil
+  obj->diePosn = nil
+  obj->chipBox = nil
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( foo (( d die ))
+;); defmethod
+
+;######################################################
+;######################################################
+;######################################################
+
+
+
+
+	

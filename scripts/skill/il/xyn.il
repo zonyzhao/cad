@@ -212,13 +212,13 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 		S		( 20 45 70)
 				)
 
-	retOlap			4.0		; reticle overlap in um
+	retOlap			0.0		; reticle overlap in um
 	exclusionRing		5000.0		; wafer handling ring width
-	outlineLyr		"outline"	; wafer outline shape layer
+	outlineLyr		"resistor"	; wafer outline shape layer
 	inclusionLyr		"y1"		; temporary shape layer
-	exclusionLyr		"outline"	; layer for exclusion ring
+	exclusionLyr		"membrane"	; layer for exclusion ring
 	waferCenterCrossLyr     "GRID"		; layer for "x" at center of outline
-	cornerBlockLyr		"nplus"		; 1um boxes for ebeam guys
+	cornerBlockLyr		"numbers"       ; 1um boxes for ebeam guys
 	stepRepeatResolution	10		; expected s&r resolution
 
 	rectUndersize		500.0		; FIXME: undersize aeblemap site rects
@@ -2496,14 +2496,17 @@ procedure( xynCreateForm3()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetNumberPads()
 
-    xynMsg( "acquiring number pads...")
-
+    xynMsg( "Acquiring number pads...")
     xynpl->numberPads = 
       foreach( mapcar pad xynFindNumberPadCells()
         xynGetNumberPadInfo( pad)
       )
-
-    xynPrintNumberPads()
+    if(null(xynpl->numberPads) then
+      xynMsg( "Number pads NOT found in build library. Copy them from reticle library please")
+    else
+      xynPrintNumberPads()
+    );
+   
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
