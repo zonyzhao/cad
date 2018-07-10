@@ -2502,7 +2502,9 @@ procedure( xynGetNumberPads()
         xynGetNumberPadInfo( pad)
       )
     if(null(xynpl->numberPads) then
-      xynMsg( "Number pads NOT found in build library. Copy them from reticle library please")
+      xynMsg( "Number pads NOT found in build library")
+      xynMsg( "Copy them from the reticle library and rename them with the following pattern:")
+      xynMsg( "DESIGN_REV_xyPad_XXX")
     else
       xynPrintNumberPads()
     );
@@ -2516,7 +2518,6 @@ procedure( xynGetNumberPads()
 ;	returns a list of the number padd cell names
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynFindNumberPadCells()
-
     setof( c xynLibCellList()
 	   caddr( parseString( c "_")) == "xyPad")
 )
