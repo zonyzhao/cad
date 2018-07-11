@@ -1458,8 +1458,12 @@ procedure( xynListVCB()
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
+;xynWafVCB: 
+;          This procedure opens a cellview window that presents the
+;          water layout with the optimized offset reticle array.
+;          This is a visual output from the Step and Repeat algorithm
+;          that optimizes the number of complete chips that can 
+;          be fabricated on the wafer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynWafVCB()
   let( ( win)
@@ -3072,7 +3076,7 @@ procedure( xynFlattenInstances( cv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynOverlayNumbers
-;	instantiates the numbers drawing over the wafer cellviews
+;	instantiates the numbers drawing over the wafer cellview (wpnums?)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynOverlayNumbers()
 
@@ -3370,8 +3374,8 @@ procedure( xynFindCentermostSecondaryOffset( cv)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;-----------------------------------------------------------------------
-;	numbers drawing generation
+; xynCreateNumbersDwg: Create numbers drawing cellview
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynCreateNumbersDwg()
   let( ( cv urb urx ury)
@@ -3420,8 +3424,9 @@ procedure( xynCreateNumbersDwg()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceChipNumbers()
   let( ( nonCoupons chipNames sl instances ix xs jy ly x lx chip orient pp 
-         nChips nd ns)
+         nChips nd ns exceed)
 
+    
 ;   preset the probed-chips counters to zero:
     foreach( c xynpl->mergedChipList c->nChips = 0)
 
@@ -3444,7 +3449,13 @@ procedure( xynPlaceChipNumbers()
     jy = -1  ly = -1
     nChips = 0
     foreach( inst instances
-
+      exceed = nil
+      xynMsg( "Processing Chip Name: %L" inst~>cellName)
+      xynMsg( "Processing Chip Instance: %L" inst~>name)
+      xynMsg( "Index X: %L" ix)
+      xynMsg( "Index Y: %L" jy)
+      xynMsg( "Intra Reticle Row (Y coord): %L" ly)
+      xynMsg( "Intra Reticle Col (X coord): %L" lx)
 ;     keep track of steps in the y direction:
       when( cadr( inst~>xy) > ly
 ;	reset the x number to zero:
@@ -3470,13 +3481,19 @@ procedure( xynPlaceChipNumbers()
 
       lx = car( inst~>xy)
       x = lx
-      while( x >= xynpl->retW x = x - xynpl->retW)
+      while( x >= xynpl->retW 
+             x = x - xynpl->retW
+             xynMsg( "X is greater than reticle width %L subtracting width - new x value: %L" xynpl->retW x))
       while( x != car( xs) && ix < 10000
-
+        ;if(null(exceed)
+        ;  xynMsg( "OCCURRENCE: X is further right than expected: %L" x)
+	;  exceed = 't
+        ;)
 ;	here x is farther right than expected, must be one or more non-chips
 ;	was skipped in this row, so advance the x number:
 	xs = or( cdr( xs) sl)
 	ix = ix + 1
+	
       )
       when( ix == 10000 
 	xynErr( "failed to find x index of chip instance %s" inst~>name)
@@ -3491,6 +3508,7 @@ procedure( xynPlaceChipNumbers()
       inst~>jY = jy
 
 ;     number only the complete chips:
+      xynMsg( "Full Chip: %L" xynIsFullObject( inst))
       cond(
         ( xynIsFullObject( inst)
 
@@ -3565,7 +3583,7 @@ procedure( xynGetVerticalScribes()
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
+; xynPlaceCouponNumbers: Places the XY numbers on the XYN Pads
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceCouponNumbers()
@@ -3661,20 +3679,36 @@ procedure( xynMapPadOrient( chipOrient padOrient)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
+; xynNumberChip: Places complete XY number on a specific chip XYN Pad using the
+;                cellview reference of the XYN PAD under consideration
+;                xynpl->numCV
+;                ix: Chip pad array x index 
+;                iy: Chip pad array y index
+;                xp: x Coordinate of pad origin
+;                yp: y Coordinate of pad origin
+;                digits: number of digits in the number ex. 4
+;                numOrient: Orientation of the number ex. "R0"
+;                numType: Number Type ex. "S"
+;                numSize: Numuber Size ex. "M"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynNumberChip( ix jy xp yp digits numOrient numType numSize)
   let( ( ofsl format xl yl ofp)
-
+    
+    xynMsg("Numbering Chip With Number Size: %L", numSize)
+    xynMsg("Chip Number Size: %L", digits)
+    xynMsg("Chip Number Size FORMAT: %%0%dd", digits)
+    xynMsg("Chip X Index: %L" ix)
+    xynMsg("Chip Y Index: %L" jy)
+    xynMsg("Pad Orientation: %L" numOrient)
+    xynMsg("Number Type: %L" numType)
 ;   place the dash in the center of the pad:
     xynPlaceDigit( xynpl->numCV xp:yp numOrient "-" numType numSize)
-
+   
 ;   get the placement offset list:
     ofsl = get( xynpl->numOffsets concat( numSize))
-
 ;   format the coordinates:
     format = sprintf( nil "%%0%dd" digits)
+    
     xl = parseString( sprintf( nil format ix) "")
     yl = parseString( sprintf( nil format jy) "")
 
@@ -3712,8 +3746,11 @@ procedure( xynNumberChip( ix jy xp yp digits numOrient numType numSize)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
+; xynPlaceDigit: Places a single XYN Digit on an XYN Pad
+; 1.) Get the cell name as determined by the digit ntype and size args
+; 2.) Open the digit cellview in the master variable
+; 3.) Instantiate the digit in the open reference cells view 
+;     refereced by the cv argument
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceDigit( cv xy orient digit ntype size)
   let( ( cellName master)
@@ -3727,7 +3764,7 @@ procedure( xynPlaceDigit( cv xy orient digit ntype size)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
+; xynGetDigitWidth: Get the width of the digit from its boundary box
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetDigitWidth( digit ntype size)
@@ -3742,11 +3779,14 @@ procedure( xynGetDigitWidth( digit ntype size)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
+; xynGetDigitCellName: Returns the name of the digit cell in the 
+;                      numbers library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetDigitCellName( digit ntype size)
 
+    xynMsg("PRINTING DIGIT: wpnums_xynum_%s%s%s"
+	     upperCase( substring( ntype 1 1))
+	     size digit)
     sprintf( nil "wpnums_xynum_%s%s%s"
 	     upperCase( substring( ntype 1 1))
 	     size digit)

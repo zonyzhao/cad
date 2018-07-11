@@ -142,6 +142,20 @@ defmethod( findXynPads (( ret reticle ))
 ;                                   R - Revision
 ;                                  [] - Optional
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;#####################################################
+; Digitizes a number (num) to a list of digits of 
+; length digits
+;#####################################################
+defmethod( digitize (( ret reticle ) num)
+  let((digits format dlist)
+    ;FIXME: add a second argument for digits
+    digits = 3
+    format = sprintf( nil "%%0%dd" digits)
+    dlist = parseString( sprintf( nil format num) "")
+  );let
+);defmethod
+
 ;######################################################
 ;######################################################
 ;######################################################
