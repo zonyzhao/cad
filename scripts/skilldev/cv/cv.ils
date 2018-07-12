@@ -53,10 +53,10 @@ defmethod( initializeInstance @after ((obj cv))
 );defmethod	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Determines if the cellview has instances
+; Determines if the cellview has instances (flat if no instances)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( hasInstance (( cell cv ))
-  dbHasInstance(getRef(cell))
+  !null(dbHasInstance(getRef(cell)))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

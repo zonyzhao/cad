@@ -2739,10 +2739,10 @@ defmethod( initializeInstance @after ((obj cv))
 );defmethod	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Determines if the cellview has instances
+; Determines if the cellview has instances (flat if no instances)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( hasInstance (( cell cv ))
-  dbHasInstance(getRef(cell))
+  !null(dbHasInstance(getRef(cell)))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3253,7 +3253,63 @@ defmethod( clean (( cell cv ) arg )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;###################################################################
+;#   instance.ils: instance class
+;###################################################################
+defclass( instance (cv)
+	  (
+	      ( inst @Reader getInst @Writer setInst )
+	      ( type @Reader getType @Writer setType )
+	      ( flev )		
+	  )
+);defClass
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj instance)) 
+ 	   obj->inst = nil
+	   obj->type = nil
+	   obj->flev = 32
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method flattens an instance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( flattenInstance (( inst instance ) )
+      if( !null(inst->ref~>cluster) then
+        dbFlattenInst(inst->ref~>cluster arg t nil nil)
+      else
+        dbFlattenInst(inst->ref inst->flev t nil nil)
+      );if
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method moves the location of the instance relative to its current
+; position
+; Argument (arg) is of the form list( dx:dy "R0") 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;defmethod( instanceMove (( inst instance ) arg ) 
+;   dbMoveFig(inst->ref inst->cvRef arg)
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method flattens the instance's heirarchy by the levels in the arg.
+; arg can range from 0 to 32 levels of heirarchical flattening
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;defmethod( instanceFlatten (( inst instance ) arg )
+;    foreach( instance inst->cvRef~>instances
+;      if( instance~>mosaic then
+;        dbFlattenInst(instance~>mosaic arg t nil nil)
+;      else
+;        dbFlattenInst(instance arg t nil nil)
+;      );if
+;    );foreach
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

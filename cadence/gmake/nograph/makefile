@@ -23,8 +23,8 @@ sdir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/"
 #########################################################################
 skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   polygon2 rectTran rectTrans transform2 transformation2 \
-                  geometry assembly stackup bbox cv reticle die chip \
-                  coupon
+                  geometry assembly stackup bbox cv instance reticle die \
+                  chip coupon
 #########################################################################
 polygons = rectangle triangle circle frame    
 #########################################################################
