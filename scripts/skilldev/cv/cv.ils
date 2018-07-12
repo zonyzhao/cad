@@ -121,6 +121,23 @@ defmethod( removeCell (( cell cv ))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copys layout view to another name in the same library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Copy (( cell cv ) name)
+  let((cv)
+    cv = getRef(cell)
+    if( null(ddGetObj(cell->lib name cell->view)) then
+      dbCopyCellView(cv cell->lib name cell->view "" nil t)
+      dbClose( cv)
+      't
+    else
+      printf("ERROR: layout cell %s exists in library\n" name)
+      nil
+    );if 
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Copys layout view from another library into the cell object's library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( copyCell (( cell cv ) copyLib copyCell)

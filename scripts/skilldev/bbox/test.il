@@ -8,94 +8,94 @@ classOf(bb)
 bb->bb
 bb->ur
 bb->ll
+bb->origin
 bb->width
 bb->height
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get the bbox for a cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
-name = "pd0164_p"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "r")
+name = "pd0164_0p"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
 setRef(bb cv)
-getbBox(bb)
-bb->bb
+getbb(bb)
+bb->bbx
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Get the bbox dimensions:
 : width and height
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
-name = "pd0164_p"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "r")
+name = "pd0164_0p"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
 setRef(bb cv)
+getbb(bb)
 getDim(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3: Get the bbox Origin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pa0715"
-name = "pa715_0p"
+lib = "pd0164"
+name = "pd0164_0p"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
-getOrigin(bb)
+setRef(bb cv)
+getbb(bb)
+Origin(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4: Get the bbox center
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pa0715"
-name = "pa715_0p"
+lib = "pd0164"
+name = "pd0164_0p"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
-getCenter(bb)
+setRef(bb cv)
+getbb(bb)
+Centroid(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-5: Test conversion of bbox
 ;       coordinates to vertices
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pa0715"
-name = "pa715_0p"
+lib = "pd0164"
+name = "pd0164_0p"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
+setRef(bb cv)
+getbb(bb)
 bb2vert(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-6: Get the area of bbox
 ;       (meters**2)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pa0715"
-name = "pa715_0p"
-bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
-getArea(bb)
+;lib = "pd0164"
+;name = "pd0164_0p"
+;bb = makeInstance( 'bbox )
+;setLib(bb lib)
+;setName(bb name)
+;getArea(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-7: Shift the bbox and it's contents
 ;       to the upper right quadrant
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pa0715"
-name = "pa715_0p"
+lib = "pd0164"
+name = "pd0164_0p_urqshift"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
+setRef(bb cv)
 shiftURQ(bb)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-8: Get the bbox for a suspected
-;       bad reticle cv
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "ts0455"
-name = "ts455_0s"
-bb = makeInstance( 'bbox )
-setLib(bb lib)
-setName(bb name)
-getbb(bb)
-getDim(bb)
+
 

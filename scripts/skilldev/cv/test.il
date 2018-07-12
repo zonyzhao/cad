@@ -16,12 +16,12 @@ classOf(cell)
 ;       dimensions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib="pd0164"
-name="pd0164_p"
+name="pd0164_0p"
 view="layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout")
 cell = makeInstance( 'cv )
 setRef(cell cv)
-setView(cell "layout")
+setView(cell view)
 setName(cell name)
 setLib(cell lib)
 getName(cell)
@@ -44,20 +44,6 @@ close(fp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3
-; This tests the population of the
-; boundary box list member
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-cell = makeInstance( 'cv )
-cell->lib = "XYnumbers"
-cell->name = "wpnums_xyPad_SLA"
-cell->view = "layout"
-
-getbBox(cell)
-getDim(cell)
-;getOrigin(cell)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-4
 ; This tests the alignment of the 
 ; cell to the reference position of
 ; the cell origin aligned to the 
@@ -619,7 +605,25 @@ setName(cell sname)
 snapshot(cell)
 ; save and close the snapshot cell
 dbSave(cv)
-dbClose(cv)	
+dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-24 Copy Cell to another name in the
+;       same library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="pd0164"
+name="pd0164_0p"
+view="layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setName(cell name)
+setLib(cell lib)
+setView(cell view)
+copyName = "pd0164_0p_shifturq"
+Copy(cell copyName)
+ddGetObj(getLib(cell) getName(cell) getView(cell))
+
 
 
 nth(0 nth(0 cell->stack->stack->list->elems)->shapes->list->elems)->vertices

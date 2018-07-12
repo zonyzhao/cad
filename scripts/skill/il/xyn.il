@@ -212,7 +212,7 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 		S		( 20 45 70)
 				)
 
-	retOlap			0.0		; reticle overlap in um
+	retOlap			4.0		; reticle overlap in um
 	exclusionRing		5000.0		; wafer handling ring width
 	outlineLyr		"resistor"	; wafer outline shape layer
 	inclusionLyr		"y1"		; temporary shape layer
@@ -1070,7 +1070,7 @@ procedure( xynRetCB()
 	unless( and( xynCheckRes( xynpl->retW xynpl->stepRepeatResolution)
 		     xynCheckRes( xynpl->retH xynpl->stepRepeatResolution))
 	  hiGetAttention()
-	  xynErr( "ERROR: Reticle dimensions violate step & repeat resolution settings")
+	  ;xynErr( "ERROR: Reticle dimensions violate step & repeat resolution settings")
 	  xynMsg( "Reticle Width: %g  Height: %g  S&R Resolution: %g"
 		  float( xynpl->retW) float( xynpl->retH) 
 		  float( xynpl->stepRepeatResolution))
@@ -3471,30 +3471,52 @@ procedure( xynPlaceChipNumbers()
       )
 
 ;     keep track of vertical scribe lines
-;     (to handle rows that contain chips and non-chips)
+;     (to handle rows that contain chips and non-chips) NON-CHIPS == COUPONS??
 ;     get the chip's x-coord WRT the reticle:
 
+      ; FIXME: inst~>xy is the origin of each chip in the reticle assigned during S&R processing
+      ; lx is intra reticle column position as calculated locally in this procedure
+      ; taking the differenc between the stored x coord value of chip origin and the position of the 
+      ; xcoord column index and comparing it to the reticle width. If it is greater than 
+      ; increment the index of the column value x by the length of the scribe line and increment
+      ; the value of the intra reticle column index lx 
       while( car( inst~>xy) - lx > xynpl->retW
 	ix = ix + length( sl)
 	lx = lx + xynpl->retW
       )
 
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; FIXME: ?????
+      ; the inst~>xy was given to each chip during S&R algorithm execution and is a custom
+      ; property representing the chip origin
+      ;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       lx = car( inst~>xy)
       x = lx
       while( x >= xynpl->retW 
+             xynMsg( "X value %L is greater than reticle width %L subtracting width" x xynpl->retW )
              x = x - xynpl->retW
-             xynMsg( "X is greater than reticle width %L subtracting width - new x value: %L" xynpl->retW x))
+             xynMsg( "New X value %L:" x )
+      );while
+
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Watchdog condition x value not equal to x scribe line position and the array index 
+      ; x exceeds 10,000
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       while( x != car( xs) && ix < 10000
-        ;if(null(exceed)
-        ;  xynMsg( "OCCURRENCE: X is further right than expected: %L" x)
-	;  exceed = 't
-        ;)
+        if(null(exceed) then
+          xynMsg( "MIN ONE OCCURRENCE: X is further right than expected: %L" x)
+	  exceed = 't
+        )
+;       FIXME: This is describing the skipping of a coupon as we are only interested in chips ...
 ;	here x is farther right than expected, must be one or more non-chips
 ;	was skipped in this row, so advance the x number:
 	xs = or( cdr( xs) sl)
 	ix = ix + 1
 	
       )
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       when( ix == 10000 
 	xynErr( "failed to find x index of chip instance %s" inst~>name)
 	printf( "instance x: %f  normalized x: %f\n" lx x)

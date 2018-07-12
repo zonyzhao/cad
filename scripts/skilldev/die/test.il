@@ -1,5 +1,15 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-0; Existence
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+findClass( 'die )
+d = makeInstance( 'die )
+classp( d 'die)
+classOf(d)
+
+
+
 ;###############################
-;UT0: finding the CD XYnumberPad
+;UTX: finding the CD XYnumberPad
 ;###############################
 lib = "am0105"
 cell= "wafer_4"

@@ -3,7 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( die (cv)
 	  (
-		( number @reader getNum @writer setnum)
 		( padName )
 		( type )
 		( padSize )
@@ -22,7 +21,6 @@ defclass( die (cv)
 ; Constructor Method
 ;#####################################################
 defmethod( initializeInstance @after ((obj die)) 
-  obj->number = nil
   obj->padName = nil
   obj->type = nil
   obj->padSize = nil

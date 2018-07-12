@@ -5,13 +5,17 @@
 defclass( reticle (cv)
 	  (
 		( srRes @reader getRes @writer setRes)
+		( srGrid @reader getSrGrid @writer setSrGrid)
+		( overlap @reader getOverlap @writer setOverlap)
 		( maxDim @reader getMaxDim @writer setMaxDim)
-		( xynPadDie @reader getPadDie @writer setPadDie)
-		( xynPadCoupon @reader getPadCoupon @writer setPadCoupon)
+		( xynPadChipName @reader getPadChipName @writer setPadChipName)
+		( xynPadCouponName @reader getPadCouponName @writer setPadCouponName)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
-		( dieList )
-		( couponList )					
+		( chipList @reader getChipList)
+		( couponList @reader getCouponList)
+		( chips )
+		( coupons )					
 	  )
 ) ; defClass
 
@@ -20,13 +24,17 @@ defclass( reticle (cv)
 ;#####################################################
 defmethod( initializeInstance @after ((obj reticle)) 
 	   obj->srRes = nil
+	   obj->srGrid = nil
+	   obj->overlap = nil
 	   obj->maxDim = nil
-	   obj->xynPadDie = nil
-	   obj->xynPadCoupon = nil
+	   obj->xynPadChipName = nil
+	   obj->xynPadCouponName = nil
 	   obj->validDim = nil
 	   obj->validRes = nil
-	   obj->dieList = nil  
-	   obj->couponList = nil   
+	   obj->chipList = nil  
+	   obj->couponList = nil
+	   obj->chips = makeInstance( 'collection )
+	   obj->coupons = makeInstance( 'collection )  
 );defmethod
 
 ;######################################################
@@ -35,6 +43,7 @@ defmethod( initializeInstance @after ((obj reticle))
 ;######################################################
 defmethod( checkDim ((ret reticle))
   ret->validDim = 't
+  getbBox(ret)
   getDim(ret)
   if(ret->bb->width > ret->maxDim then
     printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
@@ -55,16 +64,18 @@ defmethod( checkDim ((ret reticle))
 ; (width and height) for grid requirements????
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
-;defmethod( checkGrid ((ret reticle))
-;  if( (ret->bb->width-floor(ret->bb->width)) > 0.0 then
-;    printf("ERROR: Reticle width %g step resolution NOT ON a 1u grid\n" ret->bb->width)
-;  else
-;  );if
-;  if( (ret->bb->height-floor(ret->bb->height)) > 0.0 then
-;    printf("ERROR: Reticle width %g step resolution NOT ON a 1u grid\n" ret->bb->height)
-;  else
-;  );if
-;);defmethod
+defmethod( checkGrid ((ret reticle))
+  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+  else
+    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+  );if
+  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Width %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
+  else
+    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->height) float(ret->srGrid))
+  );if
+);defmethod
 
 ;#####################################################
 ; This method checks the reticle's bbox dimensions
@@ -72,20 +83,28 @@ defmethod( checkDim ((ret reticle))
 ; provided
 ;#####################################################
 defmethod( checkRes (( ret reticle ))
+ let((rwidth rheight)
     ret->validRes = 't
+    getbBox(ret)
     getDim(ret)
-    if( equal( modulo( int(ret->bb->width) ret->srRes) 0) then
-      printf("INFO: Reticle Width %5.1f MEETS required S&R step resolution of %3.1f\n" float(ret->bb->width) float(ret->srRes))
-    else
-      printf("ERROR: Reticle Width %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(ret->bb->width) float(ret->srRes))
+    rwidth =  ret->bb->width - ret->overlap
+    rheight = ret->bb->height - ret->overlap
+    printf("INFO: Reticle Overlap Setting: %5.1f\n" float(ret->overlap))
+    printf("INFO: Reticle S&R Setting: %5.1f\n" float(ret->srRes))
+    if(quotient(rwidth ret->srRes) - int(quotient(rwidth ret->srRes)) > 0 then
+      printf("ERROR: Overlap Compensated Reticle Width %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
       ret->validRes = nil
-    );if
-    if( equal( modulo( int(ret->bb->height) ret->srRes) 0) then
-      printf("INFO: Reticle Length %5.1f MEETS required S&R step resolution of %3.1f\n" float(ret->bb->height) float(ret->srRes))
+      
     else
-      printf("ERROR: Reticle Length %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(ret->bb->height) float(ret->srRes))
-      ret->validRes = nil
+      printf("INFO: Overlap Compensated Reticle Width %5.1f MEETS required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
     );if
+    if(quotient(rwidth ret->srRes) - int(quotient(rwidth ret->srRes)) > 0 then
+      printf("ERROR: Overlap Compensated Reticle Length %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(rheight) float(ret->srRes))
+      ret->validRes = nil
+    else
+      printf("INFO: Overlap Compensated Reticle Length %5.1f MEETS required S&R step resolution of %3.1f\n" float(rheight) float(ret->srRes))
+    );if
+  );let
 ); defmethod
 
 ;#####################################################
@@ -103,7 +122,9 @@ defmethod( chipId (( ret reticle ))
 ; one level below the top level reticle cellview
 ;#####################################################
 defmethod( findXynPads (( ret reticle ))
-  let((dlist cv)
+  let((dlist cv numPadCount coupoPadCount)
+    chipPadCount = 0
+    couponPadCount = 0
     dlist = '()
     clist = '()
     cv = getRef(ret)
@@ -113,12 +134,14 @@ defmethod( findXynPads (( ret reticle ))
         printf("Instance Name: %s \n" inst~>cellName)
         foreach( cell inst~>master~>instances
           printf("Cell Name: %s \n" cell~>cellName)
-          if(cell~>cellName == ret->xynPadDie then
-            printf("XYN DIE PAD FOUND!: %s, In die: %s \n" cell~>cellName inst~>cellName)
+          if(cell~>cellName == ret->xynPadChipName then
+	    chipPadCount++
+            printf("XYN CHIP PAD FOUND!: %s, In chip: %s \n" cell~>cellName inst~>cellName)
 	    dlist = cons(inst~>cellName dlist)
           );
-	  if(cell~>cellName == ret->xynPadCoupon then
-            printf("XYN COUPON PAD FOUND!: %s, In die: %s \n" cell~>cellName inst~>cellName)
+	  if(cell~>cellName == ret->xynPadCouponName then
+	    couponPadCount
+            printf("XYN COUPON PAD FOUND!: %s, In coupon: %s \n" cell~>cellName inst~>cellName)
 	    clist = cons(inst~>cellName clist)
           );
         );foreach
@@ -126,8 +149,9 @@ defmethod( findXynPads (( ret reticle ))
     );foreach
     dlist = sort(dlist nil)
     clist = sort(clist nil)
-    ret->dieList = dlist
+    ret->chipList = dlist
     ret->couponList = clist
+    chipPadCount + couponPadCount
   );let
 );defmethod
 
@@ -155,6 +179,29 @@ defmethod( digitize (( ret reticle ) num)
     dlist = parseString( sprintf( nil format num) "")
   );let
 );defmethod
+
+;#####################################################
+; Add chip to chips collection
+;#####################################################
+defmethod( addChip (( ret reticle ) arg)
+  if( classp( arg 'chip) then
+    add(ret->chips arg)
+  else
+    println("ERROR(reticle): Argument must be a chip object")
+  );if
+);defmethod
+
+;#####################################################
+; Add coupon to couponss collection
+;#####################################################
+defmethod( addCoupon (( ret reticle ) arg)
+  if( classp( arg 'coupon) then
+    add(ret->coupons arg)
+  else
+    println("ERROR(reticle): Argument must be a coupon object")
+  );if
+);defmethod
+
 
 ;######################################################
 ;######################################################
