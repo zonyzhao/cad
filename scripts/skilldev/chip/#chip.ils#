@@ -13,11 +13,18 @@ defmethod( initializeInstance @after ((obj chip))
   obj->numpad = makeInstance( 'chipNumberPad )
 );defmethod
 ;######################################################
-;######################################################
-;######################################################
 ;#####################################################
 ; Sets the boundary box of the chip numbers pad
 ;#####################################################
 defmethod(setPadBbox  (( ch chip ) bbx)
   setInstanceBbox(ch->numpad bbx)
 );defmethod
+;#####################################################
+; Sets numbers pad origin referenced to the origin of the
+; chip
+;#####################################################
+defmethod(setPadOrigin  (( ch chip ))
+  setInstanceOrigin(ch->numpad bbx)
+);defmethod
+;######################################################
+;######################################################

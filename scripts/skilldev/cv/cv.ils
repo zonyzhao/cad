@@ -13,7 +13,7 @@ defclass( cv (cadObj)
 		( stack )
 		( layers )
 		( pcells )
-		( bb )	
+		( bbx @reader getBbx @writer setBbx)	
 		( iRefs )
                 ( iCnt )
                 ( iNames )
@@ -22,7 +22,8 @@ defclass( cv (cadObj)
 		( iLayers )
 		( uLayers @reader getuLayers )
 		( width @reader getWidth @writer setWidth)
-		( height @reader getHeight @writer setHeight)			  
+		( height @reader getHeight @writer setHeight)
+                ( origin @reader getOrigin @writer setOrigin)			  
 	  )
 ) ; defClass
 
@@ -40,7 +41,7 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->layers    = nil
 	   obj->stack     = makeInstance('stackup)
 	   obj->pcells    = nil
-	   obj->bb        = makeInstance('bbox) 
+	   obj->bbx       = makeInstance('bbox) 
 	   obj->iRefs     = nil
 	   obj->iCnt      = nil
 	   obj->iNames    = nil
@@ -224,22 +225,35 @@ defmethod( isPcell (( cell cv ))
    )
 );defmethod
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getbBox (( cell cv ))
-  setRef(cell->bb cell->ref)
-  getbb(cell->bb)
+  setRef(cell->bbx cell->ref)
+  getbb(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getDim (( cell cv ))
-  setRef(cell->bb getRef(cell))
-  getDim(cell->bb)
-  cell->width  = getWidth(cell->bb)
-  cell->height = getHeight(cell->bb)
+  setRef(cell->bbx getRef(cell))
+  getDim(cell->bbx)
+  cell->origin = Origin(cell->bbx)
+  cell->width  = getWidth(cell->bbx)
+  cell->height = getHeight(cell->bbx)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( setDim (( cell cv ))
+  getDim(cell->bbx)
+  cell->origin = Origin(cell->bbx)
+  cell->width  = getWidth(cell->bbx)
+  cell->height = getHeight(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

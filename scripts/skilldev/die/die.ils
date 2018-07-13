@@ -1,36 +1,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  die.ils: die class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( die (cv)
-	  (
-		( padName )
-		( type )
-		( padSize )
-		( numType )
-		( numSize )
-		( padLocn )
-		( padOrient )
-		( digits )
-		( dieOrient )
-		( diePosn )
-		( chipBox )
-	  )
+defclass( die (instance)
+  (
+    ( reticle @reader getReticle @writer setReticle )
+    ( number @reader getNumber @writer setNumber)
+    ( revision @reader getRev @writer setRev)
+  )
 ) ; defClass
 
 ;#####################################################
 ; Constructor Method
 ;#####################################################
-defmethod( initializeInstance @after ((obj die)) 
-  obj->padName = nil
-  obj->type = nil
-  obj->padSize = nil
-  obj->numType = nil
-  obj->padLocn = nil
-  obj->padOrient = nil
-  obj->digits = nil
-  obj->dieOrient = nil
-  obj->diePosn = nil
-  obj->chipBox = nil
+defmethod( initializeInstance @after ((obj die))
+  obj->reticle = nil 
+  obj->number = nil
+  obj->revision = nil
 );defmethod
 
 ;#####################################################

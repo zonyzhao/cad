@@ -8,8 +8,8 @@ graphic	defaultToolName	string	"Virtuoso"
 layout	pathWidth	float	5.0
 layout  gridSpacing     float   0.001
 layout  gridMultiple    int     25
-layout	ySnapSpacing	float	0.2
-layout	xSnapSpacing	float	0.2
+layout	ySnapSpacing	float	0.1
+layout	xSnapSpacing	float	0.1
 layout	stopLevel	int	32
 layout	gravityOn	boolean	nil
 layout	toolboxDisplayMenus	boolean	t

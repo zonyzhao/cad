@@ -1,4 +1,3 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,10 +11,11 @@ defclass( reticle (cv)
 		( xynPadCouponName @reader getPadCouponName @writer setPadCouponName)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
+		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
 		( chipList @reader getChipList)
 		( couponList @reader getCouponList)
-		( chips )
-		( coupons )					
+		( chips @reader getChips)
+		( coupons @reader getCoupons)					
 	  )
 ) ; defClass
 
@@ -31,6 +31,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->xynPadCouponName = nil
 	   obj->validDim = nil
 	   obj->validRes = nil
+	   obj->shiftUrq = nil
 	   obj->chipList = nil  
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
@@ -45,17 +46,17 @@ defmethod( checkDim ((ret reticle))
   ret->validDim = 't
   getbBox(ret)
   getDim(ret)
-  if(ret->bb->width > ret->maxDim then
-    printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+  if(getWidth(ret) > getMaxDim(ret) then
+    printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(getWidth(ret)) float(ret->maxDim) )
     ret->validDim = nil
   else
-    printf("INFO: Reticle Width %8.1f is less than maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+    printf("INFO: Reticle Width %8.1f is less than maximum dimension %f\n" float(getWidth(ret)) float(ret->maxDim) )
   );if
-  if(ret->bb->height > ret->maxDim then
-    printf("ERROR: Reticle Length %8.1f exceeds maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+  if(getHeight(ret) > getMaxDim(ret) then
+    printf("ERROR: Reticle Length %8.1f exceeds maximum dimension %f\n" float(getHeight(ret)) float(ret->maxDim) )
     ret->validDim = nil
   else
-    printf("INFO: Reticle Length %8.1f is less than maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+    printf("INFO: Reticle Length %8.1f is less than maximum dimension %f\n" float(getHeight(ret)) float(ret->maxDim) )
   );if
 );defmethod
 
@@ -65,15 +66,15 @@ defmethod( checkDim ((ret reticle))
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
 defmethod( checkGrid ((ret reticle))
-  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
-    printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+  if( quotient(getWidth(ret) ret->srGrid) - int(quotient(getWidth(ret) ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
-    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   );if
-  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
-    printf("ERROR: Reticle Width %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
+  if( quotient(getHeight(ret) ret->srGrid) - int(quotient(getHeight(ret) ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Height %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
   else
-    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->height) float(ret->srGrid))
+    printf("INFO: Reticle Height %g step is correctly on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
   );if
 );defmethod
 
@@ -87,14 +88,13 @@ defmethod( checkRes (( ret reticle ))
     ret->validRes = 't
     getbBox(ret)
     getDim(ret)
-    rwidth =  ret->bb->width - ret->overlap
-    rheight = ret->bb->height - ret->overlap
+    rwidth =  getWidth(ret) - ret->overlap
+    rheight = getHeight(ret) - ret->overlap
     printf("INFO: Reticle Overlap Setting: %5.1f\n" float(ret->overlap))
     printf("INFO: Reticle S&R Setting: %5.1f\n" float(ret->srRes))
     if(quotient(rwidth ret->srRes) - int(quotient(rwidth ret->srRes)) > 0 then
       printf("ERROR: Overlap Compensated Reticle Width %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
-      ret->validRes = nil
-      
+      ret->validRes = nil     
     else
       printf("INFO: Overlap Compensated Reticle Width %5.1f MEETS required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
     );if
@@ -122,7 +122,9 @@ defmethod( chipId (( ret reticle ))
 ; one level below the top level reticle cellview
 ;#####################################################
 defmethod( findXynPads (( ret reticle ))
-  let((dlist cv numPadCount coupoPadCount)
+  let((dlist cv numPadCount coupoPadCount chip coupon cvchip)
+    resetCollection(ret->chips)
+    resetCollection(ret->coupons)
     chipPadCount = 0
     couponPadCount = 0
     dlist = '()
@@ -138,9 +140,18 @@ defmethod( findXynPads (( ret reticle ))
 	    chipPadCount++
             printf("XYN CHIP PAD FOUND!: %s, In chip: %s \n" cell~>cellName inst~>cellName)
 	    dlist = cons(inst~>cellName dlist)
+	    chip = makeInstance( 'chip )
+	    setName(chip inst~>cellName)
+	    setLib(chip getLib(ret))
+	    setView(chip getView(ret))
+	    setInstanceBbox(chip inst~>bBox)
+	    setInstanceOrigin(chip)
+	    getDim(chip)
+	    setPadBbox(chip cell~>bBox)
+	    addChip(ret chip)
           );
 	  if(cell~>cellName == ret->xynPadCouponName then
-	    couponPadCount
+	    couponPadCount++
             printf("XYN COUPON PAD FOUND!: %s, In coupon: %s \n" cell~>cellName inst~>cellName)
 	    clist = cons(inst~>cellName clist)
           );
@@ -166,6 +177,7 @@ defmethod( findXynPads (( ret reticle ))
 ;                                   R - Revision
 ;                                  [] - Optional
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;#####################################################
 ; Digitizes a number (num) to a list of digits of 

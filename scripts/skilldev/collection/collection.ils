@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; collection.ils: object collection class. Collections are
+;  collection.ils: object collection class. Collections are
 ;                  lists of objects that can be homegeneous or homogeneous object
 ;                  lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8,7 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( collection (cadObj)
 	  (
-		( n @reader getN @writer setN )
+		( n @reader getLen)
 		( list @reader getList @writer setList )
 		( cList )		  
 	  )
@@ -18,20 +18,19 @@ defclass( collection (cadObj)
 ; Class Constructor 
 ;#############################################################
 defmethod( initializeInstance @after ((obj collection)) 
-	   obj->n = 1
+	   obj->n = 0
            obj->list = makeInstance( 'listfun )
 	   obj->cList = '()
 	   obj->cid="col"
 	   obj->oid=""
 );defmethod
 
-
-
 ;############################################################
 ; Resets the collection list to empty list
 ;#############################################################
 defmethod( resetCollection ((col collection))
        resetList(col->list)
+       col->n = 0
 );defmethod
 
 ;############################################################
@@ -72,6 +71,14 @@ defmethod( class ((col collection))
 ;#############################################################
 defmethod( add ((col collection) arg)
    addTail(col->list arg)
+   col->n = col->n + 1
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( getItem ((col collection) arg)
+   getElem(col->list arg)
 );defmethod
 
 ;############################################################
@@ -80,7 +87,6 @@ defmethod( add ((col collection) arg)
 defmethod( isEmpty ((col collection))
     null(col->list->elems)
 );defmethod
-
 
 ;############################################################
 ; Creates a list of N (objNum) unpopulated lib objects 

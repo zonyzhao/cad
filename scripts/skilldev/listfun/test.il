@@ -183,6 +183,29 @@ getElems(list)
 remItem = nth(1 items)
 removeElem(list remItem)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-13: Get element of a list based
+;        on an input index 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+list = makeInstance( 'listfun )
+obj0 = makeInstance('cadObj)
+setCid(obj0 "A")
+obj1 = makeInstance('cadObj)
+setCid(obj1 "B")
+obj2 = makeInstance('cadObj)
+setCid(obj2 "C")
+getCid(obj0)
+getCid(obj1)
+getCid(obj2)
+items = list( obj0 obj1 obj2)  
+setElems(list items)
+getElems(list)
+elem0 = getElem(list 0)
+elem1 = getElem(list 1)
+elem2 = getElem(list 2) 
+getCid(elem0)
+getCid(elem1) 
+getCid(elem2)
 
 ;#########################################
 ;#########################################

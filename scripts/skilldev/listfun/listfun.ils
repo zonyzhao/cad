@@ -15,7 +15,7 @@ defclass( listfun ()
 ;#########################################################
 defmethod( initializeInstance @after ((obj listfun)) 
 	   obj->elems = '()
-	   obj->len = 0
+	   obj->len = 1
 	   obj->oid = nil
 	   obj->cid = "lst"
 );defmethod
@@ -37,23 +37,37 @@ defmethod( getLen (( list listfun ))
 );defmethod
 
 ;#########################################################
-; Returns the "head" of a list at the index position
+; Returns the list element at the index posiion in the list
+; non-destructive operation
+;#########################################################
+defmethod( getElem (( list listfun ) ind)
+  let( (lis tmp)
+    if(ind > sub1(length(list->elems) || ind < 0) then
+       nil
+    else
+       nth(ind list->elems)
+    );if
+  );let
+);defmethod
+
+;#########################################################
+; Returns the "head" of a list up to the index position
+; non-destructive operation
 ;#########################################################
 defmethod( head (( list listfun ) ind)
-	   let( (lis
-	   	 tmp)
-             if(ind > sub1(length(list->elems)) then
-	          nil
-             else
-	       lis=list->elems
-	       tmp='()
-	       for( i 1 ind+1
-     	     	  tmp = cons(popf(lis) tmp)
-	       );for
-	       list->len = sub1(length(list->elems))
-	       tmp=reverse(tmp)
-	     );if
-	   );let
+  let( (lis tmp)
+    if(ind > sub1(length(list->elems)) then
+       nil
+    else
+       lis=list->elems
+       tmp='()
+       for( i 1 ind+1
+         tmp = cons(popf(lis) tmp)
+       );for
+       list->len = sub1(length(list->elems))
+       tmp=reverse(tmp)
+    );if
+  );let
 );defmethod
 
 ;#########################################################

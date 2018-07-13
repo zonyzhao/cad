@@ -1,0 +1,42 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  numberPad.ils: number pad class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( numberPad (instance) 
+  (
+    (size @reader getSize)
+    (relOrigin)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj numberPad)) 
+  obj->size = nil
+  obj->relOrigin = nil
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;#####################################################
+; Sets numbers pad origin referenced to the origin of the
+; chip
+;#####################################################
+defmethod(setRelOrigin (( pad numberPad ))
+  let((padbbox x y)
+    pbbox = getbBox(pad)
+    x=caar(pbbpx) 
+    y=cadar(pbbox)
+    pad->relOrigin = list(x y)
+  );let
+);defmethod
+;#####################################################
+; Sets numbers pad origin referenced to the origin of the
+; chip
+;#####################################################
+defmethod(getRelOrigin (( pad numberPad ))
+  pad->relOrigin
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;#####################################################

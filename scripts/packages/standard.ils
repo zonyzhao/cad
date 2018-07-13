@@ -115,7 +115,7 @@ defclass( listfun ()
 ;#########################################################
 defmethod( initializeInstance @after ((obj listfun)) 
 	   obj->elems = '()
-	   obj->len = 0
+	   obj->len = 1
 	   obj->oid = nil
 	   obj->cid = "lst"
 );defmethod
@@ -137,23 +137,37 @@ defmethod( getLen (( list listfun ))
 );defmethod
 
 ;#########################################################
-; Returns the "head" of a list at the index position
+; Returns the list element at the index posiion in the list
+; non-destructive operation
+;#########################################################
+defmethod( getElem (( list listfun ) ind)
+  let( (lis tmp)
+    if(ind > sub1(length(list->elems) || ind < 0) then
+       nil
+    else
+       nth(ind list->elems)
+    );if
+  );let
+);defmethod
+
+;#########################################################
+; Returns the "head" of a list up to the index position
+; non-destructive operation
 ;#########################################################
 defmethod( head (( list listfun ) ind)
-	   let( (lis
-	   	 tmp)
-             if(ind > sub1(length(list->elems)) then
-	          nil
-             else
-	       lis=list->elems
-	       tmp='()
-	       for( i 1 ind+1
-     	     	  tmp = cons(popf(lis) tmp)
-	       );for
-	       list->len = sub1(length(list->elems))
-	       tmp=reverse(tmp)
-	     );if
-	   );let
+  let( (lis tmp)
+    if(ind > sub1(length(list->elems)) then
+       nil
+    else
+       lis=list->elems
+       tmp='()
+       for( i 1 ind+1
+         tmp = cons(popf(lis) tmp)
+       );for
+       list->len = sub1(length(list->elems))
+       tmp=reverse(tmp)
+    );if
+  );let
 );defmethod
 
 ;#########################################################
@@ -398,7 +412,7 @@ defmethod( resetList (( list listfun ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; collection.ils: object collection class. Collections are
+;  collection.ils: object collection class. Collections are
 ;                  lists of objects that can be homegeneous or homogeneous object
 ;                  lists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -407,7 +421,7 @@ defmethod( resetList (( list listfun ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( collection (cadObj)
 	  (
-		( n @reader getN @writer setN )
+		( n @reader getLen)
 		( list @reader getList @writer setList )
 		( cList )		  
 	  )
@@ -417,20 +431,19 @@ defclass( collection (cadObj)
 ; Class Constructor 
 ;#############################################################
 defmethod( initializeInstance @after ((obj collection)) 
-	   obj->n = 1
+	   obj->n = 0
            obj->list = makeInstance( 'listfun )
 	   obj->cList = '()
 	   obj->cid="col"
 	   obj->oid=""
 );defmethod
 
-
-
 ;############################################################
 ; Resets the collection list to empty list
 ;#############################################################
 defmethod( resetCollection ((col collection))
        resetList(col->list)
+       col->n = 0
 );defmethod
 
 ;############################################################
@@ -471,6 +484,14 @@ defmethod( class ((col collection))
 ;#############################################################
 defmethod( add ((col collection) arg)
    addTail(col->list arg)
+   col->n = col->n + 1
+);defmethod
+
+;############################################################
+; Add and object to the collection's list
+;#############################################################
+defmethod( getItem ((col collection) arg)
+   getElem(col->list arg)
 );defmethod
 
 ;############################################################
@@ -479,7 +500,6 @@ defmethod( add ((col collection) arg)
 defmethod( isEmpty ((col collection))
     null(col->list->elems)
 );defmethod
-
 
 ;############################################################
 ; Creates a list of N (objNum) unpopulated lib objects 
@@ -2631,7 +2651,7 @@ defmethod( shiftURQ (( bb bbox ))
       cv = getRef(bb)
       dbReopen( cv "a")
       printf( "INFO(bbox):  Shifting Cell: %s to upper-right quadrant\n" cv~>cellName)
-      printf( "             Shift is: %f by %f" float(caar( shift)) float(cadar( shift)))         
+      printf( "             Shift is: %f by %f\n" float(caar( shift)) float(cadar( shift)))         
       foreach( inst cv~>instances 
         dbMoveFig( inst cv shift)
       );foreach
@@ -2641,7 +2661,8 @@ defmethod( shiftURQ (( bb bbox ))
       dbSave(cv)
       dbClose(cv)
     );unless
-    getbbox(bb)
+    getbb(bb)
+    list( dx dy)
   );let
 );defMethod	
 
@@ -2699,7 +2720,7 @@ defclass( cv (cadObj)
 		( stack )
 		( layers )
 		( pcells )
-		( bb )	
+		( bbx @reader getBbx @writer setBbx)	
 		( iRefs )
                 ( iCnt )
                 ( iNames )
@@ -2708,7 +2729,8 @@ defclass( cv (cadObj)
 		( iLayers )
 		( uLayers @reader getuLayers )
 		( width @reader getWidth @writer setWidth)
-		( height @reader getHeight @writer setHeight)			  
+		( height @reader getHeight @writer setHeight)
+                ( origin @reader getOrigin @writer setOrigin)			  
 	  )
 ) ; defClass
 
@@ -2726,7 +2748,7 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->layers    = nil
 	   obj->stack     = makeInstance('stackup)
 	   obj->pcells    = nil
-	   obj->bb        = makeInstance('bbox) 
+	   obj->bbx       = makeInstance('bbox) 
 	   obj->iRefs     = nil
 	   obj->iCnt      = nil
 	   obj->iNames    = nil
@@ -2910,22 +2932,35 @@ defmethod( isPcell (( cell cv ))
    )
 );defmethod
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getbBox (( cell cv ))
-  setRef(cell->bb cell->ref)
-  getbb(cell->bb)
+  setRef(cell->bbx cell->ref)
+  getbb(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getDim (( cell cv ))
-  setRef(cell->bb getRef(cell))
-  getDim(cell->bb)
-  cell->width  = getWidth(cell->bb)
-  cell->height = getHeight(cell->bb)
+  setRef(cell->bbx getRef(cell))
+  getDim(cell->bbx)
+  cell->origin = Origin(cell->bbx)
+  cell->width  = getWidth(cell->bbx)
+  cell->height = getHeight(cell->bbx)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( setDim (( cell cv ))
+  getDim(cell->bbx)
+  cell->origin = Origin(cell->bbx)
+  cell->width  = getWidth(cell->bbx)
+  cell->height = getHeight(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3260,6 +3295,8 @@ defclass( instance (cv)
 	  (
 	      ( inst @Reader getInst @Writer setInst )
 	      ( type @Reader getType @Writer setType )
+	      ( orient @reader getOrient @writer setOrient)
+	      ( bBox @reader getbBox @writer setbBox)
 	      ( flev )		
 	  )
 );defClass
@@ -3270,7 +3307,32 @@ defclass( instance (cv)
 defmethod( initializeInstance @after ((obj instance)) 
  	   obj->inst = nil
 	   obj->type = nil
+	   obj->orient = nil
+	   obj->bBox = nil
 	   obj->flev = 32
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method flattens an instance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setInstanceBbox (( inst instance ) bb )
+      setBbx(inst->bbx bb)
+      inst->bBox = bb
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Sets the origin of the instance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setInstanceOrigin (( inst instance ))
+      getDim(inst->bbx)
+      Origin(inst->bbx)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Sets the origin of the instance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getInstanceOrigin (( inst instance ))
+      getOrigin(inst->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3309,8 +3371,7 @@ defmethod( flattenInstance (( inst instance ) )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticle (cv)
@@ -3323,10 +3384,11 @@ defclass( reticle (cv)
 		( xynPadCouponName @reader getPadCouponName @writer setPadCouponName)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
+		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
 		( chipList @reader getChipList)
 		( couponList @reader getCouponList)
-		( chips )
-		( coupons )					
+		( chips @reader getChips)
+		( coupons @reader getCoupons)					
 	  )
 ) ; defClass
 
@@ -3342,6 +3404,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->xynPadCouponName = nil
 	   obj->validDim = nil
 	   obj->validRes = nil
+	   obj->shiftUrq = nil
 	   obj->chipList = nil  
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
@@ -3356,17 +3419,17 @@ defmethod( checkDim ((ret reticle))
   ret->validDim = 't
   getbBox(ret)
   getDim(ret)
-  if(ret->bb->width > ret->maxDim then
-    printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+  if(getWidth(ret) > getMaxDim(ret) then
+    printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(getWidth(ret)) float(ret->maxDim) )
     ret->validDim = nil
   else
-    printf("INFO: Reticle Width %8.1f is less than maximum dimension %f\n" float(ret->bb->width) float(ret->maxDim) )
+    printf("INFO: Reticle Width %8.1f is less than maximum dimension %f\n" float(getWidth(ret)) float(ret->maxDim) )
   );if
-  if(ret->bb->height > ret->maxDim then
-    printf("ERROR: Reticle Length %8.1f exceeds maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+  if(getHeight(ret) > getMaxDim(ret) then
+    printf("ERROR: Reticle Length %8.1f exceeds maximum dimension %f\n" float(getHeight(ret)) float(ret->maxDim) )
     ret->validDim = nil
   else
-    printf("INFO: Reticle Length %8.1f is less than maximum dimension %f\n" float(ret->bb->height) float(ret->maxDim) )
+    printf("INFO: Reticle Length %8.1f is less than maximum dimension %f\n" float(getHeight(ret)) float(ret->maxDim) )
   );if
 );defmethod
 
@@ -3376,15 +3439,15 @@ defmethod( checkDim ((ret reticle))
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
 defmethod( checkGrid ((ret reticle))
-  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
-    printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+  if( quotient(getWidth(ret) ret->srGrid) - int(quotient(getWidth(ret) ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
-    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->width) float(ret->srGrid))
+    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   );if
-  if( quotient(ret->bb->width ret->srGrid) - int(quotient(ret->bb->width ret->srGrid)) > 0.0 then
-    printf("ERROR: Reticle Width %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
+  if( quotient(getHeight(ret) ret->srGrid) - int(quotient(getHeight(ret) ret->srGrid)) > 0.0 then
+    printf("ERROR: Reticle Height %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
   else
-    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(ret->bb->height) float(ret->srGrid))
+    printf("INFO: Reticle Height %g step is correctly on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
   );if
 );defmethod
 
@@ -3398,14 +3461,13 @@ defmethod( checkRes (( ret reticle ))
     ret->validRes = 't
     getbBox(ret)
     getDim(ret)
-    rwidth =  ret->bb->width - ret->overlap
-    rheight = ret->bb->height - ret->overlap
+    rwidth =  getWidth(ret) - ret->overlap
+    rheight = getHeight(ret) - ret->overlap
     printf("INFO: Reticle Overlap Setting: %5.1f\n" float(ret->overlap))
     printf("INFO: Reticle S&R Setting: %5.1f\n" float(ret->srRes))
     if(quotient(rwidth ret->srRes) - int(quotient(rwidth ret->srRes)) > 0 then
       printf("ERROR: Overlap Compensated Reticle Width %5.1f DOES NOT MEET required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
-      ret->validRes = nil
-      
+      ret->validRes = nil     
     else
       printf("INFO: Overlap Compensated Reticle Width %5.1f MEETS required S&R step resolution of %3.1f\n" float(rwidth) float(ret->srRes))
     );if
@@ -3433,7 +3495,9 @@ defmethod( chipId (( ret reticle ))
 ; one level below the top level reticle cellview
 ;#####################################################
 defmethod( findXynPads (( ret reticle ))
-  let((dlist cv numPadCount coupoPadCount)
+  let((dlist cv numPadCount coupoPadCount chip coupon cvchip)
+    resetCollection(ret->chips)
+    resetCollection(ret->coupons)
     chipPadCount = 0
     couponPadCount = 0
     dlist = '()
@@ -3449,9 +3513,18 @@ defmethod( findXynPads (( ret reticle ))
 	    chipPadCount++
             printf("XYN CHIP PAD FOUND!: %s, In chip: %s \n" cell~>cellName inst~>cellName)
 	    dlist = cons(inst~>cellName dlist)
+	    chip = makeInstance( 'chip )
+	    setName(chip inst~>cellName)
+	    setLib(chip getLib(ret))
+	    setView(chip getView(ret))
+	    setInstanceBbox(chip inst~>bBox)
+	    setInstanceOrigin(chip)
+	    getDim(chip)
+	    setPadBbox(chip cell~>bBox)
+	    addChip(ret chip)
           );
 	  if(cell~>cellName == ret->xynPadCouponName then
-	    couponPadCount
+	    couponPadCount++
             printf("XYN COUPON PAD FOUND!: %s, In coupon: %s \n" cell~>cellName inst~>cellName)
 	    clist = cons(inst~>cellName clist)
           );
@@ -3477,6 +3550,7 @@ defmethod( findXynPads (( ret reticle ))
 ;                                   R - Revision
 ;                                  [] - Optional
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;#####################################################
 ; Digitizes a number (num) to a list of digits of 
@@ -3521,38 +3595,78 @@ defmethod( addCoupon (( ret reticle ) arg)
 
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  numberPad.ils: number pad class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( numberPad (instance) 
+  (
+    (size @reader getSize)
+    (relOrigin)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj numberPad)) 
+  obj->size = nil
+  obj->relOrigin = nil
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;#####################################################
+; Sets numbers pad origin referenced to the origin of the
+; chip
+;#####################################################
+defmethod(setRelOrigin (( pad numberPad ))
+  let((padbbox x y)
+    pbbox = getbBox(pad)
+    x=caar(pbbpx) 
+    y=cadar(pbbox)
+    pad->relOrigin = list(x y)
+  );let
+);defmethod
+;#####################################################
+; Sets numbers pad origin referenced to the origin of the
+; chip
+;#####################################################
+defmethod(getRelOrigin (( pad numberPad ))
+  pad->relOrigin
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;#####################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  chipNumberPad.ils: chip number pad class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( chipNumberPad (numberPad)
+);defClass
+;######################################################
+;######################################################
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  couponNumberPad.ils: coupon number pad class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( couponNumberPad (numberPad)
+);defClass
+;######################################################
+;######################################################
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  die.ils: die class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( die (cv)
-	  (
-		( padName )
-		( type )
-		( padSize )
-		( numType )
-		( numSize )
-		( padLocn )
-		( padOrient )
-		( digits )
-		( dieOrient )
-		( diePosn )
-		( chipBox )
-	  )
+defclass( die (instance)
+  (
+    ( reticle @reader getReticle @writer setReticle )
+    ( number @reader getNumber @writer setNumber)
+    ( revision @reader getRev @writer setRev)
+  )
 ) ; defClass
 
 ;#####################################################
 ; Constructor Method
 ;#####################################################
-defmethod( initializeInstance @after ((obj die)) 
-  obj->padName = nil
-  obj->type = nil
-  obj->padSize = nil
-  obj->numType = nil
-  obj->padLocn = nil
-  obj->padOrient = nil
-  obj->digits = nil
-  obj->dieOrient = nil
-  obj->diePosn = nil
-  obj->chipBox = nil
+defmethod( initializeInstance @after ((obj die))
+  obj->reticle = nil 
+  obj->number = nil
+  obj->revision = nil
 );defmethod
 
 ;#####################################################
@@ -3573,14 +3687,38 @@ defmethod( initializeInstance @after ((obj die))
 ;;;;;;;;;;;;;;;;  chip.ils: chip class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( chip (die)
+  (
+    (numpad @reader getNumPad)
+  )
 );defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj chip)) 
+  obj->numpad = makeInstance( 'chipNumberPad )
+);defmethod
 ;######################################################
 ;######################################################
-;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setPadBbox  (( ch chip ) bbx)
+  setInstanceBbox(ch->numpad bbx)
+);defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  coupon.ils: coupon class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( coupon (die)
+  (
+    (numpad @reader getNumPad)
+  )
 );defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coupon)) 
+  obj->numpad = makeInstance( 'couponNumberPad )
+);defmethod
 ;######################################################
 ;######################################################
 ;######################################################;######################################################

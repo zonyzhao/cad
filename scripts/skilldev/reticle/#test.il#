@@ -200,6 +200,8 @@ getName(chip0)
 getWidth(chip0)
 getHeight(chip0)
 orig0 = getOrigin(chip0)
+chip0->numpad->bBox
+chip0->numpad->bbx->bbx
 
 
 chip1 = getItem(ret->chips 1)

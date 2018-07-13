@@ -47,7 +47,7 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Gets the Cell's Origin - defined as lower left (minx,miny)
 ; for a boundary box
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
     x=caar(bb->bbx) 
