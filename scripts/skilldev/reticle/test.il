@@ -197,9 +197,17 @@ getView(ret)
 
 chip0 = getItem(ret->chips 0)
 getName(chip0)
-getWidth(chip0)
-getHeight(chip0)
-orig0 = getOrigin(chip0)
+getBbx(getBbx(chip0))
+getWidth(getBbx(chip0))
+getHeight(getBbx(chip0))
+getOrigin(getBbx(chip0))
+getBbx(getBbx(chip0->numpad))
+getWidth(getBbx(chip0->numpad))
+getHeight(getBbx(chip0->numpad))
+getOrigin(getBbx(chip0->numpad))
+
+
+
 
 
 chip1 = getItem(ret->chips 1)

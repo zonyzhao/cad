@@ -13,7 +13,7 @@ defclass( cv (cadObj)
 		( stack )
 		( layers )
 		( pcells )
-		( bbx @reader getBbx @writer setBbx)	
+		( bbx @reader getBbx)	
 		( iRefs )
                 ( iCnt )
                 ( iNames )
@@ -224,8 +224,6 @@ defmethod( isPcell (( cell cv ))
      t
    )
 );defmethod
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox

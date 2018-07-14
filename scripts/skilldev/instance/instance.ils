@@ -6,7 +6,7 @@ defclass( instance (cv)
 	      ( inst @Reader getInst @Writer setInst )
 	      ( type @Reader getType @Writer setType )
 	      ( orient @reader getOrient @writer setOrient)
-	      ( bBox @reader getbBox @writer setbBox)
+;	      ( bBox @reader getbBox @writer setbBox)
 	      ( flev )		
 	  )
 );defClass
@@ -18,32 +18,32 @@ defmethod( initializeInstance @after ((obj instance))
  	   obj->inst = nil
 	   obj->type = nil
 	   obj->orient = nil
-	   obj->bBox = nil
+;	   obj->bBox = nil
 	   obj->flev = 32
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method flattens an instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( setInstanceBbox (( inst instance ) bb )
-      setBbx(inst->bbx bb)
-      inst->bBox = bb
-);defmethod
+;defmethod( setInstanceBbox (( inst instance ) bb )
+;      setBbx(inst->bbx bb)
+;      inst->bBox = bb
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Sets the origin of the instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( setInstanceOrigin (( inst instance ))
-      getDim(inst->bbx)
-      Origin(inst->bbx)
-);defmethod
+;defmethod( setInstanceOrigin (( inst instance ))
+;      getDim(inst->bbx)
+;      Origin(inst->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Sets the origin of the instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( getInstanceOrigin (( inst instance ))
-      getOrigin(inst->bbx)
-);defmethod
+;defmethod( getInstanceOrigin (( inst instance ))
+;      getOrigin(inst->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method flattens an instance

@@ -2502,7 +2502,7 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Gets the Cell's Origin - defined as lower left (minx,miny)
 ; for a boundary box
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
     x=caar(bb->bbx) 
@@ -2720,7 +2720,7 @@ defclass( cv (cadObj)
 		( stack )
 		( layers )
 		( pcells )
-		( bbx @reader getBbx @writer setBbx)	
+		( bbx @reader getBbx)	
 		( iRefs )
                 ( iCnt )
                 ( iNames )
@@ -2931,8 +2931,6 @@ defmethod( isPcell (( cell cv ))
      t
    )
 );defmethod
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
@@ -3296,7 +3294,7 @@ defclass( instance (cv)
 	      ( inst @Reader getInst @Writer setInst )
 	      ( type @Reader getType @Writer setType )
 	      ( orient @reader getOrient @writer setOrient)
-	      ( bBox @reader getbBox @writer setbBox)
+;	      ( bBox @reader getbBox @writer setbBox)
 	      ( flev )		
 	  )
 );defClass
@@ -3308,32 +3306,32 @@ defmethod( initializeInstance @after ((obj instance))
  	   obj->inst = nil
 	   obj->type = nil
 	   obj->orient = nil
-	   obj->bBox = nil
+;	   obj->bBox = nil
 	   obj->flev = 32
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method flattens an instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( setInstanceBbox (( inst instance ) bb )
-      setBbx(inst->bbx bb)
-      inst->bBox = bb
-);defmethod
+;defmethod( setInstanceBbox (( inst instance ) bb )
+;      setBbx(inst->bbx bb)
+;      inst->bBox = bb
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Sets the origin of the instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( setInstanceOrigin (( inst instance ))
-      getDim(inst->bbx)
-      Origin(inst->bbx)
-);defmethod
+;defmethod( setInstanceOrigin (( inst instance ))
+;      getDim(inst->bbx)
+;      Origin(inst->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Sets the origin of the instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( getInstanceOrigin (( inst instance ))
-      getOrigin(inst->bbx)
-);defmethod
+;defmethod( getInstanceOrigin (( inst instance ))
+;      getOrigin(inst->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method flattens an instance
@@ -3517,10 +3515,16 @@ defmethod( findXynPads (( ret reticle ))
 	    setName(chip inst~>cellName)
 	    setLib(chip getLib(ret))
 	    setView(chip getView(ret))
-	    setInstanceBbox(chip inst~>bBox)
-	    setInstanceOrigin(chip)
-	    getDim(chip)
-	    setPadBbox(chip cell~>bBox)
+	    setBbx(getBbx(chip) inst~>bBox)
+	    getDim(getBbx(chip))
+	    Origin(getBbx(chip))
+	    setBbx(getBbx(chip->numpad) cell~>bBox)
+	    getDim(getBbx(chip->numpad))
+	    Origin(getBbx(chip->numpad))
+	    ;setChipBbox(chip inst~>bbox)
+	    ;setPadBbox(chip cell~>bBox)
+	    ;setInstanceBbox(chip inst~>bBox)
+	    ;getDim(chip)
 	    addChip(ret chip)
           );
 	  if(cell~>cellName == ret->xynPadCouponName then
@@ -3698,14 +3702,25 @@ defmethod( initializeInstance @after ((obj chip))
   obj->numpad = makeInstance( 'chipNumberPad )
 );defmethod
 ;######################################################
-;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setChipBbox  (( ch chip ) bbx)
+  setBbx(ch->bbx bbx)
+  ;getDim(ch->bbx)
+  ;Origin(ch->bbx)
+);defmethod
 ;######################################################
 ;#####################################################
 ; Sets the boundary box of the chip numbers pad
 ;#####################################################
 defmethod(setPadBbox  (( ch chip ) bbx)
-  setInstanceBbox(ch->numpad bbx)
-);defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  setBbx(ch->numpad->bbx bbx)
+  ;getDim(ch->numpad->bbx)
+  ;Origin(ch->numpad->bbx)
+);defmethod
+;######################################################
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  coupon.ils: coupon class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( coupon (die)
