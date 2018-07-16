@@ -2550,9 +2550,7 @@ procedure( xynGetNumberPadInfo( cellName )
 			 ( t	nil))
 
 	numtype =  case( substring( des 1 1)
-			 ("A"	"aeble")
-			 ("S"   "s/d")
-			 ("N"   "nitride")
+			 ("S"   "numbers")
 			 ("R"   "reverse")
 			 ( t	nil))
 
