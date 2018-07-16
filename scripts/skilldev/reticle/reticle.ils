@@ -17,7 +17,7 @@ defclass( reticle (cv)
 		( chips @reader getChips)
 		( coupons @reader getCoupons)	
 		( isFull @reader getIsFull )
-		( reticleOrigin @reader getReticleOrigin @writer setReticleOrigin)				
+		( origin @reader getOrigin @writer setOrigin)				
 	  )
 ) ; defClass
 
@@ -39,7 +39,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->chips = makeInstance( 'collection )
 	   obj->coupons = makeInstance( 'collection ) 
 	   obj->isFull = nil
-	   obj->reticleOrigin = nil 
+	   obj->origin = nil 
 );defmethod
 
 ;######################################################

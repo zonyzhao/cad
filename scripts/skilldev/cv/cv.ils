@@ -88,9 +88,21 @@ defmethod( getInstances (( cell cv ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create a new instance in the cellview
 ; FIXME: Create and container of instances
+; FIXME: How is this even working!! cv->ref should be getRef(cell)
+; FIXME: If i try to fix this skill++ won't load into cad61 session.
+;        Don't know why - xyn crises so no time to debug!!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( createInstance (( cell cv ) inst )
 	   	cell->instances = const(dbCreateInst( inst cv->ref nil 0:0 "R0" 1) cell->instances)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a new instance in the cellview
+; version used in reticle builder
+; FIXME: need to create a new instance object and add this to the instance collection
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( createInstance2 (( cell cv ) inst name orig orient)
+  dbCreateInst( getRef(cell) inst name orig orient 1)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

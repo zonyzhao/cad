@@ -304,7 +304,6 @@ getBbx(getBbx(chip5->numpad))
 getWidth(getBbx(chip5->numpad))
 getHeight(getBbx(chip5->numpad))
 
-
 ;#################################################
 
 getName(chip0)
@@ -347,4 +346,38 @@ getOrigin(getBbx(chip7))
 getName(chip7->numpad)
 getOrigin(getBbx(chip7->numpad))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Raster an array of primary 
+;       reticles in a cellview 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+getLib(ret)
+getName(ret)
+getView(ret)
+setOrigin(ret list(0.0 0.0))
+name = "wafer"
+cvm = dbOpenCellViewByType(getLib(ret) name getView(ret) "maskLayout" "w")
+cv = makeInstance( 'cv )
+setRef(cv cvm)
+i=0
+j=0
+orient = "R0"
+orig = getOrigin(ret)
+createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
+;Second reticle
+i=1
+j=0
+orient = "R0"
+rx = xCoord(orig) + 18000.0
+ry = yCoord(orig)
+orig =list(rx ry)
+createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
+;Third reticle
+i=2
+j=0
+rx = xCoord(orig) + 18000.0
+ry = yCoord(orig)
+orig =list(rx ry)
+createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
+dbSave(cvm)
+dbClose(cvm)
 
