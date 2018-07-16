@@ -15,7 +15,9 @@ defclass( reticle (cv)
 		( chipList @reader getChipList)
 		( couponList @reader getCouponList)
 		( chips @reader getChips)
-		( coupons @reader getCoupons)					
+		( coupons @reader getCoupons)	
+		( isFull @reader getIsFull )
+		( reticleOrigin @reader getReticleOrigin @writer setReticleOrigin)				
 	  )
 ) ; defClass
 
@@ -35,7 +37,9 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->chipList = nil  
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
-	   obj->coupons = makeInstance( 'collection )  
+	   obj->coupons = makeInstance( 'collection ) 
+	   obj->isFull = nil
+	   obj->reticleOrigin = nil 
 );defmethod
 
 ;######################################################
@@ -144,9 +148,12 @@ defmethod( findXynPads (( ret reticle ))
 	    setName(chip inst~>cellName)
 	    setLib(chip getLib(ret))
 	    setView(chip getView(ret))
+	    setOrient(chip inst~>orient)
 	    setBbx(getBbx(chip) inst~>bBox)
 	    getDim(getBbx(chip))
 	    Origin(getBbx(chip))
+	    setName(chip->numpad cell~>cellName)
+            setOrient(chip->numpad cell~>orient)
 	    setBbx(getBbx(chip->numpad) cell~>bBox)
 	    getDim(getBbx(chip->numpad))
 	    Origin(getBbx(chip->numpad))
@@ -220,6 +227,15 @@ defmethod( addCoupon (( ret reticle ) arg)
   );if
 );defmethod
 
+
+;#####################################################
+; Updates the relative position, relPos member,  of the 
+; chips and pad locations within the reticle based upon
+; the reticleOrigin value
+;#####################################################
+defmethod( update (( ret reticle ) num)
+  nil
+);defmethod
 
 ;######################################################
 ;######################################################

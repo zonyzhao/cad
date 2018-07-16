@@ -2713,6 +2713,7 @@ defclass( cv (cadObj)
 		( name @reader getName @writer setName)
         	( view @reader getView @writer setView )
 		( lib @reader getLib @writer setLib )
+		( orient @reader getOrient @writer setOrient) 
 		( cvLeaf )
                 ( cvPcell )
 		( instances )
@@ -2741,6 +2742,7 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->name      = nil
 	   obj->view      = nil
 	   obj->lib       = nil
+	   obj->orient    = nil
 	   obj->cvLeaf    = nil
            obj->cvPcell   = nil
 	   obj->instances = makeInstance('collection)
@@ -3386,7 +3388,9 @@ defclass( reticle (cv)
 		( chipList @reader getChipList)
 		( couponList @reader getCouponList)
 		( chips @reader getChips)
-		( coupons @reader getCoupons)					
+		( coupons @reader getCoupons)	
+		( isFull @reader getIsFull )
+		( reticleOrigin @reader getReticleOrigin @writer setReticleOrigin)				
 	  )
 ) ; defClass
 
@@ -3406,7 +3410,9 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->chipList = nil  
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
-	   obj->coupons = makeInstance( 'collection )  
+	   obj->coupons = makeInstance( 'collection ) 
+	   obj->isFull = nil
+	   obj->reticleOrigin = nil 
 );defmethod
 
 ;######################################################
@@ -3515,9 +3521,12 @@ defmethod( findXynPads (( ret reticle ))
 	    setName(chip inst~>cellName)
 	    setLib(chip getLib(ret))
 	    setView(chip getView(ret))
+	    setOrient(chip inst~>orient)
 	    setBbx(getBbx(chip) inst~>bBox)
 	    getDim(getBbx(chip))
 	    Origin(getBbx(chip))
+	    setName(chip->numpad cell~>cellName)
+            setOrient(chip->numpad cell~>orient)
 	    setBbx(getBbx(chip->numpad) cell~>bBox)
 	    getDim(getBbx(chip->numpad))
 	    Origin(getBbx(chip->numpad))
@@ -3591,6 +3600,15 @@ defmethod( addCoupon (( ret reticle ) arg)
   );if
 );defmethod
 
+
+;#####################################################
+; Updates the relative position, relPos member,  of the 
+; chips and pad locations within the reticle based upon
+; the reticleOrigin value
+;#####################################################
+defmethod( update (( ret reticle ) num)
+  nil
+);defmethod
 
 ;######################################################
 ;######################################################

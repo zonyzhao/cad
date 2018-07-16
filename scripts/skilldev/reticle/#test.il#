@@ -308,6 +308,7 @@ getHeight(getBbx(chip5->numpad))
 ;#################################################
 
 getName(chip0)
+getOrient(chip0)
 getOrigin(getBbx(chip0))
 getName(chip0->numpad)
 getOrigin(getBbx(chip0->numpad))
