@@ -9,9 +9,10 @@ classOf(st)
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get the cellview stackup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="p80B_1_fet_mult_F"
-lib="test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout")
+name="Wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
 st = makeInstance( 'stackup )
 setRef(st cv)
 getStackUp(st)
@@ -21,10 +22,15 @@ classOf(nth(0 nth(0 st->stack->list->elems)->shapes->list->elems))
 nth(0 nth(0 st->stack->list->elems)->shapes->list->elems)->vertices
 ; Take the "snapshot" of the target cv
 ; and render it in a new cellview
-name="p80B_1_fet_mult_snapshot"
-lib="test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+name="Wafer_4_snapshot"
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
 setRef(st cv)
+;FIXME: renderStack not working ...
+;       this method calls upon the layer's 
+;       "renderShapesOnLayer" method which
+;       is broken. Fix that method first ...
 renderStack(st)
 dbSave(cv)
 dbClose(cv)
@@ -33,12 +39,13 @@ dbClose(cv)
 ; UT-2: test removing a layer from
 ;       the stackup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="p80B_1_fet_mult_F"
-lib="test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout")
+name="Wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
 st = makeInstance( 'stackup )
 setRef(st cv)
 getStackUp(st)
-deleteLayer(st "text")
+deleteLayer(st "membrane")
 printStackUp(st)
 dbClose(cv)

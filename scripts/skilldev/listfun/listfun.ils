@@ -274,6 +274,18 @@ defmethod( isElem (( list listfun ) elem)
   lindex(list->elems elem)
 );defmethod
 
+
+;#########################################################
+; Is list empty
+;#########################################################
+;defmethod( isEmpty (( list listfun ))
+;  if( !null(car(list->elems)) then
+;    't
+;  else
+;    nil
+;  );if
+;);defmethod
+
 ;#########################################################
 ; Remove redundant items from a flat list
 ;#########################################################

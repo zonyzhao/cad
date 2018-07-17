@@ -1,0 +1,385 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  shape.ils: Layout Shape Object 
+;;;;;;;;;;;;;;;              This is a cadence cellview centric class that operates
+;;;;;;;;;;;;;;               on the shape of a layout layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( shape (cadObj)
+	  (	
+	  	( geometries )	
+		( layer @writer setLayer @reader getLayer )
+		( purpose @writer setPurpose @reader getPurpose )
+		( type )
+		( vertices @reader getVertices)
+		( transform )
+		( centroid )
+		( dbg )
+		( mfg )	
+		( area )			
+	  )
+) ; defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj shape))
+	   obj->geometries = makeInstance( 'collection )  
+	   obj->layer = nil 
+	   obj->purpose = nil 
+	   obj->type = nil
+	   obj->vertices = nil
+	   obj->transform = makeInstance( 'transform2 )
+	   obj->centroid = makeInstance( 'point2 )
+	   obj->dbg = nil
+	   obj->mfg = nil
+	   obj->area = nil	     
+);defmethod
+
+;#####################################################
+; Add polygon to polygons collection of the shape
+;#####################################################
+defmethod( addGeometry (( shp shape ) arg)
+  add(shp->geometries arg)
+);defmethod
+
+;#####################################################
+; Shape is the "foundation" Rendering Class for all
+; higher "layer" classes above shape - assembly, layer,
+; stackup and layout ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Renders the shape using the contained geometries
+; in the the focus cv reference
+;#####################################################
+defmethod( render (( shp shape ))
+  if( !null(shp->geometries->list) then
+    foreach( geom shp->geometries->list->elems
+      foreach( polygon geom->polygons->list->elems
+        printf("INFO(shape): Rendering Shape Polygon\n")
+        dbCreatePolygon(shp->ref
+	     	        list(shp->layer shp->purpose)
+		        polygon->vertices
+		        );dbCreatePolygon
+      );foreach
+    );foreach
+  else
+    printf("ERROR(shape): Shape Null Vertices - ")
+ );if   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FIXME: Need to update code below to process multiple 
+;        polygons in the new polygons collection 
+;        member. Most of this code should drop down
+;        into the geometry and polygon2 class definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;#####################################################
+; Reset the shape's transform
+;#####################################################
+defmethod( shapeReset (( shp shape ))
+	   shp->transform->vertices = shp->vertices
+	   shp->transform->area = shp->area
+	   shp->transform->polygon->centroid->x = shp->centroid->x
+	   shp->transform->polygon->centroid->y = shp->centroid->y
+);defmethod
+
+;#####################################################
+; This method sets the vertex list the the vertices
+; argument
+;#####################################################
+defmethod( setVertices (( shp shape ) vertices)
+	   shp->vertices = vertices
+	   shp->transform->vertices = vertices
+	   area(shp->transform->polygon)
+	   shp->transform->area = shp->area
+	   centroid(shp->transform->polygon)
+	   shp->centroid->x = shp->transform->polygon->centroid->x
+	   shp->centroid->y = shp->transform->polygon->centroid->y
+	   length(shp->transform->vertices)
+);defmethod
+
+;#####################################################
+; This method works on an existing Cadence layout, and
+; creates polygons for all layout shapes
+;#####################################################
+;
+; FIXME: This needs to go into a new "snapshot" class
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( genVertices (( shp shape ))
+	   let( (bbox
+	   	 v0
+		 v1
+		 v2
+		 v3)
+	   	shp->type = shp->ref~>objType 
+		shp->vertices='()
+		shp->transform->vertices='()
+		case( shp~>ref~>objType 
+		  ( ( "polygon" )
+		    println("polygon detected")
+	   	    foreach(point shp~>ref~>points
+	      	      shp->vertices=cons(point shp->vertices)
+		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
+	    	    )	     
+	   	  );polygon
+		  ( ( "dot" )
+		    println("dot detected")
+	   	    foreach(point shp~>ref~>points
+	      	      shp~>vertices=cons(point shp~>vertices)
+		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
+	    	    )	     
+	   	  );dot
+		  ( ( "line" )
+		    println("line detected")
+		    bbox=shp~>ref~>bBox
+		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+		    shp->vertices=list(v0 v1 v2 v3)
+		    shp->transform->vertices=list(v0 v1 v2 v3)
+		    shp->layer = shp~>ref~>layerName
+		    shp->purpose = shp~>ref~>purpose
+		    shp->type = shp~>ref~>objType
+		  );line
+		  ( ( "rect" )
+		    println("rect dectected")
+		    bbox=shp~>ref~>bBox
+		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+		    shp->vertices=list(v0 v1 v2 v3)
+		    shp->transform->vertices=list(v0 v1 v2 v3)
+		    shp->layer = shp~>ref~>layerName
+		    shp->purpose = shp~>ref~>purpose
+		    shp->type = shp~>ref~>objType
+		  );rect
+		  ( ( "path" )
+		    println("path detected")
+		    bbox=shp~>ref~>bBox
+		    v3 = list(nth(0 nth( 0 bbox)) nth(1 nth(1 bbox)))
+		    v2 = list(nth(0 nth( 1 bbox)) nth(1 nth(1 bbox)))
+		    v1 = list(nth(0 nth( 1 bbox)) nth(1 nth(0 bbox)))
+		    v0 = list(nth(0 nth( 0 bbox)) nth(1 nth(0 bbox)))
+		    shp->vertices=list(v0 v1 v2 v3)
+		    shp->transform->vertices=list(v0 v1 v2 v3)
+		    shp->layer = shp~>ref~>layerName
+		    shp->purpose = shp~>ref~>purpose
+		    shp->type = shp~>ref~>objType
+		  );path
+		  ( "label"
+		    println("label detected")
+		    shp->vertices=nil
+		  );label
+		  ( t
+			error( "ERROR SHAPE: Encountered unknown shape" )
+			return()
+		  );t
+		);case	
+		area(shp->transform->polygon)
+		shp->transform->area = shp->area
+		centroid(shp->transform->polygon)
+		shp->centroid->x = shp->transform->polygon->centroid->x 
+		shp->centroid->y = shp->transform->polygon->centroid->y
+		list(shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
+	   );let	   
+);defmethod
+
+;#####################################################
+; Translates the shape's transform
+;#####################################################
+; Note: Class no longer inherits from polygon2
+defmethod( shapeTranslate (( shp shape ) trn)
+	   if( listp(trn) then
+	   ;FIXME: Need to check that inputs are in on grid increments
+	     translate(shp->transform trn)
+	     list(shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
+	   else
+	      println("ERROR(shape): argument must be a coordinate list")
+           );if
+);defmethod
+
+;#####################################################
+; Scales the shape's transform
+;#####################################################
+; NOTE: Class no longer inherits from polygon2
+defmethod( shapeScale (( shp shape ) arg)
+	   ;FIXME: Need to check that inputs are in on grid increments
+	   scale(shp->transform arg)
+	   list(shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
+);defmethod
+
+;#####################################################
+; Rotate the shape's transform (rot is in degrees
+; with positive being counter-clockwise about the origin)
+;#####################################################
+; Note: Class no longer inherits from polygon2
+;defmethod( shapeRotate (( shp shape ) rot)
+;  ;FIXME: Need to check that input arg in on grid increments
+;  rotate(shp->transform rot/180*3.14159)
+;);defmethod
+
+;#####################################################
+; Returns the transform's centroid
+;#####################################################
+;  Note: Class no longer inherits from polygon2
+defmethod( shapeCentroid (( shp shape ))
+	   list( shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
+);defmethod
+
+;#####################################################
+; Returns the transform's area
+;#####################################################
+; Note: Class no longer inherits from polygon2
+defmethod( shapeArea (( shp shape ))
+	   shp->transform->area 
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+; FIXME: This needs to go into geometry class
+;defmethod( setOnDbg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+; FIXME: This needs to go into geometry class
+;defmethod( setOnMfg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
+;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+; Center the shape's transform centroid to align to the 
+; origin
+;#####################################################
+;defmethod( shapeCenter (( shp shape ))
+;	   let( (delx dely)
+;	   	delx = shp->transform->origin->x - shp->centroid->x
+;	   	dely = shp->transform->origin->y - shp->centroid->y 
+;	   	shapeTranslate(shp list(delx dely))
+;	   	shp->transform->centroid->x = shp->transform->origin->x
+;	   	shp->transform->centroid->y = shp->transform->origin->y
+;		list(shp->transform->polygon->centroid->x shp->transform->centroid->y)
+;	   );let
+;);defmethod
+
+;#####################################################
+; Generate a bounding box for the shape
+; FIXME: Is this simply getting the shape's bBox from
+;        the cellview?
+;#####################################################
+;defmethod( genBbox (( shp shape ))
+;	   nil
+;);defmethod
+
+;#####################################################
+; Shift the shape's lower left corner to the 
+; upper left quadrant of the cellview window
+; FIXME: do this via the bounding box once it is
+; defined in genBbox
+;#####################################################
+;defmethod( shiftUrq (( shp shape ))
+;	   nil
+;);defmethod
+
+;#####################################################
+; Does the bbox exactly match the veritices. If it
+; does the bbox is a rectangle
+;#####################################################
+;defmethod( isRect (( shp shape ))
+;	   nil
+;);defmethod
+
+;#####################################################
+; Merge the two shapes into one 
+; argument is another shape reference
+;#####################################################
+defmethod( mergeShapes (( shp shape ) arg)
+	  shp->ref = leMergeShapes(list(shp->ref arg))
+);defmethod
+
+;#####################################################
+; Union of two shapes
+;#####################################################
+defmethod( unionShapes (( shp shape ) arg)
+	  leOr(shp->ref shp->ref arg)
+);defmethod
+
+;#####################################################
+; Union minus intersection of two shapes
+;#####################################################
+defmethod( intersectionShapes (( shp shape ) arg)
+	  leXor(shp->ref shp->ref arg)
+);defmethod
+
+;#####################################################
+; Union minus intersection of two shapes
+;#####################################################
+defmethod( unionMinusintersectionShapes (( shp shape ) arg)
+	   leXor(shp->ref shp->ref arg)
+);defmethod
+
+;#####################################################
+; Fiter out redundant adjacent vertexes
+;#####################################################
+;defmethod( filter (( shp shape ) )
+;	   nil
+;);defmethod
+
+;#####################################################
+; Determines if two shapes have collided. the second
+; shape is arg
+;#####################################################
+defmethod( collide (( shp shape ) arg)
+  if( null(dbStraddle(shp->ref "text" shp->ref  arg))
+    nil
+  else	       
+    t
+  );if
+);defmethod
+
+;#####################################################
+; Determines if two the shape arg is enclosed in this
+; shape object. 
+;#####################################################
+defmethod( enclosed (( shp shape ) arg)
+  if( !null(dbAndNot(shp->ref "text" shp->ref  arg))
+    nil
+  else	       
+    t
+  );if
+);defmethod
+
+;###############################################################################
+;###############################################################################
+;###############################################################################
+
+
+
+

@@ -75,7 +75,7 @@ defmethod( add ((col collection) arg)
 );defmethod
 
 ;############################################################
-; Add and object to the collection's list
+; Get and item from the collection 
 ;#############################################################
 defmethod( getItem ((col collection) arg)
    getElem(col->list arg)

@@ -434,9 +434,21 @@ dbClose(cvm)
 ; 3.) Instantiate the reticle layer cv into the inclusion ring
 ; 4.) Flatten the inclusion ring cell view
 ; 5.) do a layer and not and if there is no output, the reticle is not 
-;     fully within the inclusion ring. 
+;     fully within the inclusion ring. leLayerAndNot()
 ; 6.) Mark this location in the array as a partial reticle  
-leLayerAndNot()
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Step 1.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Open Wafer Outline Cell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib = "reticle"
+name = "wafer_4"
+view = "layout"
+cvw = dbOpenCellViewByType(lib name view "maskLayout" "r")  
+stack = makeInstance( 'stackup )
+setRef(stack cvw)
+getStackUp(stack)
+
 
 
 

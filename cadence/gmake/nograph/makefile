@@ -25,7 +25,7 @@ skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   polygon2 rectTran rectTrans transform2 transformation2 \
                   geometry assembly stackup bbox cv instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
-                  numeric
+                  numeric shape layer 
 #########################################################################
 polygons = rectangle triangle circle frame    
 #########################################################################

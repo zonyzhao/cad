@@ -1,7 +1,8 @@
 ;######################################################
 ;# stackup.ils: container class for multiple layers 
 ;               forming a layout stackup for a number
-;               of layout assemblies
+;               of layout assemblies. This focused on
+;               Cadence layout cell views.
 ;######################################################
 defclass( stackup (cadObj)
 	  (
@@ -75,7 +76,7 @@ defmethod( addLayer (( st stackup ) arg )
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; add a single assembly object to the stackup list
+; add a single "assembly"?? object to the stackup list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( addAssembly (( st stackup ) arg )
   add(st->stack arg)

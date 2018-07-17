@@ -8,29 +8,51 @@ classOf(lay)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get all shapes on a given
-;       layer
+;       layer - IMPORTANT!!!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="p80B_1_fet_mult_F"
-lib="test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout")
+; Capture the layer shapes in a cellview
+name="Wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
 lay = makeInstance( 'techLayer )
 setRef(lay cv)
 ;printLayers(lay)
-layName = "sd"
+layName = "resistor"
 layPurp = "drawing"
 setName(lay layName)
 setPurpose(lay layPurp)
 getShapesOnLayer(lay)
-lay->shapes->list->elems
-nth(0 lay->shapes->list->elems)->ref~>layerName
-nth(0 lay->shapes->list->elems)->vertices
-dbClose(cv)
+shapes = lay->shapes->list->elems
+nth(0 shapes)->ref~>layerName
+nth(0 shapes)~>vertices
+;nth(1 shapes)->ref~>layerName
+;nth(1 shapes)->vertices
+
+tran = makeInstance( 'transform2 )
+setVertices(tran nth(0 shapes)->vertices)
+
+; THIS IS IMPORTANT: It's the bridge between Cadence Shapes and the
+; Object System ...
+; Build up a structure - shapes to assemblies ...
+geom = makeInstance( 'geometry )
+num=length(shapes)
+for(i 0 num-1
+  temp = makeInstance( 'transform2 )
+  setVertices(temp getItem(getShapes(lay) i)->vertices)
+  addTransform(geom temp)
+)
+
+getItem(getPoints(getVertices(getItem(geom->transforms 0))) 0)->x
+getItem(getPoints(getVertices(getItem(geom->transforms 0))) 0)->y
+
 ; Open a cv for write and rendor the target layer
-name="p80B_1_fet_mult_F_copy"
-lib="test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
-setRef(lay cv)
-renderShapesOnLayer(lay)
+name="inclusionRing"
+lib="pd0164"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(geom cv)
+render(geom)
 dbSave(cv)
 dbClose(cv)
 
@@ -41,13 +63,14 @@ dbClose(cv)
 ; newly opened cellview with write permissions
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="p80B_1_fet_mult_F_copy"
-lib="test"
-cvCopy = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+name="Wafer_4_noWindows"
+lib="pd0164"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 lay = makeInstance( 'techLayer )
 setRef(lay cv)
 ;printLayers(lay)
-layName = "sd"
+layName = "membrane"
 layPurp = "drawing"
 setName(lay layName)
 setPurpose(lay layPurp)
@@ -85,10 +108,11 @@ setPurpose(lay layPurp)
 getName(lay)
 getLayer(shp)
 addShape(lay shp)
-name="textBoundary"
-lib="test"
+name="retBbox"
+lib="pd0164"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(lay cv)
+; FIXME: not working. not finding vertices in the transform member ...
 renderShapesOnLayer(lay)
 dbSave(cv)
 dbClose(cv)

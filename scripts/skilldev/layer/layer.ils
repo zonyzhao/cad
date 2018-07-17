@@ -51,12 +51,17 @@ defmethod( deleteShapesOnLayer (( lay techLayer ))
 ;  Render shapes on the layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( renderShapesOnLayer (( lay techLayer ))
-  foreach(shape lay->shapes->list->elems
-      setRef(shape lay->ref)
-      setLayer(shape lay->name)
-      setPurpose(shape lay->purpose)
-      render(shape)
-  )
+  let((i)
+    i=0
+    foreach(shape lay->shapes->list->elems
+      setRef(shape->transform lay->ref)
+      setLayer(shape->transform lay->name)
+      setPurpose(shape->transform lay->purpose)
+      setVertices(shape->transform getVertices(nth(i lay->shapes->list->elems)))
+      render(shape->transform)
+      i++
+    );foreach
+  );let
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
