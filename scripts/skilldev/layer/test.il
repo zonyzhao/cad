@@ -31,10 +31,13 @@ nth(0 shapes)~>vertices
 
 tran = makeInstance( 'transform2 )
 setVertices(tran nth(0 shapes)->vertices)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THIS IS IMPORTANT: It's the bridge between Cadence Shapes and the
 ; Object System ...
 ; Build up a structure - shapes to assemblies ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 geom = makeInstance( 'geometry )
 num=length(shapes)
 for(i 0 num-1
@@ -82,7 +85,9 @@ dbClose(cv)
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3: add a simple rectangle
 ;       shape object to a layer 
-;       object
+;       object. Could represent a 
+;       reticle, chip or coupon
+;       via their boundary box.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; set shape vertices
@@ -96,7 +101,7 @@ v4 = list(0.0 0.0)
 vertices = list(v0 v1 v2 v3 v4)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 shp = makeInstance( 'shape )
-setVertices(shp vertices)
+setVertices(shp->transform vertices)
 setLayer(shp "text")
 setPurpose(shp "drawing")
 ; Create a layer object
@@ -112,7 +117,6 @@ name="retBbox"
 lib="pd0164"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(lay cv)
-; FIXME: not working. not finding vertices in the transform member ...
 renderShapesOnLayer(lay)
 dbSave(cv)
 dbClose(cv)

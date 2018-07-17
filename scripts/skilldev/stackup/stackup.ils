@@ -1,5 +1,5 @@
 ;######################################################
-;# stackup.ils: container class for multiple layers 
+; stackup.ils: container class for multiple layers 
 ;               forming a layout stackup for a number
 ;               of layout assemblies. This focused on
 ;               Cadence layout cell views.
