@@ -3401,7 +3401,7 @@ defclass( reticle (cv)
 		( couponList @reader getCouponList)
 		( chips @reader getChips)
 		( coupons @reader getCoupons)	
-		( isFull @reader getIsFull )
+		( isPartial @reader getIsPartial )
 		( origin @reader getOrigin @writer setOrigin)				
 	  )
 ) ; defClass
@@ -3423,7 +3423,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
 	   obj->coupons = makeInstance( 'collection ) 
-	   obj->isFull = nil
+	   obj->isPartial = nil
 	   obj->origin = nil 
 );defmethod
 
@@ -3618,8 +3618,8 @@ defmethod( addCoupon (( ret reticle ) arg)
 ; chips and pad locations within the reticle based upon
 ; the reticleOrigin value
 ;#####################################################
-defmethod( update (( ret reticle ) num)
-  nil
+defmethod( update (( ret reticle ))
+  
 );defmethod
 
 ;######################################################
@@ -3766,7 +3766,317 @@ defmethod( initializeInstance @after ((obj coupon))
 );defmethod
 ;######################################################
 ;######################################################
-;######################################################;######################################################
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  numeric.ils: numberic class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( numeric (polygon2)
+	  ( 
+		( val @reader getVal @writer setVal) 
+		( width )
+		( height )
+		( c0 )
+		( c1 )
+		( c2 )
+		( c3 )
+		( c4 )
+		( c5 )
+		( c6 )
+		( c7 )
+		( c8 )
+		( c9 )								
+	  )
+);defClass
+;#####################################################
+; Class constructor
+; This method initializes the class
+; Initialized/Default Heigth is 50
+;#####################################################
+defmethod( initializeInstance @after ((obj numeric))  
+	   obj->val = nil
+	   obj->width = nil
+	   obj->height = nil
+	   obj->c0  = list(list(0 10) 
+			   list(10 0) 
+			   list(18 0) 
+			   list(18 10) 
+			   list(16 10)
+			   list(13 13) 
+			   list(27 27) 
+			   list(30 27) 
+			   list(30 15) 
+			   list(25 10)
+			   list(23 10) 
+			   list(23 0) 
+			   list(30 0) 
+			   list(40 10) 
+		           list(40 40)
+			   list(30 50) 
+			   list(22 50) 
+			   list(22 40) 
+			   list(24 40) 
+			   list(27 37)
+			   list(13 23) 
+			   list(10 23) 
+			   list(10 35) 
+			   list(15 40) 
+			   list(17 40)
+			   list(17 50) 
+			   list(10 50) 
+			   list(0 40) 
+			   list(0 10))
+	   obj->c1 = list( list(0 40) 
+		           list(8 40) 
+		           list(8 0) 
+			   list(18 0) 
+			   list(18 50)
+			   list(8 50) 
+			   list(4 46) 
+			   list(0 46) 
+			   list(0 40))
+	   obj->c2 = list(list(0 0) 
+			  list(40 0) 
+			  list(40 10) 
+			  list(20.5 10) 
+			  list(20.5 13)
+			  list(40 32.5) 
+			  list(40 42.5) 
+			  list(32.5 50) 
+			  list(7.5 50) 
+			  list(0 42.5)
+			  list(0 35) 
+			  list(10 35) 
+			  list(10 37.5) 
+			  list(12.5 40) 
+			  list(29.5 40)
+			  list(29.5 37) 
+			  list(0 7.5) 
+			  list(0 0))
+	   obj->c3 = list(list(0 8) 
+			  list(8 0) 
+			  list(33 0) 
+			  list(41 8) 
+		          list(41 20)
+			  list(36 25) 
+			  list(41 30) 
+		          list(41 42) 
+			  list(33 50) 
+			  list(8 50)
+			  list(0 42) 
+			  list(0 35) 
+			  list(11 35) 
+		          list(11 37) 
+			  list(14 40)
+		          list(28 40) 
+			  list(31 37) 
+		          list(31 33) 
+			  list(23 25) 
+			  list(31 17)
+			  list(31 13) 
+			  list(28 10) 
+			  list(13 10) 
+			  list(10 13) 
+			  list(10 15)
+		          list(0 15) 
+			  list(0 8))
+	   obj->c4 = list(list(0 10) 
+			  list(16 10) 
+			  list(16 20) 
+			  list(13 20) 
+			  list(13 25)
+			  list(21 33) 
+			  list(25 33) 
+			  list(25 20) 
+			  list(22 20) 
+			  list(22 10)
+			  list(25 10) 
+			  list(25 0) 
+			  list(35 0) 
+			  list(35 10) 
+			  list(40 10)
+			  list(40 20) 
+			  list(35 20) 
+			  list(35 50) 
+			  list(23 50) 
+			  list(0 27)
+			  list(0 10))
+	   obj->c5 = list(list(0 8) 
+			  list(8 0) 
+			  list(32 0) 
+			  list(40 8) 
+			  list(40 24)
+			  list(32 32) 
+			  list(10 32) 
+			  list(10 40) 
+			  list(40 40) 
+			  list(40 50)
+			  list(0 50) 
+			  list(0 22) 
+			  list(30 22) 
+			  list(30 13) 
+			  list(27 10)
+			  list(13 10) 
+			  list(10 13) 
+			  list(10 15) 
+			  list(0 15) 
+			  list(0 8))
+	   obj->c6 = list(list(0 8) 
+			  list(8 0) 
+			  list(17 0) 
+			  list(17 10) 
+			  list(13 10)
+		          list(10 13) 
+			  list(10 17) 
+			  list(13 20) 
+			  list(27 20) 
+			  list(30 17)
+			  list(30 13) 
+			  list(27 10) 
+			  list(23 10) 
+			  list(23 0) 
+			  list(32 0)
+			  list(40 8) 
+			  list(40 22) 
+			  list(32 30) 
+			  list(10 30) 
+			  list(10 36)
+			  list(14 40) 
+			  list(37.5 40) 
+			  list(37.5 50) 
+		    	  list(8 50) 
+			  list(0 42)
+			  list(0 8))
+	   obj->c7 = list(list(0 0) 
+		     	  list(13 0) 
+			  list(13 5) 
+			  list(40 32) 
+			  list(40 50)
+			  list(0 50) 
+			  list(0 40) 
+			  list(30 40) 
+			  list(30 37) 
+			  list(0 7)
+			  list(0 0))
+	   obj->c8 = list(list(0 8) 
+			  list(8 0) 
+			  list(18 0) 
+			  list(18 10) 
+			  list(14 10)
+			  list(11 13) 
+			  list(11 17) 
+			  list(14 20) 
+			  list(28 20) 
+			  list(31 17)
+			  list(31 13) 
+			  list(28 10) 
+			  list(24 10) 
+			  list(24 0) 
+			  list(33 0)
+			  list(41 8) 
+			  list(41 19) 
+			  list(35 25) 
+			  list(41 31) 
+			  list(41 42)
+			  list(33 50) 
+			  list(24 50) 
+			  list(24 40) 
+			  list(28 40) 
+			  list(31 37)
+			  list(31 33) 
+			  list(28 30) 
+			  list(14 30) 
+			  list(11 33) 
+			  list(11 37)
+			  list(14 40) 
+			  list(18 40) 
+			  list(18 50) 
+			  list(8 50) 
+			  list(0 42)
+			  list(0 31) 
+			  list(6 25) 
+			  list(0 19) 
+			  list(0 8))
+	   obj->c9 = list(list(2.5 0) 
+			  list(32 0) 
+			  list(40 8) 
+			  list(40 42) 
+			  list(32 50)
+			  list(22 50) 
+			  list(22 40) 
+			  list(27 40) 
+			  list(30 37) 
+			  list(30 32)
+			  list(27 29) 
+			  list(13 29) 
+			  list(10 32) 
+			  list(10 37) 
+			  list(13 40)
+			  list(16 40) 
+			  list(16 50) 
+			  list(8 50) 
+			  list(0 42) 
+			  list(0 27)
+			  list(8 19) 
+			  list(30 19) 
+			  list(30 13) 
+			  list(27 10) 
+			  list(2.5 10))
+);defmethod
+
+;#####################################################
+; Width and hieght of of number member
+;#####################################################
+
+;#####################################################
+; Generates a number polygon
+;#####################################################
+defmethod( generate (( np numeric ))
+  let( (ret)
+	   ret=nil
+	   case(np->val
+	       ("0"
+	         ret=np->c0
+               )
+	       ("1"
+	         ret=np->c1
+               )
+	       ("2"
+	         ret=np->c2
+               )
+	       ("3"
+	         ret=np->c3
+               )
+	       ("4"
+	         ret=np->c4
+               )
+	       ("5"
+	         ret=np->c5
+               )
+	       ("6"
+	         ret=np->c6
+               )
+	       ("7"
+	         ret=np->c7
+               )
+	       ("8"
+	         ret=np->c8
+               )
+	       ("9"
+	         ret=np->c9
+               )
+	       (t
+	         ret=nil
+	       )
+	    );case
+	    setVertices(np ret)
+	    ret
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;######################################################
 ;# rectangle.ils: Rectangle class
 ;######################################################
 defclass( rectangle (polygon2)

@@ -1,0 +1,92 @@
+;######################################################
+;# techLayer.ils: Technology layer class. Shapes member
+;#                is a container for all shapes on the
+;#                target layer.
+;#                FIXME: shapes are depreciated. Use
+;#                       transform2 class
+;######################################################
+defclass( techLayer (cadObj)
+	  (
+		( name @reader getName @writer setName )
+		( purpose @reader getPurpose @writer setPurpose )
+		( shapes @reader getShapes )
+	  )				  
+) ; defclass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj techLayer)) 
+	   obj->name = nil
+	   obj->purpose = nil
+	   obj->shapes = makeInstance( 'collection )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method gets all the shapes on the target layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getShapesOnLayer (( lay techLayer ))
+  let( (shps temp)
+      shps = car(setof(lp lay->ref~>lpps lp~>layerName==lay->name))~>shapes
+      foreach( sh shps
+      	       temp = makeInstance( 'shape )
+	       setRef(temp sh)
+	       genVertices(temp)
+	       add(lay->shapes temp)
+      );foreach	       
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method deletes all shapes on the target layer
+; Rendor shapes on the layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deleteShapesOnLayer (( lay techLayer ))
+  foreach(shape lay->shapes
+      dbDeleteObject(shape)
+  )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Render shapes on the layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderShapesOnLayer (( lay techLayer ))
+  foreach(shape lay->shapes->list->elems
+      setRef(shape lay->ref)
+      setLayer(shape lay->name)
+      setPurpose(shape lay->purpose)
+      render(shape)
+  )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method adds a shape to a layer by reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( addShape (( lay techLayer ) arg )
+  if( getName(lay) == getLayer(arg) then
+    printf("INFO: Adding shape to layer\n")
+    add(lay->shapes arg)
+    t
+  else
+    printf("ERROR: Shape is on %s layer, cannot be added to %s layer\n" getLayer(arg) getName(lay))
+    nil
+  );if  
+);defmethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Performs the logical and of this layer and an input argument layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( layerAnd (( lay techLayer ) arg )
+;  if( getName(lay) == getLayer(arg) then
+;    printf("INFO: Performing layer logical AND \n")
+;    leLayerAndNot()
+;    t
+;  else
+;    printf("ERROR: Shape is on %s layer, cannot be added to %s layer\n" getLayer(arg) getName(lay))
+;    nil
+;  );if  
+;);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

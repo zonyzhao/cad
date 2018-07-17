@@ -345,39 +345,98 @@ getName(chip7)
 getOrigin(getBbx(chip7))
 getName(chip7->numpad)
 getOrigin(getBbx(chip7->numpad))
-
+getbBox(ret)
+getDim(ret)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-6: Raster an array of primary 
+; UT-6: Raster an sequence of primary 
 ;       reticles in a cellview 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 getLib(ret)
 getName(ret)
 getView(ret)
 setOrigin(ret list(0.0 0.0))
-name = "wafer"
+name = "raster"
 cvm = dbOpenCellViewByType(getLib(ret) name getView(ret) "maskLayout" "w")
 cv = makeInstance( 'cv )
 setRef(cv cvm)
 i=0
 j=0
 orient = "R0"
-orig = getOrigin(ret)
+dx = getWidth(ret)-getOverlap(ret)
+dy = getHeight(ret)-getOverlap(ret)
+rx = 0.0
+ry = 9.9
+orig = list(rx ry)
 createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
 ;Second reticle
 i=1
 j=0
-orient = "R0"
-rx = xCoord(orig) + 18000.0
-ry = yCoord(orig)
+rx = rx + dx
+ry = 0.0
 orig =list(rx ry)
 createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
 ;Third reticle
 i=2
 j=0
-rx = xCoord(orig) + 18000.0
-ry = yCoord(orig)
+rx = rx + dx
+ry = 0.0
 orig =list(rx ry)
 createInstance2(cv getRef(ret) sprintf( nil "reticle_%d_%d" i j) orig orient)
 dbSave(cvm)
 dbClose(cvm)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Raster a 3x3 array of primary 
+;       reticles in a cellview 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+getLib(ret)
+getName(ret)
+getView(ret)
+setOrigin(ret list(0.0 0.0))
+name = "raster2d"
+cvm = dbOpenCellViewByType(getLib(ret) name getView(ret) "maskLayout" "w")
+cv = makeInstance( 'cv )
+setRef(cv cvm)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+rows = 3
+cols = 3
+orient = "R0"
+rx = 0.0
+ry = 0.0
+orig = list(rx ry)
+dx = getWidth(ret)-getOverlap(ret)
+dy = getHeight(ret)-getOverlap(ret)
+for(i 0 rows-1
+    ry = i*dy
+  for(j 0 cols-1
+      rx = j*dx
+      orig = list(rx ry)
+      createInstance2(cv getRef(ret) sprintf( nil "r%d%d" i j) orig orient)
+  );for
+);for
+
+dbSave(cvm)
+dbClose(cvm)
+dbClose(cvm)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-7: Create Numbers at the pad
+;       locations in the reticle
+;       array created in UT-6
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-8: 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 1.) Create cell view with one layer representing the bbox of the reticle
+; 2.) Crate a cell view of only the inclusion ring layer
+; 3.) Instantiate the reticle layer cv into the inclusion ring
+; 4.) Flatten the inclusion ring cell view
+; 5.) do a layer and not and if there is no output, the reticle is not 
+;     fully within the inclusion ring. 
+; 6.) Mark this location in the array as a partial reticle  
+leLayerAndNot()
+
+
 

@@ -16,7 +16,7 @@ defclass( reticle (cv)
 		( couponList @reader getCouponList)
 		( chips @reader getChips)
 		( coupons @reader getCoupons)	
-		( isFull @reader getIsFull )
+		( isPartial @reader getIsPartial )
 		( origin @reader getOrigin @writer setOrigin)				
 	  )
 ) ; defClass
@@ -38,7 +38,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
 	   obj->coupons = makeInstance( 'collection ) 
-	   obj->isFull = nil
+	   obj->isPartial = nil
 	   obj->origin = nil 
 );defmethod
 
@@ -233,8 +233,8 @@ defmethod( addCoupon (( ret reticle ) arg)
 ; chips and pad locations within the reticle based upon
 ; the reticleOrigin value
 ;#####################################################
-defmethod( update (( ret reticle ) num)
-  nil
+defmethod( update (( ret reticle ))
+  
 );defmethod
 
 ;######################################################

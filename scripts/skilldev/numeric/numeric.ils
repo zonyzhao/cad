@@ -17,8 +17,9 @@ defclass( numeric (polygon2)
 		( c8 )
 		( c9 )								
 	  )
-) ; defClass
+);defClass
 ;#####################################################
+; Class constructor
 ; This method initializes the class
 ; Initialized/Default Heigth is 50
 ;#####################################################
@@ -298,6 +299,7 @@ defmethod( generate (( np numeric ))
 	         ret=nil
 	       )
 	    );case
+	    setVertices(np ret)
 	    ret
   );let
 );defmethod
