@@ -113,13 +113,75 @@ setPurpose(lay layPurp)
 getName(lay)
 getLayer(shp)
 addShape(lay shp)
-name="retBbox"
+name="reticle"
 lib="pd0164"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
 setRef(lay cv)
 renderShapesOnLayer(lay)
 dbSave(cv)
 dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-4: Logical and of two layers
+;       in a cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="Wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Testing primitive le function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+layA = "resistor"
+purA = "drawing"
+layB = "membrane"
+purB = "drawing"
+shapes = leLayerAnd(cv list(layA purA) list(layB purB) list("text" "drawing"))
+
+shapes = leLayerSize( cv list("membrane" "drawing") 1.5 list("membrane" "drawing") )
+nth(0 shapes)->?
+nth(0 shapes)->layerName
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+layerA = makeInstance( 'techLayer )
+setLayer(layerA "resistor")
+setPurpose(layerA "drawing")
+layerB = makeInstance( 'techLayer )
+setLayer(layerB "membrane")
+setPurpose(layerB "drawing")
+setRef(layerA cv)
+getLayer(layerA)
+getLayer(layerB)
+shapes = andLayers(layerA layerB )
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-5: Merging of a layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+lay = makeInstance( 'techLayer )
+setRef(lay cv)
+setName(lay "resistor")
+setPurpose(lay "drawing")
+getShapesOnLayer(lay)
+getCollection(lay->shapes)
+length(getCollection(lay->shapes))
+;should be two shapes
+ml=mergeLayer(lay)
+;should be just one output shape
+length(ml)
+nth(0 ml)~>?
+nth(0 ml)~>layerName
+nth(0 ml)~>points
+;FIXME: should render and check
+
 
 ;#########################################################
 ; Experimental Code

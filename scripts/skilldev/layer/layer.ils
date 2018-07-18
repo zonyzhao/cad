@@ -78,20 +78,98 @@ defmethod( addShape (( lay techLayer ) arg )
   );if  
 );defmethod
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Performs the logical AND of the two input layer objects
+;  Returns: A list of shapes that satisfy the logical AND operation
+;           nil if there is no output from the AND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( andLayers (( lay techLayer ) other )
+  let((layA purA temp)
+    layA = getLayer(other)
+    purA = getPurpose(other)
+    layB = getLayer(lay)
+    purB = getPurpose(lay)
+    leLayerAnd(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+  );let
+);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Performs the logical and of this layer and an input argument layer
+;  Performs the logical AND NOT of the two input layer objects
+;  Returns: A list of shapes that satisfy the logical AND operation
+;           nil if there is no output from the AND
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;defmethod( layerAnd (( lay techLayer ) arg )
-;  if( getName(lay) == getLayer(arg) then
-;    printf("INFO: Performing layer logical AND \n")
-;    leLayerAndNot()
-;    t
-;  else
-;    printf("ERROR: Shape is on %s layer, cannot be added to %s layer\n" getLayer(arg) getName(lay))
-;    nil
-;  );if  
-;);defmethod
+defmethod( andNotLayers (( lay techLayer ) other )
+  let((layA purA temp)
+    layA = getLayer(other)
+    purA = getPurpose(other)
+    layB = getLayer(lay)
+    purB = getPurpose(lay)
+    leLayerAndNot(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Performs the logical OR of the two input layer objects
+;  Returns: A list of shapes that satisfy the logical AND operation
+;           nil if there is no output from the AND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( orLayers (( lay techLayer ) other )
+  let((layA purA temp)
+    layA = getLayer(other)
+    purA = getPurpose(other)
+    layB = getLayer(lay)
+    purB = getPurpose(lay)
+    leLayerOr(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Performs the logical XOR of the two input layer objects
+;  Returns: A list of shapes that satisfy the logical AND operation
+;           nil if there is no output from the AND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( xOrLayers (( lay techLayer ) other )
+  let((layA purA temp)
+    layA = getLayer(other)
+    purA = getPurpose(other)
+    layB = getLayer(lay)
+    purB = getPurpose(lay)
+    leLayerXor(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Resizes the shapes on this layer by useru (um) and returns 
+;  a list of newly resized shapes on this layer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( resizeLayer (( lay techLayer ) uu )
+  let((layA purA temp)
+    lay = getLayer(other)
+    pur = getPurpose(other)
+    leLayerSize(getRef(lay) list(lay pur) uu list(lay pur))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Merge all shapes on a layer. Returnts a list of shapes that have
+;  been returned from the merger operation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( mergeLayer (( lay techLayer ))
+  let((cv sList)
+    cv = getRef(lay)
+    foreach(layer cv~>lpps
+      if(layer~>layerName == getName(lay) && layer~>purpose == getPurpose(lay) then
+        foreach(shp layer~>shapes 
+          sList = cons(shp sList)
+        );foreach
+      );if
+    );foreach	
+    ; get the target layer from the cv
+    ; get the shapes on that layer and add them to sList
+    leMergeShapes(sList)
+  )
+);defmethod
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

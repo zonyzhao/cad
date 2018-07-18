@@ -1,0 +1,130 @@
+;######################################################
+; stackup.ils: container class for multiple layers 
+;               forming a layout stackup for a number
+;               of layout assemblies. This focused on
+;               Cadence layout cell views.
+;######################################################
+defclass( stackup (cadObj)
+	  (
+		( stack @writer setStackCollection )
+	  )				  
+) ; defclass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj stackup)) 
+	   obj->stack = makeInstance( 'collection )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method gets the layer stackup and prints it out
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getStackUp (( st stackup ))
+  let( (n temp)
+    n = 0
+    if( !null(st->ref~>lpps) then
+    	foreach(lpp st->ref~>lpps
+      	  printf("%d: LAYER: %s, PURPOSE: %s SHAPES: %d\n" n lpp~>layerName lpp~>purpose lpp~>nShapes)
+      	  temp = makeInstance( 'techLayer )
+	  setRef(temp st->ref)
+	  setName(temp lpp~>layerName)
+	  setPurpose(temp lpp~>purpose)
+	  getShapesOnLayer(temp)
+	  add(st->stack temp)
+	  n++
+    	);foreach
+    	n
+    else
+	printf("WARNING: No layers found in cellview\n")
+	nil
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; render the stack in the target cellview (st->ref)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderStack (( st stackup ))
+  let( (n m)
+    m=0
+    foreach(stack st->stack->list->elems
+      printf("Rendering stackup: %d\n" m)
+      n=0
+      foreach(layer stack->list->elems
+        printf("%d: Rendering layer: %s\n" n layer->name)
+        setRef(layer st->ref)
+        renderShapesOnLayer(layer)
+        n++
+      );foreach
+      m++
+    );foreach
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Merges all layers that are teh same
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( mergeStackUp (( st stackup ))
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; add a single layer object to the stack
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( addLayer (( st stackup ) arg )
+  add(st->stack arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; add a single "assembly"?? object to the stackup list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( addAssembly (( st stackup ) arg )
+  add(st->stack arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method deletes the "arg" layer from the cellview stackup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deleteLayer (( st stackup ) arg )
+  let( (i found)
+    found = nil
+    i=0
+    foreach(lay st->stack->list->elems
+      if(getName(lay) == arg then
+        found = t
+	removeElem(st->stack->list lay)
+	i++
+      else
+       i++	     
+      );if    
+    );foreach
+    if(found then
+      printf("INFO: Layer %s removed from stackup\n" arg)
+    else
+      printf("WARNING: Layer %s not found in stackup\n" arg)
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method prints the stackup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( printStackUp (( st stackup ))
+  let( (n)
+    n = 0
+    if( !null(st->stack->list->elems) then
+    	foreach(lay st->stack->list->elems
+      	  printf("%d: LAYER: %s\n" n getName(lay))
+	  n++
+    	);foreach
+    	n
+    else
+	printf("WARNING: No layers found in cellview\n")
+	nil
+    );if
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
