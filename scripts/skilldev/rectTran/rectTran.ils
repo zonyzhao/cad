@@ -1,13 +1,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  rectTran.ils: Rectangle transform class 
+;  rectTran.ils: Rectangle transform class
+'  FIXME: This seems like it should inherit from bbox. Needs a big refactor!! 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTran (cadObj)
 	  (
-		( ur )
-		( ll )
-		( width )
-		( height )
-		( transformation )			  
+		( ur @reader getUrPnt)
+		( ll @reader getllPnt)
+		( width @reader getWidth)
+		( height @reader getHeight)
+		( transformation @reader getTrans)			  
 	  )
 ) ; defClass
 

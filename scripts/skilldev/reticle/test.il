@@ -429,26 +429,89 @@ dbClose(cvm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-8: 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; 1.) Create cell view with one layer representing the bbox of the reticle
-; 2.) Crate a cell view of only the inclusion ring layer
-; 3.) Instantiate the reticle layer cv into the inclusion ring
-; 4.) Flatten the inclusion ring cell view
-; 5.) do a layer and not and if there is no output, the reticle is not 
-;     fully within the inclusion ring. leLayerAndNot()
-; 6.) Mark this location in the array as a partial reticle  
+; 1.) Create cell view with a GRID layer representing the bbox of the reticle
+; 2.) Add the inclusion ring on the text layer of the cell view in step 1.)
+; 3.) Perform an abeLayerInside on the two layers
+; 4.) If the reticle layer is NOT inside mark that reticle site as partial
+; 5.) Repeat steps 1-4 for the entire reticle array
+; 6.) Save the number of non-partial (full) reticles
+; 7.) Delete the inclusion ring layer from the cell view
+;
+; Repeat steps 2-7 stepping x and y by S&R intervals
+; Choose x and y offsets that maximize the number of full reticles
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Step 1.
+Step 1. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Open Wafer Outline Cell
+; Create reticle bbox shape
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "reticle"
-name = "wafer_4"
+lib = "pd0164"
+name = "pd0164_0p_shifturq"
 view = "layout"
-cvw = dbOpenCellViewByType(lib name view "maskLayout" "r")  
-stack = makeInstance( 'stackup )
-setRef(stack cvw)
-getStackUp(stack)
+cvr = dbOpenCellViewByType(lib name view "maskLayout" "r")  
+ret = makeInstance( 'reticle )
+setRef(ret cvr)
+getbBox(ret)
+bbv = bb2vert(ret->bbx)
+shp = makeInstance( 'shape )
+setLayer(shp "GRID")
+setPurpose(shp "drawing")
+setVertices(shp->transform bbv) 
+dbClose(cvr)
+lay = makeInstance( 'techLayer )
+layName = "GRID"
+layPurp = "drawing"
+setName(lay layName)
+setPurpose(lay layPurp)
+getName(lay)
+getLayer(shp)
+addShape(lay shp)
+name="retBBox"
+lib="pd0164"
+view = "layout"
+cvrc = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(lay cvrc)
+renderShapesOnLayer(lay)
+dbSave(cvrc)
+dbClose(cvrc)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Step 2. 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Add the inclusion ring layer to the retBBox cellview positioned
+; in the URQ of the cell view
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Capture the layer shapes in a cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="Wafer_4"
+lib="reticle"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+lay = makeInstance( 'techLayer )
+setRef(lay cv)
+layName = "resistor"
+layPurp = "drawing"
+setName(lay layName)
+setPurpose(lay layPurp)
+getShapesOnLayer(lay)
+shapes = lay->shapes->list->elems
+dbClose(cv)
+geom = makeInstance( 'geometry )
+num=length(shapes)
+for(i 0 num-1
+  temp = makeInstance( 'transform2 )
+  setVertices(temp getItem(getShapes(lay) i)->vertices)
+  
+  shiftURQ(temp->rtran) 
+  addTransform(geom temp)
+)
+; Shift transform to URQ
+shiftURQ(
 
-
-
-
+; Open a cv for write and rendor the target layer
+name="inclusionRing"
+lib="pd0164"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(geom cv)
+render(geom)
+dbSave(cv)
+dbClose(cv)
