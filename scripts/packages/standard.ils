@@ -4468,6 +4468,18 @@ defmethod( enclosed (( shp shape ) arg)
   );if
 );defmethod
 
+;#####################################################
+; Resize the shape by uu user units (um)
+; FIXME: need to create a binding between shape object
+;        and equivalent cell view shape so that
+;        le functions can be used by this class??
+;#####################################################
+;defmethod( enclosed (( shp shape ) uu)
+; let((cv)
+;   leSizeShape(cvShp)
+; );let  
+;);defmethod
+
 ;###############################################################################
 ;###############################################################################
 ;###############################################################################
