@@ -3422,9 +3422,9 @@ procedure( xynCreateNumbersDwg()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynPlaceChipNumbers()
   let( ( nonCoupons chipNames sl instances ix xs jy ly x lx chip orient pp 
-         nChips nd ns exceed)
+         nChips nd ns exceed slerror numerr)
 
-    
+    numerr = nil
 ;   preset the probed-chips counters to zero:
     foreach( c xynpl->mergedChipList c->nChips = 0)
 
@@ -3443,17 +3443,11 @@ procedure( xynPlaceChipNumbers()
 
 ;   sort them by xy position:
     instances = sort( instances 'xynInstXySort)
-
+    slerror = 0
     jy = -1  ly = -1
     nChips = 0
     foreach( inst instances
       exceed = nil
-      xynMsg( "Processing Chip Name: %L" inst~>cellName)
-      xynMsg( "Processing Chip Instance: %L" inst~>name)
-      xynMsg( "Index X: %L" ix)
-      xynMsg( "Index Y: %L" jy)
-      xynMsg( "Intra Reticle Row (Y coord): %L" ly)
-      xynMsg( "Intra Reticle Col (X coord): %L" lx)
 ;     keep track of steps in the y direction:
       when( cadr( inst~>xy) > ly
 ;	reset the x number to zero:
@@ -3467,7 +3461,12 @@ procedure( xynPlaceChipNumbers()
 ;	reset the intra-reticle x-counter:
 	lx = 0
       )
-
+      xynMsg( "Processing Chip Name: %L" inst~>cellName)
+      xynMsg( "Processing Chip Instance: %L" inst~>name)
+      xynMsg( "Reticle Row Index X: %L" ix)
+      xynMsg( "Reticle Col Index Y: %L" jy)
+      xynMsg( "Intra Reticle Row Y Coord: %L" ly)
+      xynMsg( "Intra Reticle Col X Coord: %L" lx)
 ;     keep track of vertical scribe lines
 ;     (to handle rows that contain chips and non-chips) NON-CHIPS == COUPONS??
 ;     get the chip's x-coord WRT the reticle:
@@ -3484,60 +3483,70 @@ procedure( xynPlaceChipNumbers()
       )
 
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ; FIXME: ?????
-      ; the inst~>xy was given to each chip during S&R algorithm execution and is a custom
+      ; This is where the x coordinate value is reset to zero at the end of each
+      ; reticle processed
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+      ; Note: the inst~>xy was given to each chip during S&R algorithm execution and is a custom
       ; property representing the chip origin
-      ;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      lx = car( inst~>xy)
-      x = lx
-      while( x >= xynpl->retW 
-             xynMsg( "X value %L is greater than reticle width %L subtracting width" x xynpl->retW )
-             x = x - xynpl->retW
-             xynMsg( "New X value %L:" x )
-      );while
+      ;lx = car( inst~>xy)
+      ;;new variable x is assigned from the x coordinate value - used for inter-reticle checking
+      ;;against street calculation
+      ;x = lx
+      ;while( x >= xynpl->retW 
+      ;       xynMsg( "X coordinate %L is greater than reticle width %L subtracting width" x xynpl->retW )
+      ;       x = x - xynpl->retW
+      ;       xynMsg( "New X value %L:" x )
+      ;);while
 
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ; Watchdog condition x value not equal to x scribe line position and the array index 
-      ; x exceeds 10,000
+      ; Watchdog Condition: When X coord value not equal to X value of the vertical scribe line position (xs)
+      ;                     and the the array x index is less than 10,000 assume that the next 
+      ;                     retical array location is not a chip and force an increment of the reticle
+      ;                     column counter ix - Weird!!
+      ;                     Chips in next reticle x index are not aligning to the vertical scribe lines
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      while( x != car( xs) && ix < 10000
-        if(null(exceed) then
-          xynMsg( "MIN ONE OCCURRENCE: X is further right than expected: %L" x)
-	  exceed = 't
-        )
-;       FIXME: This is describing the skipping of a coupon as we are only interested in chips ...
-;	here x is farther right than expected, must be one or more non-chips
-;	was skipped in this row, so advance the x number:
-	xs = or( cdr( xs) sl)
-	ix = ix + 1
-	
-      )
+      ;while( x != car( xs) && ix < 10000
+      ;  slerror++
+      ;  if(null(exceed) then
+      ;    xynMsg( "WARNING: MIN ONE OCCURRENCE: Coord x:%L is further right than expected as compared to vertical scribe xs:%L" x xs)
+;	  exceed = 't
+    ;    )
+;;       FIXME: This is describing the skipping of a coupon as we are only interested in chips ...
+;;	here x is farther right than expected, must be one or more non-chips
+;;	was skipped in this row, so advance the x number:
+       ; ; pop off the first entry in list xs and place previously popped value at the end
+       ; ; circular stack
+;	xs = or( cdr( xs) sl)
+;	ix = ix + 1 ; Increment the Reticle column index by one
+;      )
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Watchdog Condition: If x index value is 10,000 then there must have been a problem 
+      ;                     error out ... 
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       when( ix == 10000 
 	xynErr( "failed to find x index of chip instance %s" inst~>name)
-	printf( "instance x: %f  normalized x: %f\n" lx x)
-	printf( "vertical scribe lines:\n")
-	println( sl)
+	xynMsg( "instance x: %f  normalized x: %f\n" lx x)
+	xynMsg( "vertical scribe lines %L:\n" sl)
+	xynMsg( "Number of scribe line alignment errors: %d" slerror)	
+	numerr = 't
       )
+  ;     add the wafer position numbers to the instance as properties:
+  ;     mod 2/5/05 to ensure all chip instances have x-y numbers stored on them
+        inst~>iX = ix
+        inst~>jY = jy
 
-;     add the wafer position numbers to the instance as properties:
-;     mod 2/5/05 to ensure all chip instances have x-y numbers stored on them
-      inst~>iX = ix
-      inst~>jY = jy
+  ;     number only the complete chips:
+        xynMsg( "Full Chip: %L" xynIsFullObject( inst))
+        cond(
+          ( xynIsFullObject( inst)
 
-;     number only the complete chips:
-      xynMsg( "Full Chip: %L" xynIsFullObject( inst))
-      cond(
-        ( xynIsFullObject( inst)
-
-;	  new instance property indicates:  0 = off-wafer, 1 = partial, 2 = full chip
+  ;	  new instance property indicates:  0 = off-wafer, 1 = partial, 2 = full chip
 	  inst~>onWafer = 2
-
-;         determine orientation of numbers:
-	  chip = car( exists( c xynpl->mergedChipList c->name == inst~>cellName))
-          orient = xynMapPadOrient( chip->chipOrient chip->padOrient)
+  
+  ;      determine orientation of numbers:
+         chip = car( exists( c xynpl->mergedChipList c->name == inst~>cellName))
+         orient = xynMapPadOrient( chip->chipOrient chip->padOrient)
 
 ;	  map the pad origin:
 	  pp = dbTransformPoint( chip->padLocn
@@ -3550,7 +3559,11 @@ procedure( xynPlaceChipNumbers()
 	  when( nd == 3 ns = case( ns ("L"  "M")  ("M"  "S")  ("S"  "S")))
 
 ;	  number the site:
-	  xynNumberChip( ix jy car( pp) cadr( pp) nd orient chip->numType ns)
+	  ;if(null(numerr) then
+	     xynNumberChip( ix jy car( pp) cadr( pp) nd orient chip->numType ns)
+          ;else 
+	  ;   xynErr( "Skipping number site %d,%d" ix jy)
+          ;)
 
 	  chip->nChips = chip->nChips + 1
 	  nChips = nChips + 1
@@ -3589,17 +3602,30 @@ procedure( xynPlaceChipNumbers()
 ;	during numbering
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( xynGetVerticalScribes()
-  let( ( sl)
-
+  let( ( sl sorted i)
+    xynMsg( "Finding Vertical Reticle Scribe Lines:")
     foreach( chip xynpl->retChipList
       when( chip->chipType == "chip"
+        xynMsg( "Chip Name: %L" chip->cellName)
 	foreach( posn chip->chipPosn
+          xynMsg( "Chip X Position: %L" xCoord(posn))
+	  ;xynMsg( "Chip Y Position: %L" yCoord(posn))
+          ; create a list of chip unique x values
+          ; INLINE IF: if(member( car( posn) sl) sl = cons( car( posn) sl):nil)
 	  unless( member( car( posn) sl) sl = cons( car( posn) sl))
 	)
       )
     )
-    sort( sl 'lessp)
+    sorted = sort( sl 'lessp)
+    xynMsg( "Sorted Reticle Scribe Line X Coord List:")
+    i=0
+    foreach(sort sorted
+      xynMsg( "%L.) SL X Coord:%L" i nth(i sorted))
+      cdr(sorted)
+      i++
+    )
   )
+  sort( sl 'lessp)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
