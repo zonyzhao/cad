@@ -163,7 +163,7 @@ dbClose(cvc)
 ; Step 4.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
-name  = "pd0164_0p"
+name = "pd0164_0p"
 view = "layout"
 copyName = strcat(name "_shifturq")
 ;copyName = strcat(name "_xyn")
@@ -177,10 +177,13 @@ setRes(ret 10.0)
 setMaxDim(ret 20000.0)
 setOverlap(ret 4.0)
 setSrGrid(ret 0.1)
+setNumRetChips(ret 8)
+setNumRetCoups(ret 1)
 ;setShiftUrq(ret retShift)
 setPadChipName(ret "pd0164_0_xyPad_SLA")
 setPadCouponName(ret "pd0164_0_xyPad_SLB")
 findXynPads(ret)
+checkSum(ret)
 getChipList(ret)
 getCouponList(ret)
 isEmpty(ret->chips)
@@ -431,7 +434,7 @@ dbClose(cvm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 1.) Create cell view with a GRID layer representing the bbox of the reticle
 ; 2.) Add the inclusion ring on the text layer of the cell view in step 1.)
-; 3.) Perform an abeLayerInside on the two layers
+; 3.) Perform an TBD "overlaps" on the two layers
 ; 4.) If the reticle layer is NOT inside mark that reticle site as partial
 ; 5.) Repeat steps 1-4 for the entire reticle array
 ; 6.) Save the number of non-partial (full) reticles
@@ -439,6 +442,8 @@ dbClose(cvm)
 ;
 ; Repeat steps 2-7 stepping x and y by S&R intervals
 ; Choose x and y offsets that maximize the number of full reticles
+; Use TBD "enclosed" method to check if a chip is a partial or full
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Step 1. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -515,3 +520,76 @@ setRef(geom cv)
 render(geom)
 dbSave(cv)
 dbClose(cv)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-9: Checking for pad names in library
+;       FIXME: This should be part of initial reticle checks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name = getPadChipName(ret)
+view = "layout"
+cvchippad = dbOpenCellViewByType( lib name view "maskLayout" "r")
+if(!null(cvchippad) then
+    printf("INFO: XYN CHIP PAD FOUND IN RETICLE LIBRARY!: %s\n" cvchippad~>cellName)
+  else
+    printf("WARNING: XYN CHIP PAD NOT FOUND IN RETICLE LIBRARY!: %s\n" name)
+);if
+dbClose(cvchippad)
+
+name = getPadCouponName(ret)
+cvcouppad = dbOpenCellViewByType( lib name view "maskLayout" "r")
+if(!null(cvchippad) then
+    printf("INFO: XYN COUPON PAD FOUND IN RETICLE LIBRARY!: %s\n" cvcouppad~>cellName)
+  else
+    printf("WARNING: XYN COUPON PAD NOT FOUND IN RETICLE LIBRARY!: %s\n" name)
+);if
+dbClose(cvcouppad)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-10: Print out the reticle heirarchy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name = getName(ret)
+view = "layout"
+cvr = dbOpenCellViewByType( lib name view "maskLayout" "r")
+; look through them manually
+length(cvr~>instHeaders)
+nth(0 cvr~>instHeaders)~>cellName
+nth(1 cvr~>instHeaders)~>cellName
+nth(2 cvr~>instHeaders)~>cellName
+nth(3 cvr~>instHeaders)~>cellName
+nth(4 cvr~>instHeaders)~>cellName
+nth(5 cvr~>instHeaders)~>cellName
+nth(6 cvr~>instHeaders)~>cellName
+nth(7 cvr~>instHeaders)~>cellName
+nth(8 cvr~>instHeaders)~>cellName
+nth(9 cvr~>instHeaders)~>cellName
+nth(10 cvr~>instHeaders)~>cellName
+
+
+nth(0 cvr~>instances)~>cellName
+nth(1 cvr~>instances)~>cellName
+nth(2 cvr~>instances)~>cellName
+nth(3 cvr~>instances)~>cellName
+nth(4 cvr~>instances)~>cellName
+nth(5 cvr~>instances)~>cellName
+nth(6 cvr~>instances)~>cellName
+nth(7 cvr~>instances)~>cellName
+nth(8 cvr~>instances)~>cellName
+nth(9 cvr~>instances)~>cellName
+nth(10 cvr~>instances)~>cellName
+
+; Drilling down into the "CHIP0HP" instance to find the XYN PAD NAME
+nth(10 cvr~>instHeaders)~>?  
+nth(10 cvr~>instHeaders)~>instances
+nth(0 nth(10 cvr~>instHeaders)~>instances)~>cellName
+nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader
+nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master
+nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>?
+nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances
+
+nth(0 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName
+; ERROR BAD XYN NAME
+nth(1 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName

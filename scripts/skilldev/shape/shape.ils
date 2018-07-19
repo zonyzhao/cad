@@ -382,7 +382,7 @@ defmethod( enclosed (( shp shape ) arg)
 ;        and equivalent cell view shape so that
 ;        le functions can be used by this class??
 ;#####################################################
-;defmethod( enclosed (( shp shape ) uu)
+;defmethod( resize (( shp shape ) uu)
 ; let((cv)
 ;   leSizeShape(cvShp)
 ; );let  

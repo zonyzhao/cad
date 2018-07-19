@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  rectTran.ils: Rectangle transform class
-'  FIXME: This seems like it should inherit from bbox. Needs a big refactor!! 
+;  FIXME: This seems like it should inherit from bbox. Needs a big refactor!! 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTran (cadObj)
 	  (

@@ -1391,15 +1391,16 @@ defmethod( isRectangle (( poly polygon2 ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  rectTran.ils: Rectangle transform class 
+;  rectTran.ils: Rectangle transform class
+;  FIXME: This seems like it should inherit from bbox. Needs a big refactor!! 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTran (cadObj)
 	  (
-		( ur )
-		( ll )
-		( width )
-		( height )
-		( transformation )			  
+		( ur @reader getUrPnt)
+		( ll @reader getllPnt)
+		( width @reader getWidth)
+		( height @reader getHeight)
+		( transformation @reader getTrans)			  
 	  )
 ) ; defClass
 
@@ -3416,9 +3417,12 @@ defclass( reticle (cv)
 		( chips @reader getChips)
 		( coupons @reader getCoupons)	
 		( isPartial @reader getIsPartial )
-		( origin @reader getOrigin @writer setOrigin)				
+		( origin @reader getOrigin @writer setOrigin)
+		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
+		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
+		( numNumPads @reader getNumNumPads)				
 	  )
-) ; defClass
+);defClass
 
 ;#####################################################
 ; Constructor Method
@@ -3439,6 +3443,9 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->coupons = makeInstance( 'collection ) 
 	   obj->isPartial = nil
 	   obj->origin = nil 
+	   obj->numRetChips = nil 
+	   obj->numRetCoups = nil
+	   obj->numNumPads = nil
 );defmethod
 
 ;######################################################
@@ -3525,23 +3532,26 @@ defmethod( chipId (( ret reticle ))
 ; one level below the top level reticle cellview
 ;#####################################################
 defmethod( findXynPads (( ret reticle ))
-  let((dlist cv numPadCount coupoPadCount chip coupon cvchip)
+  let((dlist cv numPadCount chipPadCount couponPadCount chip coupon cvchip)
     resetCollection(ret->chips)
     resetCollection(ret->coupons)
+    numPadCount = 0
     chipPadCount = 0
     couponPadCount = 0
     dlist = '()
     clist = '()
     cv = getRef(ret)
+    ;FIXME: coupons not being detected!!
     foreach( ih cv~>instHeaders
       printf("Instance Header Name: %s \n" ih~>cellName)
       foreach( inst ih~>instances
         printf("Instance Name: %s \n" inst~>cellName)
         foreach( cell inst~>master~>instances
           printf("Cell Name: %s \n" cell~>cellName)
-          if(cell~>cellName == ret->xynPadChipName then
+          if(!null(strcmp(cell~>cellName ret->xynPadChipName) == 0) then
+	    numPadCount++
 	    chipPadCount++
-            printf("XYN CHIP PAD FOUND!: %s, In chip: %s \n" cell~>cellName inst~>cellName)
+            printf("%d.) XYN CHIP PAD FOUND!: %s, In chip: %s \n" numPadCount cell~>cellName inst~>cellName)
 	    dlist = cons(inst~>cellName dlist)
 	    chip = makeInstance( 'chip )
 	    setName(chip inst~>cellName)
@@ -3562,9 +3572,10 @@ defmethod( findXynPads (( ret reticle ))
 	    ;getDim(chip)
 	    addChip(ret chip)
           );
-	  if(cell~>cellName == ret->xynPadCouponName then
+	  if(!null(strcmp(cell~>cellName ret->xynPadCouponName) == 0) then
+            numPadCount++
 	    couponPadCount++
-            printf("XYN COUPON PAD FOUND!: %s, In coupon: %s \n" cell~>cellName inst~>cellName)
+            printf("%d.) XYN COUPON PAD FOUND!: %s, In coupon: %s \n" numPadCount cell~>cellName inst~>cellName)
 	    clist = cons(inst~>cellName clist)
           );
         );foreach
@@ -3574,7 +3585,7 @@ defmethod( findXynPads (( ret reticle ))
     clist = sort(clist nil)
     ret->chipList = dlist
     ret->couponList = clist
-    chipPadCount + couponPadCount
+    ret->numNumPads = numPadCount
   );let
 );defmethod
 
@@ -3633,7 +3644,23 @@ defmethod( addCoupon (( ret reticle ) arg)
 ; the reticleOrigin value
 ;#####################################################
 defmethod( update (( ret reticle ))
-  
+  nil
+);defmethod
+
+;#####################################################
+; Updates the relative position, relPos member,  of the 
+; chips and pad locations within the reticle based upon
+; the reticleOrigin value
+;#####################################################
+defmethod( checkSum (( ret reticle ))
+  let((psum)
+    psum = getNumRetChips(ret) + getNumRetCoups(ret)
+    if(!null(psum == getNumNumPads(ret)) then
+       printf("INFO: Reticle Coupon Checksum Passed, Chips+Coups: %d, numPads: %d\n" psum getNumNumPads(ret))
+    else
+       printf("ERROR: Reticle Coupon Checksum FAILED!, Chips+Coups: %d, numPads: %d\n" psum getNumNumPads(ret))
+    ); 
+  );
 );defmethod
 
 ;######################################################
@@ -4474,7 +4501,7 @@ defmethod( enclosed (( shp shape ) arg)
 ;        and equivalent cell view shape so that
 ;        le functions can be used by this class??
 ;#####################################################
-;defmethod( enclosed (( shp shape ) uu)
+;defmethod( resize (( shp shape ) uu)
 ; let((cv)
 ;   leSizeShape(cvShp)
 ; );let  
