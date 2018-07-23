@@ -25,35 +25,55 @@ phopl = '( nil
   dropin	""
   procTypes	("P46F" "P46H" "P51E" "P51F" "P51G" 
                  "P60D" "P60H" "P60J" "P60K" "P70A"
-		 "P80A" "P80B" "P81" "P82" "D83")
-
+		 "P80A" "P80B" "P81" "P82" "D83" "P85"
+                 "D91")
   process 	"P46H"
   winId		nil
   cv		nil
+  cvSec         nil
   xStepPri	0
-  yStepPri	0	
+  yStepPri	0
+  xStepSec	0
+  yStepSec	0	
   xStepOat	0
   yStepOat	0
   print		t	
   priCells 	nil
+  secCells      nil
   alignCells    nil
+  alignSecCells nil
   oatCells	nil
   junkCells	nil
+  junkSecCells  nil
   Gmarks	nil
+  GmarksSec     nil
   BnB		nil
+  BnBSec        nil
   Metro		nil
+  MetroSec      nil
   dfas		nil
+  dfasSec       nil
   oldStyleCells nil
   qtrX		0
   qtrY		0
+  qtrXSec	0
+  qtrYSec	0
   qtrCenX	0
   qtrCenY	0
+  qtrSecCenX	0
+  qtrSecCenY	0
   NEcenter	nil
   SWcenter	nil
   NWcenter	nil
   SEcenter	nil
+  NEcenterSec	nil
+  SWcenterSec	nil
+  NWcenterSec	nil
+  SEcenterSec	nil
   dfasQtr	nil
+  dfasQtrSec	nil
   gmarkQtr	nil
+  gmarkQtrSec	nil
   newStyleCells nil
   mpss		t  
   libPath	""
@@ -63,6 +83,7 @@ phopl = '( nil
   eBeam         "Leica"
   multi         nil
   Lmarks        nil
+  LmarksSec     nil
 )
 ;		)
 
@@ -85,6 +106,22 @@ procedure(photoInfo()
   getMetroFET(phopl->cv)
   kwWeedPriCells()
   kwWeedOatCells()
+
+  if(phopl->multi then
+    getSecCells()
+    getSecGlobalMarks()
+    getSecDFASkeys()
+    evaluateSecDFASkeys()
+    getSecBoxnBox()
+    ;################################################################################
+    GLOBAL_INST = list()
+    cv = dbOpenCellViewByType(phopl->design phopl->dropin "layout" "maskLayout" "a")
+    name = "MetroFet"
+    getAllInstances(cv name)
+    phopl->MetroSec = GLOBAL_INST
+    ;################################################################################
+    weedSecCells()
+  );if
   
   if(phopl->print then
     kwCreateOutFile()
@@ -93,19 +130,17 @@ procedure(photoInfo()
     kwPrintData()
     kwGetQtrPrintData()
     kwPrintQtrInfo()
+    if(phopl->multi then
+      getSecStepAndRepeat()
+      getSecQtrCenData()
+      printSecData()
+      getSecQtrPrintData()
+      printSecQtrInfo()
+    );if
     close(phopl->port)
   )
   if( phopl->mpss then
-    file = strcat( phopl->libPath "/release/" phopl->design ".photo")
-    c2p = makeInstance( 'cell2png )
-    c2p->cell = strcat( phopl->cv~>cellName "_aeblemap")  
-    c2p->lib = ddGetObj(phopl->design)~>name
-    c2p->view="layout"
-    setDesignPath(c2p)
-    checkPngDir(c2p)
-    savePng(c2p)
-    mpss(phopl->multi file)
-;    printf("INFO: PNG Filename: %s" c2p->fileName)
+    mpss(phopl->multi)
     printf("t\n")
   )
 
@@ -284,6 +319,34 @@ procedure( kwGetStepAndRepeat()
   )
 )
 
+procedure( getSecStepAndRepeat()
+  let((xStep yStep CellbBox Xint Yint)
+    CellbBox = phopl->bBoxSec
+    xStep = abs(car(car(CellbBox))) + car(cadr(CellbBox))
+    yStep = abs(cadr(car(CellbBox))) + cadr(cadr(CellbBox))
+    Xint = atoi(sprintf( newXvalue "%f", xStep))
+    Yint = atoi(sprintf( newYvalue "%f", yStep))
+    if(( xStep == Xint ) && (yStep == Yint ) then
+      if((( mod( fix(xStep) 5 ) == 4) && (mod( fix(yStep) 5) == 4)) then
+	fprintf(phopl->port "Secondary Step and Repeat:  %8.2f %8.2f \n", xStep-4 yStep-4)
+      else
+	hiGetAttention()
+	hiDisplayAppDBox( ?name 'photoInfo0 ?dboxBanner "Warning" ?dboxText
+	"Secondary Step and Repeat is incorrect, check and fix in .photo file")
+	fprintf(phopl->port "Secondary Step & Repeat: Check and Fix \n")
+      )
+    else
+      hiGetAttention()
+      hiDisplayAppDBox( ?name 'photoInfo0 ?dboxBanner "Warning" ?dboxText
+      "Secondary Step & Repeat is not correct, check and fix in .photo file")
+      fprintf(phopl->port "Secondary Step & Repeat: Check and Fix \n")
+    )
+
+    phopl->xStepSec = xStep-4
+    phopl->yStepSec = yStep-4
+  )
+)
+
 procedure( kwNamingConvention()
   let((nameStyle)
     nameStyle = 
@@ -301,8 +364,10 @@ procedure( kwNamingConvention()
 	("P80A"	'("mmcP80" "p80"))
 	("P80B"	'("mmcP80" "p80"))
 	("P81"	'("mmcP81" "p81"))
-	("P82"	'("mmcP81" "p82"))
-	("D83"	'("mmcP81" "d83"))
+	("P82"	'("mmcP82" "p82"))
+	("P85"	'("mmcP85" "p85"))
+	("D83"	'("mmcD83" "d83"))
+	("D91"	'("mmcD91" "d91"))
       )
 
       phopl->oldStyle = car(nameStyle)
@@ -368,6 +433,104 @@ procedure( kwGetPriCellsB()
     )
   )
 )
+
+procedure( getSecCells()
+  let( (cv cellLength endOfCell tmpPriCell)
+    tmpPriCell = nil
+    phopl->BnBSec = nil
+    phopl->GmarksSec = nil
+    phopl->LmarksSec = nil
+    phopl->MetroSec = nil
+    phopl->secCells = nil
+    cv = dbOpenCellViewByType(phopl->design phopl->dropin "layout" "maskLayout" "a")
+    phopl->bBoxSec = cv~>bBox
+    foreach( cell cv~>instances
+      cellLength = strlen(cell~>cellName)
+      endOfCell = substring(cell~>cellName cellLength-6 cellLength)
+
+      rexMagic(t)
+      ; mfp - added ASML to Global marks update in kwGetGlobalMarks() also
+      ;printf("%s %L\n" cell~>cellName cell~>xy)
+
+      if(((strncmp(cell~>cellName phopl->oldStyle 5 ) == 0) ||
+	  (strncmp(cell~>cellName phopl->newStyle 3 ) == 0) ||
+	  rexMatchp("gaas_1" cell~>cellName) ||
+	  rexMatchp("gan_1" cell~>cellName) ||
+	  rexMatchp("ASML" cell~>cellName) ||
+	  rexMatchp("_Leica_" cell~>cellName)) then
+
+	if(((strncmp(substring(cell~>cellName 7 7) "boxnbox" 7) == 0) ||
+	    (strcmp(endOfCell "boxnbox") == 0) || rexMatchp("_Leica_" cell~>cellName)) then
+
+	  kwEvaluateBnB(cell)
+	else
+	  if( (rexMatchp("_grid_" cell~>cellName) && rexMatchp("_L0_" cell~>cellName)) || rexMatchp("_grid_gaAs" cell~>cellName) then
+	    kwEvaluateGM(cell)
+	  else
+	    name    =   cell~>cellName
+	    xy      =   cell~>xy
+	    orient  =   cell~>orient
+	    tmpPriCell = list(name xy orient)
+	    phopl->secCells= cons(tmpPriCell phopl->secCells)
+	  )
+	)
+      )
+    )
+  )
+)
+
+procedure( weedSecCells()
+  let( (cellLen cellName endOfCell junkCells newPriCells alignCells offsetX offsetY)
+     	junkSecCells = nil
+	newSecCells = nil
+	alignSecCells = nil
+	foreach(i phopl->secCells
+	  cellName = car(i)
+	  cellLen = strlen(cellName)
+	  if((strncmp(cellName phopl->oldStyle 5 ) == 0) then
+		endOfCell = substring(cellName cellLen-4 5)
+		else
+		endOfCell = substring(cellName cellLen-6 5)
+	 )
+	 if(((strcmp(endOfCell "_post") == 0) || (strcmp(endOfCell "_grid") == 0) ||
+	     (strcmp(endOfCell "_grid") == 0) || rexMatchp("align_ur" cellName) ||
+             rexMatchp("align_ul" cellName) || rexMatchp("align_lr" cellName) ||     
+             rexMatchp("align_ll" cellName) || (strcmp(endOfCell "_mark") == 0) ||     
+             (strcmp(endOfCell "fet51") == 0) || (strcmp(endOfCell "Probe") == 0) ||     
+             (strcmp(endOfCell "_all4") == 0) || (strcmp(endOfCell "rPost") == 0) || 
+             (strcmp(endOfCell "dSnap") == 0) || (strcmp(endOfCell "FET99") == 0) ||
+	     (strcmp(endOfCell "sog_A") == 0) || (strcmp(endOfCell "bel_A") == 0)) then
+	       if( rexMatchp("align_ul" cellName) || rexMatchp("align_lr" cellName) ||
+	           rexMatchp("align_ur" cellName) || rexMatchp("align_ll" cellName) then
+	       rexMagic(t)
+	       cond( ( rexMatchp("_ul" cellName)
+		         offsetX = 17
+	 	         offsetY = -107 )
+	             ( rexMatchp("_ur" cellName)
+		         offsetX = -17
+		         offsetY = -287 )
+	             ( rexMatchp("_ll"  cellName)
+		         offsetX = 17
+		         offsetY = 407 )
+	             ( rexMatchp("_lr" cellName)
+		         offsetX = -17
+		         offsetY = 227 )
+	       );cond
+            	 cellX = caadr(i)+offsetX
+            	 cellY = cadadr(i)+offsetY
+	    	 alignSecCells = cons(list(cellName cellX cellY) alignSecCells)
+               else
+	       junkSecCells = cons(i junkSecCells)
+	     )
+	     else
+               newSecCells = cons(i newSecCells)
+	     )
+	     phopl->junkSecCells = junkSecCells
+	     phopl->secCells = newSecCells
+	     phopl->alignSecCells = alignSecCells
+	   )
+	)
+) ;let & procedure
 
 procedure( kwWeedPriCells()
 let( (cellLen cellName endOfCell junkCells newPriCells alignCells)
@@ -474,8 +637,20 @@ procedure( kwGetQtrCenData()
   )
 )
 
-
-
+procedure( getSecQtrCenData()
+  let( (tempX tempY)
+    tempX = phopl->xStepSec
+    tempY = phopl->yStepSec
+    phopl->qtrXSec = phopl->xStepSec/2
+    phopl->qtrYSec = phopl->yStepSec/2
+    phopl->qtrSecCenX = phopl->qtrX/2
+    phopl->qtrSecCenY = phopl->qtrY/2
+    phopl->NEcenterSec = list(phopl->qtrSecCenX:phopl->qtrSecCenY) 
+    phopl->SWcenterSec = list(-phopl->qtrSecCenX:-phopl->qtrSecCenY) 
+    phopl->NWcenterSec = list(-phopl->qtrSecCenX:phopl->qtrSecCenY)
+    phopl->SEcenterSec = list(phopl->qtrSecCenX:-phopl->qtrSecCenY) 
+  )
+)
 
 procedure( kwGetOatCells()
   tmpOatCell = nil
@@ -513,24 +688,81 @@ procedure( kwGetGlobalMarks()
 
     phopl->priCells = newPriCellList
   )
+)
+
+procedure( getSecGlobalMarks()
+  let( (cellName cellLength endOfCell newSecCellList)
+    newSecCellList = nil
+    foreach( cell phopl->secCells
+      if(rexMatchp("GM" car(cell)) || rexMatchp("global_mark" car(cell)) ||
+	 rexMatchp("ASML_PM" car(cell)) || rexMatchp("ASML_SPM" car(cell)) then
+	phopl->GmarksSec = cons(cell phopl->GmarksSec)
+      else 
+	newSecCellList = cons(cell newSecCellList)
+      )
+
+    );foreach
+
+    phopl->secCells = newSecCellList
+  )
 ) 
 
 procedure(getMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
   let( (InternalCellInfo)
     foreach(inst master~>instances
-      if( rexMatchp("MetroFet" inst~>cellName) || rexMatchp("metroFET" inst~>cellName) then
-	InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
-	phopl->Metro = cons(InternalCellInfo phopl->Metro)
-      )
-      getMetroFET(
-	inst~>master
-	dbConcatTransform(inst~>transform transform)
-	strcat(hierInstPath inst~>cellName "/")
+      when(inst~>objType=="inst"
+	if( rexMatchp("MetroFet" inst~>cellName) || rexMatchp("metroFET" inst~>cellName) then
+	  InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
+	  phopl->Metro = cons(InternalCellInfo phopl->Metro)
+	)
+	getMetroFET(
+	  inst~>master
+	  dbConcatTransform(inst~>transform transform)
+	  strcat(hierInstPath inst~>cellName "/")
+	)
       )
     )
     t
   )
 )
+
+procedure(getAllInstances(cv name @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
+  let( (InternalCellInfo iname)
+    iname = lowerCase(name)
+    foreach(inst cv~>instances
+      when(inst~>objType=="inst"
+	printf("Checking instance: %s\n" inst~>cellName)
+	if( rexMatchp(iname lowerCase(inst~>cellName)) then
+	  InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
+	  GLOBAL_INST = cons(InternalCellInfo GLOBAL_INST)
+	  printf("Adding %s to list" inst~>cellName)
+	);if 
+	getAllInstances(inst~>master iname dbConcatTransform(inst~>transform transform) strcat(hierInstPath inst~>cellName "/"))
+      );while
+    );foreach
+    t
+  );let
+);proc
+
+procedure(getSecMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
+  let( (InternalCellInfo)
+    foreach(inst phopl->inst
+      when(inst~>objType=="inst"
+	if( rexMatchp("MetroFet" inst~>cellName) || rexMatchp("metroFET" inst~>cellName) then
+	  InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
+	  phopl->Metro = cons(InternalCellInfo phopl->Metro)
+	)
+	getMetroFET(
+	  inst~>master
+	  dbConcatTransform(inst~>transform transform)
+	  strcat(hierInstPath inst~>cellName "/")
+	)
+      )
+    )
+    t
+  )
+)
+
 
 ;***************************************************************
 
@@ -547,6 +779,21 @@ procedure( kwGetBoxnBox()
       )
     ) 
     phopl->priCells = newPriCellList
+  )
+)
+
+procedure( getSecBoxnBox()
+  let( ( newSecCellList  )
+    phopl->BnBSec = nil
+    newSecCellList = nil
+    foreach( cell phopl->secCells
+      if( rexMatchp("boxnbox" car(cell)) then 
+	phopl->BnBSec = cons(cell phopl->BnBSec)
+      else
+	newSecCellList = cons(cell newSecCellList)
+      )
+    ) 
+    phopl->secCells = newSecCellList
   )
 )
 
@@ -654,6 +901,147 @@ procedure( kwGetDFASkeys()
       )
       phopl->priCells = tmpPriCells
     )
+  )
+)
+
+procedure( getSecDFASkeys()
+  let( (tmpSecCells)
+    tmpSecCells = nil	
+    phopl->dfasSec = nil
+    rexMagic( t )
+    foreach( cell phopl->secCells
+      if( rexMatchp("dfas" car(cell) ) ||
+	  rexMatchp("isi"  car(cell) )
+      then
+	phopl->dfasSec = cons(cell phopl->dfasSec)
+      else
+	tmpSecCells = cons(cell tmpSecCells)
+      )
+      phopl->secCells = tmpSecCells
+    )
+  )
+)
+
+procedure( evaluateSecDFASkeys()
+  let( (cellInfo layer code tmpDfas finalDfasList letterCode)
+    tmpDfas = nil
+    finalDfasList = nil
+    foreach( cell phopl->dfasSec
+      if((strncmp(car(cell) phopl->newStyle 3 ) == 0) || rexMatchp("mmc66" car(cell)) then
+        tmpcellName = car(cell)
+        cellName = substring(tmpcellName 12 10)
+	  cond( 
+	    ( rexMatchp("Mesa_1_2_l" car(cell)) 
+	      letterCode = "C (mesa)"
+	    )
+	    ( rexMatchp("Mesa_6_bar" car(cell))
+	      letterCode = "I (mesa)"
+	    )
+	    ( rexMatchp("Mesa_6_mic" car(cell))
+	      letterCode = "H (mesa)"
+	    )
+	    ( rexMatchp("SD_1_2_seg" car(cell))
+	      letterCode = "F (sd)"
+	    )
+	    ( rexMatchp("SD_4_4_bar" car(cell))
+	      letterCode = "G (sd)"
+	    )
+	    ( rexMatchp("SD_5_4_bar" car(cell))
+	      letterCode = "A (sd)"
+	    )
+	    ( rexMatchp("SD_6_6_bar" car(cell))
+	      letterCode = "D (sd)"
+	    )
+	    ( rexMatchp("MM_6_micro" car(cell))
+	      letterCode = "A (MM)"
+	    )                   
+	    ( rexMatchp("MM_6_bar_r" car(cell))
+	      letterCode = "B (MM)"
+	    )
+	    ( rexMatchp( "EB_6_micro" car(cell))
+	      letterCode = "A (EBeam)"
+	    )
+	    ( rexMatchp("MM_6_micro" car(cell))
+	      letterCode = "A (MM)"
+	    )
+	    ( rexMatchp("M_6_micro_" car(cell))
+	      letterCode = "A (mesa)"
+	    )
+	    ( rexMatchp("SD_6_micro" car(cell))
+	      letterCode = "A (sd)")
+	    ( rexMatchp("SD_mkr_6_m" car(cell))
+	      letterCode = "A (sdText)"
+	    )
+	    ( rexMatchp("SD_text_6_" car(cell))
+	      letterCode = "A (sdText)"
+	    )
+	    ( rexMatchp("Scan_6_mic" car(cell))
+	      letterCode = "A (scan)"
+	    )
+	  )
+      else
+	tmpcellName = car(cell)
+	endofcell=strlen(tmpcellName)
+	if( (strncmp(substring(car(cell) 8 1) "_" 1) == 0) then
+	  cellName=substring(tmpcellName 9 endofcell-8)
+	else
+	  cellName=substring(tmpcellName 10 endofcell-9)
+	)
+	letterCode = 
+	  case( cellName
+	    ("isi_Mesa_6_4_bars" "A (mesa)")
+	    ("isi_Mesa_6_4_micro_mark_solid" "A (mesa)")
+	    ("isi_Mesa_1_4_seg_rev" "B (mesa)")
+	    ("isi_Mesa_1_2_longbars" "C (mesa)")
+	    ("isi_Mesa_1_2x3_6longbars" "C (mesa)")
+	    ("isi_Mesa_1_4_seg" "D (mesa)")
+	    ("isi_Mesa_1_4_micro_mark_seg" "D (mesa)")
+	    ("isi_Mesa_1_2_shortbars" "E (mesa)")
+	    ("isi_Mesa_1_2_seg" "F (mesa)")
+	    ("isi_Mesa_1_6_seg" "G (mesa)")
+	    ("isi_Mesa_1_6um_segmented" "G (mesa)")
+	    ("isi_SD_5_4_bars" "A (sd)")
+	    ("isi_SD_1_4_seg_rev" "B (sd)")
+	    ("isi_SD_6_6_bar_rev" "C (sd)")
+	    ("isi_SD_1_4_seg" "D (sd)")
+	    ("isi_SD_1_2_shortbars" "E (sd)")
+	    ("isi_SD_1_2_seg" "F (sd)")
+	    ("isi_SD_4_4_bars" "G (sd)")
+	    ("isi_SD_5_4_seg_rev" "A (sd)")
+	    ("isi_SD_1_4_seg_rev" "B (sd)")
+	    ("isi_SD_6_6_seg_rev" "C (sd)")
+	    ("isi_SD_1_4_micro_mark_seg" "D (sd)")
+	    ("isi_SD_1_2x2_4_shortbars" "E (sd)")
+	    ("isi_SD_1_2seg_tre" "F (sd)")
+	    ("isi_SD_4_4_seg_rev" "G (sd)")
+	    ("isi_sd_5_4_seg_rev" "A (sd)")
+	    ("isi_sd_1_4_seg_rev" "B (sd)")
+	    ("isi_sd_6_6_seg_rev" "C (sd)")
+	    ("isi_sd_1_4_micro_mark_seg" "D (sd)")
+	    ("isi_sd_1_2x2_4_shortbars" "E (sd)")
+	    ("isi_Mesa_1_2x2_4_shortbars" "E (mesa)")
+	    ("isi_Mesa_1_2seg_tre" "F (mesa)")
+	    ("isi_sd_1_2seg_tre" "F (sd)")
+	    ("isi_sd_4_4_seg_rev" "G (sd)")
+	    ("isi_Mesa_6_micro_mark_solid" "H (mesa)")
+	    ("isi_Mesa_6_bar_rev" "I (mesa)")
+	    ("isi_SD_1_2_seg" "F (sd)")
+	  )
+      )
+      cellInfo = list(car(cell) cadr(cell) letterCode)
+      tmpDfas = cons(cellInfo tmpDfas)
+    )
+/*******  Code to weed out unreference dfas stuff  ****/
+    foreach( i tmpDfas
+      if( caddr(i) then
+	finalDfasList= cons(i finalDfasList)	
+      else
+	phopl->priCells = cons(i phopl->priCells)
+	phopl->tmp = i 
+      )	
+    )
+	phopl->dfas = finalDfasList
+
   )
 )
 
@@ -794,28 +1182,22 @@ procedure( kwPrintData()
 	    fprintf( phopl->port "Global Mark%d:     %-36s %10.2f %10.2f\n", gmCount tmpCellName tmpCOX tmpCOY)
 	    gmCount = gmCount + 1
     )
-
     fprintf(phopl->port "****************************************************************************\n")
     fprintf(phopl->port "******                        DFAS Keys                               ******\n")
     fprintf(phopl->port "****************************************************************************\n")
     fprintf(phopl->port " \n")
     fprintf(phopl->port "       Code      CellName                                      X        Y\n")
-
     foreach(i phopl->dfas
     cellCode = caddr(i)
     cellName = car(i)
     cellX = caadr(i)
     cellY = cadadr(i)
-
-
-
     fprintf(phopl->port "PRI   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
     )
     fprintf(phopl->port "\n")
     fprintf(phopl->port "****************************************************************************\n")
     fprintf(phopl->port "******                      Other Cells                               ******\n")
     fprintf(phopl->port "****************************************************************************\n")
-
     foreach(i phopl->priCells
     cellCode=" "
     cellName = car(i)
@@ -826,7 +1208,6 @@ procedure( kwPrintData()
     fprintf(phopl->port "\n")
     fprintf(phopl->port "Oat Cells only show up if they are different from the Primary \n")
     fprintf(phopl->port "\n")
-
     foreach(i phopl->oatCells
     cellCode=" "
     cellName = car(i)
@@ -834,9 +1215,7 @@ procedure( kwPrintData()
     cellY = cadadr(i)
     fprintf(phopl->port "Oat   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
     )
-
     /* Make sure Aeble alignment marks are defined and print them out */
-
     if( phopl->alignCells && phopl->eBeam=="Aeble" then
       fprintf(phopl->port "\n")
       fprintf(phopl->port "****************************************************************************\n")
@@ -936,6 +1315,154 @@ procedure( kwPrintData()
   )
 ) 
 
+
+procedure( printSecData()
+  let( (tmpCellName tmpCOX tmpCOY tmpCellCoords gmCount cellX cellY cellOrient quadList newBnBList)
+    gmCount = 1
+    fprintf(phopl->port "****************************************************************************\n")
+    fprintf(phopl->port "******              Secondary Global Marks                            ******\n")
+    fprintf(phopl->port "****************************************************************************\n")
+
+    foreach(i phopl->GmarksSec
+	    tmpCellName = car(i)
+	    tmpCOX = caadr(i)
+	    tmpCOY = cadadr(i)
+	    fprintf( phopl->port "Global Mark%d:     %-36s %10.2f %10.2f\n", gmCount tmpCellName tmpCOX tmpCOY)
+	    gmCount = gmCount + 1
+    )
+    fprintf(phopl->port "****************************************************************************\n")
+    fprintf(phopl->port "******              Secondary DFAS Keys                               ******\n")
+    fprintf(phopl->port "****************************************************************************\n")
+    fprintf(phopl->port " \n")
+    fprintf(phopl->port "       Code      CellName                                      X        Y\n")
+    foreach(i phopl->dfasSec
+    cellCode = caddr(i)
+    cellName = car(i)
+    cellX = caadr(i)
+    cellY = cadadr(i)
+    fprintf(phopl->port "PRI   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+    )
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "****************************************************************************\n")
+    fprintf(phopl->port "******            Secondary Other Cells                               ******\n")
+    fprintf(phopl->port "****************************************************************************\n")
+    foreach(i phopl->secCells
+    cellCode=" "
+    cellName = car(i)
+    cellX = caadr(i)
+    cellY = cadadr(i)
+    fprintf(phopl->port "SEC   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+    )
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port " Cells only show up if they are different from the Primary \n")
+    fprintf(phopl->port "\n")
+    foreach(i phopl->oatCells
+    cellCode=" "
+    cellName = car(i)
+    cellX = caadr(i)
+    cellY = cadadr(i)
+    fprintf(phopl->port "Oat   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+    )
+    /* Make sure Aeble alignment marks are defined and print them out */
+    if( phopl->alignSecCells && phopl->eBeam=="Aeble" then
+      fprintf(phopl->port "\n")
+      fprintf(phopl->port "****************************************************************************\n")
+      fprintf(phopl->port "******        Secondary Aeble Local Marks                            ******\n")
+      fprintf(phopl->port "****************************************************************************\n")
+      fprintf(phopl->port "\n")
+      fprintf(phopl->port "Aeble Local Mark coordinates relate to the center of the upper most sd cross\n")
+      fprintf(phopl->port "\n")
+
+	sortList = phopl->alignSecCells
+	quadList=nil
+	sortList = sort(sortList lambda((a b) multi_sort(a b '(1 3 2))))
+	
+	fprintf(phopl->port "\n")
+	quadList = printQuad(1 sortList "LL Quad \"A\"     " quadList)
+	quadList = printQuad(2 sortList "LL Quad \"B\"     " quadList)
+	quadList = printQuad(6 sortList "LR Quad \"B\"     " quadList)
+	quadList = printQuad(8 sortList "LR Quad \"C\"     " quadList)
+	quadList = printQuad(4 sortList "LL Quad \"C\"     " quadList)
+	quadList = printQuad(3 sortList "LL Quad \"D\"     " quadList)
+	quadList = printQuad(11 sortList "UL Quad \"D\"     " quadList)
+	quadList = printQuad(15 sortList "UR Quad \"D\"     " quadList)
+	quadList = printQuad(16 sortList "UR Quad \"C\"     " quadList)
+	fprintf(phopl->port "\n")
+
+      foreach(q quadList
+	sortList=remove(q sortList)
+      )
+
+      foreach(i sortList
+	cellCode=" "
+	cellName = car(i)
+	cellX = cadr(i)
+	cellY = caddr(i)
+	fprintf(phopl->port "ALIGN %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+      )
+
+      get_ebeam_window(phopl->design phopl->primary phopl->port)
+
+    )
+
+    if( phopl->eBeam=="Leica" then
+      fprintf(phopl->port "\n")
+      fprintf(phopl->port "****************************************************************************\n")
+      fprintf(phopl->port "******             Secondary Leica Marks                              ******\n")
+      fprintf(phopl->port "****************************************************************************\n")
+      fprintf(phopl->port "\n")
+
+      sortList = phopl->LmarksSec
+      sortList = sort(sortList lambda((a b) multi_sort(a b '(1))))
+      phopl->LmarksSec = sortList
+      foreach(i phopl->LmarksSec
+	cellCode=" "
+	cellName = car(i)
+	cellX = caadr(i)
+	cellY = cadadr(i)
+	fprintf(phopl->port "SEC   %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+      )
+
+      get_ebeam_window(phopl->design phopl->dropin phopl->port)
+    )
+
+
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "****************************************************************************\n")
+    fprintf(phopl->port "****** SEC Box In Box Structures  Inside->Outside (Center of both)    ******\n")
+    fprintf(phopl->port "****************************************************************************\n")
+
+    newBnBList = phopl->BnBSec
+    newBnBList = sort(newBnBList lambda((a b) multi_sort(a b '(1))))
+    phopl->BnBSec = newBnBList
+
+    foreach(i phopl->BnBSec
+      cellCode=" "
+      cellName = car(i)
+      cellX = caadr(i)
+      cellY = cadadr(i)
+      fprintf(phopl->port "      %-10s %-40s  %8.2f %8.2f \n", cellCode cellName cellX cellY)
+    )
+    
+    if( phopl->MetroSec then
+      fprintf(phopl->port "\n")
+      fprintf(phopl->port "****************************************************************************************************\n")
+      fprintf(phopl->port "****** SEC Metro FETS     Lower Left Corner when R0 or Upper Right when R180      Orientation ******\n")
+      fprintf(phopl->port "****************************************************************************************************\n")
+
+      foreach(i phopl->MetroSec
+	cellCode=" "
+	cellName = car(i)
+	cellX = caadr(i)
+	cellY = cadadr(i)
+	cellOrient = caddr(i)
+	fprintf(phopl->port "      %-10s %-40s  %8.2f %8.2f      %s\n", cellCode cellName cellX cellY cellOrient)
+      )
+    )
+
+  )
+)
+
 procedure( kwComputeDisFromCenter(dfasX dfasY)
 let( (NEcenX NEcenY XdfCNE YdfCNE NWcenX NWcenY XdfCNW YdfCNW
       SWcenX SWcenY XdfCSW YdfCSW SEcenX SEcenY XdfCSE YdfCSE)
@@ -974,8 +1501,6 @@ then quad = "SE")
 list(quad)
 ))
 
-
-
 procedure( kwGetQtrPrintData()
 let( (quadrant relX relY qtrDfasDataLocal)
 
@@ -996,6 +1521,30 @@ dis2gmark = kwComputeDisFromCenter( caadr(i) cadadr(i))
 quadrant = kwGetQuadrant(caadr(i) cadadr(i))
 qtrGmarkDataLocal = list(car(i) caddr(i) dis2gmark quadrant)
 phopl->gmarkQtr = cons(qtrGmarkDataLocal phopl->gmarkQtr)
+)
+
+))
+
+procedure( getSecQtrPrintData()
+let( (quadrant relX relY qtrDfasDataLocal)
+
+qtrDfasDataLocal= nil
+qtrGmarkDataLocal= nil
+phopl->dfasQtrSec = nil
+phopl->gmarkQtrSec = nil
+
+foreach( i phopl->dfasSec
+dis2dfas = kwComputeDisFromCenter( caadr(i) cadadr(i)) 
+quadrant = kwGetQuadrant(caadr(i) cadadr(i))
+qtrDfasDataLocal = list(car(i) caddr(i) dis2dfas quadrant)  
+phopl->dfasQtrSec = cons(qtrDfasDataLocal phopl->dfasQtrSec)
+)
+
+foreach(i phopl->GmarksSec
+dis2gmark = kwComputeDisFromCenter( caadr(i) cadadr(i))
+quadrant = kwGetQuadrant(caadr(i) cadadr(i))
+qtrGmarkDataLocal = list(car(i) caddr(i) dis2gmark quadrant)
+phopl->gmarkQtrSec = cons(qtrGmarkDataLocal phopl->gmarkQtrSec)
 )
 
 ))
@@ -1048,7 +1597,55 @@ fprintf(phopl->port "\n")
 
 ))
 
-procedure( mpss(multi file)
+procedure( printSecQtrInfo()
+let( (nfo) 
+fprintf(phopl->port "\n")
+fprintf(phopl->port "\n")
+fprintf(phopl->port "\n")
+
+fprintf(phopl->port "SEC DATA Based On Quarter Reticles\n")
+fprintf(phopl->port "\n")
+fprintf(phopl->port "SEC 1/4 reticle size %8.2f %8.2f \n", phopl->xStepSec/2 phopl->yStepSec/2)
+fprintf(phopl->port "SEC 1/4 reticle OVERsized to %8.2f %8.2f \n", phopl->xStepSec/2+1 phopl->yStepSec/2+1)
+fprintf(phopl->port "\n")
+
+fprintf(phopl->port "SEC Center of NE Reticle %22L\n", car(phopl->NEcenterSec))
+fprintf(phopl->port "SEC Center of NW Reticle %22L\n", car(phopl->NWcenterSec))
+fprintf(phopl->port "SEC Center of SW Reticle %22L\n", car(phopl->SWcenterSec))
+fprintf(phopl->port "SEC Center of SE Reticle %22L\n", car(phopl->SEcenterSec))
+fprintf(phopl->port "\n")
+
+
+fprintf(phopl->port "\n")
+fprintf(phopl->port "\n")
+
+foreach(i phopl->dfasQtrSec
+dis2 = caddr(i)
+fprintf(phopl->port "SEC %-40s DFAS Reference %-12s  Quadrant %-10s\n",car(i) cadr(i) car(cadddr(i)))
+fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+fprintf(phopl->port "\n")
+)
+
+
+fprintf(phopl->port "\n")
+fprintf(phopl->port "\n")
+
+foreach(i phopl->gmarkQtrSec
+dis2 = caddr(i)
+fprintf(phopl->port "SEC %-40s Quadrant %-10s\n", car(i) car(cadddr(i)))
+fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+fprintf(phopl->port "\n")
+)
+
+))
+
+procedure( mpss(multi)
   let( ( mpss_cmd mpssfile forked output, multiCMD)
     if( (phopl->print) then 
       if( (multi==t) then
@@ -1056,12 +1653,15 @@ procedure( mpss(multi file)
        else
             multiCMD = "single"
       )
-      sprintf(mpss_cmd "/net/nfs-n501/ANFS01/apps/python/python27/bin/python /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/python/trunk/buildMPSS.py %s %s" file multiCMD)
+      buildMpssPythonFile = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/python/buildMPSS/buildMPSS.py"
+      sprintf(mpss_cmd "%s %s %s %s" buildMpssPythonFile phopl->release phopl->design multiCMD)
       forked = ipcBeginProcess( mpss_cmd "")
     
 ;     wait for it to start, then acknowledge:
       ipcWaitForProcess( forked )
-      printf( "Building MPSS Report from release photo file: %s ... \n" file)
+      printf( "Building MPSS Report ... \n")
+      printf( "MPSS Build Command: %s \n" mpss_cmd)
+;      printf( "MPSS Python Location: %s \n" buildMpssFile)
       ipcWait(forked)
       output = ipcReadProcess(forked)
       printf("%s" output)
@@ -1230,7 +1830,6 @@ procedure( get_ebeam_window(lib cell REPORT)
       
   ) t
 )
-
 
 procedure( runDRC(cv rules_path)
 

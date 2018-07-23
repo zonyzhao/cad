@@ -1,5 +1,41 @@
 #!/usr/bin/env python
+#######################################################################################################
+# SCRIPT DESCRIPTION:
+#
+# FIMXE: Now prints to the reticle design directory wherever it exists .... 
+# mpss document will be outputted to the release folder of the cell design directory
+# ex. ~/deslibs_oa/ln0705/release/ln0705_0_revA.docx
+#######################################################################################################
+# THINGS TO KEEP UP TO DATE:
+# 1.) Process types for GaN and GaAs, so we know which RSS sheet to look at, (directly below this)
+# 2.) The location and names of the RSS files and also the sheetname of the main 
+#     page with all of the information (directly below this)
+# 3.) The location of the photo of the north south diagram (this is a pre-made picture of the 
+#     multi-image mask reticles)
+# 4.) Abbrevations if new layers are added (in the function getAbbrev)
+#######################################################################################################
+# The main frameowork of the MPSS document is composed of fixed pages that appear in
+# the MPSS Page column of the RSS spreadsheets. Although not all pages are required for a 
+# given process code, the following is a complete list of pages this program can generate:
+#
+# 1.) "Core"
+# 2.) "Tertiary"
+# 3.) "Backside"
+# 4.) "Aeble"
+# 5.) "Numbers"
+# 6.) "FrontSide"
+# 7.) "Flipped"
+########################################################################################################
+# These are the table helper procedures that make up the anchoring elements within the pages of the MPSS
+# 
+# createMultiImageTable(doc, layers, design, process)
+# createFiveXTable(doc, layers, tableType, design)
+# createOneXTable(doc, layers, design, mpss)
+########################################################################################################
 
+###########################
+# Package Import
+###########################
 import sys
 import os
 import datetime
@@ -10,35 +46,18 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 import warnings
 import subprocess
 
-warnings.filterwarnings("ignore")
-#redirect error messages to stdout so cadence can read them
-sys.stderr = sys.stdout
+# COMMAND LINE INPUT ARGUMENTS
+#takes a commandline argument, the path to the photo file
+retLib = sys.argv[1]
+photofile = sys.argv[2]
+#determine if its to be a multi image mask or not
+multi = False
+if sys.argv[3] == "multi":
+    multi = True
 
-#mpss document will be outputted to the release folder of the cell design directory
-# ex. ~/deslibs/ln0705/release/ln0705_0_revA.docx
-
-#THINGS TO KEEP UP TO DATE:
-#process types for GaN and GaAs, so we know which RSS sheet to look at, (directly below this)
-#the location and names of the RSS files and also the sheetname of the main page with all of the information (directly below this)
-#the location of the photo of the north south diagram(directly below this
-#abbrevations if new layers are added (in the function getAbbrev)
-
-
-#processes for each of the types, add to these if there are more proccesses
-GaN =["P80A", "P80B", "P81"]
-GaAs = ["P46", "P51", "P60", "P70"]
-other = ["P82", "D83", "D82"]
-GaNFile = "GaN_RSS.xlsx"
-GaAsFile = "GaAs_RSS.xlsx"
-otherFile = "other.xlsx"
-GaNSheet = "GaN"
-GaAsSheet = "GaAs"
-otherSheet = "DEV"
-rssPath = "/nfs/foundry/met/cadence/cad51Setup/"
-northSouthDiagram = "/nfs/foundry/met/cadence/cad51Setup/northSouthDiagram.png"
-
-
-
+#####################
+# "God" Layer Object
+#####################
 class Layer(object):
     def __init__(self):
         #initalize
@@ -107,13 +126,42 @@ class Layer(object):
         return str(data)
 
 
+#################################
+# Beginning of procedural "helper" 
+# code 
+# - Zero encapsulation - Ugg!!
+# - Reliance on global variables - Ugg!
+#################################
+
 def rowEmpty(worksheet, row):
     for col in range(1, worksheet.max_column+1):
         if worksheet.cell(row=row, column=col).value != None:
             return False
     return True
 
-
+#################################################################
+# process_worksheet helper procedure
+#################################################################
+# Input Argument: process = "GaN" or "GaS"
+# Output Return Value: List of Layer class objects
+#################################################################
+# Generate a list of populated Layer objects by parsing out the
+# appropriate RSS spreadsheet (GaN or GaAs). 
+# This procedure currently parses out the following 
+# columns of the RSS spreadsheet:
+# 1.) "MPSS PAGE"
+# 2.) "ITEM NUMBER"
+# 3.) "PROCESS LAYER"
+# 4.) "RETICAL TITLE"
+# 5.) "GDS LAYER"
+# 6.) "MAG"
+# 7.) "RETICLE FIELD"
+# 8.) "BIAS/SIDE"
+# 9.) "CAD DATA CD"
+# 10.) "RETICLE CD/TOLERANCE"
+# The data above is used to populate each of the returned list of
+# Layer objects
+#################################################################
 def process_worksheet(process):
     ws = None
     filename = None
@@ -129,7 +177,7 @@ def process_worksheet(process):
         filename = otherFile
         sheetName = otherSheet
     else:
-        print("Process \"%s\" not recognized, aborting..." % process)
+        print("MPSS ERROR: Process \"%s\" not recognized, aborting..." % process)
         sys.exit()
     ws = load_workbook(rssPath+filename).get_sheet_by_name(sheetName)
     #data we need to pull
@@ -173,9 +221,21 @@ def process_worksheet(process):
             prevValue = "Y"
     return layerList
 
+##########################################################
+# getAbbrev helper procedure
+##########################################################
+# Input argument: title - a given layer's reticle title
+# Output Returned: abbreviated title (Used in doc?)
+##########################################################
+# Performs a mapping of "Reticle Title" (which I think is
+# acutally "Mask Title") which is called "pureTitle" in
+# this helper
+##########################################################
+
 def getAbbrev(title):
     #strip out any leading and trailing whitepsace and ensure that all words are separated by one space for robustness
     pureTitle = title.strip()
+    #Removes all spaces in the title
     pureTitle = "".join(pureTitle.split())
     abbrev = title
     if pureTitle == "ZERO": abbrev = "ZERO"
@@ -223,9 +283,9 @@ def build_filename(layer, designName):
     elif end == "TRI": midLetter = "T"
     elif layer.mpss == "Numbers": midLetter = "N"
     elif layer.mpss == "Backside": midLetter = "W"
-    front = designName[:2].upper() + designName[3:]
-    filename = "%s0%s%02d.00" % (front, midLetter, long(layer.gds))
-    return filename
+ #   front = designName[:2].upper() + designName[3:]
+ #   filename = "%s0%s%02d.00" % (front, midLetter, long(layer.gds))
+    return midLetter
 
 def get_user():
     #grabs the stdout of the cmd and strips off the trailing newline '\n' character
@@ -241,7 +301,17 @@ def get_user():
     elif name == "parkesm": user = "Mike Parkes"
     elif name == "wilsonka": user = "Ken Wilson"
     elif name == "1119423": user = "Matthew Chu"
+    elif name == "1127110": user = "Stephen Wimpenney"
     return user
+
+##############################################################
+# create_header helper procedure
+##############################################################
+# Input Arguments: 
+# doc - reference to the word doc
+# multiplier - mask magnification factor
+# pageType - "core", "tert", "BS", "aeble", "numbers", "Frontside", and Flipped          
+# multiImage - "true", "false"
 
 def create_header(doc, multiplier, pageType, multiImage):
     runlist=[] #list of things that should be in red
@@ -306,7 +376,17 @@ def create_header(doc, multiplier, pageType, multiImage):
         p.add_run("\nS & R CENTERS - (X) %5.3fMM, (Y) %5.3fMM" % (float(stepRepeatX)/1000, float(stepRepeatY)/1000))
     for run in runlist: run.font.color.rgb = RGBColor(0xff, 0x0, 0x0)
 
-
+#################################################
+# getLayers helper procedure
+#################################################
+# Input Arguments:
+# mpssType: string representing the layer type to filter on
+# allLayers: list of Layer objects
+#################################################
+# This helper functions returns a list of Layer
+# objects that have been selected based upon the 
+# mpssType argument key sting
+#################################################
 def getLayers(mpssType, allLayers):
     result = []
     prevMpss = None
@@ -319,10 +399,27 @@ def getLayers(mpssType, allLayers):
 def isTertiary(layer):
     return getAbbrev(layer.rTitle).split()[-1].strip() == "TRI"
 
+##########################################################
+# createFiveXTable helper procedure
+##########################################################
+# Input arguments: 
+# doc - reference to word documents
+# layers - list of Layer objects
+# tableType -  1.) "Core"
+#              2.) "Tertiary"
+#              3.) "Backside"
+#              4.) "Aeble"
+#              5.) "Numbers"
+#              6.) "FrontSide"
+#              7.) "Flipped"
+# Output Returned: void
+##########################################################
+# Generates a 5x table 
+##########################################################
 def createFiveXTable(doc, layers, tableType, design):
     table = doc.add_table(rows = 1, cols = 7)
     hdr_cells = table.rows[0].cells
-    headerList = ["ITEM NO.", "FILENAME", "GDS LAYER", "SUPPLIED DATA CD", "RETICLE CD LINE", "RETICLE TITLE", "BAR CODE"]
+    headerList = ["ITEM NO.", "Use Data Structure", "GDS LAYER", "SUPPLIED DATA CD", "RETICLE CD LINE", "RETICLE TITLE", "BAR CODE"]
     runlist=[]
     for i in range(len(headerList)):
         run = hdr_cells[i].paragraphs[0].add_run(headerList[i])
@@ -351,7 +448,7 @@ def createFiveXTable(doc, layers, tableType, design):
             #filename
             runlist.append(cells[1].paragraphs[0].add_run(build_filename(layer, design)))
             #GDS layer
-            runlist.append(cells[2].paragraphs[0].add_run("%02d" % long(layer.gds)))
+            runlist.append(cells[2].paragraphs[0].add_run(str(layer.gds)))
             #Supplied Data CD
             runlist.append(cells[3].paragraphs[0].add_run(layer.cad))
             #reticle CD line - grab only up to the +/- part
@@ -413,17 +510,14 @@ def get_device_type(deviceType) :
     elif deviceType == "TS": leadingLetter = "T"
     elif deviceType == "SW": leadingLetter = "W"
     elif deviceType == "AT": leadingLetter = "A"
-    else:
-        print("Naming Convention Error. Unknown Device Type \"%s\"" % deviceType)
-        leadingLetter = "X"
     return leadingLetter
 
 
-def createOneXTable(doc, layers, design, mpss):
-    table = doc.add_table(rows = len(layers)+1, cols = 6)
-    headerList = ["ITEM NO.", "FILENAME", "GDS LAYER", "SUPPLIED DATA CD", "RETICLE CD LINE", "RETICLE TITLE"]
+def createOneXTable(doc, layers, design, mpss, process):
+    headerList = ["ITEM NO.", "USE DATA STRUCTURE", "GDS LAYER", "SUPPLIED DATA CD", "CD Digitized", "RETICLE CD LINE", "Barcode", "RETICLE TITLE"]
+    table = doc.add_table(rows = len(layers)+1, cols = len(headerList))
     hdr_cells = table.rows[0].cells
-    for i in range(6):
+    for i in range(len(headerList)):
         run = hdr_cells[i].paragraphs[0].add_run(headerList[i])
         run.bold = True
         font = run.font
@@ -455,8 +549,13 @@ def createOneXTable(doc, layers, design, mpss):
                 runlist.append(cells[3].paragraphs[0].add_run(layer.cad))
             else:
                 runlist.append(cells[3].paragraphs[0].add_run("NA"))
-            runlist.append(cells[4].paragraphs[0].add_run(reticleLine))
-            runlist.append(cells[5].paragraphs[0].add_run(title))
+            runlist.append(cells[4].paragraphs[0].add_run(digitized(layer, process)))
+            runlist.append(cells[5].paragraphs[0].add_run(reticleLine))
+            deviceType = design[:2].upper()
+            pLayer = layer.pLayer.strip()
+            barcode = "%s%sP00%s" % (get_device_type(deviceType).upper(), design[-3:], pLayer)
+            runlist.append(cells[6].paragraphs[0].add_run(barcode))
+            runlist.append(cells[7].paragraphs[0].add_run(title))
         #style formatting
         #make the font size 8 and turn all optional layers red
         for run in runlist:
@@ -467,24 +566,35 @@ def createOneXTable(doc, layers, design, mpss):
         prevLayer = layer
     #manually sets column widths, needs to be done for both columns and cells to take effect
     table.autofit = False
-    table.columns[0].width = Inches(0.7)
-    for cell in table.columns[0].cells: cell.width = Inches(0.7)
-    table.columns[1].width = Inches(0.94)
-    for cell in table.columns[1].cells: cell.width = Inches(0.94)
-    table.columns[2].width = Inches(0.94)
-    for cell in table.columns[2].cells: cell.width = Inches(0.94)
-    table.columns[3].width = Inches(1.25)
-    for cell in table.columns[3].cells: cell.width = Inches(1.25)
-    table.columns[4].width = Inches(1.18)
-    for cell in table.columns[4].cells: cell.width = Inches(1.18)
-    table.columns[5].width = Inches(1.76)
-    for cell in table.columns[5].cells: cell.width = Inches(1.76)
+    table.columns[0].width = Inches(0.5)
+    for cell in table.columns[0].cells: cell.width = Inches(0.5)
+    table.columns[1].width = Inches(0.9)
+    for cell in table.columns[1].cells: cell.width = Inches(0.9)
+    table.columns[2].width = Inches(0.6)
+    for cell in table.columns[2].cells: cell.width = Inches(0.6)
+    table.columns[3].width = Inches(0.8)
+    for cell in table.columns[3].cells: cell.width = Inches(0.8)
+    table.columns[4].width = Inches(0.6)
+    for cell in table.columns[4].cells: cell.width = Inches(0.6)
+    table.columns[5].width = Inches(0.9)
+    for cell in table.columns[5].cells: cell.width = Inches(0.9)
+    table.columns[6].width = Inches(0.8)
+    for cell in table.columns[6].cells: cell.width = Inches(0.8)
+    table.columns[7].width = Inches(1.25)
+    for cell in table.columns[7].cells: cell.width = Inches(1.25)
     #center align text in the table
     for row in table.rows:
         for cell in row.cells:
             cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     table.style = "Table Grid"
 
+##########################################################
+# digitized helper procedure
+##########################################################
+# Spot size digitization is performed on a layer by layer
+# basis. This helper procedure provides the "magic decoder
+# ring" required for determining if a layer is digitized
+##########################################################
 def digitized(layer, process):
     abbrev = getAbbrev(layer.rTitle)
     if abbrev == "NE" or abbrev == "GLASS": return "No"
@@ -503,7 +613,18 @@ def deleteEmptyRows(table):
         if empty:
             table._tbl.remove(row._tr)
 
-
+##########################################################
+#  createMultiImageTable helper procedure
+##########################################################
+# Input arguments: 
+# doc - reference to word documents
+# layers - list of Layer objects
+# design - design name
+# process - process code
+# Output Returned: void
+##########################################################
+# Generates a mutli-image table 
+##########################################################
 
 def createMultiImageTable(doc, layers, design, process):
     #table headers
@@ -655,11 +776,9 @@ def createMultiImageTable(doc, layers, design, process):
             cell.paragraphs[0].style.font.size = Pt(8)
     deleteEmptyRows(table)
 
-
-def getAebleMap(doc, design, multi, pathdir):
-#    user = subprocess.Popen(["whoami"], stdout = subprocess.PIPE).communicate()[0][:-1]
-#    path = "/users/%s/cad_layout_61/%s/release/png/" % (user, design)
-    path = pathdir + "/png/" 
+def getAebleMap(doc, design, multi):
+    user = subprocess.Popen(["whoami"], stdout = subprocess.PIPE).communicate()[0][:-1]
+    path = retLib + "/pdf/"
     for fname in os.listdir(path):
         if "aeblemap" in fname:
             if multi:
@@ -686,26 +805,45 @@ def getAebleMap(doc, design, multi, pathdir):
                 for run in runlist:
                     run.bold = True
             #add aeblemap under it
-            os.system("cp %s%s tempAeble.png" % (path, fname))
-            doc.add_picture("tempAeble.png", width = Inches(6))
-            os.system("rm tempAeble.png")
+            os.system("convert %s%s tempAeble.jpg" % (path, fname))
+            doc.add_picture("tempAeble.jpg", width = Inches(6))
+            os.system("rm tempAeble.jpg")
             return True
-        else:
-            print("ERROR: Aeble map image not found in directory: " + path + "\n")
     return False
 
 
-########################################################################################################
-################################START OF SCRIPT#########################################################
-########################################################################################################
+##################################################################################
+# Program "Main" that utilizes Layer class and "helper" procedures
+##################################################################################
 
-#takes a commandline argument, the path to the photo file
-photofile = sys.argv[1]
+# GLOBAL VARIABLES
+#processes for each of the types, add to these if there are more proccesses
+GaN =["P80A", "P80B", "P81","P85"]
+GaAs = ["P46", "P51", "P60", "P70", "D91"]
+other = ["P82", "D83", "D82"]
+GaNFile = "GaNReticleAndPhotoSheetRevE.xlsx"
+GaAsFile = "GaAsReticleAndPhotoSpecSheetRevF.xlsx"
+otherFile = "other.xlsx"
+GaNSheet = "GaN Master"
+GaAsSheet = "GaAs Master"
+otherSheet = "DEV"
+rssPath = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/rss/"
+northSouthDiagram = "/users/1127110/gitRepo/mpss/data/northSouthDiagram.png"
 
-#parse the photofile
-photofile = open(photofile, "r")
+# WARNINGS FILTER
+warnings.filterwarnings("ignore")
+
+# ERROR OUTPUT TO THE CADENCE IPC THAT CALLS THIS PYTHON CHILD SCRIPT
+# effectively redirects error messages to stdout so cadence can read them
+sys.stderr = sys.stdout
+
+#Read the photofile
+pfile = retLib + "/" + photofile + ".photo"
+photofile = open(pfile, "r")
 lines = photofile.readlines()
 photofile.close()
+
+#Parse the photofile header
 design = lines[0].split()[-1]
 primary = lines[1].split()[-1]
 secondary = lines[2].split()[-1]
@@ -713,20 +851,17 @@ processType = lines[3].split()[-1]
 stepRepeatX = lines[4].split()[-2]
 stepRepeatY = lines[4].split()[-1]
 
+
 #strip out the letter for all except P80, ie P46H becomes P46
 if not processType[-1].isdigit() and not ("P80" in processType):
     strippedProcess = processType[:-1]
 else: strippedProcess = processType
 
-#parse the RSS
+# Generate a List of populated Layer Objects by parsing out the
+# data from the RSS spreadheet
 layerList = process_worksheet(strippedProcess)
 
-#determine if its to be a multi image mask or not
-multi = False
-if sys.argv[2] == "multi":
-    multi = True
-
-#create the MPSS document
+#create the MPSS Word document
 doc = Document()
 style = doc.styles["Normal"]
 font = style.font
@@ -736,13 +871,17 @@ font.size = Pt(12)
 today = datetime.date.today()
 date = today.strftime("%m/%d/%Y")
 
-
 ##############################################cores##########################################################
+# Place the core layers into tables. If the mask is multi-image, create a multi-image table of core layers.
+# If the mask is not multi-image make a 5x table of the core layers. 
+# The core layer table generation is dependent on whether the reticle is multi-image. If the reticle is 
+# multi-imaage, a multi-image table will be generated. If the reticle is not multi then a 5x table will be
+# generated for the core layer masks.
+#############################################################################################################
 create_header(doc, 5, "core", multi)
 
+# Create layer list of "Core" Layer objects only
 coreLayers = getLayers("Core", layerList)
-#for lay in coreLayers:
-#    print lay.rTitle
 
 if multi:
     createMultiImageTable(doc, coreLayers, design, strippedProcess)
@@ -759,9 +898,7 @@ doc.add_page_break()
 ######################################################tertiary###############################################
 if strippedProcess in GaAs and not multi:
     create_header(doc, 5, "tert", multi)
-
     createFiveXTable(doc, coreLayers, "tert", design)
-
     doc.add_paragraph("NOTES:")
     doc.add_paragraph("END NOTES:")
     doc.add_page_break()
@@ -771,9 +908,7 @@ bsLayers = getLayers("Backside", layerList)
 
 if len(bsLayers) > 0:
     create_header(doc, 1, "BS", multi)
-
-    createOneXTable(doc, bsLayers, design, "Backside")
-
+    createOneXTable(doc, bsLayers, design, "Backside", strippedProcess)
     #grab the grid and via layers for use in the notes section
     via = None
     grid = None
@@ -782,16 +917,11 @@ if len(bsLayers) > 0:
         if layer.rTitle == "VIA": via = layer
         if layer.rTitle == "GRID": grid = layer
         if layer.rTitle == "SOLDERSTOP": sstop = layer
-
     doc.add_paragraph("NOTES:")
-    p = doc.add_paragraph("""DATA: Right reading chrome side up
-
-TITLES: Right reading chrome side up
-
-"CD" Measurements performed on Photronics closure patters are acceptable for masks listed on this page
-
-Shift around the array generation by waferShiftX and waferShiftY found on the Aeblemap""")
-
+    p = doc.add_paragraph("""DATA: Right reading chrome side up TITLES: Right reading chrome side up
+                            "CD" Measurements performed on Photronics closure patters are acceptable 
+                             for masks listed on this page Shift around the array generation by 
+                             waferShiftX and waferShiftY found on the Aeblemap""")
     if via != None and via.pLayer != "NA" and grid != None and grid.pLayer != "NA":
         if sstop != None and sstop.pLayer != "NA": 
             p.add_run("\n\nPlease shift the array of %s and %s so that they overlay with the %s" % (sstop.pLayer, grid.pLayer, via.pLayer))
@@ -806,8 +936,8 @@ create_header(doc, 5, "aeble", multi)
 run = doc.add_paragraph().add_run("%s-%s Aeblemap" % (design[0:2].upper(), design[2:]))
 run.font.size = Pt(20)
 run.bold = True
-pathdir = os.path.dirname(sys.argv[1])
-if not getAebleMap(doc, design, multi, pathdir) :
+
+if not getAebleMap(doc, design, multi):
     run = doc.add_paragraph().add_run("PUT AEBLE MAP HERE XXX")
     run.font.color.rgb = RGBColor(0xff, 0x0, 0x0)
 
@@ -821,21 +951,18 @@ for layer in numLayers:
         removed = layer
     elif str(layer.gds) == "55" and not multi: 
         removed = layer
+
 if removed != None: numLayers.remove(removed)
+
 if len(numLayers) > 0:
     create_header(doc, 0, "NUM", multi)
-
-    createOneXTable(doc, numLayers, design, "Numbers")
-
+    createOneXTable(doc, numLayers, design, "Numbers", strippedProcess)
     doc.add_paragraph("NOTES:")
     doc.add_paragraph(
-    """DATA: Wrong reading chrome side up
-
-TITLES: Wrong reading chrome side up
-
-Please center data on the mask
-
-All 1X CD crosses are located in the four corners of the data extents""")
+    """DATA: Wrong reading chrome side up 
+       TITLES: Wrong reading chrome side up 
+       Please center data on the mask 
+       All 1X CD crosses are located in the four corners of the data extents""")
     doc.add_paragraph("END NOTES")
     doc.add_page_break()
 
@@ -843,18 +970,13 @@ All 1X CD crosses are located in the four corners of the data extents""")
 fsLayers = getLayers("Frontside", layerList)
 if len(fsLayers) > 0:
     create_header(doc, 0, "FS", multi)
-
-    createOneXTable(doc, fsLayers, design, "Frontside")
-
+    createOneXTable(doc, fsLayers, design, "Frontside", strippedProcess)
     doc.add_paragraph("NOTES:")
     doc.add_paragraph(
     """DATA: Wrong reading chrome side up
-
-TITLES: Wrong reading chrome side up
-
-Please center data on the mask
-
-All 1X CD crosses are located in the four corners of the data extents""")
+       TITLES: Wrong reading chrome side up
+       Please center data on the mask
+       All 1X CD crosses are located in the four corners of the data extents""")
     doc.add_paragraph("END NOTES")
 
     doc.add_page_break()
@@ -865,7 +987,7 @@ flippedLayers = getLayers("Flipped", layerList)
 if len(flippedLayers) > 0:
     create_header(doc, 0, "FLIPPED", multi)
 
-    createOneXTable(doc, flippedLayers, design, "Flipped")
+    createOneXTable(doc, flippedLayers, design, "Flipped", strippedProcess )
 
     doc.add_paragraph("NOTES:")
     doc.add_paragraph(
@@ -880,7 +1002,9 @@ All 1X CD crosses are located in the four corners of the data extents""")
 
 #save and close
 docName = "%s_0_revA.docx" % design
-#docxPath = "~/cad_layout_61/%s/release/" % design
+docxPath = retLib
 doc.save(docName)
-os.system("mv %s %s" % (docName, pathdir))
-sys.stdout.write("MPSS complete, check release folder\n")
+os.system("mv %s %s" % (docName, docxPath))
+#status = "MPSS complete, check " + design + " release folder\n"
+status = "MPSS complete, check release folder\n"
+sys.stdout.write(status)
