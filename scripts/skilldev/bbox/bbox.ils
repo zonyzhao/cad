@@ -11,7 +11,7 @@ defclass( bbox (cadObj)
 		( origin @reader getOrigin @writer setOrigin)
 		( centroid @reader getCentroid @writer setCentroid)
 		( vertices @reader getVertices @writer setVertices)
-		( transformation )			  
+		( transformation @reader getTrans)			  
 	  )
 ) ; defClass
 
@@ -36,11 +36,24 @@ defmethod( getbb (( bb bbox ))
 );defMethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method sets the cv bBox based on the bbx member of this class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setbb (( bb bbox ))
+  let((bbx)
+    bbx=list(getLl(bb) getUr(bb))
+    setBbx(bb bbx)
+    getRef(bb)~>bBox = getBbx(bb)
+  );let 
+);defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Gets The Width and Height cell's boundary box 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getDim (( bb bbox ))
 	bb->width  = caadr( bb->bbx ) - caar( bb->bbx )
-	bb->height = cadadr( bb->bbx ) - cadar( bb->bbx) 
+	bb->height = cadadr( bb->bbx ) - cadar( bb->bbx)
+	setUr(bb caadr( bb->bbx ))
+	setLl(bb cadar( bb->bbx)) 
 	list(bb->width bb->height)
 );defMethod
 

@@ -276,8 +276,8 @@ defmethod( miny (( poly polygon2 ))
 ; polygon
 ;#####################################################
 defmethod( setRectTran (( poly polygon2 ))
-  setUpperRight(poly->rtran list(maxx(poly) maxy(poly)))
-  setLowerLeft(poly->rtran list(minx(poly) miny(poly)))
+  setUr(poly->rtran list(maxx(poly) maxy(poly)))
+  setLl(poly->rtran list(minx(poly) miny(poly)))
   calculateCentroid(poly->rtran)
 );defmethod
 

@@ -22,8 +22,8 @@ sdir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/"
 #  Package File Names
 #########################################################################
 skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
-                  polygon2 rectTran rectTrans transform2 transformation2 \
-                  geometry assembly stackup bbox cv instance reticle \
+                  polygon2 bbox rectTran rectTrans transform2 transformation2 \
+                  geometry assembly stackup  cv instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
                   numeric shape layer 
 #########################################################################
