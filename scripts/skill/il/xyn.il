@@ -1426,7 +1426,7 @@ procedure( xynNumCB()
 	xynChipListFile()
       )
       ( t
-	xynMsg( "Numbers generation failed.")
+	xynMsg( "ERROR: Numbers generation failed.")
       )
     )
 )
