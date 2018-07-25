@@ -1,0 +1,162 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; planarCap.ils: Base planar capacitor class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( planarCap (assembly)
+	  (
+		( widthTop @reader getWidthTop @writer setWidthTop )
+		( lengthTop @reader getLengthTop @writer setLengthTop )
+		( layerTop @reader getLayerTop @writer setLayerTop)
+		( purposeTop @reader getPurposeTop @writer setPurposeTop)
+		( widthDiel @reader getWidthDiel @writer setWidthDiel )
+		( lengthDiel @reader getLengthDiel @writer setLengthDiel )
+		( layerDiel @reader getLayerDiel @writer setLayerDiel)
+		( purposeDiel @reader getPurposeDiel @writer setPurposeDiel)
+		( widthBot @reader getWidthBot @writer setWidthBot )
+		( lengthBot @reader getLengthBot @writer setLengthBot )
+		( layerBot @reader getLayerBot @writer setLayerBot)
+		( purposeBot @reader getPurposeBot @writer setPurposeBot)
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj planarCap)) 
+	   obj->widthTop  = 100.0
+           obj->lengthTop = 100.0
+	   obj->layerTop = "Text"
+	   obj->purposeTop = "drawing"
+	   obj->widthDiel  = 102.0
+           obj->lengthDiel = 102.0
+	   obj->layerDiel = "Text"
+	   obj->purposeDiel = "drawing"
+	   obj->widthBot  = 104.0
+           obj->lengthBot = 104.0
+	   obj->layerBot = "Text"
+	   obj->purposeBot = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( cap planarCap ))
+  let((diel bot cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create Dielectric Layer
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    diel = makeInstance( 'rectangle )
+    setWidth(diel cap->widthDiel)
+    setHeight(diel cap->lengthDiel)
+    generate(diel)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create Bottom Layer
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bot = makeInstance( 'rectangle )
+    setWidth(bot cap->widthBot)
+    setHeight(bot cap->lengthBot)
+    generate(bot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create Top Layer
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    top = makeInstance( 'rectangle )
+    setWidth(top cap->widthTop)
+    setHeight(top cap->lengthTop)
+    generate(top)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dielectric Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dTran = makeInstance( 'transform2 )
+    setVertices(dTran getVertices(diel))
+    setCentroid(dTran getCentroid(diel))
+    cloneRectTran(dTran)
+    setLayer(dTran getLayerDiel(cap))
+    setPurpose(dTran getPurposeDiel(cap))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  Bottom Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(bot))
+    setCentroid(bTran getCentroid(bot))
+    cloneRectTran(bTran)
+    setLayer(bTran getLayerBot(cap))
+    setPurpose(bTran getPurposeBot(cap))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tTran = makeInstance( 'transform2 )
+    setVertices(tTran getVertices(top))
+    setCentroid(tTran getCentroid(top))
+    cloneRectTran(tTran)
+    setLayer(tTran getLayerTop(cap))
+    setPurpose(tTran getPurposeTop(cap))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup dTran)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup tTran )
+    rectTranUnion(geomGroup)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; This Assembly 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(cap geomGroup)
+    rtsAdd(cap->rtrans getRectTran(geomGroup))
+    rtsUnion(cap->rtrans)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; FIXME: Defer Pins and Nets until
+    ;        CDF flow is established 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; This is the target cellview add pins and
+    ; nets to ...
+    ;  cv = getRef(res)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Add in electrical nets and
+    ; pins - Need to have net and
+    ; purposes set on target layers
+    ; in TF
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  pNet = dbMakeNet(cv "POS")
+    ;  dbCreateTerm(pNet "P" "inputOutput")
+    ;  nNet = dbMakeNet(cv "NEG")
+    ;  dbCreateTerm(nNet "N" "inputOutput")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Make a pin rectangle
+    ;  pr = makeInstance( 'rectangle )
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Add in POS pin shape
+    ; FIXME: Replace shape with new  flow
+    ;  ppShp = makeInstance( 'shape )
+    ;  setVertices(ppShp genRect(pr))
+    ;  setLayer(ppShp "sd")
+    ;  setPurpose(ppShp "net")
+    ; Translate POS Pin Shape to proper position
+    ;  shapeTranslate(ppShp list(cptrn  0))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Add in POS pin shape
+    ; FIXME: Replace shape with new  flow
+    ;  pnShp = makeInstance( 'shape )
+    ;  setVertices(pnShp genRect(pr))
+    ;  setLayer(pnShp "sd")	
+    ;  setPurpose(pnShp "net")
+    ; Translate POS Pin Shape to proper position
+    ;  shapeTranslate(pnShp list(cntrn  0))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Set the shape references to the
+    ; cv
+    ;  setCvRef(ppShp  cv)
+    ;  setCvRef(pnShp  cv)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Render the two pin shapes
+    ;  pp = render(ppShp)
+    ;  pn = render(pnShp)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Add Electrical Pins to the Pin Shapes
+    ;  dbCreatePin(pNet pp "pp")
+    ;  dbCreatePin(nNet pp "pn")
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################

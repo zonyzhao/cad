@@ -1,0 +1,115 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; memsCapBotCont.ils: Bottom plate connnection to mems cap 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( memsCapBotCont (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj memsCapBotCont)) 
+	   obj->width  = 100.0
+           obj->length = 100.0
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( mbc memsCapBotCont ))
+  let((bot botCon dstp thk btran brTran dTran tTran)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Bottom plate attachement
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bot = makeInstance( 'rectangle )
+    setWidth(bot mbc->width)
+    setHeight(bot mbc->length)
+    generate(bot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Electrode bottom plate bridge connection to Thick 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    botCon = makeInstance( 'rectangle )
+    setWidth(botCon 29.0)
+    setHeight(botCon 254.0)
+    generate(botCon)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dielectric Strip
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dstp = makeInstance( 'rectangle )
+    setWidth(dstp 6.0)
+    setHeight(dstp 264.0)
+    generate(dstp)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Thick bottom plate attachment connection to MEMS switch
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    thk = makeInstance( 'rectangle )
+    setWidth(thk 26.0)
+    setHeight(thk 264.0)
+    generate(thk)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Bottom Plate Connection Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(bot))
+    setCentroid(bTran getCentroid(bot))
+    cloneRectTran(bTran)
+    setLayer(bTran "electrode")
+    setPurpose(bTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Electrode Bridge Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    brTran = makeInstance( 'transform2 )
+    setVertices(brTran getVertices(botCon))
+    setCentroid(brTran getCentroid(botCon))
+    cloneRectTran(brTran)
+    setLayer(brTran "electrode")
+    setPurpose(brTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dielectric Strip Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dTran = makeInstance( 'transform2 )
+    setVertices(dTran getVertices(dstp))
+    setCentroid(dTran getCentroid(dstp))
+    cloneRectTran(dTran)
+    setLayer(dTran "dielectric")
+    setPurpose(dTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Thick Attach Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tTran = makeInstance( 'transform2 )
+    setVertices(tTran getVertices(thk))
+    setCentroid(tTran getCentroid(thk))
+    cloneRectTran(tTran)
+    setLayer(tTran "thick")
+    setPurpose(tTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate transforms to 
+    ; their proper position
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(brTran list(0.5*getWidth(mbc)+14.5 0.0))
+    translate(dTran list(0.5*getWidth(mbc)+13.5 0.0))
+    translate(tTran list(0.5*getWidth(mbc)+23.5 0.0))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup brTran)
+    addTransform(geomGroup dTran )
+    addTransform(geomGroup tTran )
+    rectTranUnion(geomGroup)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Complete this assembly 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(mbc geomGroup)
+    rtsAdd(mbc->rtrans getRectTran(geomGroup))
+    rtsUnion(mbc->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################

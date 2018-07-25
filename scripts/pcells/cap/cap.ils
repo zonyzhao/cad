@@ -1,0 +1,58 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cap.ils: MEMs Capacitor PCELL 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cap (PcellParam)
+	  (
+		( wid @initform defineParam("float" 100.0))	
+		( len @initform defineParam("float" 100.0))
+		( plCap )
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )	  
+	  )
+);defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj cap)) 
+	   obj->plCap = makeInstance( 'planarCap )
+	   obj->plBpc = makeInstance( 'memsCapBotCont )
+	   obj->plTpc = makeInstance( 'memsCapTopCont )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mems planar capacitor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device cap))
+  let( (wid len pr resRectTran )
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters
+   wid = getParamValue(device 'wid)
+   len = getParamValue(device 'len)
+   setWidth(device->plRes wid)
+   setLength(device->plRes len)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; FIXME: Get these from TF
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setMinWidth(device->plRes 1.0)
+   setMinLength(device->plRes 1.0)
+   setTermLen(device->plRes 1.0)
+   setTermEnc(device->plRes 0.5)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setBodyLayer(device->plRes "resistor")
+   setBodyPurpose(device->plRes "drawing")
+   setContLayer(device->plRes "electrode")
+   setContPurpose(device->plRes "drawing")
+   setRef(device->plRes getRef(device))
+   generate(device->plRes)
+   render(device->plRes)
+   resRectTran = getRectTran(device->plRes)
+   rtsAdd(device->rtrans resRectTran)
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   callNextMethod()
+  );let
+);defmethod
