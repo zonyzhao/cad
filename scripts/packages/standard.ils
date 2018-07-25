@@ -6161,6 +6161,124 @@ defmethod( generate (( mbc memsCapBotCont ))
 ;######################################################
 ;######################################################
 ;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; memsCapTopCont.ils: Top plate connnection to mems cap 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( memsCapTopCont (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj memsCapTopCont)) 
+	   obj->width  = 100.0
+           obj->length = 100.0
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( mtc memsCapTopCont ))
+  let((bot botCon dstp thk btran brTran dTran tTran ttwidth)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top plate connection
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    top = makeInstance( 'rectangle )
+    setWidth(top mtc->width)
+    setHeight(top mtc->length)
+    generate(top)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top plate tab 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ttwidth = 35.0
+    topTab = makeInstance( 'rectangle )
+    setWidth(topTab ttwidth)
+    setHeight(topTab 146.0)
+    generate(topTab)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Thick connection
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    thkwidth = 18.0
+    thk = makeInstance( 'rectangle )
+    setWidth(thk thkwidth)
+    setHeight(thk 150.0)
+    generate(thk)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dielectric Post
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dwidth = 9.0
+    diel = makeInstance( 'rectangle )
+    setWidth(diel dwidth)
+    setHeight(diel 142.0)
+    generate(diel)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top Plate Connection Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tTran = makeInstance( 'transform2 )
+    setVertices(tTran getVertices(top))
+    setCentroid(tTran getCentroid(top))
+    cloneRectTran(tTran)
+    setLayer(tTran "membrane")
+    setPurpose(tTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top Tab Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ttTran = makeInstance( 'transform2 )
+    setVertices(ttTran getVertices(topTab))
+    setCentroid(ttTran getCentroid(topTab))
+    cloneRectTran(ttTran)
+    setLayer(ttTran "membrane")
+    setPurpose(ttTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Thick Attach Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    thkTran = makeInstance( 'transform2 )
+    setVertices(thkTran getVertices(thk))
+    setCentroid(thkTran getCentroid(thk))
+    cloneRectTran(thkTran)
+    setLayer(thkTran "thick")
+    setPurpose(thkTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dielectric Post Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    dTran = makeInstance( 'transform2 )
+    setVertices(dTran getVertices(diel))
+    setCentroid(dTran getCentroid(diel))
+    cloneRectTran(dTran)
+    setLayer(dTran "spacer_via")
+    setPurpose(dTran "drawing")
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate transforms to 
+    ; their proper position
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(ttTran list(-0.5*getWidth(mtc)-ttwidth/2.0 0.0))
+    translate(thkTran list(-0.5*getWidth(mtc)-thkwidth/2.0-19.0 0.0))
+    translate(dTran list(-0.5*getWidth(mtc)-dwidth/2.0-24.0 0.0))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup tTran)
+    addTransform(geomGroup ttTran)
+    addTransform(geomGroup thkTran )
+    addTransform(geomGroup dTran )
+    rectTranUnion(geomGroup)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Complete this assembly 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(mtc geomGroup)
+    rtsAdd(mtc->rtrans getRectTran(geomGroup))
+    rtsUnion(mtc->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
 ; generic.ils: generic functions
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
