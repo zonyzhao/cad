@@ -6813,4 +6813,94 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    callNextMethod()
   );let
+);defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cap.ils: MEMs Capacitor PCELL 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cap (PcellParam)
+	  (
+		( wid @initform defineParam("float" 100.0))	
+		( len @initform defineParam("float" 100.0))
+		( plCap )
+		( plBpc )
+		( plTpc )
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )	  
+	  )
+);defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj cap)) 
+	   obj->plCap = makeInstance( 'planarCap )
+	   obj->plBpc = makeInstance( 'memsCapBotCont )
+	   obj->plTpc = makeInstance( 'memsCapTopCont )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mems planar capacitor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device cap))
+  let( (wid len overlap capRectTran topRectTran botRectTran)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   overlap = 2.0
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; User Parameters
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   wid = getParamValue(device 'wid)
+   len = getParamValue(device 'len)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap body
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Dielectric "Sandwiched" layer
+   setWidthDiel(device->plCap wid)
+   setLengthDiel(device->plCap len)
+   setLayerDiel(device->plCap "spacer_via")
+   setPurposeDiel(device->plCap "drawing")
+   ; Top Plate Definition
+   setWidthTop(device->plCap wid+2*overlap)
+   setLengthTop(device->plCap len+2*overlap)
+   setLayerTop(device->plCap "membrane")
+   setPurposeTop(device->plCap "drawing")
+   ; Bottom Plate Definition
+   setWidthBot(device->plCap wid+4*overlap)
+   setLengthBot(device->plCap len+4*overlap)
+   setLayerBot(device->plCap "thick")
+   setPurposeBot(device->plCap "drawing")
+   setRef(device->plCap getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap top connection
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setWidth(device->plTpc wid)
+   setLength(device->plTpc len)
+   setRef(device->plTpc getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap bottom connection
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setWidth(device->plBpc wid+overlap)
+   setLength(device->plBpc len+overlap)
+   setRef(device->plBpc getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   generate(device->plCap)
+   generate(device->plTpc)
+   generate(device->plBpc)
+   render(device->plCap)
+   render(device->plTpc)
+   render(device->plBpc)
+   capRectTran = getRectTran(device->plCap)
+   topRectTran = getRectTran(device->plTpc)
+   botRectTran = getRectTran(device->plBpc)
+   rtsAdd(device->rtrans capRectTran)
+   rtsAdd(device->rtrans topRectTran)
+   rtsAdd(device->rtrans botRectTran)
+   rtsUnion(device->rtrans)
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   callNextMethod()
+  );let
 );defmethod

@@ -6,6 +6,8 @@ defclass( cap (PcellParam)
 		( wid @initform defineParam("float" 100.0))	
 		( len @initform defineParam("float" 100.0))
 		( plCap )
+		( plBpc )
+		( plTpc )
 		( centroid )
 		( ref @reader getRef @writer setRef )
 		( rtrans )
@@ -28,30 +30,61 @@ defmethod( initializeInstance @after ((obj cap))
 ; This method draws the shapes of the mems planar capacitor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device cap))
-  let( (wid len pr resRectTran )
+  let( (wid len overlap capRectTran topRectTran botRectTran)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   overlap = 2.0
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; User Parameters
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    wid = getParamValue(device 'wid)
    len = getParamValue(device 'len)
-   setWidth(device->plRes wid)
-   setLength(device->plRes len)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap body
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Dielectric "Sandwiched" layer
+   setWidthDiel(device->plCap wid)
+   setLengthDiel(device->plCap len)
+   setLayerDiel(device->plCap "spacer_via")
+   setPurposeDiel(device->plCap "drawing")
+   ; Top Plate Definition
+   setWidthTop(device->plCap wid+2*overlap)
+   setLengthTop(device->plCap len+2*overlap)
+   setLayerTop(device->plCap "membrane")
+   setPurposeTop(device->plCap "drawing")
+   ; Bottom Plate Definition
+   setWidthBot(device->plCap wid+4*overlap)
+   setLengthBot(device->plCap len+4*overlap)
+   setLayerBot(device->plCap "thick")
+   setPurposeBot(device->plCap "drawing")
+   setRef(device->plCap getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap top connection
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setWidth(device->plTpc wid)
+   setLength(device->plTpc len)
+   setRef(device->plTpc getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Cap bottom connection
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setWidth(device->plBpc wid+overlap)
+   setLength(device->plBpc len+overlap)
+   setRef(device->plBpc getRef(device))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; FIXME: Get these from TF
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setMinWidth(device->plRes 1.0)
-   setMinLength(device->plRes 1.0)
-   setTermLen(device->plRes 1.0)
-   setTermEnc(device->plRes 0.5)
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setBodyLayer(device->plRes "resistor")
-   setBodyPurpose(device->plRes "drawing")
-   setContLayer(device->plRes "electrode")
-   setContPurpose(device->plRes "drawing")
-   setRef(device->plRes getRef(device))
-   generate(device->plRes)
-   render(device->plRes)
-   resRectTran = getRectTran(device->plRes)
-   rtsAdd(device->rtrans resRectTran)
+   generate(device->plCap)
+   generate(device->plTpc)
+   generate(device->plBpc)
+   render(device->plCap)
+   render(device->plTpc)
+   render(device->plBpc)
+   capRectTran = getRectTran(device->plCap)
+   topRectTran = getRectTran(device->plTpc)
+   botRectTran = getRectTran(device->plBpc)
+   rtsAdd(device->rtrans capRectTran)
+   rtsAdd(device->rtrans topRectTran)
+   rtsAdd(device->rtrans botRectTran)
+   rtsUnion(device->rtrans)
    setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
    callNextMethod()
   );let
