@@ -6138,8 +6138,8 @@ defmethod( generate (( mbc memsCapBotCont ))
     ; their proper position
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     translate(brTran list(0.5*getWidth(mbc)+14.5 0.0))
-    translate(dTran list(0.5*getWidth(mbc)+13.5 0.0))
-    translate(tTran list(0.5*getWidth(mbc)+23.5 0.0))
+    translate(dTran list(0.5*getWidth(mbc)+10.5 0.0))
+    translate(tTran list(0.5*getWidth(mbc)+20.5 0.0))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6845,7 +6845,7 @@ defmethod( initializeInstance @after ((obj cap))
 ; This method draws the shapes of the mems planar capacitor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device cap))
-  let( (wid len overlap capRectTran topRectTran botRectTran)
+  let( (wid len overlap capRectTran topRectTran botRectTran bpOverlap)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6875,16 +6875,17 @@ defmethod( draw ((device cap))
    setPurposeBot(device->plCap "drawing")
    setRef(device->plCap getRef(device))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Cap top connection
+   ; Cap top contact
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setWidth(device->plTpc wid)
-   setLength(device->plTpc len)
+   setWidth(device->plTpc wid+2*overlap)
+   setLength(device->plTpc len+2*overlap)
    setRef(device->plTpc getRef(device))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Cap bottom connection
+   ; Cap bottom contact
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setWidth(device->plBpc wid+overlap)
-   setLength(device->plBpc len+overlap)
+   bpOverlap = 12.0;
+   setWidth(device->plBpc wid+2*bpOverlap)
+   setLength(device->plBpc len+2*bpOverlap)
    setRef(device->plBpc getRef(device))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    generate(device->plCap)

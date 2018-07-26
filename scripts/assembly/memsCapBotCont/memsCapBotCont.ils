@@ -90,8 +90,8 @@ defmethod( generate (( mbc memsCapBotCont ))
     ; their proper position
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     translate(brTran list(0.5*getWidth(mbc)+14.5 0.0))
-    translate(dTran list(0.5*getWidth(mbc)+13.5 0.0))
-    translate(tTran list(0.5*getWidth(mbc)+23.5 0.0))
+    translate(dTran list(0.5*getWidth(mbc)+10.5 0.0))
+    translate(tTran list(0.5*getWidth(mbc)+20.5 0.0))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
