@@ -18,6 +18,7 @@ export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cade
 # Main Directories
 #########################################################################
 localDesDir = $(HOME)/"/deslibs_oa/"
+localMemsDesDir = $(HOME)/"/deslibs_oa_mems/"
 localCadDir = $(HOME)/"/cad_layout_61/"
 cadenceDefault = "/net/nfs-n501/ANFS01/apps/cadence/IC616/share/cdssetup/"
 avTech = "/apps/assura/ASSURA616_04.14.101/tools/assura/etc/avtech/avTech"
@@ -160,7 +161,7 @@ mems:
 	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsinit $(localCadDir)/.cdsinit
 	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
-	echo "INCLUDE /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cdslib/cds.lib" >> $(localCadDir)/cds.lib
+	echo "INCLUDE " $(localMemsDesDir)/cds.lib  >> $(localCadDir)/cds.lib
 #	$(foreach var, $(memsLibs), echo "DEFINE " $(var) " "$(memsLibDir)/$(var) >> $(localCadDir)/cds.lib;)
 
 #############################################################################################################################################
