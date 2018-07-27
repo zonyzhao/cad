@@ -177,13 +177,15 @@ defmethod( scale (( poly polygon2 ) arg)
 ;###############################################################################
 defmethod( render (( poly polygon2 ))
   if( !null(poly->vertices) then
-    println("INFO(polygon): Rendering")
-    dbCreatePolygon(poly->ref
+    if( vertexCount(poly) < 2048 then
+      println("INFO(polygon): Rendering")
+      dbCreatePolygon(poly->ref
 	     	    list(poly->layer poly->purpose)
 		    poly->vertices
-    );dbCreatePolygon
-  else
-    println("ERROR(polygon): No vertices to render")
+      );dbCreatePolygon
+    else
+      println("ERROR(polygon): No vertices to render")
+    );if
   );if   
 );defmethod
 
@@ -502,6 +504,13 @@ defmethod( isPointInside (( poly polygon2 ) pnt )
 ;###############################################################################
 defmethod( isRectangle (( poly polygon2 ))
   nil
+)
+
+;###############################################################################
+; Is polygon a rectangle
+;###############################################################################
+defmethod( vertexCount (( poly polygon2 ))
+  length(poly->vertices)
 )
 
 ;###############################################################################

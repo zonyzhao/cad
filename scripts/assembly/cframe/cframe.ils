@@ -29,7 +29,7 @@ defmethod( initializeInstance @after ((obj cframe))
 ;######################################################
 defmethod( generate (( cfr cframe ))
   let((wid hgt ewid mwid mlen bot top left right lTran
-       rTran bTran tTran)
+       rTran bTran tTran uro)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
@@ -63,6 +63,34 @@ defmethod( generate (( cfr cframe ))
     setWidth(right ewid)
     setHeight(right hgt-2*ewid)
     generate(right)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uro = makeInstance( 'circle )
+    setRadius(uro ewid)
+    setGrid(uro 0.1)
+    generateQuarterCircle(uro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ulo = makeInstance( 'circle )
+    setRadius(ulo ewid)
+    setGrid(ulo 0.1)
+    generateQuarterCircle(ulo)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lro = makeInstance( 'circle )
+    setRadius(lro ewid)
+    setGrid(lro 0.1)
+    generateQuarterCircle(lro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    llo = makeInstance( 'circle )
+    setRadius(llo ewid)
+    setGrid(llo 0.1)
+    generateQuarterCircle(llo)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -100,12 +128,55 @@ defmethod( generate (( cfr cframe ))
     setLayer(rTran getLayer(cfr))
     setPurpose(rTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uroTran = makeInstance( 'transform2 )
+    setVertices(uroTran getVertices(uro))
+    setCentroid(uroTran getCentroid(uro))
+    cloneRectTran(uroTran)
+    setLayer(uroTran getLayer(cfr))
+    setPurpose(uroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uloTran = makeInstance( 'transform2 )
+    setVertices(uloTran getVertices(ulo))
+    setCentroid(uloTran getCentroid(ulo))
+    cloneRectTran(uloTran)
+    setLayer(uloTran getLayer(cfr))
+    setPurpose(uloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lroTran = makeInstance( 'transform2 )
+    setVertices(lroTran getVertices(lro))
+    setCentroid(lroTran getCentroid(lro))
+    cloneRectTran(lroTran)
+    setLayer(lroTran getLayer(cfr))
+    setPurpose(lroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lloTran = makeInstance( 'transform2 )
+    setVertices(lloTran getVertices(llo))
+    setCentroid(lloTran getCentroid(llo))
+    cloneRectTran(lloTran)
+    setLayer(lloTran getLayer(cfr))
+    setPurpose(lloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     translate(bTran list(0.0 hgt/2.0-ewid/2.0))
     translate(tTran list(0.0 -hgt/2.0+ewid/2.0))
     translate(lTran list(-wid/2.0+ewid/2.0 0.0))
     translate(rTran list(wid/2.0-ewid/2.0 0.0))
+    translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid))
+    rotate(uloTran 90.0)
+    translate(uloTran list(-wid/2.0+ewid hgt/2.0-ewid))
+    rotate(lroTran -90.0)
+    translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
+    rotate(lloTran 180.0)
+    translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -114,6 +185,10 @@ defmethod( generate (( cfr cframe ))
     addTransform(geomGroup tTran)
     addTransform(geomGroup lTran)
     addTransform(geomGroup rTran)
+    addTransform(geomGroup uroTran)
+    addTransform(geomGroup uloTran)
+    addTransform(geomGroup lroTran)
+    addTransform(geomGroup lloTran)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -17,8 +17,8 @@ cir->grid
 ;       and test its rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cir = makeInstance( 'circle )
-cir->radius=5
-cir->grid=0.025
+cir->radius=100
+cir->grid=0.1
 generate(cir)
 getOrigin(cir)
 getCentroid(cir->rtran)
@@ -46,7 +46,7 @@ foreach( vert vertices
 	  i=i+1
 );foreach
 
-lib="test"
+lib="reticle"
 name="circleTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cir cv)
@@ -79,8 +79,8 @@ renderPolygon2(poly)
 ;       and test its rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cir = makeInstance( 'circle )
-cir->radius=5
-cir->grid=0.025
+cir->radius=100
+cir->grid=0.1
 generateHalfCircle(cir)
 getOrigin(cir)
 getCentroid(cir->rtran)
@@ -88,7 +88,7 @@ getUpperRight(cir->rtran)
 getLowerLeft(cir->rtran)
 isCentered(cir->rtran)
 
-lib="test"
+lib="reticle"
 name="halfCircleTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cir cv)
@@ -104,8 +104,8 @@ dbClose(cv)
 ;       and test its rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cir = makeInstance( 'circle )
-cir->radius=5
-cir->grid=0.025
+cir->radius=100.0
+cir->grid=0.1
 generateQuarterCircle(cir)
 getOrigin(cir)
 getCentroid(cir->rtran)
@@ -113,12 +113,34 @@ getUpperRight(cir->rtran)
 getLowerLeft(cir->rtran)
 isCentered(cir->rtran)
 
-lib="test"
+lib="reticle"
 name="quarterCircleTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cir cv)
 render(cir)
 setRef(cir->rtran cv)
 render(cir->rtran)
+dbSave(cv)
+dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-5: Generate quarter circle
+;       and add it to a transform
+;       for rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cir = makeInstance( 'circle )
+setRadius(cir 100.0)
+setGrid(cir 0.1)
+generateQuarterCircle(cir)
+cTran = makeInstance( 'transform2 )
+setVertices(cTran getVertices(cir))
+setCentroid(cTran getCentroid(cir))
+cloneRectTran(cTran)
+
+lib="reticle"
+name="quarterCircleTestTran"
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+setRef(cir cv)
+render(cir)
 dbSave(cv)
 dbClose(cv)

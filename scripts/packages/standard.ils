@@ -1056,13 +1056,15 @@ defmethod( scale (( poly polygon2 ) arg)
 ;###############################################################################
 defmethod( render (( poly polygon2 ))
   if( !null(poly->vertices) then
-    println("INFO(polygon): Rendering")
-    dbCreatePolygon(poly->ref
+    if( vertexCount(poly) < 2048 then
+      println("INFO(polygon): Rendering")
+      dbCreatePolygon(poly->ref
 	     	    list(poly->layer poly->purpose)
 		    poly->vertices
-    );dbCreatePolygon
-  else
-    println("ERROR(polygon): No vertices to render")
+      );dbCreatePolygon
+    else
+      println("ERROR(polygon): No vertices to render")
+    );if
   );if   
 );defmethod
 
@@ -1381,6 +1383,13 @@ defmethod( isPointInside (( poly polygon2 ) pnt )
 ;###############################################################################
 defmethod( isRectangle (( poly polygon2 ))
   nil
+)
+
+;###############################################################################
+; Is polygon a rectangle
+;###############################################################################
+defmethod( vertexCount (( poly polygon2 ))
+  length(poly->vertices)
 )
 
 ;###############################################################################
@@ -4856,6 +4865,9 @@ defmethod( generate (( tri triangle ))
 ;              are defined to have the same centroid as the original
 ;              circle
 ;
+;              FIXME: Need a delta filter to reduce the number of points in these
+;                     circular constructs. Only keep the points that are changing
+;                     and the point just prior to the change ...
 ;              FIXME: for large diameter circtles need to break the polygons into
 ;                     a group of segments that are some maximum number of vertices
 ;                     (maximimum is 2048 for the Cadence rendering). Circle will
@@ -4875,7 +4887,9 @@ defclass( circle (polygon2)
 		( id )			  
 	  )
 ) ; defClass
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj circle)) 
 	   obj->radius = 1.0
 	   obj->orig = list(0.0 0.0)
@@ -4886,7 +4900,9 @@ defmethod( initializeInstance @after ((obj circle))
 	   obj->direction = 0
 	   obj->id="cir"
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Incrementally generates next vertex based upon CORDIC constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( genNextVertex ((cir circle))
   let( ( (grid cir->grid)
          X0 Y0 R0 D0 X1 Y1 R1 D1 X2 Y2 R2 D2 X3 Y3 R3 D3 
@@ -6279,7 +6295,208 @@ defmethod( generate (( mtc memsCapTopCont ))
 ;######################################################
 ;######################################################
 ;######################################################
-; generic.ils: generic functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; cframe.ils: Chip/Reticle frame with specilized corners  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cframe (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
+		( overlap @reader getOverlap @writer setOverlap )
+		( layer @reader getLayer @writer setLayer )
+	  	( purpose @reader getPurpose @writer setPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj cframe)) 
+	   obj->width     = 10000.0
+           obj->height    = 10000.0
+	   obj->edgeWidth = 95.0
+	   obj->overlap   = 4.0
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( cfr cframe ))
+  let((wid hgt ewid mwid mlen bot top left right lTran
+       rTran bTran tTran uro)
+    wid = cfr->width 
+    hgt = cfr->height
+    ewid = cfr->edgeWidth
+    mwid = 2*ewid
+    mlen = mwid
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Bottom
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bot = makeInstance( 'rectangle )
+    setWidth(bot wid-2*ewid)
+    setHeight(bot ewid)
+    generate(bot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Top
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    top = makeInstance( 'rectangle )
+    setWidth(top wid-2*ewid)
+    setHeight(top ewid)
+    generate(top)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Left
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    left = makeInstance( 'rectangle )
+    setWidth(left ewid)
+    setHeight(left hgt-2*ewid)
+    generate(left)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Right
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    right = makeInstance( 'rectangle )
+    setWidth(right ewid)
+    setHeight(right hgt-2*ewid)
+    generate(right)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uro = makeInstance( 'circle )
+    setRadius(uro ewid)
+    setGrid(uro 0.1)
+    generateQuarterCircle(uro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ulo = makeInstance( 'circle )
+    setRadius(ulo ewid)
+    setGrid(ulo 0.1)
+    generateQuarterCircle(ulo)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lro = makeInstance( 'circle )
+    setRadius(lro ewid)
+    setGrid(lro 0.1)
+    generateQuarterCircle(lro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    llo = makeInstance( 'circle )
+    setRadius(llo ewid)
+    setGrid(llo 0.1)
+    generateQuarterCircle(llo)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Bottom transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(bot))
+    setCentroid(bTran getCentroid(bot))
+    cloneRectTran(bTran)
+    setLayer(bTran getLayer(cfr))
+    setPurpose(bTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Top transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tTran = makeInstance( 'transform2 )
+    setVertices(tTran getVertices(top))
+    setCentroid(tTran getCentroid(top))
+    cloneRectTran(tTran)
+    setLayer(tTran getLayer(cfr))
+    setPurpose(tTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Left transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lTran = makeInstance( 'transform2 )
+    setVertices(lTran getVertices(left))
+    setCentroid(lTran getCentroid(left))
+    cloneRectTran(lTran)
+    setLayer(lTran getLayer(cfr))
+    setPurpose(lTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Right transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    rTran = makeInstance( 'transform2 )
+    setVertices(rTran getVertices(right))
+    setCentroid(rTran getCentroid(right))
+    cloneRectTran(rTran)
+    setLayer(rTran getLayer(cfr))
+    setPurpose(rTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uroTran = makeInstance( 'transform2 )
+    setVertices(uroTran getVertices(uro))
+    setCentroid(uroTran getCentroid(uro))
+    cloneRectTran(uroTran)
+    setLayer(uroTran getLayer(cfr))
+    setPurpose(uroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uloTran = makeInstance( 'transform2 )
+    setVertices(uloTran getVertices(ulo))
+    setCentroid(uloTran getCentroid(ulo))
+    cloneRectTran(uloTran)
+    setLayer(uloTran getLayer(cfr))
+    setPurpose(uloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lroTran = makeInstance( 'transform2 )
+    setVertices(lroTran getVertices(lro))
+    setCentroid(lroTran getCentroid(lro))
+    cloneRectTran(lroTran)
+    setLayer(lroTran getLayer(cfr))
+    setPurpose(lroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lloTran = makeInstance( 'transform2 )
+    setVertices(lloTran getVertices(llo))
+    setCentroid(lloTran getCentroid(llo))
+    cloneRectTran(lloTran)
+    setLayer(lloTran getLayer(cfr))
+    setPurpose(lloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ; Translate Frame Edges to correct positions
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(bTran list(0.0 hgt/2.0-ewid/2.0))
+    translate(tTran list(0.0 -hgt/2.0+ewid/2.0))
+    translate(lTran list(-wid/2.0+ewid/2.0 0.0))
+    translate(rTran list(wid/2.0-ewid/2.0 0.0))
+    translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid))
+    rotate(uloTran 90.0)
+    translate(uloTran list(-wid/2.0+ewid hgt/2.0-ewid))
+    rotate(lroTran -90.0)
+    translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
+    rotate(lloTran 180.0)
+    translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup tTran)
+    addTransform(geomGroup lTran)
+    addTransform(geomGroup rTran)
+    addTransform(geomGroup uroTran)
+    addTransform(geomGroup uloTran)
+    addTransform(geomGroup lroTran)
+    addTransform(geomGroup lloTran)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; this assembly
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(cfr geomGroup)
+    rtsAdd(cfr->rtrans getRectTran(geomGroup))
+    ;rtsUnion(cfr->rtrans)
+  );let
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################; generic.ils: generic functions
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function

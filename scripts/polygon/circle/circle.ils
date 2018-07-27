@@ -5,6 +5,9 @@
 ;              are defined to have the same centroid as the original
 ;              circle
 ;
+;              FIXME: Need a delta filter to reduce the number of points in these
+;                     circular constructs. Only keep the points that are changing
+;                     and the point just prior to the change ...
 ;              FIXME: for large diameter circtles need to break the polygons into
 ;                     a group of segments that are some maximum number of vertices
 ;                     (maximimum is 2048 for the Cadence rendering). Circle will
@@ -24,7 +27,9 @@ defclass( circle (polygon2)
 		( id )			  
 	  )
 ) ; defClass
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj circle)) 
 	   obj->radius = 1.0
 	   obj->orig = list(0.0 0.0)
@@ -35,7 +40,9 @@ defmethod( initializeInstance @after ((obj circle))
 	   obj->direction = 0
 	   obj->id="cir"
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Incrementally generates next vertex based upon CORDIC constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( genNextVertex ((cir circle))
   let( ( (grid cir->grid)
          X0 Y0 R0 D0 X1 Y1 R1 D1 X2 Y2 R2 D2 X3 Y3 R3 D3 
