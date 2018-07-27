@@ -1,0 +1,127 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; cframe.ils: Chip/Reticle frame with specilized corners  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cframe (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
+		( overlap @reader getOverlap @writer setOverlap )
+		( layer @reader getLayer @writer setLayer )
+	  	( purpose @reader getPurpose @writer setPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj cframe)) 
+	   obj->width     = 10000.0
+           obj->height    = 10000.0
+	   obj->edgeWidth = 95.0
+	   obj->overlap   = 4.0
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( cfr cframe ))
+  let((wid hgt ewid mwid mlen bot top left right lTran
+       rTran bTran tTran)
+    wid = cfr->width 
+    hgt = cfr->height
+    ewid = cfr->edgeWidth
+    mwid = 2*ewid
+    mlen = mwid
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Bottom
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bot = makeInstance( 'rectangle )
+    setWidth(bot wid-2*ewid)
+    setHeight(bot ewid)
+    generate(bot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Top
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    top = makeInstance( 'rectangle )
+    setWidth(top wid-2*ewid)
+    setHeight(top ewid)
+    generate(top)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Left
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    left = makeInstance( 'rectangle )
+    setWidth(left ewid)
+    setHeight(left hgt-2*ewid)
+    generate(left)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Right
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    right = makeInstance( 'rectangle )
+    setWidth(right ewid)
+    setHeight(right hgt-2*ewid)
+    generate(right)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Bottom transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(bot))
+    setCentroid(bTran getCentroid(bot))
+    cloneRectTran(bTran)
+    setLayer(bTran getLayer(cfr))
+    setPurpose(bTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Top transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tTran = makeInstance( 'transform2 )
+    setVertices(tTran getVertices(top))
+    setCentroid(tTran getCentroid(top))
+    cloneRectTran(tTran)
+    setLayer(tTran getLayer(cfr))
+    setPurpose(tTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Left transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lTran = makeInstance( 'transform2 )
+    setVertices(lTran getVertices(left))
+    setCentroid(lTran getCentroid(left))
+    cloneRectTran(lTran)
+    setLayer(lTran getLayer(cfr))
+    setPurpose(lTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Right transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    rTran = makeInstance( 'transform2 )
+    setVertices(rTran getVertices(right))
+    setCentroid(rTran getCentroid(right))
+    cloneRectTran(rTran)
+    setLayer(rTran getLayer(cfr))
+    setPurpose(rTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate Frame Edges to correct positions
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(bTran list(0.0 hgt/2.0-ewid/2.0))
+    translate(tTran list(0.0 -hgt/2.0+ewid/2.0))
+    translate(lTran list(-wid/2.0+ewid/2.0 0.0))
+    translate(rTran list(wid/2.0-ewid/2.0 0.0))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup tTran)
+    addTransform(geomGroup lTran)
+    addTransform(geomGroup rTran)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; this assembly
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(cfr geomGroup)
+    rtsAdd(cfr->rtrans getRectTran(geomGroup))
+    ;rtsUnion(cfr->rtrans)
+  );let
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################
