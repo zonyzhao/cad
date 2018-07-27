@@ -5,6 +5,10 @@
 ;              are defined to have the same centroid as the original
 ;              circle
 ;
+;              FIXME: Sub-circular shapes are not ending at 90 degrees on both sides
+;                     Need to add an addition point one grid increment to get the
+;                     double sided 90. Added 1 grid increment of FUDGE to the cframe
+;                     corners to compensate for this problems
 ;              FIXME: Need a delta filter to reduce the number of points in these
 ;                     circular constructs. Only keep the points that are changing
 ;                     and the point just prior to the change ...

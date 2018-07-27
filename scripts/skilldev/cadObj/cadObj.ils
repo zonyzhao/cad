@@ -28,7 +28,7 @@ defmethod( initializeInstance @after ((obj cadObj))
 	   obj->attributes=nil
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
-	   obj->grid = 0.025
+	   obj->grid = 0.1
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

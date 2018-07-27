@@ -28,7 +28,7 @@ defmethod( initializeInstance @after ((obj cadObj))
 	   obj->attributes=nil
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
-	   obj->grid = 0.025
+	   obj->grid = 0.1
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4865,6 +4865,10 @@ defmethod( generate (( tri triangle ))
 ;              are defined to have the same centroid as the original
 ;              circle
 ;
+;              FIXME: Sub-circular shapes are not ending at 90 degrees on both sides
+;                     Need to add an addition point one grid increment to get the
+;                     double sided 90. Added 1 grid increment of FUDGE to the cframe
+;                     corners to compensate for this problems
 ;              FIXME: Need a delta filter to reduce the number of points in these
 ;                     circular constructs. Only keep the points that are changing
 ;                     and the point just prior to the change ...
@@ -6325,25 +6329,42 @@ defmethod( initializeInstance @after ((obj cframe))
 ; Generates the assembly
 ;######################################################
 defmethod( generate (( cfr cframe ))
-  let((wid hgt ewid mwid mlen bot top left right lTran
-       rTran bTran tTran uro)
+  let((wid hgt ewid mwid mhgt bot top left right lTran
+       rTran bTran tTran uro medg grid)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
+    medg = 20.0
     mwid = 2*ewid
-    mlen = mwid
+    mhgt = mwid
+    grid = 0.1
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Minimum and clamp checks
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; edge
+    if(ewid < medg then
+      ewid = medg
+    );if
+    ; width
+    if(wid < mwid then
+      wid = mwid
+    );if
+    ; height
+    if(hgt < mhgt then
+      hgt = mhgt
+    );if
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Bottom
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     bot = makeInstance( 'rectangle )
-    setWidth(bot wid-2*ewid)
+    setWidth(bot wid-2*ewid+2*grid)
     setHeight(bot ewid)
     generate(bot)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Top
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     top = makeInstance( 'rectangle )
-    setWidth(top wid-2*ewid)
+    setWidth(top wid-2*ewid+2*grid)
     setHeight(top ewid)
     generate(top)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6351,14 +6372,14 @@ defmethod( generate (( cfr cframe ))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     left = makeInstance( 'rectangle )
     setWidth(left ewid)
-    setHeight(left hgt-2*ewid)
+    setHeight(left hgt-2*ewid+2*grid)
     generate(left)
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Right
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     right = makeInstance( 'rectangle )
     setWidth(right ewid)
-    setHeight(right hgt-2*ewid)
+    setHeight(right hgt-2*ewid+2*grid)
     generate(right)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UR Outside Corner
