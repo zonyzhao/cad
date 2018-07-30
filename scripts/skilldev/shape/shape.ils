@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  shape.ils: Layout Shape Object 
-;;;;;;;;;;;;;;;              This is a cadence cellview centric class that operates
-;;;;;;;;;;;;;;               on the shape of a layout layer
+;  shape.ils: Layout Shape Object 
+;             This is a cadence cellview centric class that 
+;             operates on the shape of a layout layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( shape (cadObj)
 	  (	
@@ -54,7 +54,7 @@ defmethod( render (( shp shape ))
     foreach( geom shp->geometries->list->elems
       foreach( polygon geom->polygons->list->elems
         printf("INFO(shape): Rendering Shape Polygon\n")
-        dbCreatePolygon(shp->ref
+        dbCreatePolygon(getRef(shp)
 	     	        list(shp->layer shp->purpose)
 		        polygon->vertices
 		        );dbCreatePolygon

@@ -1,0 +1,57 @@
+;######################################################
+;# snapshot.ils: 
+;######################################################
+defclass( snapshot (stackup)
+   (
+	  ( layerMap @reader getLayerMap @writer setLayerMap)
+	  ( serialfile  @reader getSerialFile @writer setSerialFile)
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj snapshot)) 
+  layerMap = nil
+  serialfile = nil	   	     
+);defmethod
+
+;#####################################################
+; snaps vertices on the database grid
+;#####################################################
+;defmethod( setOnDbg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+; snaps the vertices on the manufacturing grid
+;#####################################################
+;defmethod( setOnMfg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
+;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -11,7 +11,7 @@ defclass( techLayer (cadObj)
 		( purpose @reader getPurpose @writer setPurpose )
 		( shapes @reader getShapes )
 	  )				  
-) ; defclass
+);defclass
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
@@ -27,13 +27,13 @@ defmethod( initializeInstance @after ((obj techLayer))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getShapesOnLayer (( lay techLayer ))
   let( (shps temp)
-      shps = car(setof(lp lay->ref~>lpps lp~>layerName==lay->name))~>shapes
-      foreach( sh shps
-      	       temp = makeInstance( 'shape )
-	       setRef(temp sh)
-	       genVertices(temp)
-	       add(lay->shapes temp)
-      );foreach	       
+    shps = car(setof(lp lay->ref~>lpps lp~>layerName==lay->name))~>shapes
+    foreach( sh shps
+      temp = makeInstance( 'shape )
+      setRef(temp sh)
+      genVertices(temp)
+      add(lay->shapes temp)
+    );foreach	       
   );let
 );defmethod
 
@@ -51,14 +51,17 @@ defmethod( deleteShapesOnLayer (( lay techLayer ))
 ;  Render shapes on the layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( renderShapesOnLayer (( lay techLayer ))
-  let((i)
+  let((i points)
     i=0
-    foreach(shape lay->shapes->list->elems
-      setRef(shape->transform lay->ref)
-      setLayer(shape->transform lay->name)
-      setPurpose(shape->transform lay->purpose)
-      setVertices(shape->transform getVertices(nth(i lay->shapes->list->elems)))
-      render(shape->transform)
+    foreach(shp lay->shapes->list->elems
+      points = makeInstance( 'points2 )
+      addPoints(points shp->vertices)
+      setVertexCollection(shp->transform points)
+      setLayer(shp->transform lay->name)
+      setPurpose(shp->transform lay->purpose)
+      setRef(shp getRef(lay))
+      setRef(shp->transform getRef(lay))    
+      render(shp->transform)
       i++
     );foreach
   );let

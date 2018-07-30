@@ -2048,7 +2048,7 @@ defmethod( translate (( rts rectTrans ) arg)
 defclass( transform2 (cadObj)
 	  (
 	    ( polygon )
-	    ( vertices @reader getVertices)
+	    ( vertices @reader getVertices @writer setVertexCollection)
 	    ( area )
 	    ( transformation )
 	    ( rtran @reader getRectTran)
@@ -2621,7 +2621,7 @@ defmethod( render (( ass assembly ))
 ;######################################################
 defclass( stackup (cadObj)
 	  (
-		( stack @writer setStackCollection )
+		( layers @writer setLayers @reader getLayers )
 	  )				  
 ) ; defclass
 
@@ -2629,7 +2629,7 @@ defclass( stackup (cadObj)
 ; Class constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj stackup)) 
-	   obj->stack = makeInstance( 'collection )
+	   obj->layers = makeInstance( 'collection )
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2646,7 +2646,7 @@ defmethod( getStackUp (( st stackup ))
 	  setName(temp lpp~>layerName)
 	  setPurpose(temp lpp~>purpose)
 	  getShapesOnLayer(temp)
-	  add(st->stack temp)
+	  add(st->layers temp)
 	  n++
     	);foreach
     	n
@@ -2663,15 +2663,17 @@ defmethod( getStackUp (( st stackup ))
 defmethod( renderStack (( st stackup ))
   let( (n m)
     m=0
-    foreach(stack st->stack->list->elems
-      printf("Rendering stackup: %d\n" m)
-      n=0
-      foreach(layer stack->list->elems
-        printf("%d: Rendering layer: %s\n" n layer->name)
-        setRef(layer st->ref)
+    ;FIXME: stack is a layer and layer is a shape!!
+    foreach(layer st->layers->list->elems
+      printf("Rendering layer: %d: Name (layer->name): %s \n" m layer->name)
+      ;n=0
+      ; Shapes on layer are being rendered ...
+      ;foreach(shp layer->shapes
+      ;  printf("%d: Rendering layer: %s\n" n layer->name)
+        setRef(layer getRef(st))
         renderShapesOnLayer(layer)
-        n++
-      );foreach
+      ;  n++
+      ;);foreach
       m++
     );foreach
   );let
@@ -4141,9 +4143,9 @@ defmethod( generate (( np numeric ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  shape.ils: Layout Shape Object 
-;;;;;;;;;;;;;;;              This is a cadence cellview centric class that operates
-;;;;;;;;;;;;;;               on the shape of a layout layer
+;  shape.ils: Layout Shape Object 
+;             This is a cadence cellview centric class that 
+;             operates on the shape of a layout layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( shape (cadObj)
 	  (	
@@ -4196,7 +4198,7 @@ defmethod( render (( shp shape ))
     foreach( geom shp->geometries->list->elems
       foreach( polygon geom->polygons->list->elems
         printf("INFO(shape): Rendering Shape Polygon\n")
-        dbCreatePolygon(shp->ref
+        dbCreatePolygon(getRef(shp)
 	     	        list(shp->layer shp->purpose)
 		        polygon->vertices
 		        );dbCreatePolygon
@@ -4550,7 +4552,7 @@ defclass( techLayer (cadObj)
 		( purpose @reader getPurpose @writer setPurpose )
 		( shapes @reader getShapes )
 	  )				  
-) ; defclass
+);defclass
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
@@ -4566,13 +4568,13 @@ defmethod( initializeInstance @after ((obj techLayer))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getShapesOnLayer (( lay techLayer ))
   let( (shps temp)
-      shps = car(setof(lp lay->ref~>lpps lp~>layerName==lay->name))~>shapes
-      foreach( sh shps
-      	       temp = makeInstance( 'shape )
-	       setRef(temp sh)
-	       genVertices(temp)
-	       add(lay->shapes temp)
-      );foreach	       
+    shps = car(setof(lp lay->ref~>lpps lp~>layerName==lay->name))~>shapes
+    foreach( sh shps
+      temp = makeInstance( 'shape )
+      setRef(temp sh)
+      genVertices(temp)
+      add(lay->shapes temp)
+    );foreach	       
   );let
 );defmethod
 
@@ -4590,14 +4592,17 @@ defmethod( deleteShapesOnLayer (( lay techLayer ))
 ;  Render shapes on the layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( renderShapesOnLayer (( lay techLayer ))
-  let((i)
+  let((i points)
     i=0
-    foreach(shape lay->shapes->list->elems
-      setRef(shape->transform lay->ref)
-      setLayer(shape->transform lay->name)
-      setPurpose(shape->transform lay->purpose)
-      setVertices(shape->transform getVertices(nth(i lay->shapes->list->elems)))
-      render(shape->transform)
+    foreach(shp lay->shapes->list->elems
+      points = makeInstance( 'points2 )
+      addPoints(points shp->vertices)
+      setVertexCollection(shp->transform points)
+      setLayer(shp->transform lay->name)
+      setPurpose(shp->transform lay->purpose)
+      setRef(shp getRef(lay))
+      setRef(shp->transform getRef(lay))    
+      render(shp->transform)
       i++
     );foreach
   );let
@@ -4713,6 +4718,60 @@ defmethod( mergeLayer (( lay techLayer ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
+;# snapshot.ils: 
+;######################################################
+defclass( snapshot (stackup)
+   (
+	  ( layerMap @reader getLayerMap @writer setLayerMap)
+   )				  
+);defclass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj snapshot)) 
+  layerMap = nil	   	     
+);defmethod
+
+;#####################################################
+; snaps vertices on the database grid
+;#####################################################
+;defmethod( setOnDbg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;#####################################################
+; snaps the vertices on the manufacturing grid
+;#####################################################
+;defmethod( setOnMfg (( shp shape ))
+;	   let( (x
+;	   	 y
+;		 vertices)
+;		 vertices = '()
+;		 foreach( vert shp->vertices
+;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
+;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
+;		   vertex =list(x y)
+;		   vertices = cons(vertex vertices)
+;		 );foreach
+;		 shp->vertices=reverse(vertices)
+;	   );let	   
+;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
 ;# rectangle.ils: Rectangle class
 ;######################################################
 defclass( rectangle (polygon2)

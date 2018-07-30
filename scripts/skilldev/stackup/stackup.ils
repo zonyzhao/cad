@@ -6,7 +6,7 @@
 ;######################################################
 defclass( stackup (cadObj)
 	  (
-		( stack @writer setStackCollection )
+		( layers @writer setLayers @reader getLayers )
 	  )				  
 ) ; defclass
 
@@ -14,7 +14,7 @@ defclass( stackup (cadObj)
 ; Class constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj stackup)) 
-	   obj->stack = makeInstance( 'collection )
+	   obj->layers = makeInstance( 'collection )
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -31,7 +31,7 @@ defmethod( getStackUp (( st stackup ))
 	  setName(temp lpp~>layerName)
 	  setPurpose(temp lpp~>purpose)
 	  getShapesOnLayer(temp)
-	  add(st->stack temp)
+	  add(st->layers temp)
 	  n++
     	);foreach
     	n
@@ -48,15 +48,17 @@ defmethod( getStackUp (( st stackup ))
 defmethod( renderStack (( st stackup ))
   let( (n m)
     m=0
-    foreach(stack st->stack->list->elems
-      printf("Rendering stackup: %d\n" m)
-      n=0
-      foreach(layer stack->list->elems
-        printf("%d: Rendering layer: %s\n" n layer->name)
-        setRef(layer st->ref)
+    ;FIXME: stack is a layer and layer is a shape!!
+    foreach(layer st->layers->list->elems
+      printf("Rendering layer: %d: Name (layer->name): %s \n" m layer->name)
+      ;n=0
+      ; Shapes on layer are being rendered ...
+      ;foreach(shp layer->shapes
+      ;  printf("%d: Rendering layer: %s\n" n layer->name)
+        setRef(layer getRef(st))
         renderShapesOnLayer(layer)
-        n++
-      );foreach
+      ;  n++
+      ;);foreach
       m++
     );foreach
   );let

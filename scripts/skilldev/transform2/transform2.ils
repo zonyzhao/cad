@@ -4,7 +4,7 @@
 defclass( transform2 (cadObj)
 	  (
 	    ( polygon )
-	    ( vertices @reader getVertices)
+	    ( vertices @reader getVertices @writer setVertexCollection)
 	    ( area )
 	    ( transformation )
 	    ( rtran @reader getRectTran)
