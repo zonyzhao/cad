@@ -76,12 +76,12 @@ defmethod( checkDim ((ret reticle))
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
 defmethod( checkGrid ((ret reticle))
-  if( quotient(getWidth(ret) ret->srGrid) - int(quotient(getWidth(ret) ret->srGrid)) > 0.0 then
+  if( abs(quotient(getWidth(ret) ret->srGrid 1.0) - round(getWidth(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
     printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   );if
-  if( quotient(getHeight(ret) ret->srGrid) - int(quotient(getHeight(ret) ret->srGrid)) > 0.0 then
+  if( abs(quotient(getHeight(ret) ret->srGrid 1.0) - round(getHeight(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Height %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
   else
     printf("INFO: Reticle Height %g step is correctly on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
@@ -116,6 +116,16 @@ defmethod( checkRes (( ret reticle ))
     );if
   );let
 ); defmethod
+
+;#####################################################
+; This method checks the periodicity of the inside
+; streets of reticle and ensures that each inner street
+; extends the full length of the reticle without any 
+; jogging 
+;#####################################################
+defmethod( periodicity (( ret reticle ))
+  nil
+);
 
 ;#####################################################
 ; This method checks the reticle's bbox dimensions

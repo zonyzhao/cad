@@ -68,7 +68,51 @@ dbSave(cv)
 dbClose(cv)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-3: test removing a layer from
+; UT-3: Grid checking the snapshot
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="sw_mhcd2_sr"
+;name="membrane_ebh13_Std"
+lib="D91"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+nth(0 ss->layers->list->elems)->name
+classOf(nth(0 ss->layers->list->elems))
+classOf(nth(0 nth(0 ss->layers->list->elems)->shapes->list->elems))
+nth(0 nth(0 ss->layers->list->elems)->shapes->list->elems)->vertices
+dbClose(cv)
+; Render snapshot it in a new cellview
+name="sw_mhcd2_sr_snapshot"
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+getName(nth(1 ss->layers->list->elems))
+getName(nth(2 ss->layers->list->elems))
+getName(nth(3 ss->layers->list->elems))
+getName(nth(4 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+; Open the snapshot cellview and re-check grid
+name="sw_mhcd2_sr_snapshot"
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-4: test removing a layer from
 ;       the stackup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 name="SPM_Y_AH53"

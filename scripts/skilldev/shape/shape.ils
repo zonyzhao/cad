@@ -237,42 +237,69 @@ defmethod( shapeArea (( shp shape ))
 );defmethod
 
 ;#####################################################
-;
+; Checks that all the vertices are on the manufacturing grid
 ;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnDbg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
-;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
+defmethod( checkMfg (( shp shape ))
+  forach(shp shp->geometries
+    foreach( vert shp->vertices
+       ;x=round(xCoord(vert)/shp->mfg) * shp->mfg
+       ;y=round(yCoord(vert)/shp->mfg) * shp->mfg
+    );foreach
+  );foreach
+);defmethod
 
 ;#####################################################
 ;
 ;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnMfg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
-;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
+;defmethod( setOnDbg (( shp shape ))
+;  let( (x y vertices)
+;    vertices = '()
+;    foreach( vert shp->vertices
+;      x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;     y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;      vertex =list(x y)
+;      vertices = cons(vertex vertices)
+;    );foreach
+;    shp->vertices=reverse(vertices)
+;  );let	   
 ;);defmethod
+
+
+;#####################################################
+; quotient(xCoord(vert)/grid 1.0) - round(xCoord(vert)*10)
+;#####################################################
+defmethod( isOnMfg (( shp shape ))
+  let( (onGrid)
+    onGrid = 't
+    foreach( vert shp->vertices
+      if( abs(quotient(xCoord(vert)/getGrid(shp) 1.0) - round(xCoord(vert)*10)) > 0.000001 then
+        printf("ERROR: Shape Vertex X coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
+        onGrid = nil
+      );if
+      if( abs(quotient(yCoord(vert)/getGrid(shp) 1.0) - round(yCoord(vert)*10)) > 0.000001 then
+        printf("ERROR: Shape Vertex Y coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
+        onGrid = nil
+      );if
+    );foreach
+  );let	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setOnMfg (( shp shape ))
+  let( (x y vertices mfg)
+    vertices = '()
+    mfg = getGrid(shp)
+    foreach( vert shp->vertices
+      x=round(xCoord(vert)/mfg) * mfg
+      y=round(yCoord(vert)/mfg) * mfg
+      vertex =list(x y)
+      vertices = cons(vertex vertices)
+    );foreach
+      shp->vertices=reverse(vertices)
+  );let	   
+);defmethod
 
 ;#####################################################
 ; Center the shape's transform centroid to align to the 

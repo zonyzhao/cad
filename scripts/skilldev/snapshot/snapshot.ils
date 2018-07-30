@@ -17,6 +17,33 @@ defmethod( initializeInstance @after ((obj snapshot))
 );defmethod
 
 ;#####################################################
+; Checks the vertices of all shapes for manufacturing grid
+; compliance
+;#####################################################
+defmethod( checkMfg (( ss snapshot ))
+  foreach( layer ss->layers->list->elems
+    printf("INFO: Checking layer for MFG compliance: %s\n" layer->name)
+    foreach(shp layer->shapes->list->elems
+      isOnMfg(shp)
+    );foreach
+  );foreach
+);defmethod
+
+;#####################################################
+; snaps the vertices of all shapes onto the manufacturing grid
+;#####################################################
+defmethod( setOnMfg (( ss snapshot ))
+  let((n)
+    foreach( layer ss->layers->list->elems
+      printf("INFO: Regridding layer: %s\n" layer->layer)
+      foreach(shp layer->shapes->list->elems
+        setOnMfg(shp)
+      );foreach
+    );foreach
+  );let
+);defmethod
+
+;#####################################################
 ; snaps vertices on the database grid
 ;#####################################################
 ;defmethod( setOnDbg (( shp shape ))
@@ -34,23 +61,7 @@ defmethod( initializeInstance @after ((obj snapshot))
 ;	   );let	   
 ;);defmethod
 
-;#####################################################
-; snaps the vertices on the manufacturing grid
-;#####################################################
-;defmethod( setOnMfg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
-;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

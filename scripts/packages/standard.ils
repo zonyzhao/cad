@@ -3543,6 +3543,16 @@ defmethod( checkRes (( ret reticle ))
 ); defmethod
 
 ;#####################################################
+; This method checks the periodicity of the inside
+; streets of reticle and ensures that each inner street
+; extends the full length of the reticle without any 
+; jogging 
+;#####################################################
+defmethod( periodicity (( ret reticle ))
+  nil
+);
+
+;#####################################################
 ; This method checks the reticle's bbox dimensions
 ; (width and height) for Step and Repeat (S&R) value 
 ; provided
@@ -4381,42 +4391,69 @@ defmethod( shapeArea (( shp shape ))
 );defmethod
 
 ;#####################################################
-;
+; Checks that all the vertices are on the manufacturing grid
 ;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnDbg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->dbg) * shp->dbg
-;	           y=round(yCoord(vert)/shp->dbg) * shp->dbg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
+defmethod( checkMfg (( shp shape ))
+  forach(shp shp->geometries
+    foreach( vert shp->vertices
+       ;x=round(xCoord(vert)/shp->mfg) * shp->mfg
+       ;y=round(yCoord(vert)/shp->mfg) * shp->mfg
+    );foreach
+  );foreach
+);defmethod
 
 ;#####################################################
 ;
 ;#####################################################
-; FIXME: This needs to go into geometry class
-;defmethod( setOnMfg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
-;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
+;defmethod( setOnDbg (( shp shape ))
+;  let( (x y vertices)
+;    vertices = '()
+;    foreach( vert shp->vertices
+;      x=round(xCoord(vert)/shp->dbg) * shp->dbg
+;     y=round(yCoord(vert)/shp->dbg) * shp->dbg
+;      vertex =list(x y)
+;      vertices = cons(vertex vertices)
+;    );foreach
+;    shp->vertices=reverse(vertices)
+;  );let	   
 ;);defmethod
+
+
+;#####################################################
+; quotient(xCoord(vert)/grid 1.0) - round(xCoord(vert)*10)
+;#####################################################
+defmethod( isOnMfg (( shp shape ))
+  let( (onGrid)
+    onGrid = 't
+    foreach( vert shp->vertices
+      if( abs(quotient(xCoord(vert)/grid 1.0) - round(xCoord(vert)*10)) > 0.000001 then
+        printf("ERROR: Shape Vertex X coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
+        onGrid = nil
+      );if
+      if( abs(quotient(yCoord(vert)/grid 1.0) - round(yCoord(vert)*10)) > 0.000001 then
+        printf("ERROR: Shape Vertex Y coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
+        onGrid = nil
+      );if
+    );foreach
+  );let	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setOnMfg (( shp shape ))
+  let( (x y vertices mfg)
+    vertices = '()
+    mfg = getGrid(shp)
+    foreach( vert shp->vertices
+      x=round(xCoord(vert)/mfg) * mfg
+      y=round(yCoord(vert)/mfg) * mfg
+      vertex =list(x y)
+      vertices = cons(vertex vertices)
+    );foreach
+      shp->vertices=reverse(vertices)
+  );let	   
+);defmethod
 
 ;#####################################################
 ; Center the shape's transform centroid to align to the 
@@ -4723,6 +4760,7 @@ defmethod( mergeLayer (( lay techLayer ))
 defclass( snapshot (stackup)
    (
 	  ( layerMap @reader getLayerMap @writer setLayerMap)
+	  ( serialfile  @reader getSerialFile @writer setSerialFile)
    )				  
 );defclass
 
@@ -4730,7 +4768,35 @@ defclass( snapshot (stackup)
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj snapshot)) 
-  layerMap = nil	   	     
+  layerMap = nil
+  serialfile = nil	   	     
+);defmethod
+
+;#####################################################
+; Checks the vertices of all shapes for manufacturing grid
+; compliance
+;#####################################################
+defmethod( checkMfg (( ss snapshot ))
+  foreach( layer ss->layers->list->elems
+    printf("INFO: Checking layer for MFG compliance: %s\n" layer->name)
+    foreach(shp layer->shapes->list->elems
+      isOnMfg(shp)
+    );foreach
+  );foreach
+);defmethod
+
+;#####################################################
+; snaps the vertices of all shapes onto the manufacturing grid
+;#####################################################
+defmethod( setOnMfg (( ss snapshot ))
+  let((n)
+    foreach( layer ss->layers->list->elems
+      printf("INFO: Regridding layer: %s\n" layer->layer)
+      foreach(shp layer->shapes->list->elems
+        setOnMfg(shp)
+      );foreach
+    );foreach
+  );let
 );defmethod
 
 ;#####################################################
@@ -4751,23 +4817,7 @@ defmethod( initializeInstance @after ((obj snapshot))
 ;	   );let	   
 ;);defmethod
 
-;#####################################################
-; snaps the vertices on the manufacturing grid
-;#####################################################
-;defmethod( setOnMfg (( shp shape ))
-;	   let( (x
-;	   	 y
-;		 vertices)
-;		 vertices = '()
-;		 foreach( vert shp->vertices
-;	           x=round(xCoord(vert)/shp->mfg) * shp->mfg
-;	           y=round(yCoord(vert)/shp->mfg) * shp->mfg
-;		   vertex =list(x y)
-;		   vertices = cons(vertex vertices)
-;		 );foreach
-;		 shp->vertices=reverse(vertices)
-;	   );let	   
-;);defmethod
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
