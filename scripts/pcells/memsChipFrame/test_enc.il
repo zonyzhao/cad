@@ -1,0 +1,1 @@
+encrypt("/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/pcells/memsChipFrame/memsChipFrame.ils"  "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/pcells/memsChipFrame/memsChipFrame_enc.ils")
