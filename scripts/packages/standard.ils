@@ -3501,12 +3501,12 @@ defmethod( checkDim ((ret reticle))
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
 defmethod( checkGrid ((ret reticle))
-  if( quotient(getWidth(ret) ret->srGrid) - int(quotient(getWidth(ret) ret->srGrid)) > 0.0 then
+  if( abs(quotient(getWidth(ret) ret->srGrid 1.0) - round(getWidth(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
     printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   );if
-  if( quotient(getHeight(ret) ret->srGrid) - int(quotient(getHeight(ret) ret->srGrid)) > 0.0 then
+  if( abs(quotient(getHeight(ret) ret->srGrid 1.0) - round(getHeight(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Height %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
   else
     printf("INFO: Reticle Height %g step is correctly on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
@@ -4426,11 +4426,11 @@ defmethod( isOnMfg (( shp shape ))
   let( (onGrid)
     onGrid = 't
     foreach( vert shp->vertices
-      if( abs(quotient(xCoord(vert)/grid 1.0) - round(xCoord(vert)*10)) > 0.000001 then
+      if( abs(quotient(xCoord(vert)/getGrid(shp) 1.0) - round(xCoord(vert)*10)) > 0.000001 then
         printf("ERROR: Shape Vertex X coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
         onGrid = nil
       );if
-      if( abs(quotient(yCoord(vert)/grid 1.0) - round(yCoord(vert)*10)) > 0.000001 then
+      if( abs(quotient(yCoord(vert)/getGrid(shp) 1.0) - round(yCoord(vert)*10)) > 0.000001 then
         printf("ERROR: Shape Vertex Y coordinate NOT ON a %g um grid: (%g,%g) \n" float(getGrid(shp)) float(xCoord(vert)) float(yCoord(vert)))
         onGrid = nil
       );if

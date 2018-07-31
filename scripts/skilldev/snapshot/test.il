@@ -133,3 +133,382 @@ cv = dbOpenCellViewByType( lib name view "maskLayout")
 renderStack(ss)
 dbSave(cv)
 dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-5: Tech conversion and re-mapping 
+;       layers manually
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="SPM_X_AH53"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "resistor")
+getName(nth(0 ss->layers->list->elems))
+getName(nth(1 ss->layers->list->elems))
+setName(nth(1 ss->layers->list->elems) "numbers")
+getName(nth(1 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Tech conversion and re-mapping 
+;       layers manually
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="SPM_Y_AH53"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "resistor")
+getName(nth(0 ss->layers->list->elems))
+getName(nth(1 ss->layers->list->elems))
+setName(nth(1 ss->layers->list->elems) "numbers")
+getName(nth(1 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-7: Tech conversion and re-mapping 
+;       layers manually
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="SPM_Y_AH32"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "resistor")
+getName(nth(0 ss->layers->list->elems))
+getName(nth(1 ss->layers->list->elems))
+setName(nth(1 ss->layers->list->elems) "numbers")
+getName(nth(1 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-8: Tech conversion and re-mapping 
+;       layers manually
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="bug"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "electrode")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-8: Tech conversion and re-mapping 
+;       layers manually - BNB RE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_RE"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "resistor")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-9: Tech conversion and re-mapping 
+;       layers manually - BNB EL
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_EL"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "electrode")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-10: Tech conversion and re-mapping 
+;       layers manually - BNB TH
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_TH"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "thick")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-10: Tech conversion and re-mapping 
+;       layers manually - BNB MB
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_MB"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "membrane")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-11: Tech conversion and re-mapping 
+;       layers manually - BNB SV
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_SV"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "spacer_via")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-12: Tech conversion and re-mapping 
+;       layers manually - BNB DL
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_DL"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "dielectric")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-13: Tech conversion and re-mapping 
+;       layers manually - BNB GL
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_GL"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "glass")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-14: Tech conversion and re-mapping 
+;       layers manually - BNB BR
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_BR"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "Bond_Ring")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-15: Tech conversion and re-mapping 
+;       layers manually - BNB LM
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="asml_1_bnb_LM"
+lib="numbers"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+; Render snapshot it in a new cellview in new technology
+lib="reticle"
+view = "layout" 
+cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+setRef(ss cv)
+checkMfg(ss)
+setOnMfg(ss)
+checkMfg(ss)
+length(ss->layers->list->elems)
+getName(nth(0 ss->layers->list->elems))
+setName(nth(0 ss->layers->list->elems) "Lid_Metal")
+getName(nth(0 ss->layers->list->elems))
+renderStack(ss)
+dbSave(cv)
+dbClose(cv)
+
+
