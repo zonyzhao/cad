@@ -5346,6 +5346,43 @@ defmethod( generateQuarterCircle (( cir circle ))
 		calculateCentroid(cir->rtran)
 	   );let
 ) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "inverse quarter circle" vertex list
+; forming a rounded inner corner or inverse arc polygon
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generateQuarterCircleInv (( cir circle ))
+	   let( (count)
+	   	;Initialize Members
+	   	cir->vertices = '()
+           	cir->direction= 0
+		cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+	   	cir->vertices = cons(list(0.0 cir->radius) cir->vertices)
+		cir->X = 0.0
+		cir->Y = cir->radius
+		cir->orig = list(0.0 0.0)
+		genNextVertex(cir)
+		count = 0
+	   	while( !( (abs(cir->X-cir->radius) < (cir->grid)) && (abs(cir->Y) < (cir->grid)) )
+	   	        count = count + 1
+		 	genNextVertex(cir)
+		 	cir->vertices = cons(list(cir->X cir->Y) cir->vertices)	  		      
+	   	);while
+	   	if( count > 0 then
+		    ; add in radial vertex to close circle
+		    cir->vertices = cons(list(cir->radius 0.0) cir->vertices)
+		    cir->vertices = cons(list(cir->radius cir->radius) cir->vertices)
+	       	    count
+	   	else
+		    nil
+	   	);if
+		; Need to add starting point for algorithms that rely upon
+ 		; vertice perimeter completion (start vertex = end vertex)
+		setCentroid(cir list(0.0 0.0))
+		setRectTran(cir)
+		calculateCentroid(cir->rtran)
+	   );let
+) ; defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

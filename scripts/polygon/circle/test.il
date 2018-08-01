@@ -140,6 +140,51 @@ cloneRectTran(cTran)
 lib="reticle"
 name="quarterCircleTestTran"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+setRef(cTran cv)
+render(cTran)
+dbSave(cv)
+dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Generate quarter circle
+;       and add it to a transform
+;       for rendering. Rotate 90 degrees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cir = makeInstance( 'circle )
+setRadius(cir 100.0)
+setGrid(cir 0.1)
+generateQuarterCircle(cir)
+cTran = makeInstance( 'transform2 )
+setVertices(cTran getVertices(cir))
+setCentroid(cTran getCentroid(cir))
+cloneRectTran(cTran)
+rotate(cTran 90.0)
+
+lib="reticle"
+name="quarterCircleTestTranRot"
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+setRef(cTran cv)
+render(cTran)
+dbSave(cv)
+dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-7: Generate inverse quarter circle
+;       and add it to a transform
+;       for rendering
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cir = makeInstance( 'circle )
+setRadius(cir 100.0)
+setGrid(cir 0.1)
+generateQuarterCircleInv(cir)
+cTran = makeInstance( 'transform2 )
+setVertices(cTran getVertices(cir))
+setCentroid(cTran getCentroid(cir))
+cloneRectTran(cTran)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="reticle"
+name="quarterCircleInvTest"
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cir cv)
 render(cir)
 dbSave(cv)
