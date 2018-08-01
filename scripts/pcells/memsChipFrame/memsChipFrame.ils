@@ -1,6 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  memsChipFrame.ils: Chip outline Pcell for MEMS Skill++ code 
-;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly!!!
+;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly - very slow to compile when due to
+;;;;;;;;;;;;;;;;         on-grid, rounded corners!!!
 ;;;;;;;;;;;;;;;;  FIXME: need to add in rectangular layer for
 ;;;;;;;;;;;;;;;;  FIXME: Need to suppress egdeWith user param
 ;;;;;;;;;;;;;;;;  FIMXE: Need to set min/max width and height to the frame's 
@@ -15,6 +16,7 @@ defclass( memsChipFrame (PcellParam)
 		( ol1 )
 		( ol2 )
 		( ol3 )
+		( ol4 )
 		( centroid )
 		( ref @reader getRef @writer setRef )
 		( rtrans )
@@ -29,7 +31,8 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
 	   obj->ol0 = makeInstance( 'outline )
 	   obj->ol1 = makeInstance( 'outline )
 	   obj->ol2 = makeInstance( 'outline )
-	   obj->ol3 = makeInstance( 'outline )
+	   obj->ol3 = makeInstance( 'cframe )
+	   obj->ol4 = makeInstance( 'outline )
 	   obj->centroid = makeInstance('point2)
 	   obj->rtrans = makeInstance('rectTrans)
 );defmethod
@@ -37,7 +40,7 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device memsChipFrame))
-  let( (width length edgeWidth ol0RectTran 
+  let( (minwid minlen width length edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
         bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset)
@@ -46,11 +49,14 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; FIXME: hard wired here temporarily. Need to get the from TF ...
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   minwid = 2000.0
+   minlen = 2000.0
    ; frame widths
    backSideEdgeWidth = 39.5
    nitrideEtchEdgeWidth = 95.0
    bondRingEdgeWidth = 500.0
    lidMetalRingEdgeWidth = 100.0
+   lidEtchRingEdgeWidth = 1000.0
    ; frame offsets from outter edge references
    bondRingEdgeInnerOffset = 195.0
    lidMetalEdgeInnerOffset = 200.0
@@ -64,11 +70,24 @@ defmethod( draw ((device memsChipFrame))
    setPurpose(device->ol2 "drawing")
    setLayer(device->ol3 "Lid_Metal")
    setPurpose(device->ol3 "drawing")
+   setLayer(device->ol4 "LID_ETCH")
+   setPurpose(device->ol4 "drawing")
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; User Parameters - Outside Dimensions
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    width = getParamValue(device 'width)
    length = getParamValue(device 'length)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Minimum and clamp checks
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; width
+   if(width < minwid then
+      width = minwid
+   );if
+   ; height
+   if(length < minlen then
+      length = minlen
+   );if
 ;  edgeWidth = getParamValue(device 'edgeWidth)
    ; Outline 0
    setWidth(device->ol0 width)
@@ -84,8 +103,12 @@ defmethod( draw ((device memsChipFrame))
    setEdgeWidth(device->ol2 bondRingEdgeWidth)
    ; Outline 3
    setWidth(device->ol3 width-2*bondRingEdgeInnerOffset-2*lidMetalEdgeInnerOffset)
-   setLength(device->ol3 length-2*bondRingEdgeInnerOffset-2*lidMetalEdgeInnerOffset)
+   setHeight(device->ol3 length-2*bondRingEdgeInnerOffset-2*lidMetalEdgeInnerOffset)
    setEdgeWidth(device->ol3 lidMetalRingEdgeWidth)
+   ; Outline 4
+   setWidth(device->ol4 width-2*bondRingEdgeInnerOffset-2*bondRingEdgeWidth-2*lidEtchRingEdgeInnerOffset)
+   setLength(device->ol4 length-2*bondRingEdgeInnerOffset-2*bondRingEdgeWidth-2*lidEtchRingEdgeInnerOffset)
+   setEdgeWidth(device->ol4 lidEtchRingEdgeWidth)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Set the References
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,6 +116,7 @@ defmethod( draw ((device memsChipFrame))
    setRef(device->ol1 getRef(device))
    setRef(device->ol2 getRef(device))
    setRef(device->ol3 getRef(device))
+   setRef(device->ol4 getRef(device))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Generate the assemblies 
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -100,6 +124,7 @@ defmethod( draw ((device memsChipFrame))
    generate(device->ol1)
    generate(device->ol2)
    generate(device->ol3)
+   generate(device->ol4)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Render the assemblies
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -107,6 +132,7 @@ defmethod( draw ((device memsChipFrame))
    render(device->ol1)
    render(device->ol2)
    render(device->ol3)
+   render(device->ol4)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Generate a RectTran - Only need the outter oultine
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
