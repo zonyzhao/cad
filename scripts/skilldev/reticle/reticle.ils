@@ -1,5 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
+;  reticle.il: Reticle Object 
+;   FIXME: After the inner streets are checked for compliance, there needs to be
+;          a check to ensure that the outter streets of the combined die site 
+;          outter streets are centered within the reticle outline. The combination
+;          of these checks ensures that the inter and intra reticle streets are
+;          periodic and can be numbered via the commutative numbering algorithm  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticle (cv)
 	  (

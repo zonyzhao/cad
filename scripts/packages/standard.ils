@@ -3451,7 +3451,12 @@ defmethod( flattenInstance (( inst instance ) )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  reticle.il: Reticle Object 
+;  reticle.il: Reticle Object 
+;   FIXME: After the inner streets are checked for compliance, there needs to be
+;          a check to ensure that the outter streets of the combined die site 
+;          outter streets are centered within the reticle outline. The combination
+;          of these checks ensures that the inter and intra reticle streets are
+;          periodic and can be numbered via the commutative numbering algorithm  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticle (cv)
 	  (
@@ -6540,13 +6545,22 @@ defmethod( generate (( mtc memsCapTopCont ))
 ;######################################################
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; cframe.ils: Chip/Reticle frame with specilized corners  
+; FIXME: This cornered frame has limitations. The radius is defined via 
+;        the the frame edgewidth. For edgewidths larger than TBD (~500um) 
+;        the number of on grid, rounded corner points exceeds the Cadence
+;        rendering maximum of 2048. The problem is that the circle class
+;        needs to detect when a circle class polygon is greater than 2048,
+;        and then create a collection of arcs that have points less than 2048.
+;        This collection needs to be rendered, and then a post rendering merge
+;        conducted within Cadence to form the large circumference radial 
+;        geometry.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cframe (assembly)
 	  (
 		( width @reader getWidth @writer setWidth )
 		( height @reader getHeight @writer setHeight )
 		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
-		( overlap @reader getOverlap @writer setOverlap )
+		( rounded @reader getRounded @writer setRounded )		
 		( layer @reader getLayer @writer setLayer )
 	  	( purpose @reader getPurpose @writer setPurpose )
 		( centroid @reader getCentroid @writer setCentroid )			
@@ -6557,9 +6571,9 @@ defclass( cframe (assembly)
 ;######################################################
 defmethod( initializeInstance @after ((obj cframe)) 
 	   obj->width     = 10000.0
-           obj->height    = 10000.0
-	   obj->edgeWidth = 95.0
-	   obj->overlap   = 4.0
+           obj->height    = 10000.0	   
+	   obj->edgeWidth = 100.0
+	   obj->rounded = 't
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 	   obj->centroid = makeInstance( 'point2 )
@@ -6815,6 +6829,389 @@ defmethod( generate (( cfr cframe ))
     addTransform(geomGroup tTran)
     addTransform(geomGroup lTran)
     addTransform(geomGroup rTran)
+    addTransform(geomGroup uroTran)
+    addTransform(geomGroup uloTran)
+    addTransform(geomGroup lroTran)
+    addTransform(geomGroup lloTran)
+    addTransform(geomGroup uriTran)
+    addTransform(geomGroup uliTran)
+    addTransform(geomGroup lriTran)
+    addTransform(geomGroup lliTran)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; this assembly
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    addGeometry(cfr geomGroup)
+    rtsAdd(cfr->rtrans getRectTran(geomGroup))
+    ;rtsUnion(cfr->rtrans)
+  );let
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; cframe2.ils: Chip/Reticle frame with specilized corners. This version has
+;              corner dimensions controlled by a radius member.
+; FIXME: This cornered frame has limitations. The radius is defined via 
+;        the the frame edgewidth. For edgewidths larger than TBD (~500um) 
+;        the number of on grid, rounded corner points exceeds the Cadence
+;        rendering maximum of 2048. The problem is that the circle class
+;        needs to detect when a circle class polygon is greater than 2048,
+;        and then create a collection of arcs that have points less than 2048.
+;        This collection needs to be rendered, and then a post rendering merge
+;        conducted within Cadence to form the large circumference radial 
+;        geometry.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cframe2 (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
+		( rounded @reader getRounded @writer setRounded )
+		( radius @reader getRadius @writer setRadius )
+		( plate  @reader getPlate @writer setPlate )		
+		( layer @reader getLayer @writer setLayer )
+	  	( purpose @reader getPurpose @writer setPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj cframe2)) 
+	   obj->width     = 10000.0
+           obj->height    = 10000.0	   
+	   obj->edgeWidth = 500.0
+	   obj->rounded = 't
+	   obj->radius = 100.0
+	   obj->plate = nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->centroid = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( cfr cframe2 ))
+  let((wid hgt ewid mwid mhgt radius ibot itop ileft iright 
+       obot otop oleft oright ilTran irTran ibTran itTran 
+       olTran orTran obTran otTran uro ulo llo lro medg grid
+       uri uli lli lri uroTran uloTran lloTran lroTran
+       uriTran uliTran lliTran lriTran)
+    wid = cfr->width 
+    hgt = cfr->height
+    ewid = cfr->edgeWidth
+    radius = cfr->radius
+    medg = 20.0
+    mwid = 2*ewid
+    mhgt = mwid
+    grid = 0.1
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Minimum and clamp checks
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; edge
+    if(ewid < medg then
+      ewid = medg
+    );if
+    ; width
+    if(wid < mwid then
+      wid = mwid
+    );if
+    ; height
+    if(hgt < mhgt then
+      hgt = mhgt
+    );if
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Bottom
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ibot = makeInstance( 'rectangle )
+    setWidth(ibot wid-2.0*ewid-2.0*radius)
+    setHeight(ibot ewid-2.0*radius)
+    generate(ibot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Top
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    itop = makeInstance( 'rectangle )
+    setWidth(itop wid-2.0*ewid-2.0*radius)
+    setHeight(itop ewid-2.0*radius)
+    generate(itop)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Left
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ileft = makeInstance( 'rectangle )
+    setWidth(ileft ewid-2.0*radius)
+    setHeight(ileft hgt-2.0*ewid-2.0*radius)
+    generate(ileft)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Right
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    iright = makeInstance( 'rectangle )
+    setWidth(iright ewid-2.0*radius)
+    setHeight(iright hgt-2.0*ewid+2.0*radius)
+    generate(iright)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Bottom
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    obot = makeInstance( 'rectangle )
+    setWidth(obot wid-2*radius)
+    setHeight(obot radius)
+    generate(obot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Top
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    otop = makeInstance( 'rectangle )
+    setWidth(otop wid-2*radius)
+    setHeight(otop radius)
+    generate(otop)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Left
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    oleft = makeInstance( 'rectangle )
+    setWidth(oleft radius)
+    setHeight(oleft hgt-2*radius)
+    generate(oleft)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Right
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    oright = makeInstance( 'rectangle )
+    setWidth(oright radius)
+    setHeight(oright hgt-2*radius)
+    generate(oright)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uro = makeInstance( 'circle )
+    setRadius(uro radius)
+    setGrid(uro grid)
+    generateQuarterCircle(uro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ulo = makeInstance( 'circle )
+    setRadius(ulo radius)
+    setGrid(ulo grid)
+    generateQuarterCircle(ulo)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lro = makeInstance( 'circle )
+    setRadius(lro radius)
+    setGrid(lro grid)
+    generateQuarterCircle(lro)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    llo = makeInstance( 'circle )
+    setRadius(llo radius)
+    setGrid(llo grid)
+    generateQuarterCircle(llo)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uri = makeInstance( 'circle )
+    setRadius(uri radius)
+    setGrid(uri grid)
+    generateQuarterCircleInv(uri)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uli = makeInstance( 'circle )
+    setRadius(uli radius)
+    setGrid(uli grid)
+    generateQuarterCircleInv(uli)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lri = makeInstance( 'circle )
+    setRadius(lri radius)
+    setGrid(lri grid)
+    generateQuarterCircleInv(lri)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lli = makeInstance( 'circle )
+    setRadius(lli radius)
+    setGrid(lli grid)
+    generateQuarterCircleInv(lli)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Bottom transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ibTran = makeInstance( 'transform2 )
+    setVertices(ibTran getVertices(ibot))
+    setCentroid(ibTran getCentroid(ibot))
+    cloneRectTran(ibTran)
+    setLayer(ibTran getLayer(cfr))
+    setPurpose(ibTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Top transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    itTran = makeInstance( 'transform2 )
+    setVertices(itTran getVertices(itop))
+    setCentroid(itTran getCentroid(itop))
+    cloneRectTran(itTran)
+    setLayer(itTran getLayer(cfr))
+    setPurpose(itTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Left transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ilTran = makeInstance( 'transform2 )
+    setVertices(ilTran getVertices(ileft))
+    setCentroid(ilTran getCentroid(ileft))
+    cloneRectTran(ilTran)
+    setLayer(ilTran getLayer(cfr))
+    setPurpose(ilTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Inner Right transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    irTran = makeInstance( 'transform2 )
+    setVertices(irTran getVertices(iright))
+    setCentroid(irTran getCentroid(iright))
+    cloneRectTran(irTran)
+    setLayer(irTran getLayer(cfr))
+    setPurpose(irTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Bottom transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    obTran = makeInstance( 'transform2 )
+    setVertices(obTran getVertices(obot))
+    setCentroid(obTran getCentroid(obot))
+    cloneRectTran(obTran)
+    setLayer(obTran getLayer(cfr))
+    setPurpose(obTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Top transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    otTran = makeInstance( 'transform2 )
+    setVertices(otTran getVertices(otop))
+    setCentroid(otTran getCentroid(otop))
+    cloneRectTran(otTran)
+    setLayer(otTran getLayer(cfr))
+    setPurpose(otTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Left transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    olTran = makeInstance( 'transform2 )
+    setVertices(olTran getVertices(oleft))
+    setCentroid(olTran getCentroid(oleft))
+    cloneRectTran(olTran)
+    setLayer(olTran getLayer(cfr))
+    setPurpose(olTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Right transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    orTran = makeInstance( 'transform2 )
+    setVertices(orTran getVertices(oright))
+    setCentroid(orTran getCentroid(oright))
+    cloneRectTran(orTran)
+    setLayer(orTran getLayer(cfr))
+    setPurpose(orTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uroTran = makeInstance( 'transform2 )
+    setVertices(uroTran getVertices(uro))
+    setCentroid(uroTran getCentroid(uro))
+    cloneRectTran(uroTran)
+    setLayer(uroTran getLayer(cfr))
+    setPurpose(uroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uloTran = makeInstance( 'transform2 )
+    setVertices(uloTran getVertices(ulo))
+    setCentroid(uloTran getCentroid(ulo))
+    cloneRectTran(uloTran)
+    setLayer(uloTran getLayer(cfr))
+    setPurpose(uloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lroTran = makeInstance( 'transform2 )
+    setVertices(lroTran getVertices(lro))
+    setCentroid(lroTran getCentroid(lro))
+    cloneRectTran(lroTran)
+    setLayer(lroTran getLayer(cfr))
+    setPurpose(lroTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Outside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lloTran = makeInstance( 'transform2 )
+    setVertices(lloTran getVertices(llo))
+    setCentroid(lloTran getCentroid(llo))
+    cloneRectTran(lloTran)
+    setLayer(lloTran getLayer(cfr))
+    setPurpose(lloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uriTran = makeInstance( 'transform2 )
+    setVertices(uriTran getVertices(uri))
+    setCentroid(uriTran getCentroid(uri))
+    cloneRectTran(uriTran)
+    setLayer(uriTran getLayer(cfr))
+    setPurpose(uriTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uliTran = makeInstance( 'transform2 )
+    setVertices(uliTran getVertices(uli))
+    setCentroid(uliTran getCentroid(uli))
+    cloneRectTran(uliTran)
+    setLayer(uliTran getLayer(cfr))
+    setPurpose(uliTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lriTran = makeInstance( 'transform2 )
+    setVertices(lriTran getVertices(lri))
+    setCentroid(lriTran getCentroid(lri))
+    cloneRectTran(lriTran)
+    setLayer(lriTran getLayer(cfr))
+    setPurpose(lriTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lliTran = makeInstance( 'transform2 )
+    setVertices(lliTran getVertices(lli))
+    setCentroid(lliTran getCentroid(lli))
+    cloneRectTran(lliTran)
+    setLayer(lliTran getLayer(cfr))
+    setPurpose(lliTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ; Translate Frame Edges to correct positions
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(ibTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
+    translate(itTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
+    translate(ilTran list(-wid/2.0+ewid/2+radius/2.0 0.0))
+    translate(irTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
+    translate(obTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
+    translate(otTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
+    translate(olTran list(-wid/2.0+ewid/2.0+radius/2.0 0.0))
+    translate(orTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
+    translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid+radius/2.0))
+    rotate(uloTran 90.0)
+    translate(uloTran list(-wid/2.0+ewid-radius/2.0 hgt/2.0-ewid+radius/2.0))
+    rotate(lroTran -90.0)
+    translate(lroTran list(wid/2.0-ewid+radius/2.0 -hgt/2.0+ewid-radius/2.0))
+    rotate(lloTran 180.0)
+    translate(lloTran list(-wid/2.0+ewid-radius/2.0 -hgt/2.0+ewid-radius/2.0))
+    translate(uriTran list(wid/2.0-2*ewid+radius/2.0 hgt/2.0-2.0*ewid+radius/2.0))
+    rotate(uliTran 90.0)
+    translate(uliTran list(-wid/2.0+2*ewid-radius/2.0 hgt/2.0-2.0*ewid+radius/2.0))    
+    rotate(lriTran -90.0)
+    translate(lriTran list(wid/2.0-2*ewid+radius/2.0 -hgt/2.0+2.0*ewid-radius/2.0))  
+    rotate(lliTran 180.0)
+    translate(lliTran list(-wid/2.0+2*ewid-radius/2.0 -hgt/2.0+2.0*ewid-radius/2.0))   
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup ibTran)
+    addTransform(geomGroup itTran)
+    addTransform(geomGroup ilTran)
+    addTransform(geomGroup irTran)
+    addTransform(geomGroup obTran)
+    addTransform(geomGroup otTran)
+    addTransform(geomGroup olTran)
+    addTransform(geomGroup orTran)
     addTransform(geomGroup uroTran)
     addTransform(geomGroup uloTran)
     addTransform(geomGroup lroTran)
@@ -7245,7 +7642,8 @@ defmethod( draw ((device outlineChip))
   );let
 );defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  memsChipFrame.ils: Chip outline Pcell for MEMS Skill++ code 
-;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly!!!
+;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly - very slow to compile when due to
+;;;;;;;;;;;;;;;;         on-grid, rounded corners!!!
 ;;;;;;;;;;;;;;;;  FIXME: need to add in rectangular layer for
 ;;;;;;;;;;;;;;;;  FIXME: Need to suppress egdeWith user param
 ;;;;;;;;;;;;;;;;  FIMXE: Need to set min/max width and height to the frame's 
@@ -7284,7 +7682,7 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device memsChipFrame))
-  let( (width length edgeWidth ol0RectTran 
+  let( (minwid minlen width length edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
         bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset)
@@ -7293,12 +7691,14 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; FIXME: hard wired here temporarily. Need to get the from TF ...
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   minwid = 2000.0
+   minlen = 2000.0
    ; frame widths
    backSideEdgeWidth = 39.5
    nitrideEtchEdgeWidth = 95.0
    bondRingEdgeWidth = 500.0
    lidMetalRingEdgeWidth = 100.0
-   lidEtchRingEdgeWidth = 500.0
+   lidEtchRingEdgeWidth = 1000.0
    ; frame offsets from outter edge references
    bondRingEdgeInnerOffset = 195.0
    lidMetalEdgeInnerOffset = 200.0
@@ -7319,6 +7719,17 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    width = getParamValue(device 'width)
    length = getParamValue(device 'length)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Minimum and clamp checks
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; width
+   if(width < minwid then
+      width = minwid
+   );if
+   ; height
+   if(length < minlen then
+      length = minlen
+   );if
 ;  edgeWidth = getParamValue(device 'edgeWidth)
    ; Outline 0
    setWidth(device->ol0 width)

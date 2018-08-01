@@ -1,5 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; cframe.ils: Chip/Reticle frame with specilized corners  
+; cframe2.ils: Chip/Reticle frame with specilized corners. This version has
+;              corner dimensions controlled by a radius member.
 ; FIXME: This cornered frame has limitations. The radius is defined via 
 ;        the the frame edgewidth. For edgewidths larger than TBD (~500um) 
 ;        the number of on grid, rounded corner points exceeds the Cadence
@@ -10,12 +11,14 @@
 ;        conducted within Cadence to form the large circumference radial 
 ;        geometry.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( cframe (assembly)
+defclass( cframe2 (assembly)
 	  (
 		( width @reader getWidth @writer setWidth )
 		( height @reader getHeight @writer setHeight )
 		( edgeWidth @reader getEdgeWidth @writer setEdgeWidth )
-		( rounded @reader getRounded @writer setRounded )		
+		( rounded @reader getRounded @writer setRounded )
+		( radius @reader getRadius @writer setRadius )
+		( plate  @reader getPlate @writer setPlate )		
 		( layer @reader getLayer @writer setLayer )
 	  	( purpose @reader getPurpose @writer setPurpose )
 		( centroid @reader getCentroid @writer setCentroid )			
@@ -24,11 +27,13 @@ defclass( cframe (assembly)
 ;######################################################
 ;# Constructor
 ;######################################################
-defmethod( initializeInstance @after ((obj cframe)) 
+defmethod( initializeInstance @after ((obj cframe2)) 
 	   obj->width     = 10000.0
            obj->height    = 10000.0	   
-	   obj->edgeWidth = 100.0
+	   obj->edgeWidth = 500.0
 	   obj->rounded = 't
+	   obj->radius = 100.0
+	   obj->plate = nil
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 	   obj->centroid = makeInstance( 'point2 )
@@ -36,14 +41,16 @@ defmethod( initializeInstance @after ((obj cframe))
 ;######################################################
 ; Generates the assembly
 ;######################################################
-defmethod( generate (( cfr cframe ))
-  let((wid hgt ewid mwid mhgt bot top left right lTran
-       rTran bTran tTran uro ulo llo lro medg grid
+defmethod( generate (( cfr cframe2 ))
+  let((wid hgt ewid mwid mhgt radius ibot itop ileft iright 
+       obot otop oleft oright ilTran irTran ibTran itTran 
+       olTran orTran obTran otTran uro ulo llo lro medg grid
        uri uli lli lri uroTran uloTran lloTran lroTran
        uriTran uliTran lliTran lriTran)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
+    radius = cfr->radius
     medg = 20.0
     mwid = 2*ewid
     mhgt = mwid
@@ -64,125 +71,189 @@ defmethod( generate (( cfr cframe ))
       hgt = mhgt
     );if
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Bottom
+    ; Frame Inner Bottom
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    bot = makeInstance( 'rectangle )
-    setWidth(bot wid-2*ewid+2*grid)
-    setHeight(bot ewid)
-    generate(bot)
+    ibot = makeInstance( 'rectangle )
+    setWidth(ibot wid-2.0*ewid-2.0*radius)
+    setHeight(ibot ewid-2.0*radius)
+    generate(ibot)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Top
+    ; Frame Inner Top
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    top = makeInstance( 'rectangle )
-    setWidth(top wid-2*ewid+2*grid)
-    setHeight(top ewid)
-    generate(top)
+    itop = makeInstance( 'rectangle )
+    setWidth(itop wid-2.0*ewid-2.0*radius)
+    setHeight(itop ewid-2.0*radius)
+    generate(itop)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Left
+    ; Frame Inner Left
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    left = makeInstance( 'rectangle )
-    setWidth(left ewid)
-    setHeight(left hgt-2*ewid+2*grid)
-    generate(left)
+    ileft = makeInstance( 'rectangle )
+    setWidth(ileft ewid-2.0*radius)
+    setHeight(ileft hgt-2.0*ewid-2.0*radius)
+    generate(ileft)
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Right
+    ; Frame Inner Right
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    right = makeInstance( 'rectangle )
-    setWidth(right ewid)
-    setHeight(right hgt-2*ewid+2*grid)
-    generate(right)
+    iright = makeInstance( 'rectangle )
+    setWidth(iright ewid-2.0*radius)
+    setHeight(iright hgt-2.0*ewid+2.0*radius)
+    generate(iright)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Bottom
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    obot = makeInstance( 'rectangle )
+    setWidth(obot wid-2*radius)
+    setHeight(obot radius)
+    generate(obot)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Top
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    otop = makeInstance( 'rectangle )
+    setWidth(otop wid-2*radius)
+    setHeight(otop radius)
+    generate(otop)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Left
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    oleft = makeInstance( 'rectangle )
+    setWidth(oleft radius)
+    setHeight(oleft hgt-2*radius)
+    generate(oleft)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Right
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    oright = makeInstance( 'rectangle )
+    setWidth(oright radius)
+    setHeight(oright hgt-2*radius)
+    generate(oright)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UR Outside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     uro = makeInstance( 'circle )
-    setRadius(uro ewid)
-    setGrid(uro 0.1)
+    setRadius(uro radius)
+    setGrid(uro grid)
     generateQuarterCircle(uro)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UL Outside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ulo = makeInstance( 'circle )
-    setRadius(ulo ewid)
-    setGrid(ulo 0.1)
+    setRadius(ulo radius)
+    setGrid(ulo grid)
     generateQuarterCircle(ulo)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; LR Outside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     lro = makeInstance( 'circle )
-    setRadius(lro ewid)
-    setGrid(lro 0.1)
+    setRadius(lro radius)
+    setGrid(lro grid)
     generateQuarterCircle(lro)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; LR Outside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     llo = makeInstance( 'circle )
-    setRadius(llo ewid)
-    setGrid(llo 0.1)
+    setRadius(llo radius)
+    setGrid(llo grid)
     generateQuarterCircle(llo)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UR Inside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     uri = makeInstance( 'circle )
-    setRadius(uri ewid)
-    setGrid(uri 0.1)
+    setRadius(uri radius)
+    setGrid(uri grid)
     generateQuarterCircleInv(uri)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UL Inside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     uli = makeInstance( 'circle )
-    setRadius(uli ewid)
-    setGrid(uli 0.1)
+    setRadius(uli radius)
+    setGrid(uli grid)
     generateQuarterCircleInv(uli)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; LR Inside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     lri = makeInstance( 'circle )
-    setRadius(lri ewid)
-    setGrid(lri 0.1)
+    setRadius(lri radius)
+    setGrid(lri grid)
     generateQuarterCircleInv(lri)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; LL Inside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     lli = makeInstance( 'circle )
-    setRadius(lli ewid)
-    setGrid(lli 0.1)
+    setRadius(lli radius)
+    setGrid(lli grid)
     generateQuarterCircleInv(lli)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Bottom transform
+    ; Frame Inner Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    bTran = makeInstance( 'transform2 )
-    setVertices(bTran getVertices(bot))
-    setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
-    setLayer(bTran getLayer(cfr))
-    setPurpose(bTran getPurpose(cfr))
+    ibTran = makeInstance( 'transform2 )
+    setVertices(ibTran getVertices(ibot))
+    setCentroid(ibTran getCentroid(ibot))
+    cloneRectTran(ibTran)
+    setLayer(ibTran getLayer(cfr))
+    setPurpose(ibTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Top transform
+    ; Frame Inner Top transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    tTran = makeInstance( 'transform2 )
-    setVertices(tTran getVertices(top))
-    setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
-    setLayer(tTran getLayer(cfr))
-    setPurpose(tTran getPurpose(cfr))
+    itTran = makeInstance( 'transform2 )
+    setVertices(itTran getVertices(itop))
+    setCentroid(itTran getCentroid(itop))
+    cloneRectTran(itTran)
+    setLayer(itTran getLayer(cfr))
+    setPurpose(itTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Left transform
+    ; Frame Inner Left transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lTran = makeInstance( 'transform2 )
-    setVertices(lTran getVertices(left))
-    setCentroid(lTran getCentroid(left))
-    cloneRectTran(lTran)
-    setLayer(lTran getLayer(cfr))
-    setPurpose(lTran getPurpose(cfr))
+    ilTran = makeInstance( 'transform2 )
+    setVertices(ilTran getVertices(ileft))
+    setCentroid(ilTran getCentroid(ileft))
+    cloneRectTran(ilTran)
+    setLayer(ilTran getLayer(cfr))
+    setPurpose(ilTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Frame Right transform
+    ; Frame Inner Right transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    rTran = makeInstance( 'transform2 )
-    setVertices(rTran getVertices(right))
-    setCentroid(rTran getCentroid(right))
-    cloneRectTran(rTran)
-    setLayer(rTran getLayer(cfr))
-    setPurpose(rTran getPurpose(cfr))
+    irTran = makeInstance( 'transform2 )
+    setVertices(irTran getVertices(iright))
+    setCentroid(irTran getCentroid(iright))
+    cloneRectTran(irTran)
+    setLayer(irTran getLayer(cfr))
+    setPurpose(irTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Bottom transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    obTran = makeInstance( 'transform2 )
+    setVertices(obTran getVertices(obot))
+    setCentroid(obTran getCentroid(obot))
+    cloneRectTran(obTran)
+    setLayer(obTran getLayer(cfr))
+    setPurpose(obTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Top transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    otTran = makeInstance( 'transform2 )
+    setVertices(otTran getVertices(otop))
+    setCentroid(otTran getCentroid(otop))
+    cloneRectTran(otTran)
+    setLayer(otTran getLayer(cfr))
+    setPurpose(otTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Left transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    olTran = makeInstance( 'transform2 )
+    setVertices(olTran getVertices(oleft))
+    setCentroid(olTran getCentroid(oleft))
+    cloneRectTran(olTran)
+    setLayer(olTran getLayer(cfr))
+    setPurpose(olTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Frame Outter Right transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    orTran = makeInstance( 'transform2 )
+    setVertices(orTran getVertices(oright))
+    setCentroid(orTran getCentroid(oright))
+    cloneRectTran(orTran)
+    setLayer(orTran getLayer(cfr))
+    setPurpose(orTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UR Outside Corner Transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -258,32 +329,40 @@ defmethod( generate (( cfr cframe ))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    translate(bTran list(0.0 hgt/2.0-ewid/2.0))
-    translate(tTran list(0.0 -hgt/2.0+ewid/2.0))
-    translate(lTran list(-wid/2.0+ewid/2.0 0.0))
-    translate(rTran list(wid/2.0-ewid/2.0 0.0))
-    translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid))
+    translate(ibTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
+    translate(itTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
+    translate(ilTran list(-wid/2.0+ewid/2+radius/2.0 0.0))
+    translate(irTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
+    translate(obTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
+    translate(otTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
+    translate(olTran list(-wid/2.0+ewid/2.0+radius/2.0 0.0))
+    translate(orTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
+    translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid+radius/2.0))
     rotate(uloTran 90.0)
-    translate(uloTran list(-wid/2.0+ewid hgt/2.0-ewid))
+    translate(uloTran list(-wid/2.0+ewid-radius/2.0 hgt/2.0-ewid+radius/2.0))
     rotate(lroTran -90.0)
-    translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
+    translate(lroTran list(wid/2.0-ewid+radius/2.0 -hgt/2.0+ewid-radius/2.0))
     rotate(lloTran 180.0)
-    translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
-    translate(uriTran list(wid/2.0-2*ewid hgt/2.0-2.0*ewid))
+    translate(lloTran list(-wid/2.0+ewid-radius/2.0 -hgt/2.0+ewid-radius/2.0))
+    translate(uriTran list(wid/2.0-2*ewid+radius/2.0 hgt/2.0-2.0*ewid+radius/2.0))
     rotate(uliTran 90.0)
-    translate(uliTran list(-wid/2.0+2*ewid hgt/2.0-2.0*ewid))    
+    translate(uliTran list(-wid/2.0+2*ewid-radius/2.0 hgt/2.0-2.0*ewid+radius/2.0))    
     rotate(lriTran -90.0)
-    translate(lriTran list(wid/2.0-2*ewid -hgt/2.0+2.0*ewid))  
+    translate(lriTran list(wid/2.0-2*ewid+radius/2.0 -hgt/2.0+2.0*ewid-radius/2.0))  
     rotate(lliTran 180.0)
-    translate(lliTran list(-wid/2.0+2*ewid -hgt/2.0+2.0*ewid))   
+    translate(lliTran list(-wid/2.0+2*ewid-radius/2.0 -hgt/2.0+2.0*ewid-radius/2.0))   
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     geomGroup = makeInstance('geometry)
-    addTransform(geomGroup bTran)
-    addTransform(geomGroup tTran)
-    addTransform(geomGroup lTran)
-    addTransform(geomGroup rTran)
+    addTransform(geomGroup ibTran)
+    addTransform(geomGroup itTran)
+    addTransform(geomGroup ilTran)
+    addTransform(geomGroup irTran)
+    addTransform(geomGroup obTran)
+    addTransform(geomGroup otTran)
+    addTransform(geomGroup olTran)
+    addTransform(geomGroup orTran)
     addTransform(geomGroup uroTran)
     addTransform(geomGroup uloTran)
     addTransform(geomGroup lroTran)
