@@ -86,7 +86,7 @@ procedure(photoInfo()
   ; A set of callbacks that copies variables from
   ; the photoForm variables inot the phopl variables??
   kwTriggerCBs()
-  ; Helper procedure that sets hte pholp->release and
+  ; Helper procedure that sets the pholp->release and
   ; and phopl->libPath variables
   kwCreateRelDirIfNec()
   ; Maps old and new naming conventions into a 

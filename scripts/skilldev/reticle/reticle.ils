@@ -121,9 +121,75 @@ defmethod( checkRes (( ret reticle ))
 ; This method checks the periodicity of the inside
 ; streets of reticle and ensures that each inner street
 ; extends the full length of the reticle without any 
-; jogging 
+; jogging
+; 
+; 1.) generate a row/col matrix for the die sites
+; 2.) find the origin of all die sites
+; 3.) make sure the row,col matrix origin coordinates
+;     are periodic in their respective dimension  
 ;#####################################################
-defmethod( periodicity (( ret reticle ))
+;defmethod( periodicity (( ret reticle )) 
+  ; Periodicity check of verticle streets
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Scribe line pointer
+  ; xs = 0
+  ; xs = getVerticalScribes(ret)
+  ; 
+  ; Intra-Reticle (Die Site Counter)
+  ; lx = 0
+  ; while( car( inst~>xy) - lx > xynpl->retW
+  ;	ix = ix + length( sl)
+  ;	lx = lx + xynpl->retW
+  ;    )
+  ;     advance to the next scribe line, 
+  ;     or reset to the first scribe when we pass the right edge of reticle:
+  ;    xs = or( cdr( xs) sl)
+  ;x = xCoord(getOrigin(ret))
+  ;while( x >= getWidth(ret) 
+  ;       printf("X coordinate %L is greater than reticle width %L subtracting width" x getWidth(ret))
+  ;       x = x - getWidth(ret)
+  ;       printf( "New X value %L:" x )
+  ;);while
+  ;	   
+;  nil
+;);
+
+;#####################################################
+; This method checks that all vertical and horizontal
+; streets are of uniform width
+;#####################################################
+;defmethod( getVerticalScribes (( ret reticle ))
+;   let( ( sl sorted i)
+;    println( "Finding Vertical Reticle Scribe Lines:")
+;    foreach( chip getChipList(ret)
+;      when( chip->chipType == "chip"
+;        printf( "Chip Name: %L" chip->cellName)
+;	 foreach( pos getOrigin(chip)
+;          printf( "Chip X Position: %L" xCoord(pos))
+;          ; create a list of chip unique x values
+;          ; INLINE IF: if(member( car( posn) sl) sl = cons( car( posn) sl):nil)
+;	   unless( member( car( posn) sl) sl = cons( car( posn) sl))
+;	 )
+;      )
+;    )
+;    sorted = sort( sl 'lessp)
+;    println( "Sorted Reticle Scribe Line X Coord List:")
+;    i=0
+;    foreach(sort sorted
+;      printf( "%L.) SL X Coord:%L" i nth(i sorted))
+;      cdr(sorted)
+;      i++
+;    )
+;  )
+;  sort( sl 'lessp)
+;);defmethod
+
+
+;#####################################################
+; This method checks that all vertical and horizontal
+; streets are of uniform width
+;#####################################################
+defmethod( streetWidths (( ret reticle ))
   nil
 );
 

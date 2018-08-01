@@ -15,16 +15,18 @@ defclass( point2 (coord2 cadObj)
 ;#####################################################
 ;
 ;#####################################################
-;defmethod( setPoint (( pt point2 ) arg )
-;  pt->point = list(float(xCoord(arg)) float(yCoord(arg)))	   
-;);defmethod
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
 
 ;#####################################################
 ;
 ;#####################################################
-;defmethod( getPoint (( pt point2 ))
-;  pt->point	   
-;);defmethod
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
 
 ;#####################################################
 ; translate point in 2-D space. Argument is list:
@@ -136,6 +138,31 @@ defmethod( pcFixPoint (( pt point2 ))
 	   setY(pt pcFix(getY(pt)))	   
 );defmethod
 
+;#####################################################
+; This method serializes this class to a file
+;#####################################################
+defmethod( serialize (( pt point2 ) fname)
+  let( (pl fp)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
+  );let
+);defmethod
+
+;#####################################################
+; This method deserializes this class to a file
+;#####################################################
+defmethod( deserialize (( pt point2 ) fname)
+  let((fp pl)
+    fp = infile(fname)
+    pl = car(lineread(fp))
+    close(fp)
+    pt->x = xCoord(pl)
+    pt->y = yCoord(pl)
+    pl
+  );let	   
+);defmethod
 ;######################################################
 ;######################################################
 ;######################################################

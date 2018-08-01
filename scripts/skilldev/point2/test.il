@@ -57,7 +57,7 @@ translate(pnt tp)
 getCoord(pnt)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-?: Lower Left test #0
+; UT-5: Lower Left test #0
 ; (nil expected)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pnt = makeInstance( 'point2 )
@@ -68,7 +68,7 @@ pnt1 = list(xp yp)
 lowerLeftPoint(pnt pnt1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-?: Lower Left test #1
+; UT-6: Lower Left test #1
 ; (t expected)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pnt = makeInstance( 'point2 )
@@ -90,7 +90,7 @@ pnt1 = list(xp yp)
 lowerLeftPoint(pnt pnt1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-?: Lower Left test #3
+; UT-8: Lower Left test #3
 ; (t expected)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pnt = makeInstance( 'point2 )
@@ -99,6 +99,23 @@ xp = 0.0
 yp = 0.0
 pnt1 = list(xp yp)
 lowerLeftPoint(pnt pnt1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-9: Serialize and Deserialize
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+fname = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/skilldev/point2/pnt.dat"
+pnt = makeInstance( 'point2 )
+setPoint(pnt list(-1.0 0.0))
+getPoint(pnt)
+serialize(pnt fname)
+pnt = makeInstance( 'point2 )
+getPoint(pnt)
+deserialize(pnt fname)
+getPoint(pnt)
+getX(pnt)
+getY(pnt)
+pnt->x
+pnt->y
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-?: Lower Left test #4
@@ -121,4 +138,6 @@ xp = 0.0
 yp = 0.0
 pnt1 = list(xp yp)
 lowerLeftPoint(pnt pnt1)
+
+
 

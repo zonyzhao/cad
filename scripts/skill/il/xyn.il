@@ -3482,16 +3482,33 @@ procedure( xynPlaceChipNumbers()
 	lx = lx + xynpl->retW
       )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FIXME: Commented out the code below because it was confusing the numbers generation on when
+;        using MEMS chip outlines. Appears as if this code is performing a periodicity check on
+;        the vertical innner streets of the reticle. If it does not find a "particular" peridicity
+;        it makes assumptions about the next die site in the reticle being a coupon. If this is 
+;        a valid inner street periodicity check it should be performed in the reticle pre-checks
+;        and not here. Checks should be made that the inner streets have proper periodicity and
+;        run the complete width and height of the reticle well before numbers are printed. In addition,
+;        only a check of verticle inner streets is performed here. What about horizontal streets? They
+;        are not being checked here. Based upon all of this confusion about what is going on here, the
+;        inner reticle street validity checks (both horizontal and verticle) will be performed at the 
+;        input to xyn rather than doing it within the numbers generation procedure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ; This is where the x coordinate value is reset to zero at the end of each
-      ; reticle processed
+      ; reticle processed. Represents the commutative behavior aligning the the periodicity of
+      ; the inner streets of the reticle
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
       ; Note: the inst~>xy was given to each chip during S&R algorithm execution and is a custom
       ; property representing the chip origin
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;lx = car( inst~>xy)
       ;;new variable x is assigned from the x coordinate value - used for inter-reticle checking
-      ;;against street calculation
+      ;;against the previous street calculation
       ;x = lx
       ;while( x >= xynpl->retW 
       ;       xynMsg( "X coordinate %L is greater than reticle width %L subtracting width" x xynpl->retW )
@@ -3504,7 +3521,7 @@ procedure( xynPlaceChipNumbers()
       ;                     and the the array x index is less than 10,000 assume that the next 
       ;                     retical array location is not a chip and force an increment of the reticle
       ;                     column counter ix - Weird!!
-      ;                     Chips in next reticle x index are not aligning to the vertical scribe lines
+      ;                     Chips in next reticle x index are not aligning to the vertical scribe lines??
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;while( x != car( xs) && ix < 10000
       ;  slerror++
@@ -3520,6 +3537,12 @@ procedure( xynPlaceChipNumbers()
 ;	xs = or( cdr( xs) sl)
 ;	ix = ix + 1 ; Increment the Reticle column index by one
 ;      )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ; Watchdog Condition: If x index value is 10,000 then there must have been a problem 
       ;                     error out ... 
