@@ -607,16 +607,18 @@ defclass( point2 (coord2 cadObj)
 ;#####################################################
 ;
 ;#####################################################
-;defmethod( setPoint (( pt point2 ) arg )
-;  pt->point = list(float(xCoord(arg)) float(yCoord(arg)))	   
-;);defmethod
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
 
 ;#####################################################
 ;
 ;#####################################################
-;defmethod( getPoint (( pt point2 ))
-;  pt->point	   
-;);defmethod
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
 
 ;#####################################################
 ; translate point in 2-D space. Argument is list:
@@ -733,9 +735,10 @@ defmethod( pcFixPoint (( pt point2 ))
 ;#####################################################
 defmethod( serialize (( pt point2 ) fname)
   let( (pl fp)
-    fprintf(pl list(pt->x pt->y))
-    fp = outfile(fname)
-    fprintf(fp "%L" dpl)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
   );let
 );defmethod
 
@@ -743,11 +746,13 @@ defmethod( serialize (( pt point2 ) fname)
 ; This method deserializes this class to a file
 ;#####################################################
 defmethod( deserialize (( pt point2 ) fname)
-  let((fp)
+  let((fp pl)
     fp = infile(fname)
-    fscanf(fp "%L" pl)
+    pl = car(lineread(fp))
+    close(fp)
     pt->x = xCoord(pl)
     pt->y = yCoord(pl)
+    pl
   );let	   
 );defmethod
 ;######################################################
@@ -6564,7 +6569,9 @@ defmethod( initializeInstance @after ((obj cframe))
 ;######################################################
 defmethod( generate (( cfr cframe ))
   let((wid hgt ewid mwid mhgt bot top left right lTran
-       rTran bTran tTran uro medg grid)
+       rTran bTran tTran uro ulo llo lro medg grid
+       uri uli lli lri uroTran uloTran lloTran lroTran
+       uriTran uliTran lliTran lriTran)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
@@ -6643,6 +6650,13 @@ defmethod( generate (( cfr cframe ))
     setRadius(llo ewid)
     setGrid(llo 0.1)
     generateQuarterCircle(llo)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uri = makeInstance( 'circle )
+    setRadius(uri ewid)
+    setGrid(uri 0.1)
+    generateQuarterCircleInv(uri)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6715,6 +6729,15 @@ defmethod( generate (( cfr cframe ))
     cloneRectTran(lloTran)
     setLayer(lloTran getLayer(cfr))
     setPurpose(lloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uriTran = makeInstance( 'transform2 )
+    setVertices(uriTran getVertices(uri))
+    setCentroid(uriTran getCentroid(uri))
+    cloneRectTran(uriTran)
+    setLayer(uriTran getLayer(cfr))
+    setPurpose(uriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6729,6 +6752,7 @@ defmethod( generate (( cfr cframe ))
     translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
     rotate(lloTran 180.0)
     translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
+    translate(uriTran list(wid/2.0-2*ewid hgt/2.0-2*ewid))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6741,6 +6765,7 @@ defmethod( generate (( cfr cframe ))
     addTransform(geomGroup uloTran)
     addTransform(geomGroup lroTran)
     addTransform(geomGroup lloTran)
+    addTransform(geomGroup uriTran)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -29,7 +29,9 @@ defmethod( initializeInstance @after ((obj cframe))
 ;######################################################
 defmethod( generate (( cfr cframe ))
   let((wid hgt ewid mwid mhgt bot top left right lTran
-       rTran bTran tTran uro medg grid)
+       rTran bTran tTran uro ulo llo lro medg grid
+       uri uli lli lri uroTran uloTran lloTran lroTran
+       uriTran uliTran lliTran lriTran)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
@@ -108,6 +110,13 @@ defmethod( generate (( cfr cframe ))
     setRadius(llo ewid)
     setGrid(llo 0.1)
     generateQuarterCircle(llo)
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uri = makeInstance( 'circle )
+    setRadius(uri ewid)
+    setGrid(uri 0.1)
+    generateQuarterCircleInv(uri)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -180,6 +189,15 @@ defmethod( generate (( cfr cframe ))
     cloneRectTran(lloTran)
     setLayer(lloTran getLayer(cfr))
     setPurpose(lloTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UR Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uriTran = makeInstance( 'transform2 )
+    setVertices(uriTran getVertices(uri))
+    setCentroid(uriTran getCentroid(uri))
+    cloneRectTran(uriTran)
+    setLayer(uriTran getLayer(cfr))
+    setPurpose(uriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -194,6 +212,7 @@ defmethod( generate (( cfr cframe ))
     translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
     rotate(lloTran 180.0)
     translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
+    translate(uriTran list(wid/2.0-2*ewid hgt/2.0-2*ewid))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,6 +225,7 @@ defmethod( generate (( cfr cframe ))
     addTransform(geomGroup uloTran)
     addTransform(geomGroup lroTran)
     addTransform(geomGroup lloTran)
+    addTransform(geomGroup uriTran)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
