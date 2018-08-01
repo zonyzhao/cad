@@ -11,8 +11,8 @@ classOf(cf)
 ;       outline
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cf = makeInstance( 'cframe )
-setWidth(cf 7000.0)
-setHeight(cf 8000.0)
+setWidth(cf 4000.0)
+setHeight(cf 4000.0)
 setEdgeWidth(cf 95.0)
 setLayer(cf "GRID")
 setPurpose(cf "drawing")
