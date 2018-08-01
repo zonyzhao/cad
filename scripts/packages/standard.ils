@@ -6650,13 +6650,34 @@ defmethod( generate (( cfr cframe ))
     setRadius(llo ewid)
     setGrid(llo 0.1)
     generateQuarterCircle(llo)
-     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; UR Inside Corner
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     uri = makeInstance( 'circle )
     setRadius(uri ewid)
     setGrid(uri 0.1)
     generateQuarterCircleInv(uri)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uli = makeInstance( 'circle )
+    setRadius(uli ewid)
+    setGrid(uli 0.1)
+    generateQuarterCircleInv(uli)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lri = makeInstance( 'circle )
+    setRadius(lri ewid)
+    setGrid(lri 0.1)
+    generateQuarterCircleInv(lri)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Inside Corner
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lli = makeInstance( 'circle )
+    setRadius(lli ewid)
+    setGrid(lli 0.1)
+    generateQuarterCircleInv(lli)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6738,6 +6759,33 @@ defmethod( generate (( cfr cframe ))
     cloneRectTran(uriTran)
     setLayer(uriTran getLayer(cfr))
     setPurpose(uriTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; UL Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    uliTran = makeInstance( 'transform2 )
+    setVertices(uliTran getVertices(uli))
+    setCentroid(uliTran getCentroid(uli))
+    cloneRectTran(uliTran)
+    setLayer(uliTran getLayer(cfr))
+    setPurpose(uliTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LR Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lriTran = makeInstance( 'transform2 )
+    setVertices(lriTran getVertices(lri))
+    setCentroid(lriTran getCentroid(lri))
+    cloneRectTran(lriTran)
+    setLayer(lriTran getLayer(cfr))
+    setPurpose(lriTran getPurpose(cfr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; LL Inside Corner Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lliTran = makeInstance( 'transform2 )
+    setVertices(lliTran getVertices(lli))
+    setCentroid(lliTran getCentroid(lli))
+    cloneRectTran(lliTran)
+    setLayer(lliTran getLayer(cfr))
+    setPurpose(lliTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6752,7 +6800,13 @@ defmethod( generate (( cfr cframe ))
     translate(lroTran list(wid/2.0-ewid -hgt/2.0+ewid))
     rotate(lloTran 180.0)
     translate(lloTran list(-wid/2.0+ewid -hgt/2.0+ewid))
-    translate(uriTran list(wid/2.0-2*ewid hgt/2.0-2*ewid))
+    translate(uriTran list(wid/2.0-2*ewid hgt/2.0-2.0*ewid))
+    rotate(uliTran 90.0)
+    translate(uliTran list(-wid/2.0+2*ewid hgt/2.0-2.0*ewid))    
+    rotate(lriTran -90.0)
+    translate(lriTran list(wid/2.0-2*ewid -hgt/2.0+2.0*ewid))  
+    rotate(lliTran 180.0)
+    translate(lliTran list(-wid/2.0+2*ewid -hgt/2.0+2.0*ewid))   
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6766,6 +6820,9 @@ defmethod( generate (( cfr cframe ))
     addTransform(geomGroup lroTran)
     addTransform(geomGroup lloTran)
     addTransform(geomGroup uriTran)
+    addTransform(geomGroup uliTran)
+    addTransform(geomGroup lriTran)
+    addTransform(geomGroup lliTran)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
