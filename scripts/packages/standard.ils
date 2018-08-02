@@ -6891,11 +6891,11 @@ defmethod( initializeInstance @after ((obj cframe2))
 ; Generates the assembly
 ;######################################################
 defmethod( generate (( cfr cframe2 ))
-  let((wid hgt ewid mwid mhgt radius ibot itop ileft iright 
+  let((plt wid hgt ewid mwid mhgt radius ibot itop ileft iright 
        obot otop oleft oright ilTran irTran ibTran itTran 
        olTran orTran obTran otTran uro ulo llo lro medg grid
        owid uri uli lli lri uroTran uloTran lloTran lroTran
-       uriTran uliTran lliTran lriTran)
+       uriTran uliTran lliTran lriTran pTran)
     wid = cfr->width 
     hgt = cfr->height
     ewid = cfr->edgeWidth
@@ -6920,6 +6920,13 @@ defmethod( generate (( cfr cframe2 ))
     if(hgt < mhgt then
       hgt = mhgt
     );if
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Plate
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    plt = makeInstance( 'rectangle )
+    setWidth(plt wid-radius)
+    setHeight(plt hgt-radius)
+    generate(plt)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Inner Bottom
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7032,6 +7039,15 @@ defmethod( generate (( cfr cframe2 ))
     setRadius(lli radius)
     setGrid(lli grid)
     generateQuarterCircleInv(lli)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Plate transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pTran = makeInstance( 'transform2 )
+    setVertices(pTran getVertices(plt))
+    setCentroid(pTran getCentroid(plt))
+    cloneRectTran(pTran)
+    setLayer(pTran getLayer(cfr))
+    setPurpose(pTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Inner Bottom transform
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7205,10 +7221,6 @@ defmethod( generate (( cfr cframe2 ))
     ; Frame Geometry Group
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     geomGroup = makeInstance('geometry)
-    addTransform(geomGroup ibTran)
-    addTransform(geomGroup itTran)
-    addTransform(geomGroup ilTran)
-    addTransform(geomGroup irTran)
     addTransform(geomGroup obTran)
     addTransform(geomGroup otTran)
     addTransform(geomGroup olTran)
@@ -7217,10 +7229,18 @@ defmethod( generate (( cfr cframe2 ))
     addTransform(geomGroup uloTran)
     addTransform(geomGroup lroTran)
     addTransform(geomGroup lloTran)
-    addTransform(geomGroup uriTran)
-    addTransform(geomGroup uliTran)
-    addTransform(geomGroup lriTran)
-    addTransform(geomGroup lliTran)
+    if(cfr->plate then
+      addTransform(geomGroup pTran)
+    else
+      addTransform(geomGroup ibTran)
+      addTransform(geomGroup itTran)
+      addTransform(geomGroup ilTran)
+      addTransform(geomGroup irTran)
+      addTransform(geomGroup uriTran)
+      addTransform(geomGroup uliTran)
+      addTransform(geomGroup lriTran)
+      addTransform(geomGroup lliTran)
+    );if
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
