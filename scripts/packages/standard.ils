@@ -6894,7 +6894,7 @@ defmethod( generate (( cfr cframe2 ))
   let((wid hgt ewid mwid mhgt radius ibot itop ileft iright 
        obot otop oleft oright ilTran irTran ibTran itTran 
        olTran orTran obTran otTran uro ulo llo lro medg grid
-       uri uli lli lri uroTran uloTran lloTran lroTran
+       owid uri uli lli lri uroTran uloTran lloTran lroTran
        uriTran uliTran lliTran lriTran)
     wid = cfr->width 
     hgt = cfr->height
@@ -6904,6 +6904,7 @@ defmethod( generate (( cfr cframe2 ))
     mwid = 2*ewid
     mhgt = mwid
     grid = 0.1
+    owid = ewid-radius
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Minimum and clamp checks
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6923,29 +6924,29 @@ defmethod( generate (( cfr cframe2 ))
     ; Frame Inner Bottom
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ibot = makeInstance( 'rectangle )
-    setWidth(ibot wid-2.0*ewid-2.0*radius)
-    setHeight(ibot ewid-2.0*radius)
+    setWidth(ibot wid-2.0*radius)
+    setHeight(ibot owid)
     generate(ibot)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Inner Top
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     itop = makeInstance( 'rectangle )
-    setWidth(itop wid-2.0*ewid-2.0*radius)
-    setHeight(itop ewid-2.0*radius)
+    setWidth(itop wid-2.0*radius)
+    setHeight(itop owid)
     generate(itop)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Inner Left
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ileft = makeInstance( 'rectangle )
-    setWidth(ileft ewid-2.0*radius)
-    setHeight(ileft hgt-2.0*ewid-2.0*radius)
+    setWidth(ileft owid)
+    setHeight(ileft hgt-2.0*radius)
     generate(ileft)
      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Inner Right
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     iright = makeInstance( 'rectangle )
-    setWidth(iright ewid-2.0*radius)
-    setHeight(iright hgt-2.0*ewid+2.0*radius)
+    setWidth(iright owid)
+    setHeight(iright hgt-2.0*radius)
     generate(iright)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Frame Outter Bottom
@@ -7178,14 +7179,14 @@ defmethod( generate (( cfr cframe2 ))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
     ; Translate Frame Edges to correct positions
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    translate(ibTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
-    translate(itTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
-    translate(ilTran list(-wid/2.0+ewid/2+radius/2.0 0.0))
-    translate(irTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
-    translate(obTran list(0.0 hgt/2.0-ewid/2.0-radius/2.0))
-    translate(otTran list(0.0 -hgt/2.0+ewid/2.0+radius/2.0))
-    translate(olTran list(-wid/2.0+ewid/2.0+radius/2.0 0.0))
-    translate(orTran list(wid/2.0-ewid/2.0-radius/2.0 0.0))
+    translate(ibTran list(0.0 -hgt/2.0+owid/2.0+radius))
+    translate(itTran list(0.0  hgt/2.0-owid/2.0-radius))
+    translate(ilTran list(-wid/2.0+owid/2.0+radius 0.0))
+    translate(irTran list( wid/2.0-owid/2.0-radius 0.0))
+    translate(obTran list(0.0 -hgt/2.0+owid/2.0))
+    translate(otTran list(0.0 hgt/2.0-owid/2.0))
+    translate(olTran list(-wid/2.0+owid/2.0 0.0))
+    translate(orTran list(wid/2.0-owid/2.0 0.0))
     translate(uroTran list(wid/2.0-ewid hgt/2.0-ewid+radius/2.0))
     rotate(uloTran 90.0)
     translate(uloTran list(-wid/2.0+ewid-radius/2.0 hgt/2.0-ewid+radius/2.0))
