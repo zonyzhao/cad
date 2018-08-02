@@ -11,7 +11,8 @@ defclass( memsChipFrame (PcellParam)
 	  (
 		( width @initform defineParam("float" 1000.0))	
 		( length @initform defineParam("float" 1000.0))
-		( edgeWidth @initform defineParam("float" 95.0))
+;		( edgeWidth @initform defineParam("float" 95.0))
+		( spm @initform defineParam("boolean" "TRUE"))
 		( ol0 )
 		( ol1 )
 		( ol2 )
@@ -20,7 +21,7 @@ defclass( memsChipFrame (PcellParam)
 		( centroid )
 		( ref @reader getRef @writer setRef )
 		( rtrans )
-		( coreBBox @initarg coreBBox )	  
+		( coreBBox @initarg coreBBox )			  
 	  )
 );defClass
 
@@ -43,7 +44,7 @@ defmethod( draw ((device memsChipFrame))
   let( (minwid minlen width length edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
-        bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset)
+        bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib view name cv)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters - From Techfile
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,6 +147,22 @@ defmethod( draw ((device memsChipFrame))
    ; Call the next draw in the 
    ; case of multiple inheritance
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   callNextMethod()
+   ; Fixed Cellview Instantiations
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   if(device->spm == "TRUE" then
+     println("INFO: Adding SMPs")
+     lib = "reticle"
+     view = "layout"
+     name = "SPM_X_AH32"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     name = "SPM_Y_AH32"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     callNextMethod()
+    else
+     println("INFO: Removing SMPs")
+     callNextMethod()
+   );if
   );let
 );defmethod

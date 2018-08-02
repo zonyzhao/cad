@@ -1,0 +1,72 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  pcell.ils: General Pcell ANALYSIS class encapsulating commonly used
+;             pcell analysis commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( pcell (cadObj)
+	  (		
+		( ref @writer setRef @reader getRef )
+		( cvRef @writer setCvRef @reader getCvRef )			
+	  )
+) ; defClass
+
+;#####################################################
+; 
+;#####################################################
+defmethod( initializeInstance @after ((obj pcell))  
+	   obj->ref  = nil
+	   obj->cvRef = nil  
+);defmethod
+
+;#####################################################
+; Check if current cv is a pcell
+;#####################################################
+defmethod( isPcell (( pc pcell ))
+	   pc->cvRef~>isParamCell
+);defmethod
+
+;#####################################################
+; Check if current cv is a VALID pcell
+;#####################################################
+defmethod( isValidPcell (( pc pcell ))
+	   dbCheckParamCell(pc->cvRef)
+);defmethod
+
+;#####################################################
+; Generate the skill code for the pcell cv
+;#####################################################
+defmethod( skillGen (( pc pcell ) ofile)
+	   pcSkillGen(pc->cvRef ofile nil)
+);defmethod
+
+;#####################################################
+; "Dump" the skill code for the pcell cv
+;#####################################################
+defmethod( skillDump (( pc pcell ) ofile)	   
+	   dbDumpPcDefinePcell(pc->cvRef ofile)
+);defmethod
+
+;#####################################################
+; Fix the skill code for the pcell cv
+;#####################################################
+defmethod( skillFix (( pc pcell ) ofile)	   
+	   if(!null(dbFixParamCell(pc->cvRef ofile)) then
+	     println("INFO: Pcell redefined succeeded")
+	   else
+	     println("WARN: Pcell redefined either was not needed or redefine not needed")
+	   );if 
+);defmethod
+
+;#####################################################
+; "Dump" the skill code for the pcell cv
+;#####################################################
+defmethod( getParams (( pc pcell ))	   
+  if(!null(nth(0 pc->cvRef~>prop)~>valueType) then
+    foreach(value nth(0 pc->cvRef~>prop)~>value
+       printf("Name: %s Type: %s, Value: %L\n" value~>name value~>valueType value~>value)
+    )
+  )
+);defmethod
+
+;###############################################################################
+;###############################################################################
+;###############################################################################
