@@ -218,7 +218,7 @@ unless( and( boundp( 'xynpl) listp( xynpl))
 	inclusionLyr		"y1"		; temporary shape layer
 	exclusionLyr		"membrane"	; layer for exclusion ring
 	waferCenterCrossLyr     "GRID"		; layer for "x" at center of outline
-	cornerBlockLyr		"numbers"       ; 1um boxes for ebeam guys
+	cornerBlockLyr		"GRID"          ; 1um boxes for ebeam guys
 	stepRepeatResolution	10		; expected s&r resolution
 
 	rectUndersize		500.0		; FIXME: undersize aeblemap site rects

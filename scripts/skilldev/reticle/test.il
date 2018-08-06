@@ -195,8 +195,10 @@ setPadCouponName(ret "pd0164_0_xyPad_SLC")
 findXynPads(ret)
 checkSum(ret)
 getChipList(ret)
+getOverheadList(ret)
 getCouponList(ret)
 isEmpty(ret->chips)
+isEmpty(ret->overhead)
 isEmpty(ret->coupons)
 getLen(ret->chips)
 getName(getItem(ret->chips 0))
@@ -364,7 +366,7 @@ getDim(ret)
 ;;;;;;;;
 ; Step 5.
 ;;;;;;;;
-getVerticalScribes(ret)
+checkInnerStreets(ret)
 
 
 

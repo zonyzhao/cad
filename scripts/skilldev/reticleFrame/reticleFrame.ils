@@ -1,0 +1,34 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  reticleFrame.ils: reticleFrame class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( reticleFrame (die)
+  (
+    (overlap @reader getOverlap)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj reticleFrame)) 
+  obj->overlap = 4.0
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setChipBbox  (( rf reticleFrame ) bbx)
+  setBbx(rf->bbx bbx)
+  ;getDim(rf->bbx)
+  ;Origin(rf->bbx)
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setPadBbox  (( rf reticleFrame ) bbx)
+  setBbx(rf->numpad->bbx bbx)
+  ;getDim(rf->numpad->bbx)
+  ;Origin(rf->numpad->bbx)
+);defmethod
+;######################################################
+;######################################################

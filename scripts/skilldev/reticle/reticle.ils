@@ -19,6 +19,7 @@ defclass( reticle (cv)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
 		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
+		( frame @reader getFrame)
 		( chipList @reader getChipList)
 		( olist @reader getOverheadList)
 		( couponList @reader getCouponList)
@@ -30,7 +31,8 @@ defclass( reticle (cv)
 		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
-		( numNumPads @reader getNumNumPads)				
+		( numNumPads @reader getNumNumPads)
+		( innerStreetOrigs @reader getInnerStreetOrigs)				
 	  )
 );defClass
 
@@ -48,6 +50,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->validDim = nil
 	   obj->validRes = nil
 	   obj->shiftUrq = nil
+	   obj->frame = makeInstance( 'reticleFrame )
 	   obj->chipList = nil
 	   obj->olist = nil 
 	   obj->couponList = nil
@@ -169,13 +172,12 @@ defmethod( checkRes (( ret reticle ))
 ;);
 
 ;#####################################################
-; This method checks that all vertical and horizontal
-; streets are of uniform width
+; Checks that inner streets are conformant to the
+; requirement that they extend the full length of 
+; the reticle
 ;#####################################################
-defmethod( getVerticalScribes (( ret reticle ))
-   let( ( sl sorted i origsx origsy)
-    println( "Finding Vertical Reticle Scribe Lines:")
-    ; Generate a list of all chip origins
+defmethod( checkInnerStreets (( ret reticle ))
+  let( ( slx sly sorted i origsx origsy dieCount dieSiteCount)
     origsx = '()
     origsy = '()
     foreach( chip getCollection(ret->chips)
@@ -183,25 +185,50 @@ defmethod( getVerticalScribes (( ret reticle ))
       origsx = cons(xCoord(getOrigin(getBbx(chip))) origsx)
       origsy = cons(yCoord(getOrigin(getBbx(chip))) origsy)
     );foreach
-    foreach( coup getCollection(ret->coupons)
-      printf( "Coupon Name: %L" getName(coup))
-      origsx = cons(xCoord(getOrigin(getBbx(coup))) origsx)
-      origsy = cons(yCoord(getOrigin(getBbx(coup))) origsy)
+    foreach( oh getCollection(ret->overhead)
+      printf( "Coupon Name: %L" getName(oh))
+      origsx = cons(xCoord(getOrigin(getBbx(oh))) origsx)
+      origsy = cons(yCoord(getOrigin(getBbx(oh))) origsy)
     );foreach
-    sl = '()
-    printf( "Chip X Position: %L" posx)
-    ; create a list of chip unique x values
-    ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
-    unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
-    sorted = sort( sl )
-    println( "Sorted Reticle Scribe Line X Coord List:")
-    i=0
+    slx = '()
+    foreach( posx origsx
+       if(null(member(posx slx)) then
+         slx = cons(posx slx)
+       );if
+    );foreach
+    sly = '()
+    foreach( posy origsy
+       if(null(member(posy sly)) then
+         sly = cons(posy sly)
+       );if
+    );foreach
+    foreach( posx origsx
+      printf( "Chip X Position: %L\n" posx)
+      ; create a list of chip unique x values
+      ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
+      unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
+      cdr(origsx)
+    );foreach
+    sortedx = sort( slx 'lessp)
+    sortedy = sort( sly 'lessp)
+    printf("INFO: Number of Vertical Inner Streets Detected: %d\n" length(sortedx))
+    printf("INFO: Number of Horizontal Inner Streets Detected: %d\n" length(sortedy))
+    dieSiteCount = length(sortedx)*length(sortedy)
+    dieCount = getNumRetChips(ret)+getNumRetOverhead(ret)
+    if(dieSiteCount != dieCount then
+       printf("ERROR: Die number: %d, NOT EQUAL TO Die site inner street array total: %d\n"  dieCount dieSiteCount)
+    else
+       printf("INFO: Die number: %d, EQUALS Die site inner street array total: %d\n"  dieCount dieSiteCount)
+    );
+    ;println( "Sorted Reticle Scribe Line X Coord List:")
+    ;i=0
+    ;foreach(sort sorted
+    ;  printf( "%L.) SL X Coord:%L" i nth(i sorted))
+    ;;  cdr(sorted)
+    ;  i++
+    ;);foreach
     foreach(sort sorted
-      printf( "%L.) SL X Coord:%L" i nth(i sorted))
-      cdr(sorted)
-      i++
-    );foreach
-    sort( sl )
+    ;sort( sl )
   );let
 );defmethod
 

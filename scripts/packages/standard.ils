@@ -3621,13 +3621,12 @@ defmethod( checkRes (( ret reticle ))
 ;);
 
 ;#####################################################
-; This method checks that all vertical and horizontal
-; streets are of uniform width
+; Checks that inner streets are conformant to the
+; requirement that they extend the full length of 
+; the reticle
 ;#####################################################
-defmethod( getVerticalScribes (( ret reticle ))
-   let( ( sl sorted i origsx origsy)
-    println( "Finding Vertical Reticle Scribe Lines:")
-    ; Generate a list of all chip origins
+defmethod( checkInnerStreets (( ret reticle ))
+  let( ( slx sly sorted i origsx origsy dieCount dieSiteCount)
     origsx = '()
     origsy = '()
     foreach( chip getCollection(ret->chips)
@@ -3635,17 +3634,41 @@ defmethod( getVerticalScribes (( ret reticle ))
       origsx = cons(xCoord(getOrigin(getBbx(chip))) origsx)
       origsy = cons(yCoord(getOrigin(getBbx(chip))) origsy)
     );foreach
-    foreach( coup getCollection(ret->coupons)
-      printf( "Coupon Name: %L" getName(coup))
-      origsx = cons(xCoord(getOrigin(getBbx(coup))) origsx)
-      origsy = cons(yCoord(getOrigin(getBbx(coup))) origsy)
+    foreach( oh getCollection(ret->overhead)
+      printf( "Coupon Name: %L" getName(oh))
+      origsx = cons(xCoord(getOrigin(getBbx(oh))) origsx)
+      origsy = cons(yCoord(getOrigin(getBbx(oh))) origsy)
     );foreach
-    sl = '()
-    printf( "Chip X Position: %L" posx)
-    ; create a list of chip unique x values
-    ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
-    unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
-    sorted = sort( sl )
+    slx = '()
+    foreach( posx origsx
+       if(null(member(posx slx)) then
+         slx = cons(posx slx)
+       );if
+    );foreach
+    sly = '()
+    foreach( posy origsy
+       if(null(member(posy sly)) then
+         sly = cons(posy sly)
+       );if
+    );foreach
+    foreach( posx origsx
+      printf( "Chip X Position: %L\n" posx)
+      ; create a list of chip unique x values
+      ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
+      unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
+      cdr(origsx)
+    );foreach
+    sortedx = sort( slx 'lessp)
+    sortedy = sort( sly 'lessp)
+    printf("INFO: Number of Vertical Inner Streets Detected: %d\n" length(sortedx))
+    printf("INFO: Number of Horizontal Inner Streets Detected: %d\n" length(sortedy))
+    dieSiteCount = length(sortedx)*length(sortedy)
+    dieCount = getNumRetChips(ret)+getNumRetOverhead(ret)
+    if(dieSiteCount != dieCount then
+       printf("ERROR: Die number: %d, NOT EQUAL TO Die site inner street array total: %d\n"  dieCount dieSiteCount)
+    else
+       printf("INFO: Die number: %d, EQUALS Die site inner street array total: %d\n"  dieCount dieSiteCount)
+    );
     println( "Sorted Reticle Scribe Line X Coord List:")
     i=0
     foreach(sort sorted
@@ -4018,6 +4041,39 @@ defmethod(setPadBbox  (( oh overhead ) bbx)
   setBbx(oh->numpad->bbx bbx)
   ;getDim(oh->numpad->bbx)
   ;Origin(oh->numpad->bbx)
+);defmethod
+;######################################################
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  reticleFrame.ils: reticleFrame class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( reticleFrame (die)
+  (
+    (overlap @reader getOverlap)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj reticleFrame)) 
+  obj->overlap = 4.0
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setChipBbox  (( rf reticleFrame ) bbx)
+  setBbx(rf->bbx bbx)
+  ;getDim(rf->bbx)
+  ;Origin(rf->bbx)
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setPadBbox  (( rf reticleFrame ) bbx)
+  setBbx(rf->numpad->bbx bbx)
+  ;getDim(rf->numpad->bbx)
+  ;Origin(rf->numpad->bbx)
 );defmethod
 ;######################################################
 ;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
