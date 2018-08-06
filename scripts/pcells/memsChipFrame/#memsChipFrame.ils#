@@ -1,0 +1,171 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  memsChipFrame.ils: Chip outline Pcell for MEMS Skill++ code 
+;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly - very slow to compile when due to
+;;;;;;;;;;;;;;;;         on-grid, rounded corners!!!
+;;;;;;;;;;;;;;;;  FIXME: need to add in rectangular layer for
+;;;;;;;;;;;;;;;;  FIXME: Need to suppress egdeWith user param
+;;;;;;;;;;;;;;;;  FIMXE: Need to set min/max width and height to the frame's 
+;;;;;;;;;;;;;;;;         edge width 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( memsChipFrame (PcellParam)
+	  (
+		( width @initform defineParam("float" 1000.0))	
+		( length @initform defineParam("float" 1000.0))
+;		( edgeWidth @initform defineParam("float" 95.0))
+		( spm @initform defineParam("boolean" "TRUE"))
+		( ol0 )
+		( ol1 )
+		( ol2 )
+		( ol3 )
+		( ol4 )
+		( centroid )
+		( ref @reader getRef @writer setRef )
+		( rtrans )
+		( coreBBox @initarg coreBBox )			  
+	  )
+);defClass
+
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj memsChipFrame)) 
+	   obj->ol0 = makeInstance( 'outline )
+	   obj->ol1 = makeInstance( 'outline )
+	   obj->ol2 = makeInstance( 'cframe2 )
+	   obj->ol3 = makeInstance( 'cframe )
+	   obj->ol4 = makeInstance( 'cframe2 )
+	   obj->centroid = makeInstance('point2)
+	   obj->rtrans = makeInstance('rectTrans)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method draws the shapes of the mesa resistor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( draw ((device memsChipFrame))
+  let( (minwid minlen width length edgeWidth ol0RectTran 
+        backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
+        lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
+        bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib view name cv)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; Formal Parameters - From Techfile
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; FIXME: hard wired here temporarily. Need to get the from TF ...
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   minwid = 2000.0
+   minlen = 2000.0
+   ; frame widths
+   backSideEdgeWidth = 39.5
+   nitrideEtchEdgeWidth = 95.0
+   bondRingEdgeWidth = 500.0
+   lidMetalRingEdgeWidth = 100.0
+   lidEtchRingEdgeWidth = 1000.0
+   ; frame offsets from outter edge references
+   bondRingEdgeInnerOffset = 195.0
+   lidMetalEdgeInnerOffset = 200.0
+   lidEtchRingEdgeInnerOffset = 200.0
+   ; layers
+   setLayer(device->ol0 "dot_etch")
+   setPurpose(device->ol0 "drawing")
+   setLayer(device->ol1 "Backside")
+   setPurpose(device->ol1 "drawing")
+   setLayer(device->ol2 "Bond_Ring")
+   setPurpose(device->ol2 "drawing")
+   setLayer(device->ol3 "Lid_Metal")
+   setPurpose(device->ol3 "drawing")
+   setLayer(device->ol4 "LID_ETCH")
+   setPurpose(device->ol4 "drawing")
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; User Parameters - Outside Dimensions
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   width = getParamValue(device 'width)
+   length = getParamValue(device 'length)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Minimum and clamp checks - guard rails
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; width
+   if(width < minwid then
+      width = minwid
+   );if
+   ; height
+   if(length < minlen then
+      length = minlen
+   );if
+;  edgeWidth = getParamValue(device 'edgeWidth)
+   ; Outline 0
+   setWidth(device->ol0 width)
+   setLength(device->ol0 length)
+   setEdgeWidth(device->ol0 nitrideEtchEdgeWidth)
+   ; Outline 1
+   setWidth(device->ol1 width)
+   setLength(device->ol1 length)
+   setEdgeWidth(device->ol1 backSideEdgeWidth)
+   ; Outline 2
+   setWidth(device->ol2 width-2*bondRingEdgeInnerOffset)
+   setHeight(device->ol2 length-2*bondRingEdgeInnerOffset)
+   setEdgeWidth(device->ol2 bondRingEdgeWidth)
+   setRadius(device->ol4 nitrideEtchEdgeWidth)
+   ; Outline 3
+   setWidth(device->ol3 width-2*bondRingEdgeInnerOffset-2*lidMetalEdgeInnerOffset)
+   setHeight(device->ol3 length-2*bondRingEdgeInnerOffset-2*lidMetalEdgeInnerOffset)
+   setEdgeWidth(device->ol3 lidMetalRingEdgeWidth)
+   ; Outline 4
+   setWidth(device->ol4 width-2*bondRingEdgeInnerOffset-2*bondRingEdgeWidth-2*lidEtchRingEdgeInnerOffset)
+   setHeight(device->ol4 length-2*bondRingEdgeInnerOffset-2*bondRingEdgeWidth-2*lidEtchRingEdgeInnerOffset)
+   setEdgeWidth(device->ol4 lidEtchRingEdgeWidth)
+   setRadius(device->ol4 nitrideEtchEdgeWidth)
+   setPlate(device->ol4 't)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Set the References
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setRef(device->ol0 getRef(device))
+   setRef(device->ol1 getRef(device))
+   setRef(device->ol2 getRef(device))
+   setRef(device->ol3 getRef(device))
+   setRef(device->ol4 getRef(device))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Generate the assemblies 
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   generate(device->ol0)
+   generate(device->ol1)
+   generate(device->ol2)
+   generate(device->ol3)
+   generate(device->ol4)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Render the assemblies
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   render(device->ol0)
+   render(device->ol1)
+   render(device->ol2)
+   render(device->ol3)
+   render(device->ol4)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Generate a RectTran - Only need the outter oultine
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ol0RectTran = getRectTran(device->ol0)
+   rtsAdd(device->rtrans ol0RectTran)
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Set the CV boundary box
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Call the next draw in the 
+   ; case of multiple inheritance
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ; Fixed Cellview Instantiations
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   if(device->spm == "TRUE" then
+     println("INFO: Adding SMPs")
+     lib = "reticle"
+     view = "layout"
+     name = "SPM_X_AH32"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     name = "SPM_Y_AH32"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     callNextMethod()
+    else
+     println("INFO: Removing SMPs")
+     callNextMethod()
+   );if
+  );let
+);defmethod
