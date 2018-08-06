@@ -5,6 +5,7 @@
 ;          outter streets are centered within the reticle outline. The combination
 ;          of these checks ensures that the inter and intra reticle streets are
 ;          periodic and can be numbered via the commutative numbering algorithm  
+;  FIXME: Coupon XYNPADS need to be detected within the overhead block
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticle (cv)
 	  (
@@ -13,17 +14,21 @@ defclass( reticle (cv)
 		( overlap @reader getOverlap @writer setOverlap)
 		( maxDim @reader getMaxDim @writer setMaxDim)
 		( xynPadChipName @reader getPadChipName @writer setPadChipName)
+		( xynPadOverheadName @reader getPadOverheadName @writer setPadOverheadName)
 		( xynPadCouponName @reader getPadCouponName @writer setPadCouponName)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
 		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
 		( chipList @reader getChipList)
+		( olist @reader getOverheadList)
 		( couponList @reader getCouponList)
 		( chips @reader getChips)
+		( overhead @reader getOverhead)
 		( coupons @reader getCoupons)	
 		( isPartial @reader getIsPartial )
 		( origin @reader getOrigin @writer setOrigin)
 		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
+		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
 		( numNumPads @reader getNumNumPads)				
 	  )
@@ -38,17 +43,21 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->overlap = nil
 	   obj->maxDim = nil
 	   obj->xynPadChipName = nil
+	   obj->xynPadOverheadName = nil
 	   obj->xynPadCouponName = nil
 	   obj->validDim = nil
 	   obj->validRes = nil
 	   obj->shiftUrq = nil
-	   obj->chipList = nil  
+	   obj->chipList = nil
+	   obj->olist = nil 
 	   obj->couponList = nil
 	   obj->chips = makeInstance( 'collection )
+	   obj->overhead = makeInstance( 'collection )
 	   obj->coupons = makeInstance( 'collection ) 
 	   obj->isPartial = nil
 	   obj->origin = nil 
 	   obj->numRetChips = nil 
+	   obj->numRetOverhead = nil
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
 );defmethod
@@ -84,12 +93,12 @@ defmethod( checkGrid ((ret reticle))
   if( abs(quotient(getWidth(ret) ret->srGrid 1.0) - round(getWidth(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
-    printf("INFO: Reticle Width %g step is correctly on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
+    printf("INFO: Reticle Width %g step is CORRECTLY on a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   );if
   if( abs(quotient(getHeight(ret) ret->srGrid 1.0) - round(getHeight(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Height %g step resolution NOT ON a %g um grid\n" ret->bb->height ret->srGrid)
   else
-    printf("INFO: Reticle Height %g step is correctly on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
+    printf("INFO: Reticle Height %g step is CORRECTLY on a %g um grid\n" float(getHeight(ret)) float(ret->srGrid))
   );if
 );defmethod
 
@@ -133,7 +142,7 @@ defmethod( checkRes (( ret reticle ))
 ; 3.) make sure the row,col matrix origin coordinates
 ;     are periodic in their respective dimension  
 ;#####################################################
-;defmethod( periodicity (( ret reticle )) 
+;defmethod( CheckPeriodicity (( ret reticle )) 
   ; Periodicity check of verticle streets
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Scribe line pointer
@@ -163,40 +172,38 @@ defmethod( checkRes (( ret reticle ))
 ; This method checks that all vertical and horizontal
 ; streets are of uniform width
 ;#####################################################
-;defmethod( getVerticalScribes (( ret reticle ))
-;   let( ( sl sorted i)
-;    println( "Finding Vertical Reticle Scribe Lines:")
-;    foreach( chip getChipList(ret)
-;      when( chip->chipType == "chip"
-;        printf( "Chip Name: %L" chip->cellName)
-;	 foreach( pos getOrigin(chip)
-;          printf( "Chip X Position: %L" xCoord(pos))
-;          ; create a list of chip unique x values
-;          ; INLINE IF: if(member( car( posn) sl) sl = cons( car( posn) sl):nil)
-;	   unless( member( car( posn) sl) sl = cons( car( posn) sl))
-;	 )
-;      )
-;    )
-;    sorted = sort( sl 'lessp)
-;    println( "Sorted Reticle Scribe Line X Coord List:")
-;    i=0
-;    foreach(sort sorted
-;      printf( "%L.) SL X Coord:%L" i nth(i sorted))
-;      cdr(sorted)
-;      i++
-;    )
-;  )
-;  sort( sl 'lessp)
-;);defmethod
-
-
-;#####################################################
-; This method checks that all vertical and horizontal
-; streets are of uniform width
-;#####################################################
-defmethod( streetWidths (( ret reticle ))
-  nil
-);
+defmethod( getVerticalScribes (( ret reticle ))
+   let( ( sl sorted i origsx origsy)
+    println( "Finding Vertical Reticle Scribe Lines:")
+    ; Generate a list of all chip origins
+    origsx = '()
+    origsy = '()
+    foreach( chip getCollection(ret->chips)
+      printf( "Chip Name: %L" getName(chip))
+      origsx = cons(xCoord(getOrigin(getBbx(chip))) origsx)
+      origsy = cons(yCoord(getOrigin(getBbx(chip))) origsy)
+    );foreach
+    foreach( coup getCollection(ret->coupons)
+      printf( "Coupon Name: %L" getName(coup))
+      origsx = cons(xCoord(getOrigin(getBbx(coup))) origsx)
+      origsy = cons(yCoord(getOrigin(getBbx(coup))) origsy)
+    );foreach
+    sl = '()
+    printf( "Chip X Position: %L" posx)
+    ; create a list of chip unique x values
+    ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
+    unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
+    sorted = sort( sl )
+    println( "Sorted Reticle Scribe Line X Coord List:")
+    i=0
+    foreach(sort sorted
+      printf( "%L.) SL X Coord:%L" i nth(i sorted))
+      cdr(sorted)
+      i++
+    );foreach
+    sort( sl )
+  );let
+);defmethod
 
 ;#####################################################
 ; This method checks the reticle's bbox dimensions
@@ -213,16 +220,16 @@ defmethod( chipId (( ret reticle ))
 ; one level below the top level reticle cellview
 ;#####################################################
 defmethod( findXynPads (( ret reticle ))
-  let((dlist cv numPadCount chipPadCount couponPadCount chip coupon cvchip)
+  let((dlist olist clist cv numPadCount chipPadCount overheadPadCount couponPadCount chip coupon cvchip)
     resetCollection(ret->chips)
     resetCollection(ret->coupons)
     numPadCount = 0
     chipPadCount = 0
+    overheadPadCount = 0
     couponPadCount = 0
     dlist = '()
     clist = '()
     cv = getRef(ret)
-    ;FIXME: coupons not being detected!!
     foreach( ih cv~>instHeaders
       printf("Instance Header Name: %s \n" ih~>cellName)
       foreach( inst ih~>instances
@@ -253,18 +260,43 @@ defmethod( findXynPads (( ret reticle ))
 	    ;getDim(chip)
 	    addChip(ret chip)
           );
-	  if(!null(strcmp(cell~>cellName ret->xynPadCouponName) == 0) then
-            numPadCount++
-	    couponPadCount++
-            printf("%d.) XYN COUPON PAD FOUND!: %s, In coupon: %s \n" numPadCount cell~>cellName inst~>cellName)
-	    clist = cons(inst~>cellName clist)
+	  if(!null(strcmp(cell~>cellName ret->xynPadOverheadName) == 0) then
+	    numPadCount++
+	    overheadPadCount++
+            printf("%d.) XYN OVERHEAD PAD FOUND!: %s, In chip: %s \n" numPadCount cell~>cellName inst~>cellName)
+	    olist = cons(inst~>cellName olist)
+	    oh = makeInstance( 'overhead )
+	    setName(oh inst~>cellName)
+	    setLib(oh getLib(ret))
+	    setView(oh getView(ret))
+	    setOrient(oh inst~>orient)
+	    setBbx(getBbx(oh) inst~>bBox)
+	    getDim(getBbx(oh))
+	    Origin(getBbx(oh))
+	    setName(oh->numpad cell~>cellName)
+            setOrient(oh->numpad cell~>orient)
+	    setBbx(getBbx(oh->numpad) cell~>bBox)
+	    getDim(getBbx(oh->numpad))
+	    Origin(getBbx(oh->numpad))
+	    ;setChipBbox(oh inst~>bbox)
+	    ;setPadBbox(oh cell~>bBox)
+	    ;setInstanceBbox(oh inst~>bBox)
+	    ;getDim(oh)
+	    addOverhead(ret oh)
           );
+	  ;if(!null(strcmp(cell~>cellName ret->xynPadCouponName) == 0) then
+          ;  numPadCount++
+	  ;  couponPadCount++
+          ;  printf("%d.) XYN COUPON PAD FOUND!: %s, In coupon: %s \n" numPadCount cell~>cellName inst~>cellName)
+	  ;  clist = cons(inst~>cellName clist)
+          ;);
         );foreach
       );foreach
     );foreach
     dlist = sort(dlist nil)
     clist = sort(clist nil)
     ret->chipList = dlist
+    ret->olist = olist
     ret->couponList = clist
     ret->numNumPads = numPadCount
   );let
@@ -308,6 +340,17 @@ defmethod( addChip (( ret reticle ) arg)
 );defmethod
 
 ;#####################################################
+; Add overhead to overhead collection
+;#####################################################
+defmethod( addOverhead (( ret reticle ) arg)
+  if( classp( arg 'overhead) then
+    add(ret->overhead arg)
+  else
+    println("ERROR(reticle): Argument must be an overhead object")
+  );if
+);defmethod
+
+;#####################################################
 ; Add coupon to couponss collection
 ;#####################################################
 defmethod( addCoupon (( ret reticle ) arg)
@@ -335,11 +378,11 @@ defmethod( update (( ret reticle ))
 ;#####################################################
 defmethod( checkSum (( ret reticle ))
   let((psum)
-    psum = getNumRetChips(ret) + getNumRetCoups(ret)
+    psum = getNumRetChips(ret) + getNumRetOverhead(ret)
     if(!null(psum == getNumNumPads(ret)) then
-       printf("INFO: Reticle Coupon Checksum Passed, Chips+Coups: %d, numPads: %d\n" psum getNumNumPads(ret))
+       printf("INFO: Reticle Coupon Checksum Passed, Chips+Overhead: %d, numPads: %d\n" psum getNumNumPads(ret))
     else
-       printf("ERROR: Reticle Coupon Checksum FAILED!, Chips+Coups: %d, numPads: %d\n" psum getNumNumPads(ret))
+       printf("ERROR: Reticle Coupon Checksum FAILED!, Chips+Overhead: %d, numPads: %d\n" psum getNumNumPads(ret))
     ); 
   );
 );defmethod

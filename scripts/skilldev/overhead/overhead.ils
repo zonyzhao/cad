@@ -1,0 +1,38 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  overhead.ils: overhead class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( overhead (die)
+  (
+    (numpad @reader getNumPad)
+    (coupons @reader getCoupons)
+    (amarks @reader getAmarks)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj overhead)) 
+  obj->numpad = makeInstance( 'chipNumberPad )
+  obj->coupons = makeInstance( 'collection )
+  obj->amarks = makeInstance( 'collection )
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setChipBbox  (( oh overhead ) bbx)
+  setBbx(ch->bbx bbx)
+  ;getDim(ch->bbx)
+  ;Origin(ch->bbx)
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(setPadBbox  (( oh overhead ) bbx)
+  setBbx(oh->numpad->bbx bbx)
+  ;getDim(oh->numpad->bbx)
+  ;Origin(oh->numpad->bbx)
+);defmethod
+;######################################################
+;######################################################
