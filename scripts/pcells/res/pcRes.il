@@ -50,18 +50,18 @@ pcDefinePCell(
 	cdfCreateParam(cdfid
                            ?name "width"
 			   ?prompt "width"
-			   ?defValue 5.0	
+			   ?defValue "5.0"	
 			   ?type "string"
 			   ?display "t"
-			   ?callback "pcell->widatof(cdfgData->width)"
+			   ?callback "cdfgData->wid=atof(cdfgData->width)"
         );cdfCreateParameter
 	cdfCreateParam(cdfid
                            ?name "length"
 			   ?prompt "length"
-			   ?defValue 15.0	
+			   ?defValue "15.0"	
 			   ?type "string"
 			   ?display "t"
-			   ?callback "pcell->len=atof(cdfgData->width)"
+			   ?callback "cdfgData->len=atof(cdfgData->length)"
         );cdfCreateParameter
 	cdfSaveCDF(cdfid)
   );let
