@@ -22,6 +22,7 @@ pcDefinePCell(
 	setRef(pcell pcCellView)
 	setPcellParams(pcell pcCellView)	
 	draw(pcell)
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Create the CDF
 	; If CDF exists - delete it
 	if( cvid = ddGetObj("D91" "res") then
@@ -62,5 +63,6 @@ pcDefinePCell(
 			   ?display "t"
 			   ?callback "pcell->len=atof(cdfgData->width)"
         );cdfCreateParameter
+	cdfSaveCDF(cdfid)
   );let
 );pcDefinePcell

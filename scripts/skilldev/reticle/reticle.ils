@@ -227,7 +227,7 @@ defmethod( checkInnerStreets (( ret reticle ))
     ;;  cdr(sorted)
     ;  i++
     ;);foreach
-    foreach(sort sorted
+    ;foreach(sort sorted
     ;sort( sl )
   );let
 );defmethod

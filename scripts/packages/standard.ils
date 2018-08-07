@@ -3471,6 +3471,7 @@ defclass( reticle (cv)
 		( validDim @reader getDimValid)
 		( validRes @reader getResValid)
 		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
+		( frame @reader getFrame)
 		( chipList @reader getChipList)
 		( olist @reader getOverheadList)
 		( couponList @reader getCouponList)
@@ -3482,7 +3483,8 @@ defclass( reticle (cv)
 		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
-		( numNumPads @reader getNumNumPads)				
+		( numNumPads @reader getNumNumPads)
+		( innerStreetOrigs @reader getInnerStreetOrigs)				
 	  )
 );defClass
 
@@ -3500,6 +3502,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->validDim = nil
 	   obj->validRes = nil
 	   obj->shiftUrq = nil
+	   obj->frame = makeInstance( 'reticleFrame )
 	   obj->chipList = nil
 	   obj->olist = nil 
 	   obj->couponList = nil
@@ -3669,14 +3672,15 @@ defmethod( checkInnerStreets (( ret reticle ))
     else
        printf("INFO: Die number: %d, EQUALS Die site inner street array total: %d\n"  dieCount dieSiteCount)
     );
-    println( "Sorted Reticle Scribe Line X Coord List:")
-    i=0
-    foreach(sort sorted
-      printf( "%L.) SL X Coord:%L" i nth(i sorted))
-      cdr(sorted)
-      i++
-    );foreach
-    sort( sl )
+    ;println( "Sorted Reticle Scribe Line X Coord List:")
+    ;i=0
+    ;foreach(sort sorted
+    ;  printf( "%L.) SL X Coord:%L" i nth(i sorted))
+    ;;  cdr(sorted)
+    ;  i++
+    ;);foreach
+    ;foreach(sort sorted
+    ;sort( sl )
   );let
 );defmethod
 
