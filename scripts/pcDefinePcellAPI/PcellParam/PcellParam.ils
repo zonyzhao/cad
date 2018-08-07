@@ -26,14 +26,14 @@ defclass( PcellParam ()
 ; 
 ; NOTE: 
 ; This important method does the mapping of the desired user
-; parameters between and the required built in "pcCellView" parameters.
-; This ensures that the user defined pcell has full access to the
+; parameters to the required built in "pcCellView" parameters.
+; This ensures that the user defined pcell object code has full access to the
 ; built in class' parameters (pcCellView). During pcell compilation
-; this method is called in order to update the user pcell code object from
-; the parameterized inputs of the built in pcell object (pcCellView).
+; this method is called in order to update (trigger callback) the user pcell 
+; code object from the parameterized inputs of the built in pcell object (pcCellView).
 ; Every time a pcell's parameter is changed, the user pcell is 
 ; recompiled and executed using the new parameter values of the built 
-; in pcell object. 
+; in pcell (pcCellView) object. 
 ;#################################################################
 defmethod( setPcellParams ((device PcellParam) cv)
   when( cv && dbIsId(cv)

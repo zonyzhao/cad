@@ -12,7 +12,8 @@ defclass( memsChipFrame (PcellParam)
 		( width @initform defineParam("float" 1000.0))	
 		( length @initform defineParam("float" 1000.0))
 ;		( edgeWidth @initform defineParam("float" 95.0))
-		( spm @initform defineParam("boolean" "TRUE"))
+;		( spm @initform defineParam("boolean" "FALSE"))
+                ( spm @initform defineParam("float" -1.0))
 		( ol0 )
 		( ol1 )
 		( ol2 )
@@ -41,7 +42,7 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device memsChipFrame))
-  let( (minwid minlen width length edgeWidth ol0RectTran 
+  let( (minwid minlen width length spm edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
         bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib view name cv)
@@ -74,10 +75,13 @@ defmethod( draw ((device memsChipFrame))
    setLayer(device->ol4 "LID_ETCH")
    setPurpose(device->ol4 "drawing")
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;; User Parameters - Outside Dimensions
+   ;; User Parameters 
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;  Outside Dimensions
    width = getParamValue(device 'width)
    length = getParamValue(device 'length)
+   ; SPMs
+   spm = getParamValue(device 'spm)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Minimum and clamp checks
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,8 +156,9 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Fixed Cellview Instantiations
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   if(device->spm == "TRUE" then
-     println("INFO: Adding SMPs")
+   ;if(spm == "TRUE" then
+   if(spm > 0.0 then
+     println("INFO: Adding SPMs")
      lib = "reticle"
      view = "layout"
      name = "SPM_X_AH32"
@@ -164,7 +169,7 @@ defmethod( draw ((device memsChipFrame))
      dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
      callNextMethod()
     else
-     println("INFO: Removing SMPs")
+     println("INFO: No SPMs")
      callNextMethod()
    );if
   );let
