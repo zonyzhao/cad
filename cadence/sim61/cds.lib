@@ -1,0 +1,12 @@
+DEFINE analogLib $CDS/tools/dfII/etc/cdslib/artist/analogLib 
+DEFINE sbaLib $CDS/tools/dfII/etc/cdslib/artist/sbaLib 
+DEFINE basic $CDS/tools/dfII/etc/cdslib/basic 
+DEFINE sample $CDS/tools/dfII/samples/cdslib/sample 
+DEFINE US_8ths $CDS/tools/dfII/etc/cdslib/sheets/US_8ths
+DEFINE bicmos8hp $IBMPDK/$PROCESS/relHP/cdslib/bicmos8hp
+DEFINE esd8hp $IBMPDK/$PROCESS/relHP/cdslib/esd8hp
+DEFINE rfLib $CDS/tools/dfII/samples/artist/rfLib
+DEFINE ahdlLib $CDS/tools/dfII/samples/artist/ahdlLib
+DEFINE pllMMLib $CDS/tools/dfII/samples/artist/pllMMLib
+DEFINE avTech /apps/assura/ASSURA616_04.14.101/tools/assura/etc/avtech/avTech
+DEFINE test /users/1127110/projects/act1/test

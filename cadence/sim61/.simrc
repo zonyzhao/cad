@@ -1,0 +1,10 @@
+;;Sample .simrc file for use with auCdl netlisting
+;;
+;;Adding the spectre view in the view/stop list will netlist implicit
+;;connections for DIVA LVS.
+lvsSchematicViewList = '("auLvs" "schematic")
+lvsSchematicStopList = '("auLvs")
+cdlSchematicViewList = '("auCdl" "schematic")
+cdlSchematicStopList = '("auCdl" "schematic")
+; auCdlCDFPinCntrl = t      ; BG 14144 c
+auCdlScale = "MICRON"

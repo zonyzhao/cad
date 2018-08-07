@@ -1,0 +1,162 @@
+;#################################################################
+;#  cdf.ils: Component Description Format Class
+;##################################################################  
+defclass( cdf ()
+	  (
+		( libName @reader getLib @writer setLib)
+		( fileName @reader getFile @writer setFile)
+		( cellName @reader getCell @writer setCell)
+		( level @reader getLevel @writer setLevel)
+		( cellId )
+		( libId )
+		( cdfDataId )
+		( formInitProc )
+		( doneProc )
+		( buttonFieldWidth )
+		( fieldHeight )	   
+		( fieldWidth )
+		( promptWidth )
+		( opPointLabelSet )
+		( paramLabelSet )
+		( paramList @reader getParams @writer setParams)
+		( paramObjList )
+		( simOptList )
+		( simOptObjList )
+		( cid )
+		( oid )		
+		( chobj )	
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Class Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj cdf)) 
+	   obj->libName = nil
+	   obj->fileName = nil
+	   obj->cellName = nil
+	   obj->level = 'base
+	   obj->cellId = nil
+	   obj->libId = nil
+	   obj->cdfDataId = nil
+	   obj->formInitProc = ""
+	   obj->doneProc = ""
+	   obj->buttonFieldWidth = 340
+	   obj->fieldHeight = 35
+	   obj->fieldWidth = 350
+	   obj->promptWidth = 175
+	   obj->opPointLabelSet = ""
+	   obj->paramLabelSet = ""
+	   obj->paramList = nil
+	   obj->paramObjList = nil
+	   obj->simOptList = nil
+	   obj->simOptObjList = nil
+	   obj->cid = "cdf"
+	   obj->oid = nil
+	   obj->chobj = "cdfParam"
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create A List of Child Parameter Objects based upon the parameter name
+; list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( genParamObjList (( cmp cdf ))
+   let( ( vName
+   	  estrng )
+	  for( i 0 sub1(length(cmp->paramList))
+	       sprintf(vName "obj%d" i)
+	       sprintf(estrng strcat(vName "=makeInstance( '" cmp->chobj " )"))
+	       evalstring(estrng)
+	       sprintf(estrng strcat("cmp->paramObjList=cons(" vName " cmp->paramObjList )"))
+	       evalstring(estrng)
+	  );for
+	  for( i 0 sub1(length(cmp->paramList))
+	       nth(i cmp->paramObjList)->name = nth(i cmp->paramList)
+	       nth(i cmp->paramObjList)->cdfDataId = cmp->cdfDataId
+	  )
+   );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create A List of Child Parameter Objects based upon the paramter name
+; list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( createCdfParams (( cmp cdf ))
+   let( ( type
+   	  estrng 
+	  oind
+	  name)
+	  for( i 0 sub1(length(cmp->paramObjList))
+	       name = nth(i cmp->paramObjList)->name 
+	       printf("Creating CDF Parameter %d: %s \n" i name)
+	       type = nth(i cmp->paramObjList)->type
+	       sprintf(oind " nth(%d cmp->paramObjList)" i)  
+	       sprintf(estrng strcat("cdfParam" type "(" oind ")"))
+	       evalstring(estrng)  
+	  );for
+   );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Dump the CDF into an output file 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( dmpCdf (( cmp cdf ))
+   cdfDump(cmp->libName cmp->fileName ?cellName cmp->cellName ?level cmp->level ?edit nil)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Read in a CDF file into cadence
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( readCdf (( cmp cdf ))
+   load(cmp->cellName)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get existing CDF Id of a cell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getCdf (( cmp cdf ))
+   cmp->libId  = ddGetObj(cmp->libName)
+   cmp->cellId = ddGetObj(cmp->libName cmp->cellName)
+   cmp->cdfDataId = cdfGetBaseCellCDF(cmp->cellId)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a the CDF ID of the cell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( newCdf (( cmp cdf ))
+   cmp->libId  = ddGetObj(cmp->libName)
+   cmp->cellId = ddGetObj(cmp->libName cmp->cellName)
+   cmp->cdfDataId = cdfCreateBaseCellCDF(cmp->cellId)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Delete a the CDF ID of the cell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( deleteCdf (( cmp cdf ))
+;FIXME: capture the not existing error
+   cdfDeleteCDF(cmp->cdfDataId)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Copy a CDF from one cells to another
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( copyCdf (( cmp cdf ) dest)
+   let( ( src
+   	  srcCdf )
+   	  src = ddGetObj(cmp->libName cmp->cellName)
+   	  srcCdf=cdfGetBaseCellCDF(src)
+   	  cdfCopyCdf(dest "baseCelldata" srcCdf)
+   );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Save the CDF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( saveCdf (( cmp cdf ))
+   cdfSaveCDF(cmp->cdfDataId )
+);defmethod
+
+;;;;;;;;;;:::::::;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

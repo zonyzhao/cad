@@ -1,0 +1,6 @@
+--Path, Component, Release: cmrf7sf/V1.3.0.6MLML/cdslib/examples/assura_tech.lib, examples, cad_cmrf7sf
+--CMVC Revision: 1.4 03/06/20 15:05:25
+------------------------  cmrf7sf  -------------------------------------------
+DEFINE av8hpDRC $IBMPDK/$PROCESS/relHP/Assura/DRC
+DEFINE av8hpLVS $IBMPDK/$PROCESS/relHP/Assura/LVS
+DEFINE av8hpQRC $IBMPDK/$PROCESS/relHP/Assura/QRC/411

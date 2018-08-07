@@ -1,0 +1,29 @@
+asimenv showWhatsNew    string  "6.1.6"
+ddserv  showWhatsNew    string  "6.1.6"
+viva.application showWhatsNew string "6.1.6"
+layout  instLibName     string  "bicmos8hp"
+layout  ySnapSpacing    float   0.01
+layout  xSnapSpacing    float   0.01
+
+layoutXL        sfactorNames    string  "sc SC"
+
+spectre.envOpts    modelFiles      string  "design.scs wafer.scs allModels.scs;tt"
+spectre.envOpts  includePath  string "/nfs/foundry/ibm/IBM_PDK/bicmos8hp/relHP/Spectre/models"
+
+cdsLibEditor.main       warnExclLock    boolean nil
+cdsLibEditor.main       autoExclEdit    boolean t
+graphic defaultNewViewName      string  "layout"
+graphic defaultToolName string  "Virtuoso"
+layout  stopLevel       int     32
+layout  gravityOn       boolean nil
+layout  gravityType     string  "edge midpoint vertex end centerline"
+layout  gravityAperture float   1
+layout  gravityDepth    int     5
+rod     minWidthCheckingOn      boolean nil
+rod     minSpacingCheckingOn    boolean nil
+rod     minEnclosureCheckingOn  boolean nil
+ui      textFont        string  "-*-courier-medium-r-*-*-12-*"
+ui      showFixedMenu   cyclic  "On Left-Side      "
+ui      undoLevel       int     10
+
+
