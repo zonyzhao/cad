@@ -1,0 +1,82 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; twoPointsLine.ils: class that creates a line from two points
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( twoPointsLine ( Line )
+  (
+	( P1 @initarg P1 )
+	( P2 @initarg P2 )
+  )
+);defclass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Describe (( obj twoPointsLine ))
+  callNextMethod( obj )
+  printf("...containing\n")
+  Describe( obj->P1 )
+  Describe( obj->P2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Validate (( obj twoPointsLine ))
+  let( (x1 y1 x2 y2 A B C )
+     x1 = obj->P1->x
+     x2 = obj->p2->x
+     y1 = obj->p1->y
+     y2 = obj->p2->y
+     A = obj->A
+     B = obj->B
+     C = obj->C
+     if( A*x1+B*y1+C != 0.0 then
+       error( "Invalid twoPointsLine\n" )
+     );if
+     if( A*x2+B*y2+C != 0.0 then
+       error( "Invalid twoPointsLine\n" )
+     );if
+     t
+     );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Update (( obj twoPointsLine ))
+  let( (x1 y1 x2 y2 m b)
+    x1 = obj->P1->x
+    x2 = obj->P2->x
+    y1 = obj->P1->y
+    y2 = obj->P2->y
+    if( x2-x1 != 0 then
+      m = (y2-y1)*1.0/(x2-x1)
+      b = y2-m*x2
+      obj->A = -m
+      obj->B = 1
+      obj->C = -b
+    else
+      obj->A = 1.0
+      obj->B = 0.0
+      obj->C = -x1
+    );if
+  );let
+  callNextMethod( obj )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper Procedure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure( make_TwoPoints_Line( p1 p2 )
+  let( ( line )
+       line = makeInstance( 'twoPointsLine ?P1 p1 ?P2 p2 )
+       Update( line )
+       Connect( p1 line )
+       Connect( p2 line )
+       line
+  );let
+);procedure
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

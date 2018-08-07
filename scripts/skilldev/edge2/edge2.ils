@@ -1,0 +1,22 @@
+;######################################################
+;# edge2.ils: Polygon edge Class inheriting from line class
+;######################################################
+defclass( edge2 (lineSegment2 vector2)
+	  (
+             ( num @reader getNum @writer setNum )
+	     ( visited @reader getVisit @writer setVisit )
+	  )				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj edge2)) 
+	   obj->num = nil
+	   obj->visited = nil
+);defmethod
+
+;######################################################
+;######################################################
+;######################################################
+

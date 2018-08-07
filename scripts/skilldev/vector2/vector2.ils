@@ -1,0 +1,161 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; vector2.ils: 2-D vector class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( vector2 ()
+	  (
+		( head )
+		( tail )
+	  	( mag )
+		( theta )
+		( orig )
+	  )				  
+);defclass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj vector2)) 
+	   obj->head   = makeInstance( 'point2 )
+	   obj->tail   = makeInstance( 'point2 )
+	   obj->mag    = nil
+	   obj->theta  = nil
+	   obj->orig   = makeInstance( 'point2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set vector head
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setHead (( vect vector2 ) head)
+  vect->head->x=float(xCoord(head))
+  vect->head->y=float(yCoord(head))
+  list(vect->head->x vect->head->y)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set vector tail
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setTail (( vect vector2 ) tail)
+  vect->tail->x=float(xCoord(tail))
+  vect->tail->y=float(yCoord(tail))
+  ;vect->orig->x=xCoord(tail)
+  ;vect->orig->y=yCoord(tail)
+  list(vect->tail->x vect->tail->y)   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; vector translate
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translateVector (( vect vector2 ))
+  nil
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; translate vector tail to origin 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( tail2origin (( vect vector2 ))
+  nil
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; vector rotate
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rotateVector (( vect vector2 ))
+  nil
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set polar values of vector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setPolar (( vect vector2 ))
+  vect->mag=((vect->head->x-vect->tail->x)**2+(vect->head->y-vect->tail->y)**2)**0.5 
+  vect->theta = atan2((vect->head->y-vect->tail->y) (vect->head->x-vect->tail->x) )
+  list(vect->mag vect->theta/3.141593*180)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set polar values of vector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( polar2Cartesian (( vect vector2 ))
+  vect->head->x = vect->mag*cos(vect->theta) + vect->orig->x
+  vect->tail->x = vect->orig->x
+  vect->head->y = vect->mag*sin(vect->theta) + vect->orig->x
+  vect->tail->y = vect->orig->y
+  vect->theta = atan2((vect->head->y-vect->tail->y) (vect->head->x-vect->tail->x) )
+  list(vect->mag vect->theta/3.141593*180)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Normalize the vector
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( normalize (( vect vector2 ))
+	   setPolar(vect)
+	   vect->mag = 1.0
+	   polar2Cartesian(vect)	   	   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Vector Dot Product
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( dot (( vect vector2 ) vector)
+  let( (ax ay bx by)
+       ax = vect->head->x - vect->tail->x
+       ay = vect->head->y - vect->tail->y
+       bx = vector->head->x - vector->tail->x
+       by = vector->head->y - vector->tail->y
+       ax*bx+ay*by
+   );let	   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Vector Cross Product
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cross (( vect vector2 ) vector ) 
+  ax = vect->head->x - vect->tail->x
+  ay = vect->head->y - vect->tail->y
+  bx = vector->head->x - vector->tail->x
+  by = vector->head->y - vector->tail->y
+  ax*by - ay*bx	   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Vector Magnitude
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( magnitude (( vect vector2 ))
+  setPolar(vect)
+  vect->mag	   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Vector Angle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( angle (( vect vector2 ))
+  setPolar(vect)
+  vect->theta/3.141593*180	   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Radians To Degrees
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rad2deg (( vect vector2 ))
+   vect->theta/3.141593*180
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set radian theta with degree input
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deg2rad (( vect vector2 ) deg)
+   vect->theta = deg*3.141593/180
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Vector Internal Angle
+; defined in a counter-clockwise manner
+; (Right Hand Rule"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( internaAngle (( vect vector2 ))
+  nil	   
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

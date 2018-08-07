@@ -1,0 +1,35 @@
+;######################################################
+;# segment.ils: 2-D line segment Class
+;######################################################
+defclass( segment2 ()
+	  (
+		( p0 )
+		( p1 )
+		( len )
+		( slp )
+		( int )
+	  )				  
+) ; defclass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj segment2)) 
+	   obj->p0 = makeInstance('point2)
+	   obj->p1 = makeInstance('point2)
+	   obj->len = nil
+	   obj->slp = nil
+	   obj->int = nil
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generate the 2-D line segment
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate (( lin line2 ) value )
+	   lin->slp = (p1->x-p0->x)/(p1->y-p0->y)
+	   lin->int = p0->y-lin->slp*p0->x
+	   lin->length = ((p1->x-p0->x)**2+(p1->y-p0->y)**2)**0.5	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
