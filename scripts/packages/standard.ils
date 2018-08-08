@@ -5063,10 +5063,10 @@ defmethod( setOnMfg (( ss snapshot ))
 ;  pcell.ils: General Pcell ANALYSIS class encapsulating commonly used
 ;             pcell analysis commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( pcell (cadObj)
+defclass( pcell (cv)
 	  (		
-		( ref @writer setRef @reader getRef )
-		( cvRef @writer setCvRef @reader getCvRef )			
+		( superMaster @reader isSuperMaster )
+		( master @reader isMaster )			
 	  )
 ) ; defClass
 
@@ -5074,15 +5074,15 @@ defclass( pcell (cadObj)
 ; 
 ;#####################################################
 defmethod( initializeInstance @after ((obj pcell))  
-	   obj->ref  = nil
-	   obj->cvRef = nil  
+	   obj->superMaster  = nil
+	   obj->master = nil  
 );defmethod
 
 ;#####################################################
 ; Check if current cv is a pcell
 ;#####################################################
 defmethod( isPcell (( pc pcell ))
-	   pc->cvRef~>isParamCell
+	   getReft(pc)~>isParamCell
 );defmethod
 
 ;#####################################################

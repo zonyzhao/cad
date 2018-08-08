@@ -54,6 +54,7 @@ p2 = nth(2 ncv~>prop)
 p2~>name
 p2~>valueType
 p2~>value
+
 ; evals with updated value - good!!
 p2~>value = 1.0
 p2~>value
