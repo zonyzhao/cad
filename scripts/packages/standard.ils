@@ -7926,12 +7926,15 @@ defmethod( draw ((device memsChipFrame))
   let( (minwid minlen width length spm edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
-        bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib view name cv)
+        bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib 
+        view name cv spmlen)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters - From Techfile
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; FIXME: hard wired here temporarily. Need to get the from TF ...
+   ; FIXME: hard wired here temporarily. Need to get the from TF.
+   ; (need to finalize on frame specifications!)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   spmlen = 747.0
    minwid = 2000.0
    minlen = 2000.0
    ; frame widths
@@ -8044,10 +8047,16 @@ defmethod( draw ((device memsChipFrame))
      view = "layout"
      name = "SPM_X_AH32"
      cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
-     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     dbCreateInst(getRef(device) cv name list(width/2.0-spmlen/2.0-2*nitrideEtchEdgeWidth length/2.0-nitrideEtchEdgeWidth/2.0) "R0" 1)
      name = "SPM_Y_AH32"
      cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
-     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     dbCreateInst(getRef(device) cv name list(width/2.0-nitrideEtchEdgeWidth/2.0 length/2.0-spmlen/2.0-2*nitrideEtchEdgeWidth) "R0" 1)
+     name = "SPM_X_AH53"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(-width/2.0+spmlen/2.0+2*nitrideEtchEdgeWidth -length/2.0+nitrideEtchEdgeWidth/2.0) "R0" 1)
+     name = "SPM_Y_AH53"
+     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     dbCreateInst(getRef(device) cv name list(-width/2.0+nitrideEtchEdgeWidth/2.0 -length/2.0+spmlen/2.0+2*nitrideEtchEdgeWidth) "R0" 1)
      callNextMethod()
     else
      println("INFO: No SPMs")

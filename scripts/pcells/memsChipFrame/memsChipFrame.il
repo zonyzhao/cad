@@ -20,6 +20,7 @@ pcDefinePCell(
 	setRef(pcell pcCellView)
 	setPcellParams(pcell pcCellView)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Example of instantion of cv within the pcell compile code
 ;	pcParameters = pcCellView~>parameters~>values
 ;        foreach( value pcParameters
 ;	  if(value~>name == "spm" then
