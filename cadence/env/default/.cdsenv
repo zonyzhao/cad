@@ -16,11 +16,14 @@ layout	toolboxDisplayMenus	boolean	t
 layout	toolboxUseBindkeys	boolean	t
 layout	toolboxUseMousekeys	boolean	t
 layout cursorShape boolean nil
+layoutXL        sfactorNames    string  "sc SC"
+spectre.envOpts    modelFiles      string  "design.scs wafer.scs allModels.scs;tt"
+spectre.envOpts  includePath  string "/users/1127110/project/spectre/"
 Diva.Extract    rsf     string  "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/diva/trunk/layerText.rul"  
 Diva.Extract    useRsf  boolean t
 Diva.LVS	rewire	boolean	nil
 Diva.LVS	rundir	string	"~/deslibs_oa_exp/lvs"
 Diva.LVS	rules	string	"divaLVS.rul"
 ui	textFont	string	"-*-courier-medium-r-*-*-12-*"
-ui	undoLevel	int	100
+ui	undoLevel	int	10
 cdsLibManager.main      showCategoriesOn        boolean t
