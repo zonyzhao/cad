@@ -425,8 +425,9 @@ defmethod( resetList (( list listfun ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  collection.ils: object collection class. Collections are
-;                  lists of objects that can be homegeneous or homogeneous object
+;                  lists of objects that are homogeneous object
 ;                  lists
+; FIXME: Enforce homogenous content via classOf(x) check after first entry
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;Program SKILL Lint finished on Sep 13 14:51:51 2017 with status PASS.
 ;IQ score is 100 (best is 100).
@@ -435,7 +436,8 @@ defclass( collection (cadObj)
 	  (
 		( n @reader getLen)
 		( list @reader getList @writer setList )
-		( cList )		  
+		( cList )
+		( cType )		  
 	  )
 );defclass
 
@@ -448,6 +450,7 @@ defmethod( initializeInstance @after ((obj collection))
 	   obj->cList = '()
 	   obj->cid="col"
 	   obj->oid=""
+	   obj->cType = nil
 );defmethod
 
 ;############################################################
@@ -493,10 +496,23 @@ defmethod( class ((col collection))
 
 ;############################################################
 ; Add and object to the collection's list
+; if first object perform no classOf check (isEmpty = t)
+; if list is not empty (isEmpty = nil) enforce classOf test
 ;#############################################################
 defmethod( add ((col collection) arg)
-   addTail(col->list arg)
-   col->n = col->n + 1
+   if(isEmpty then
+     addTail(col->list arg)
+     col->cType = classOf(arg)
+     col->n = col->n + 1
+   else
+     if(classp(arg col->cType) then
+       addTail(col->list arg)
+       col->n = col->n + 1
+     else
+       printf("ERROR(collection): Input Class, %L, not compatible with collection contents\n" classOf(arg))
+     );if
+   );if
+   col->n
 );defmethod
 
 ;############################################################
@@ -2784,6 +2800,7 @@ defclass( cv (cadObj)
                 ( cvPcell )
 		( instances )
 		( leafs )
+		( leafCells )
 		( stack )
 		( layers )
 		( pcells )
@@ -2800,7 +2817,6 @@ defclass( cv (cadObj)
                 ( origin @reader getOrigin @writer setOrigin)			  
 	  )
 ) ; defClass
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2813,6 +2829,7 @@ defmethod( initializeInstance @after ((obj cv))
            obj->cvPcell   = nil
 	   obj->instances = makeInstance('collection)
 	   obj->leafs     = nil
+	   obj->leafCells = makeInstance('collection)
 	   obj->layers    = nil
 	   obj->stack     = makeInstance('stackup)
 	   obj->pcells    = nil
@@ -3042,10 +3059,11 @@ defmethod( setDim (( cell cv ))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper method for the getTree method
 ; Get cv recursive instance tree
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
-  prog( (instRef llist rlist)
+  prog( (instRef llist rlist lc ic)
        cLst = cons(cv cLst)
        if(!null(cv~>instances) then
          if( length(cv~>instances) > 0 then
@@ -3054,23 +3072,39 @@ defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
        	   foreach( instance cv~>instances
 	     printf("Sniffing ID->[%L]: CV->%s: INST->%s(%s)\n" instance cv~>cellName instance~>cellName instance~>name)
 	     instRef = dbOpenCellViewByType(instance~>libName instance~>cellName "layout" "maskLayout")
+	     ic = makeInstance( 'cv )
+	     setName(ic cv~>cellName)
+	     setLib(ic cv~>libName)
+	     setBbx(ic->bbx cv~>bBox)
+	     add(cell->instances ic)
              rlist = cons(getRecursiveTree(cell ?cv instRef ?cLst llist) rlist)  
 	     ;dbClose(instRef)
 	   );foreach
 	   return(cons(rlist cLst))
          else
            printf("INFO: Leaf Cell: ID->[%L]: %s\n" cv cv~>cellName)
+	   lc = makeInstance( 'cv )
+	   setName(lc cv~>cellName)
+	   setLib(lc cv~>libName)
+	   setBbx(lc->bbx cv~>bBox)
+	   add(cell->leafCells lc)
            return(cv)
          );if
        else
          printf("INFO: Leaf cell: ID->[%L] %s\n" cv cv~>cellName)
+	 lc = makeInstance( 'cv )
+	 setName(lc cv~>cellName)
+	 setLib(lc cv~>libName)
+	 setBbx(lc->bbx cv~>bBox)
+	 add(cell->leafCells lc)
 	 return(cv)
        );if
   );prog
-);
+);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv instance tree
+; populates the leafCell collection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getTree (( cell cv ))
   cell->iRefs = '()
@@ -3078,6 +3112,7 @@ defmethod( getTree (( cell cv ))
 );
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper Method for printTree method
 ; Auxilliary Print cv instance tree 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( printRecursiveTree (( cell cv ) @key hlist nlev cnt)
@@ -3118,6 +3153,7 @@ defmethod( printTree (( cell cv ))
 );
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Helper Method for getTreeNames method
 ; Auxilliary Get the instance names of the cv (recursive)                                        
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getRecursiveTreeNames (( cell cv ) @key hlist nlev nList)

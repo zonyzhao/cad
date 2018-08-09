@@ -7,12 +7,41 @@ classp( cell 'cv)
 classOf(cell)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Tests Grid Info
+; UT-1: Generate Recursive Tree (DFS)
+; Simple cell: pcell instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="pd0164"
+name="memsChipFrameTest"
+view="layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setView(cell view)
+setName(cell name)
+setLib(cell lib)
+getTree(cell)
+leaf = nth(0 cell->leafCells->list->elems)
+leaf->name
+leaf->lib
+leaf->bbx->bbx
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2: Generate Recursive Tree (DFS)
+; Complex cell: Reticle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="pd0164"
+name="pd0164_0p"
+view="layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setView(cell view)
+setName(cell name)
+setLib(cell lib)
+getTree(cell)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Test getting the cell 
+; UT-3: Test getting the cell 
 ;       dimensions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib="pd0164"
