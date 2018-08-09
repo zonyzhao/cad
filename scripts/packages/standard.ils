@@ -5082,7 +5082,7 @@ defmethod( initializeInstance @after ((obj pcell))
 ; Check if current cv is a pcell
 ;#####################################################
 defmethod( isPcell (( pc pcell ))
-	   getReft(pc)~>isParamCell
+	   getRef(pc)~>isParamCell
 );defmethod
 
 ;#####################################################
