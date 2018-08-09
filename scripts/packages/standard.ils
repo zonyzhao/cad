@@ -7929,8 +7929,8 @@ defclass( memsChipFrame (PcellParam)
 		( width @initform defineParam("float" 1000.0))	
 		( length @initform defineParam("float" 1000.0))
 ;		( edgeWidth @initform defineParam("float" 95.0))
-;		( spm @initform defineParam("boolean" "FALSE"))
-                ( spm @initform defineParam("float" -1.0))
+;		( spm @initform defineParam("boolean" t))
+                ( spm @initform defineParam("float" 0.0))
 		( ol0 )
 		( ol1 )
 		( ol2 )
@@ -7980,7 +7980,7 @@ defmethod( draw ((device memsChipFrame))
    lidMetalRingEdgeWidth = 100.0
    lidEtchRingEdgeWidth = 1000.0
    ; frame offsets from outter edge references
-   bondRingEdgeInnerOffset = 195.0
+   bondRingEdgeInnerOffset = 145.0
    lidMetalEdgeInnerOffset = 200.0
    lidEtchRingEdgeInnerOffset = 200.0
    ; layers
@@ -8002,6 +8002,7 @@ defmethod( draw ((device memsChipFrame))
    length = getParamValue(device 'length)
    ; SPMs
    spm = getParamValue(device 'spm)
+   ;printf("spm value: %L\n" spm)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Minimum and clamp checks
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8078,6 +8079,7 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;if(spm == "TRUE" then
    if(spm > 0.0 then
+   ;if(null(spm) then
      println("INFO: Adding SPMs")
      lib = "reticle"
      view = "layout"
