@@ -34,11 +34,34 @@ isPcell(pc)
 hasInstance(pc)
 getInstances(pc)
 ncv = nth(0 getInstances(pc))
+; Zero level is the instance itself
 ncv~>?
 ncv~>cellName
 ncv~>baseName
-; two levels up to find superMaster
+; one level up to find master
 master = ncv~>master
+master~>instances
+pci0 = nth(0 master~>instances)
+pci0~>?
+pci0~>cellName
+pci0~>bBox
+pci0~>purpose
+pci0~>objType
+pci0~>libName
+pci0~>master
+pci0~>master~>cellName
+pci0~>master~>libName
+pci0~>master~>lpps
+lpp0 = nth(0 pci0~>master~>lpps)
+lpp0~>layerName
+lpp0~>purpose
+lpp1 = nth(1 pci0~>master~>lpps)
+lpp1~>layerName
+lpp1~>purpose
+pci1 = nth(1 master~>instances)
+pci2 = nth(2 master~>instances)
+pci3 = nth(3 master~>instances)
+; two levels up to find superMaster
 superMaster = master~>superMaster
 superMaster~>cellName
 ; Now I know the instance is indeed a PCELL
@@ -54,6 +77,7 @@ p2 = nth(2 ncv~>prop)
 p2~>name
 p2~>valueType
 p2~>value
+
 ; evals with updated value - good!!
 p2~>value = 1.0
 p2~>value
