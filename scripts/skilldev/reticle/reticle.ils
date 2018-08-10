@@ -32,7 +32,8 @@ defclass( reticle (cv)
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
 		( numNumPads @reader getNumNumPads)
-		( innerStreetOrigs @reader getInnerStreetOrigs)				
+		( innerStreetOrigs @reader getInnerStreetOrigs)	
+		( bnb @reader getBnb)			
 	  )
 );defClass
 
@@ -63,6 +64,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numRetOverhead = nil
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
+	   obj->bnb = makeInstance( 'collection )
 );defmethod
 
 ;######################################################

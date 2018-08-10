@@ -1,0 +1,58 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  wafer.il: Wafer Class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( wafer (cv)
+  (
+    ( retName @reader getRetName @writer setRetName)
+    ( reticles @reader getReticles)
+    ( rows @reader getRows @writer setRows))
+    ( cols @read getCols @writer setCols)
+    ( crossLayer @reader getCrossLayer @writer setCrossLayer)
+    ( center @reader getCenter )	
+    ( shiftHorizontal @reader getShiftHorizontal )
+    ( shiftVerticle @reader getShiftVerticle )	
+    ( pm @reader getPm )
+    ( wafNumMrk @reader getWafNumMrk )
+    ( retNumMrk @reader getRefNumMrk )	
+    ( bsideMrk @reader getBsideMrk )	
+  )
+);defClass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj wafer))
+  obj->name 
+  obj->reticles = makeInstance( 'collection )
+  obj->rows = nil
+  obj->cols = nil
+  obj->crossLayer = "GRID"
+  obj->center = nil
+  obj->pm = makeInstance( 'collection )
+  obj->wafNumMrk = makeInstance( 'collection )
+  obj->retNumMrk = makeInstance( 'collection )
+  obj->bsideMrk =  makeInstance( 'collection )
+);defmethod
+
+;######################################################
+; This finds the Center Diameter "CD-Critical Dimension" 
+; Cross Coordinates
+; find the center of the wafer outline, it's a cross 
+; (on GRID layer, typically):
+;######################################################
+defmethod( findCenter (( waf wafer ))
+  let( (shapes cross)  
+    shapes = setof( i getRef(waf)~>shapes i~>layerName == waf->crossLayer)
+    cross = nth(0 shapes)
+    if(length(cross~>points) == 12 then
+      waf->center = abs((caadr(cross~>bBox)-caar(cross~>bBox))-(cadadr(cross~>bBox)-cadar(cross~>bBox)))
+    );if
+    waf->center
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+	

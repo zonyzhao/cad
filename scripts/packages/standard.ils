@@ -3520,7 +3520,8 @@ defclass( reticle (cv)
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
 		( numNumPads @reader getNumNumPads)
-		( innerStreetOrigs @reader getInnerStreetOrigs)				
+		( innerStreetOrigs @reader getInnerStreetOrigs)	
+		( bnb @reader getBnb)			
 	  )
 );defClass
 
@@ -3551,6 +3552,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numRetOverhead = nil
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
+	   obj->bnb = makeInstance( 'collection )
 );defmethod
 
 ;######################################################
@@ -7964,7 +7966,7 @@ defmethod( draw ((device memsChipFrame))
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
         bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib 
-        view name cv spmlen)
+        view name type cv spmlen bo)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters - From Techfile
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8078,27 +8080,38 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Fixed Cellview Instantiations
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   lib = "reticle"
+   view = "layout"
+   type = "maskLayout"
+   name = "bug"
+   bo = 2.0*bondRingEdgeInnerOffset+2.0*lidMetalEdgeInnerOffset+2.0*lidEtchRingEdgeInnerOffset
+   cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+   dbCreateInst(getRef(device) cv name list(-width/2.0+bo -length/2.0+bo) "R0" 1)
    if(spm == "TRUE" then
 ;   if(spm > 0.0 then
 ;   if(null(spm) then
      println("INFO: Adding SPMs")
-     lib = "reticle"
-     view = "layout"
+     name = "xyPad_SLB"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(-width/2.0+300.0+bo -length/2.0+bo) "R0" 1)
      name = "SPM_X_AH32"
-     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(width/2.0-spmlen/2.0-2*nitrideEtchEdgeWidth length/2.0-nitrideEtchEdgeWidth/2.0) "R0" 1)
      name = "SPM_Y_AH32"
-     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(width/2.0-nitrideEtchEdgeWidth/2.0 length/2.0-spmlen/2.0-2*nitrideEtchEdgeWidth) "R0" 1)
      name = "SPM_X_AH53"
-     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(-width/2.0+spmlen/2.0+2*nitrideEtchEdgeWidth -length/2.0+nitrideEtchEdgeWidth/2.0) "R0" 1)
      name = "SPM_Y_AH53"
-     cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+     cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(-width/2.0+nitrideEtchEdgeWidth/2.0 -length/2.0+spmlen/2.0+2*nitrideEtchEdgeWidth) "R0" 1)
      callNextMethod()
     else
      println("INFO: No SPMs")
+     name = "xyPad_SLA"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(-width/2.0+bo+300.0 -length/2.0+bo) "R0" 1)
      callNextMethod()
    );if
   );let
