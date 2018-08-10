@@ -9,12 +9,10 @@
 pcDefinePCell(
   list(ddGetObj("reticle") "memsChipFrame" "layout")
   (
-	( width     "float"    5000  )
-	( length    "float"    5000  )
-;	( edgeWidth "float"      95  )
-;	( spm       "boolean"   nil )
+	( width     "float"    5000   )
+	( length    "float"    5000   )
         ( spm       "boolean" "FALSE" )
-;	( spm       "float"   0.0 )
+	( pm        "boolean" "FALSE" )
   )
   let((pcell lib name view cv spmBool spmVal pcParameters)
 	pcell = makeInstance('memsChipFrame)
@@ -22,6 +20,7 @@ pcDefinePCell(
 	setPcellParams(pcell pcCellView)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Example of instantion of cv within the pcell compile code
+; also use this to implement radio button functionality
 ;	pcParameters = pcCellView~>parameters~>values
 ;        foreach( value pcParameters
 ;	  if(value~>name == "spm" then

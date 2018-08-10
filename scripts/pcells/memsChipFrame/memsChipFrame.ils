@@ -2,8 +2,6 @@
 ;;;;;;;;;;;;;;;;  memsChipFrame.ils: Chip outline Pcell for MEMS Skill++ code 
 ;;;;;;;;;;;;;;;;  FIXME: Refactor into an assembly - very slow to compile when due to
 ;;;;;;;;;;;;;;;;         on-grid, rounded corners!!!
-;;;;;;;;;;;;;;;;  FIXME: need to add in rectangular layer for
-;;;;;;;;;;;;;;;;  FIXME: Need to suppress egdeWith user param
 ;;;;;;;;;;;;;;;;  FIMXE: Need to set min/max width and height to the frame's 
 ;;;;;;;;;;;;;;;;         edge width 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11,10 +9,8 @@ defclass( memsChipFrame (PcellParam)
 	  (
 		( width @initform defineParam("float" 1000.0))	
 		( length @initform defineParam("float" 1000.0))
-;		( edgeWidth @initform defineParam("float" 95.0))
-;		( spm @initform defineParam("boolean" nil))
                 ( spm @initform defineParam("boolean" "FALSE"))
-;               ( spm @initform defineParam("float" 0.0))
+		(  pm @initform defineParam("boolean" "FALSE"))
 		( ol0 )
 		( ol1 )
 		( ol2 )
@@ -43,11 +39,11 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device memsChipFrame))
-  let( (minwid minlen width length spm edgeWidth ol0RectTran 
+  let( (minwid minlen width length spm pm edgeWidth ol0RectTran 
         backSideEdgeWidth nitrideEtchEdgeWidth bondRingEdgeWidth 
         lidMetalRingEdgeWidth lidMetalEdgeInnerOffset 
         bondRingEdgeInnerOffset lidEtchRingEdgeInnerOffset lib 
-        view name type cv spmlen bo)
+        view name type cv spmlen bo bnbKo)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters - From Techfile
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,6 +82,7 @@ defmethod( draw ((device memsChipFrame))
    length = getParamValue(device 'length)
    ; SPMs
    spm = getParamValue(device 'spm)
+   pm = getParamValue(device 'pm)
    ;printf("spm value: %L\n" spm)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Minimum and clamp checks
@@ -169,9 +166,6 @@ defmethod( draw ((device memsChipFrame))
    cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
    dbCreateInst(getRef(device) cv name list(-width/2.0+bo -length/2.0+bo) "R0" 1)
    if(spm == "TRUE" then
-;   if(spm > 0.0 then
-;   if(null(spm) then
-     println("INFO: Adding SPMs")
      name = "xyPad_SLB"
      cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(-width/2.0+300.0+bo -length/2.0+bo) "R0" 1)
@@ -189,11 +183,32 @@ defmethod( draw ((device memsChipFrame))
      dbCreateInst(getRef(device) cv name list(-width/2.0+nitrideEtchEdgeWidth/2.0 -length/2.0+spmlen/2.0+2*nitrideEtchEdgeWidth) "R0" 1)
      callNextMethod()
     else
-     println("INFO: No SPMs")
      name = "xyPad_SLA"
      cv = dbOpenCellViewByType( lib name view type "r")
      dbCreateInst(getRef(device) cv name list(-width/2.0+bo+300.0 -length/2.0+bo) "R0" 1)
      callNextMethod()
+   );if
+   if(pm == "TRUE" then
+     name = "ASML_PM_LO"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+   else
+     bnbKo = 50.0
+     name = "asml_1_bnb_RE_BR"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(0.0 0.0) "R0" 1)
+     name = "asml_1_bnb_RE_DL"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(bnbKo/2.0 0.0) "R0" 1)
+     name = "asml_1_bnb_RE_EL"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(-bnbKo/2.0 0.0) "R0" 1)
+     name = "asml_1_bnb_RE_GL"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(0.0 bnbKo/2.0) "R0" 1)
+     name = "asml_1_bnb_RE_LM"
+     cv = dbOpenCellViewByType( lib name view type "r")
+     dbCreateInst(getRef(device) cv name list(0.0 -bnbKo/2.0) "R0" 1)
    );if
   );let
 );defmethod
