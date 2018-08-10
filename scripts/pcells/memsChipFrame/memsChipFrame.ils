@@ -13,7 +13,8 @@ defclass( memsChipFrame (PcellParam)
 		( length @initform defineParam("float" 1000.0))
 ;		( edgeWidth @initform defineParam("float" 95.0))
 ;		( spm @initform defineParam("boolean" nil))
-                ( spm @initform defineParam("float" 0.0))
+                ( spm @initform defineParam("boolean" "FALSE"))
+;               ( spm @initform defineParam("float" 0.0))
 		( ol0 )
 		( ol1 )
 		( ol2 )
@@ -160,9 +161,9 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Fixed Cellview Instantiations
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;if(spm == "TRUE" then
-   if(spm > 0.0 then
-   ;if(null(spm) then
+   if(spm == "TRUE" then
+;   if(spm > 0.0 then
+;   if(null(spm) then
      println("INFO: Adding SPMs")
      lib = "reticle"
      view = "layout"
