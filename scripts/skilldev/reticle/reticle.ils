@@ -68,6 +68,37 @@ defmethod( initializeInstance @after ((obj reticle))
 );defmethod
 
 ;######################################################
+; Copies the contents of this reticle into arg reticle
+;######################################################
+defmethod( cloneRet ((ret reticle) arg)
+   arg->srRes              = ret->srRes 
+   arg->srGrid 	           = ret->srGrid 
+   arg->overlap	           = ret->overlap 
+   arg->maxDim 	           = ret->maxDim 
+   arg->xynPadChipName 	   = ret->xynPadChipName 
+   arg->xynPadOverheadName = ret->xynPadOverheadName
+   arg->xynPadCouponName   = ret->xynPadCouponName 
+   arg->validDim	   = ret->validDim 
+   arg->validRes           = ret->validRes
+   arg->shiftUrq           = ret->shiftUrq
+   arg->frame	           = ret->frame 
+   arg->chipList	   = ret->chipList
+   arg->olist 	           = ret->olist  
+   arg->couponList 	   = ret->couponList 
+   arg->chips 	           = ret->chips 
+   arg->overhead 	   = ret->overhead 
+   arg->coupons	           = ret->coupons  
+   arg->isPartial	   = ret->isPartial 
+   arg->origin	           = ret->origin  
+   arg->numRetChips 	   = ret->numRetChips 
+   arg->numRetOverhead	   = ret->numRetOverhead 
+   arg->numRetCoups	   = ret->numRetCoups 
+   arg->numNumPads 	   = ret->numNumPads 
+   arg->bnb	           = ret->bnb
+   cloneCv(ret arg)
+);defmethod
+
+;######################################################
 ; This method checks to make sure reticle width and 
 ; height do not exceed the maximum dimension (maxDim)
 ;######################################################

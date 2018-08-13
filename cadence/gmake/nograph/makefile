@@ -25,7 +25,8 @@ skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   polygon2 bbox rectTran rectTrans transform2 transformation2 \
                   geometry assembly stackup cv instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
-                  overhead reticleFrame numeric shape layer snapshot pcell
+                  overhead reticleFrame numeric shape layer snapshot pcell \
+                  wafer
 #########################################################################
 polygons = rectangle triangle circle frame    
 #########################################################################

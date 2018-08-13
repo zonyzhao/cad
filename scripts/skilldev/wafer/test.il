@@ -4,7 +4,7 @@
 findClass( 'wafer )
 waf = makeInstance( 'wafer )
 classp( waf 'wafer)
-classOf(wafer)
+classOf(waf)
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Find "CD" Cross
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -18,6 +18,46 @@ setRef(wafer cv)
 findCenter(wafer)
 dbClose(cv)
 
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2: Create the reticle array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name  = "pd0164"
+view  = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setName(ret name)
+setRef(ret cv)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+checkDim(ret)
+checkRes(ret)
+checkGrid(ret)
+
+waf = makeInstance( 'wafer )
+setName(waf name)
+setReticle(waf ret)
+setWidth(waf 97175.0)
+setHeight(waf 99275.0)
+setOverlap(waf 4.0)
+; Create the reticle array
+array(waf)
+length(waf->reticles->list->elems)
+nth(0 waf->reticles->list->elems)->?
+nth(0 waf->reticles->list->elems)->overlap
+nth(0 waf->reticles->list->elems)->srRes
+nth(0 waf->reticles->list->elems)->name
+nth(0 waf->reticles->list->elems)->width
+nth(0 waf->reticles->list->elems)->height
+nth(0 waf->reticles->list->elems)->origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+foreach(ret getCollection(waf->reticles)
+  printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code

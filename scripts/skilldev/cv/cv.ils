@@ -1,6 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  cv.ils: Cell view class inheriting from cadObj 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cv (cadObj)
 	  (
 		( name @reader getName @writer setName)
@@ -55,6 +59,35 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->width     = nil
 	   obj->height    = nil
 );defmethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clones the cellview object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( cloneCv (( cell cv) arg )
+  arg->name = cell->name      
+  arg->view = cell->view      
+  arg->lib = cell->lib      
+  arg->orient = cell->orient    
+  arg->cvLeaf = cell->cvLeaf    
+  arg->cvPcell = cell->cvPcell   
+  arg->instances = cell->instances 
+  arg->leafs = cell->leafs     
+  arg->leafCells = cell->leafCells 
+  arg->layers = cell->layers    
+  arg->stack = cell->stack     
+  arg->pcells = cell->pcells    
+  arg->bbx = cell->bbx        
+  arg->iRefs = cell->iRefs     
+  arg->iCnt = cell->iCnt      
+  arg->iNames = cell->iNames    
+  arg->iLibNames = cell->iLibNames 
+  arg->iLevels = cell->iLevels   
+  arg->iLayers = cell->iLayers   
+  arg->uLayers = cell->uLayers   
+  arg->width = cell->width     
+  arg->height = cell->height    
+  cloneCadObj(cell arg)
+);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Determines if the cellview has instances (flat if no instances)

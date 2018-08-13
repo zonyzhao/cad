@@ -5,22 +5,25 @@
 ; Program SKILL Lint started on Sep 13 13:43:12 2017.
 ; IQ score is 100 (best is 100).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cadObj ()
 	  (
 		( oid @reader getOid @writer setOid )
 		( cid @reader getCid @writer setCid )
 		( ref @reader getRef @writer setRef )
-		( attributes @reader getAttributes  )
+		( attributes @reader getAttributes  @writer setAttributes)
 		( layer @reader getLayer @writer setLayer )
 		( purpose @reader getPurpose @writer setPurpose )
 		( grid @writer setGrid @reader getGrid )			
 	  )
-) ; defclass
-
+);defclass
 ;########################################################
 ;# Class Constructor
 ;########################################################
-
 defmethod( initializeInstance @after ((obj cadObj)) 
 	   obj->oid=nil
 	   obj->cid=nil
@@ -30,7 +33,17 @@ defmethod( initializeInstance @after ((obj cadObj))
 	   obj->purpose = "drawing"
 	   obj->grid = 0.1
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cloneCadObj (( cobj cadObj) arg )
+  arg->oid        = cobj->oid
+  arg->ref        = cobj->ref
+  arg->attributes = cobj->attributes
+  arg->layer      = cobj->layer
+  arg->purpose    = cobj->purpose
+  arg->grid       = cobj->grid
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Stores a List of Attributes the attributes member given
 ; that the reference to that CAD object has been set

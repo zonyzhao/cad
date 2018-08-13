@@ -653,6 +653,44 @@ copyName = "pd0164_0p_shifturq"
 Copy(cell copyName)
 ddGetObj(getLib(cell) getName(cell) getView(cell))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-25 Clone the object to another object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib  = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setOid(cell "foo")
+setName(cell name)
+setLib(cell lib)
+setView(cell view)
+getRef(cell)
+getOid(cell)
+getName(cell)
+getLib(cell)
+getView(cell)
+; Clone object
+cellcp = makeInstance( 'cv )
+cloneCv(cell cellcp)
+getRef(cellcp)
+getOid(cellcp)
+getName(cellcp)
+getLib(cellcp)
+getView(cellcp)
+
+
+
+
+
+
+
+
+
+
+
 
 
 nth(0 nth(0 cell->stack->stack->list->elems)->shapes->list->elems)->vertices

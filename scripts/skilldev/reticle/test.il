@@ -118,7 +118,7 @@ else
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-5: Initial Processing of a 
+; UT-6: Initial Processing of a 
 ;       Reticle
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Step 1.) Reticle Dimension Checks
@@ -444,14 +444,14 @@ dbClose(cvm)
 dbClose(cvm)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-7: Create Numbers at the pad
+; UT-8: Create Numbers at the pad
 ;       locations in the reticle
 ;       array created in UT-6
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-8: 
+; UT-9: 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 1.) Create cell view with a GRID layer representing the bbox of the reticle
 ; 2.) Add the inclusion ring on the text layer of the cell view in step 1.)
@@ -544,7 +544,7 @@ dbClose(cv)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-9: Checking for pad names in library
+; UT-10: Checking for pad names in library
 ;       FIXME: This should be part of initial reticle checks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
@@ -569,7 +569,7 @@ dbClose(cvcouppad)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-10: Print out the reticle heirarchy
+; UT-11: Print out the reticle heirarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
 name = getName(ret)
@@ -614,3 +614,47 @@ nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances
 nth(0 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName
 ; ERROR BAD XYN NAME
 nth(1 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-12: Print out the reticle heirarchy
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+getbBox(ret)
+bbv = bb2vert(ret->bbx)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+retcp = makeInstance( 'reticle )
+clone(ret retcp)
+getbBox(retcp)
+bbv = bb2vert(retcp->bbx)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-13: Clone a reticle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setName(ret name)
+setRef(ret cv)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+getName(ret)
+; Clone object
+retcp = makeInstance( 'reticle )
+cloneRet(ret retcp)
+getName(retcp)
+getRef(retcp)
+
+
+

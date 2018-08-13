@@ -1,8 +1,8 @@
 ; generic.ils: generic functions
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function
 ; removes all methods defined by the previous defgeneric from
-defgeneric( draw (devicd)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( draw (device)
 	    t
 );defgeneric
