@@ -31,13 +31,13 @@ ret->bbx->bbx
 getWidth(ret)
 getHeight(ret)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Create the array
+; Create the array and center it
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ra = makeInstance( 'reticleArray )
 setName(ra name)
 setReticle(ra ret)
-setWidth(ra 97175.0)
-setHeight(ra 99275.0)
+setWaferWidth(ra 97175.0)
+setWaferHeight(ra 99275.0)
 setOverlap(ra 4.0)
 ; Create the reticle array
 array(ra)
@@ -48,6 +48,15 @@ nth(0 ra->reticles->list->elems)->srRes
 nth(0 ra->reticles->list->elems)->name
 nth(0 ra->reticles->list->elems)->width
 nth(0 ra->reticles->list->elems)->height
+;
+nth(0 ra->reticles->list->elems)->origin
+nth(0 ra->reticles->list->elems)->bbx->bbx
+;
+nth(1 ra->reticles->list->elems)->origin
+nth(1 ra->reticles->list->elems)->bbx->bbx
+
+centerArray(ra)
+
 ;
 nth(0 ra->reticles->list->elems)->origin
 nth(0 ra->reticles->list->elems)->bbx->bbx

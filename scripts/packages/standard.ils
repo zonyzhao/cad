@@ -5315,6 +5315,143 @@ defmethod( getParams (( pc pcell ))
 ;###############################################################################
 ;###############################################################################
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  reticleArray.il: Wafer Class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( reticleArray (cv)
+  (
+    ( waferWidth @reader getWaferWidth @writer setWaferWidth)
+    ( waferHeight @reader getWaferHeight @writer setWaferHeight)
+    ( reticle  @reader getReticle @writer setReticle)
+    ( reticles @reader getReticles)
+    ( arrayWidth @reader getArrayWidth @writer setArrayWidth)
+    ( arrayHeight @reader getArrayHeight @writer setArrayHeight)
+    ( rows @reader getRows @writer setRows)
+    ( cols @read getCols @writer setCols)
+    ( overlap @read getOverlap @writer setOverlap)
+    ( origin )	
+    ( ur )
+  )
+);defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj reticleArray))
+  obj->waferWidth = nil
+  obj->waferHeight = nil
+  obj->reticle = nil
+  obj->reticles = makeInstance( 'collection )
+  obj->arrayWidth = nil
+  obj->arrayHeight = nil
+  obj->rows = nil
+  obj->cols = nil
+  obj->overlap = nil
+  obj->origin = nil
+  obj->ur = nil
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Center the reticle array
+; FIXME: need to generate an reticle array that has
+;        an odd number of sites in the horizontal and
+;        vertical. This will center the center of the
+;        center site on the center of the wafer outline
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( centerArray (( ra reticleArray ))
+  ra->width  = xCoord(ra->ur) - xCoord(ra->origin) 
+  ra->height = yCoord(ra->ur) - yCoord(ra->origin)
+  shift(ra list(-ra->width/2.0 -ra->height/2.0))
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Shift reticle array origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( shift (( ra reticleArray ) arg)
+  let((orig dx dy i)
+    i = 0
+    foreach(ret getCollection(ra->reticles)
+      orig = getOrigin(ret)
+      dx = xCoord(arg) - xCoord(orig)
+      dy = yCoord(arg) - yCoord(orig)
+      printf("INFO(reticleArray) Setting Origin %d to %L\n" i list(dx dy))
+      setOrigin(ret list(dx dy))
+      i++
+    );foreach
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;######################################################
+; Create Reticle Array
+;######################################################
+defmethod( array (( ra reticleArray ))
+  let((ral rah rw rh r c ind x y)
+    ral = getWaferWidth(ra)
+    rah = getWaferHeight(ra)
+    rw = getWidth(ra->reticle)
+    rh = getHeight(ra->reticle)
+    r = floor(ral/rh)
+    c = floor(rah/rw)
+    ra->rows = r
+    ra->cols = c
+    ol = ra->overlap
+    ind = 0
+    x = 0.0
+    y = 0.0
+    for(i 0 sub1(r)
+      ind = ind + ind*i
+      x = 0.0
+      orig = list(x y)
+      for(j 0 sub1(c)
+        ind = ind + j
+	x = xCoord(orig) + rw - ol
+	ret = makeInstance( 'reticle )
+	cloneRet(ra->reticle ret)
+	setOrigin(ret orig)	
+        add(ra->reticles ret)
+	orig = list(x y)
+      );for
+      y = yCoord(orig) + rh - ol
+    );for
+    ra->origin = list(0.0 0.0)
+    ra->ur = list(x+rw y+rh)
+    list(ra->rows ra->cols)
+  );let
+);defmethod
+;######################################################
+; Render reticle boundary box array
+;######################################################
+defmethod( render (( ra reticleArray ))
+  foreach(ret getCollection(ra->reticles)
+    printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
+    setRef(ret getRef(ra))
+    renderRetBbox(ret)
+  );foreach
+);defmethod
+;######################################################
+; Render the boundary box of a single reticle into
+; the target cellview
+;######################################################
+defmethod( renderBbox (( ra reticleArray ))
+  let((ind ret r c)
+    ra->rows = r
+    ra->cols = c
+    ind = 0.0
+    for(i 0 sub1(r)
+      ind = ind + ind*i
+      for(j 0 sub1(c)
+        ind = ind + j
+        ret = getItem(reticles ind)
+	renderRetBbox(ret)
+      );for
+    );for
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  wafer.il: Wafer Class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( wafer (cv)
@@ -5323,10 +5460,7 @@ defclass( wafer (cv)
     ( height @read getHeight @writer setHeight )
     ( overlap @read getOverlap @writer setOverlap )
     ( retName @reader getRetName @writer setRetName)
-    ( reticle @reader getReticle @writer setReticle )
-    ( reticles @reader getReticles)
-    ( rows @reader getRows @writer setRows)
-    ( cols @read getCols @writer setCols)
+    ( retArray @reader getRetArray)
     ( crossLayer @reader getCrossLayer @writer setCrossLayer)
     ( center @reader getCenter )	
     ( shiftHorizontal @reader getShiftHorizontal )
@@ -5346,10 +5480,7 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->height = nil
   obj->overlap = nil
   obj->retName = nil
-  obj->reticle = nil
-  obj->reticles = makeInstance( 'collection )
-  obj->rows = nil
-  obj->cols = nil
+  obj->retArray = makeInstance( 'reticleArray )
   obj->crossLayer = "GRID"
   obj->center = nil
   obj->shiftHorizontal = nil
@@ -5376,61 +5507,20 @@ defmethod( findCenter (( waf wafer ))
     waf->center
   );let
 );defmethod
-
-;######################################################
-; Create Reticle Array
-;######################################################
-defmethod( array (( waf wafer ))
-  let((ww wh rw rh r c ind x y)
-    ww = waf->width
-    wh = waf->height
-    rw = getWidth(waf->reticle)
-    rh = getHeight(waf->reticle)
-    r = floor(wh/rh)
-    c = floor(ww/rw)
-    waf->rows = r
-    waf->cols = c
-    ol = waf->overlap
-    ind = 0
-    x = 0.0
-    y = 0.0
-    for(i 0 sub1(r)
-      ind = ind + ind*i
-      x = 0.0
-      orig = list(x y)
-      for(j 0 sub1(c)
-        ind = ind + j
-	x = xCoord(orig) + rw - ol
-	ret = makeInstance( 'reticle )
-	cloneRet(waf->reticle ret)
-	setOrigin(ret orig)	
-        add(waf->reticles ret)
-	orig = list(x y)
-      );for
-      y = yCoord(orig) + rh - ol
-    );for
-    list(waf->rows waf->cols)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Read in the wafer outline layers from a reference
+; cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderOutline (( waf wafer ) cv)
+  let((ss)
+    ss = makeInstance( 'snapshot )
+    setRef(ss cv)
+    getStackUp(ss)
+    setRef(ss getRef(waf))
+    renderStack(ss)
   );let
 );defmethod
-
-;######################################################
-; Raster the reticle array in the upper right quadrant
-;######################################################
-defmethod( renderBbox (( waf wafer ))
-  let((ind ret r c)
-    waf->rows = r
-    waf->cols = c
-    ind = 0.0
-    for(i 0 sub1(r)
-      ind = ind + ind*i
-      for(j 0 sub1(c)
-        ind = ind + j
-        ret = getItem(reticles ind)
-	renderRetBbox(ret)
-      );for
-    );for
-  );let
-);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;######################################################
 ;######################################################

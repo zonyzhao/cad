@@ -7,10 +7,7 @@ defclass( wafer (cv)
     ( height @read getHeight @writer setHeight )
     ( overlap @read getOverlap @writer setOverlap )
     ( retName @reader getRetName @writer setRetName)
-    ( reticle @reader getReticle @writer setReticle )
-    ( reticles @reader getReticles)
-    ( rows @reader getRows @writer setRows)
-    ( cols @read getCols @writer setCols)
+    ( retArray @reader getRetArray)
     ( crossLayer @reader getCrossLayer @writer setCrossLayer)
     ( center @reader getCenter )	
     ( shiftHorizontal @reader getShiftHorizontal )
@@ -30,10 +27,7 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->height = nil
   obj->overlap = nil
   obj->retName = nil
-  obj->reticle = nil
-  obj->reticles = makeInstance( 'collection )
-  obj->rows = nil
-  obj->cols = nil
+  obj->retArray = makeInstance( 'reticleArray )
   obj->crossLayer = "GRID"
   obj->center = nil
   obj->shiftHorizontal = nil
@@ -60,61 +54,20 @@ defmethod( findCenter (( waf wafer ))
     waf->center
   );let
 );defmethod
-
-;######################################################
-; Create Reticle Array
-;######################################################
-defmethod( array (( waf wafer ))
-  let((ww wh rw rh r c ind x y)
-    ww = waf->width
-    wh = waf->height
-    rw = getWidth(waf->reticle)
-    rh = getHeight(waf->reticle)
-    r = floor(wh/rh)
-    c = floor(ww/rw)
-    waf->rows = r
-    waf->cols = c
-    ol = waf->overlap
-    ind = 0
-    x = 0.0
-    y = 0.0
-    for(i 0 sub1(r)
-      ind = ind + ind*i
-      x = 0.0
-      orig = list(x y)
-      for(j 0 sub1(c)
-        ind = ind + j
-	x = xCoord(orig) + rw - ol
-	ret = makeInstance( 'reticle )
-	cloneRet(waf->reticle ret)
-	setOrigin(ret orig)	
-        add(waf->reticles ret)
-	orig = list(x y)
-      );for
-      y = yCoord(orig) + rh - ol
-    );for
-    list(waf->rows waf->cols)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Read in the wafer outline layers from a reference
+; cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderOutline (( waf wafer ) cv)
+  let((ss)
+    ss = makeInstance( 'snapshot )
+    setRef(ss cv)
+    getStackUp(ss)
+    setRef(ss getRef(waf))
+    renderStack(ss)
   );let
 );defmethod
-
-;######################################################
-; Raster the reticle array in the upper right quadrant
-;######################################################
-defmethod( renderBbox (( waf wafer ))
-  let((ind ret r c)
-    waf->rows = r
-    waf->cols = c
-    ind = 0.0
-    for(i 0 sub1(r)
-      ind = ind + ind*i
-      for(j 0 sub1(c)
-        ind = ind + j
-        ret = getItem(reticles ind)
-	renderRetBbox(ret)
-      );for
-    );for
-  );let
-);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;######################################################
 ;######################################################

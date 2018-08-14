@@ -26,14 +26,21 @@ lib   = "reticle"
 name  = "wafer_4"
 view  = "layout"
 type = "maskLayout"
-cv = dbOpenCellViewByType( lib name view type "r")
+cvwo = dbOpenCellViewByType( lib name view type "r")
+lib   = "pd0164"
+name  = "pd0164_wafer"
+view  = "layout"
+type = "maskLayout"
+cvw = dbOpenCellViewByType( lib name view type "w")
 waf = makeInstance( 'wafer )
-setRet(waf cv)
-getWaferOutline(waf)
-
+setRef(waf cvw)
+renderOutline(waf cvwo)
+dbSave(cvw)
+dbClose(cvw)
+dbClose(cvwo)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Create the reticle array
+; UT-3: Create the reticle array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
 name  = "pd0164"
@@ -57,56 +64,39 @@ ret->bbx->bbx
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 waf = makeInstance( 'wafer )
 setName(waf name)
-setReticle(waf ret)
-setWidth(waf 97175.0)
-setHeight(waf 99275.0)
-setOverlap(waf 4.0)
+setReticle(waf->retArray ret)
+setWidth(waf->retArray 97175.0)
+setHeight(waf->retArray 99275.0)
+setOverlap(waf->retArray 4.0)
 ; Create the reticle array
-array(waf)
-length(waf->reticles->list->elems)
-nth(0 waf->reticles->list->elems)->?
-nth(0 waf->reticles->list->elems)->overlap
-nth(0 waf->reticles->list->elems)->srRes
-nth(0 waf->reticles->list->elems)->name
-nth(0 waf->reticles->list->elems)->width
-nth(0 waf->reticles->list->elems)->height
+array(waf->retArray)
+length(waf->retArray->reticles->list->elems)
+nth(0 waf->retArray->reticles->list->elems)->?
+nth(0 waf->retArray->reticles->list->elems)->overlap
+nth(0 waf->retArray->reticles->list->elems)->srRes
+nth(0 waf->retArray->reticles->list->elems)->name
+nth(0 waf->retArray->reticles->list->elems)->width
+nth(0 waf->retArray->reticles->list->elems)->height
 ;
-nth(0 waf->reticles->list->elems)->origin
-nth(0 waf->reticles->list->elems)->bbx->bbx
+nth(0 waf->retArray->reticles->list->elems)->origin
+nth(0 waf->retArray->reticles->list->elems)->bbx->bbx
 ;
-nth(1 waf->reticles->list->elems)->origin
-nth(1 waf->reticles->list->elems)->bbx->bbx
+nth(1 waf->retArray->reticles->list->elems)->origin
+nth(1 waf->retArray->reticles->list->elems)->bbx->bbx
 
-ret0 = nth(0 waf->reticles->list->elems)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Reticle Single Render
-;;;;;;;;;;;;;;;;
-name  = "pd0164_array"
-cv = dbOpenCellViewByType( lib name view type "w")
-setRef(waf cv)
-ret = nth(0 waf->reticles->list->elems)
-setOrigin(ret->bbx list(10000.0 10000.0))
-setRef(ret cv)
-renderRetBbox(ret)
+ret0 = nth(0 waf->retArray->reticles->list->elems)
+;;;;;;;;;;;;;;;;;
+; Reticle Array Render over the wafer outline layers
+;;;;;;;;;;;;;;;;;
+name  = "pd0164_wafer"
+lib = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "a")
+setRef(waf->retArray cv)
+render(waf->retArray)
 dbSave(cv)
 dbClose(cv)
-;;;;;;;;;;;;;;;;;
-; Reticle Array Render
-;;;;;;;;;;;;;;;;;
-name  = "pd0164_array"
-cv = dbOpenCellViewByType( lib name view type "w")
-setRef(waf cv)
-foreach(ret getCollection(waf->reticles)
-  printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
-  setRef(ret cv)
-  renderRetBbox(ret)
-)
-dbSave(cv)
-dbClose(cv)
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code
