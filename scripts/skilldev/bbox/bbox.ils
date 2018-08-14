@@ -225,6 +225,24 @@ defmethod( shiftURQ (( bb bbox ))
 );defMethod	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts The contetns of the targeted Cellview to the upper 
+; right hand plane of the coordinate system base upon the boundary box
+; of the target Cellview  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( shiftOrigin (( bb bbox ) orig)
+  let( (bllx blly burx bury bbll bbur) 
+    bllx = xCoord(nth(0 bb->bbx)) + xCoord(orig)
+    blly = yCoord(nth(0 bb->bbx)) + yCoord(orig)
+    burx = xCoord(nth(1 bb->bbx)) + xCoord(orig)
+    bury = yCoord(nth(1 bb->bbx)) + yCoord(orig)
+    bbll = list(bllx blly)
+    bbur = list(burx bury)
+    bb->bbx = list(bbll bbur)
+    Origin(bb)
+  );let
+);defMethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts bbox Origin by provided dx and dy values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 ;defmethod( setCentroid (( bb bbox ) arg)

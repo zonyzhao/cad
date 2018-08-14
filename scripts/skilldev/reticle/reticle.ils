@@ -27,7 +27,6 @@ defclass( reticle (cv)
 		( overhead @reader getOverhead)
 		( coupons @reader getCoupons)	
 		( isPartial @reader getIsPartial )
-		( origin @reader getOrigin @writer setOrigin)
 		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
@@ -272,6 +271,28 @@ defmethod( checkInnerStreets (( ret reticle ))
 ;#####################################################
 defmethod( chipId (( ret reticle ))
   nil
+);
+
+;#####################################################
+; This method checks the reticle's bbox dimensions
+; (width and height) for Step and Repeat (S&R) value 
+; provided
+;#####################################################
+defmethod( renderRetBbox (( ret reticle ))
+  let((bbv shp lay)
+    bbv = bb2vert(ret->bbx)
+    shp = makeInstance( 'shape )
+    setLayer(shp "GRID")
+    setPurpose(shp "drawing")
+    setVertices(shp bbv)
+    setVertices(shp->transform bbv) 
+    lay = makeInstance( 'techLayer )
+    setName(lay "GRID")
+    setPurpose(lay "drawing")
+    addShape(lay shp)
+    setRef(lay getRef(ret))
+    renderShapesOnLayer(lay)
+  );let
 );
 
 ;#####################################################

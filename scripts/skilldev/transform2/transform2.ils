@@ -38,10 +38,19 @@ defmethod( addPolygon (( tran transform2 ) arg)
 ; Creates a collection of vertex objects from an input
 ; vertex simple list argument
 ;#####################################################
+defmethod( resetVertices (( tran transform2 ))
+  resetCollection(tran->vertices)
+);defmethod
+
+;#####################################################
+; Creates a collection of vertex objects from an input
+; vertex simple list argument
+;#####################################################
 defmethod( setVertices (( tran transform2 ) arg)
   let( (p2)
     setVertices(tran->polygon arg)
     setRectTran(tran->polygon)
+    resetPoints(tran->vertices)
     foreach(vert arg
       p2 = makeInstance( 'point2 )
       setCoord(p2 vert)

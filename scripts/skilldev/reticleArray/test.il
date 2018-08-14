@@ -1,39 +1,13 @@
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-0: test existence and constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'wafer )
-waf = makeInstance( 'wafer )
-classp( waf 'wafer)
-classOf(waf)
-:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Find "CD" Cross
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "reticle"
-name = "wafer_4"
-view = "layout"
-type = "maskLayout"
-cv = dbOpenCellViewByType( lib name view type)
-wafer = makeInstance( 'wafer )
-setRef(wafer cv)
-findCenter(wafer)
-dbClose(cv)
+findClass( 'reticleArray )
+ra = makeInstance( 'reticleArray )
+classp( ra 'reticleArray)
+classOf(ra)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Read in and render the wafer
-;       outline
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib   = "reticle"
-name  = "wafer_4"
-view  = "layout"
-type = "maskLayout"
-cv = dbOpenCellViewByType( lib name view type "r")
-waf = makeInstance( 'wafer )
-setRet(waf cv)
-getWaferOutline(waf)
-
-
-:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Create the reticle array
+; UT-1: Create the reticle array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
 name  = "pd0164"
@@ -55,38 +29,40 @@ dbClose(cv)
 getOrigin(ret)
 ret->bbx->bbx
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-waf = makeInstance( 'wafer )
-setName(waf name)
-setReticle(waf ret)
-setWidth(waf 97175.0)
-setHeight(waf 99275.0)
-setOverlap(waf 4.0)
+; Create the array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ra = makeInstance( 'reticleArray )
+setName(ra name)
+setReticle(ra ret)
+setWidth(ra 97175.0)
+setHeight(ra 99275.0)
+setOverlap(ra 4.0)
 ; Create the reticle array
-array(waf)
-length(waf->reticles->list->elems)
-nth(0 waf->reticles->list->elems)->?
-nth(0 waf->reticles->list->elems)->overlap
-nth(0 waf->reticles->list->elems)->srRes
-nth(0 waf->reticles->list->elems)->name
-nth(0 waf->reticles->list->elems)->width
-nth(0 waf->reticles->list->elems)->height
+array(ra)
+length(ra->reticles->list->elems)
+nth(0 ra->reticles->list->elems)->?
+nth(0 ra->reticles->list->elems)->overlap
+nth(0 ra->reticles->list->elems)->srRes
+nth(0 ra->reticles->list->elems)->name
+nth(0 ra->reticles->list->elems)->width
+nth(0 ra->reticles->list->elems)->height
 ;
-nth(0 waf->reticles->list->elems)->origin
-nth(0 waf->reticles->list->elems)->bbx->bbx
+nth(0 ra->reticles->list->elems)->origin
+nth(0 ra->reticles->list->elems)->bbx->bbx
 ;
-nth(1 waf->reticles->list->elems)->origin
-nth(1 waf->reticles->list->elems)->bbx->bbx
+nth(1 ra->reticles->list->elems)->origin
+nth(1 ra->reticles->list->elems)->bbx->bbx
 
-ret0 = nth(0 waf->reticles->list->elems)
+ret0 = nth(0 ra->reticles->list->elems)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Reticle Single Render
 ;;;;;;;;;;;;;;;;
-name  = "pd0164_array"
+name  = "pd0164_ret_array"
 cv = dbOpenCellViewByType( lib name view type "w")
-setRef(waf cv)
-ret = nth(0 waf->reticles->list->elems)
-setOrigin(ret->bbx list(10000.0 10000.0))
+setRef(ra cv)
+ret = nth(0 ra->reticles->list->elems)
+setOrigin(ra->bbx list(10000.0 10000.0))
 setRef(ret cv)
 renderRetBbox(ret)
 dbSave(cv)
@@ -94,7 +70,7 @@ dbClose(cv)
 ;;;;;;;;;;;;;;;;;
 ; Reticle Array Render
 ;;;;;;;;;;;;;;;;;
-name  = "pd0164_array"
+name  = "pd0164_ret_array"
 cv = dbOpenCellViewByType( lib name view type "w")
 setRef(waf cv)
 foreach(ret getCollection(waf->reticles)

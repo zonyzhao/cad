@@ -29,7 +29,7 @@ defclass( cv (cadObj)
 		( uLayers @reader getuLayers )
 		( width @reader getWidth @writer setWidth)
 		( height @reader getHeight @writer setHeight)
-                ( origin @reader getOrigin @writer setOrigin)			  
+                ( origin )			  
 	  )
 ) ; defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,7 +76,7 @@ defmethod( cloneCv (( cell cv) arg )
   arg->layers = cell->layers    
   arg->stack = cell->stack     
   arg->pcells = cell->pcells    
-  arg->bbx = cell->bbx        
+  arg->bbx->bbx = cell->bbx->bbx        
   arg->iRefs = cell->iRefs     
   arg->iCnt = cell->iCnt      
   arg->iNames = cell->iNames    
@@ -87,6 +87,25 @@ defmethod( cloneCv (( cell cv) arg )
   arg->width = cell->width     
   arg->height = cell->height    
   cloneCadObj(cell arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set origin of cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setOrigin (( cell cv ) arg)
+  let((orig shx shy)
+     orig  = Origin(cell->bbx)
+     shx = xCoord(arg) - xCoord(orig)
+     shy = yCoord(arg) - yCoord(orig)
+     shiftOrigin(cell->bbx list(shx shy))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get origin of cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getOrigin (( cell cv ))
+  cell->origin = Origin(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

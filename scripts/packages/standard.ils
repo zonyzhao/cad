@@ -1682,6 +1682,24 @@ defmethod( shiftURQ (( bb bbox ))
 );defMethod	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Shifts The contetns of the targeted Cellview to the upper 
+; right hand plane of the coordinate system base upon the boundary box
+; of the target Cellview  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( shiftOrigin (( bb bbox ) orig)
+  let( (bllx blly burx bury bbll bbur) 
+    bllx = xCoord(nth(0 bb->bbx)) + xCoord(orig)
+    blly = yCoord(nth(0 bb->bbx)) + yCoord(orig)
+    burx = xCoord(nth(1 bb->bbx)) + xCoord(orig)
+    bury = yCoord(nth(1 bb->bbx)) + yCoord(orig)
+    bbll = list(bllx blly)
+    bbur = list(burx bury)
+    bb->bbx = list(bbll bbur)
+    Origin(bb)
+  );let
+);defMethod	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts bbox Origin by provided dx and dy values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 ;defmethod( setCentroid (( bb bbox ) arg)
@@ -2138,10 +2156,19 @@ defmethod( addPolygon (( tran transform2 ) arg)
 ; Creates a collection of vertex objects from an input
 ; vertex simple list argument
 ;#####################################################
+defmethod( resetVertices (( tran transform2 ))
+  resetCollection(tran->vertices)
+);defmethod
+
+;#####################################################
+; Creates a collection of vertex objects from an input
+; vertex simple list argument
+;#####################################################
 defmethod( setVertices (( tran transform2 ) arg)
   let( (p2)
     setVertices(tran->polygon arg)
     setRectTran(tran->polygon)
+    resetPoints(tran->vertices)
     foreach(vert arg
       p2 = makeInstance( 'point2 )
       setCoord(p2 vert)
@@ -2831,7 +2858,7 @@ defclass( cv (cadObj)
 		( uLayers @reader getuLayers )
 		( width @reader getWidth @writer setWidth)
 		( height @reader getHeight @writer setHeight)
-                ( origin @reader getOrigin @writer setOrigin)			  
+                ( origin )			  
 	  )
 ) ; defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2878,7 +2905,7 @@ defmethod( cloneCv (( cell cv) arg )
   arg->layers = cell->layers    
   arg->stack = cell->stack     
   arg->pcells = cell->pcells    
-  arg->bbx = cell->bbx        
+  arg->bbx->bbx = cell->bbx->bbx        
   arg->iRefs = cell->iRefs     
   arg->iCnt = cell->iCnt      
   arg->iNames = cell->iNames    
@@ -2889,6 +2916,25 @@ defmethod( cloneCv (( cell cv) arg )
   arg->width = cell->width     
   arg->height = cell->height    
   cloneCadObj(cell arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set origin of cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setOrigin (( cell cv ) arg)
+  let((orig shx shy)
+     orig  = Origin(cell->bbx)
+     shx = xCoord(arg) - xCoord(orig)
+     shy = yCoord(arg) - yCoord(orig)
+     shiftOrigin(cell->bbx list(shx shy))
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get origin of cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getOrigin (( cell cv ))
+  cell->origin = Origin(cell->bbx)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3561,7 +3607,6 @@ defclass( reticle (cv)
 		( overhead @reader getOverhead)
 		( coupons @reader getCoupons)	
 		( isPartial @reader getIsPartial )
-		( origin @reader getOrigin @writer setOrigin)
 		( numRetChips @reader getNumRetChips @writer setNumRetChips) 
 		( numRetOverhead @reader getNumRetOverhead @writer setNumRetOverhead)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
@@ -3806,6 +3851,28 @@ defmethod( checkInnerStreets (( ret reticle ))
 ;#####################################################
 defmethod( chipId (( ret reticle ))
   nil
+);
+
+;#####################################################
+; This method checks the reticle's bbox dimensions
+; (width and height) for Step and Repeat (S&R) value 
+; provided
+;#####################################################
+defmethod( renderRetBbox (( ret reticle ))
+  let((bbv shp lay)
+    bbv = bb2vert(ret->bbx)
+    shp = makeInstance( 'shape )
+    setLayer(shp "GRID")
+    setPurpose(shp "drawing")
+    setVertices(shp bbv)
+    setVertices(shp->transform bbv) 
+    lay = makeInstance( 'techLayer )
+    setName(lay "GRID")
+    setPurpose(lay "drawing")
+    addShape(lay shp)
+    setRef(lay getRef(ret))
+    renderShapesOnLayer(lay)
+  );let
 );
 
 ;#####################################################
@@ -4595,13 +4662,14 @@ defmethod( shapeReset (( shp shape ))
 ;#####################################################
 defmethod( setVertices (( shp shape ) vertices)
 	   shp->vertices = vertices
-	   shp->transform->vertices = vertices
+	   resetPoints(shp->transform->vertices)
+	   setVertices(shp->transform vertices)
 	   area(shp->transform->polygon)
 	   shp->transform->area = shp->area
 	   centroid(shp->transform->polygon)
 	   shp->centroid->x = shp->transform->polygon->centroid->x
 	   shp->centroid->y = shp->transform->polygon->centroid->y
-	   length(shp->transform->vertices)
+	   length(getCollection(shp->transform->vertices->points))
 );defmethod
 
 ;#####################################################
@@ -5334,7 +5402,7 @@ defmethod( array (( waf wafer ))
         ind = ind + j
 	x = xCoord(orig) + rw - ol
 	ret = makeInstance( 'reticle )
-	clone(waf->reticle ret)
+	cloneRet(waf->reticle ret)
 	setOrigin(ret orig)	
         add(waf->reticles ret)
 	orig = list(x y)
@@ -5358,7 +5426,7 @@ defmethod( renderBbox (( waf wafer ))
       for(j 0 sub1(c)
         ind = ind + j
         ret = getItem(reticles ind)
-	renderBbx(ret)
+	renderRetBbox(ret)
       );for
     );for
   );let

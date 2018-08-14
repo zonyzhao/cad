@@ -110,7 +110,7 @@ defmethod( renderBbox (( waf wafer ))
       for(j 0 sub1(c)
         ind = ind + j
         ret = getItem(reticles ind)
-	renderBbx(ret)
+	renderRetBbox(ret)
       );for
     );for
   );let
