@@ -3,13 +3,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticleArray (cv)
   (
-    ( width @reader getWidth @reader setWidth)
-    ( height @reader getHeight @reader setHeight)) 
-    ( reticle  @reader getReticle @reader setReticle)
+    ( width @reader getWidth @writer setWidth)
+    ( height @reader getHeight @writer setHeight)
+    ( reticle  @reader getReticle @writer setReticle)
     ( reticles @reader getReticles)
     ( rows @reader getRows @writer setRows)
     ( cols @read getCols @writer setCols)
-    ( overlap @read getOverlap @writer setOverlap)	
+    ( overlap @read getOverlap @writer setOverlap)
+    ( origin )	
   )
 );defclass
 ;#####################################################
@@ -22,18 +23,27 @@ defmethod( initializeInstance @after ((obj reticleArray))
   obj->reticles = makeInstance( 'collection )
   obj->rows = nil
   obj->cols = nil
+  obj->overlap = nil
+  obj->origin
 );defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Shift reticle array origin
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( shift (( ra reticleArray ) arg)
+  nil
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ; Create Reticle Array
 ;######################################################
 defmethod( array (( ra reticleArray ))
-  let((ww wh rw rh r c ind x y)
-    wl = ra->width
-    wh = ra->height
-    rw = getWidth(waf->reticle)
-    rh = getHeight(waf->reticle)
-    r = floor(wh/rh)
-    c = floor(ww/rw)
+  let((ral rah rw rh r c ind x y)
+    ral = getWidth(ra)
+    rah = getHeight(ra)
+    rw = getWidth(ra->reticle)
+    rh = getHeight(ra->reticle)
+    r = floor(ral/rh)
+    c = floor(rah/rw)
     ra->rows = r
     ra->cols = c
     ol = ra->overlap
@@ -58,12 +68,11 @@ defmethod( array (( ra reticleArray ))
     list(ra->rows ra->cols)
   );let
 );defmethod
-
 ;######################################################
 ; Render reticle boundary box array
 ;######################################################
 defmethod( render (( ra reticleArray ))
-  foreach(ret getCollection(waf->reticles)
+  foreach(ret getCollection(ra->reticles)
     printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
     setRef(ret getRef(ra))
     renderRetBbox(ret)

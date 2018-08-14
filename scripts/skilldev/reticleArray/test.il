@@ -28,6 +28,8 @@ checkGrid(ret)
 dbClose(cv)
 getOrigin(ret)
 ret->bbx->bbx
+getWidth(ret)
+getHeight(ret)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create the array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,29 +60,37 @@ ret0 = nth(0 ra->reticles->list->elems)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Reticle Single Render
 ;;;;;;;;;;;;;;;;
-name  = "pd0164_ret_array"
-cv = dbOpenCellViewByType( lib name view type "w")
-setRef(ra cv)
-ret = nth(0 ra->reticles->list->elems)
-setOrigin(ra->bbx list(10000.0 10000.0))
-setRef(ret cv)
-renderRetBbox(ret)
-dbSave(cv)
-dbClose(cv)
+;name  = "pd0164_ret_array"
+;cv = dbOpenCellViewByType( lib name view type "w")
+;setRef(ra cv)
+;ret = nth(0 ra->reticles->list->elems)
+;setOrigin(ra->bbx list(10000.0 10000.0))
+;setRef(ret cv)
+;renderRetBbox(ret)
+;dbSave(cv)
+;dbClose(cv)
 ;;;;;;;;;;;;;;;;;
 ; Reticle Array Render
 ;;;;;;;;;;;;;;;;;
+;name  = "pd0164_ret_array"
+;cv = dbOpenCellViewByType( lib name view type "w")
+;setRef(ra cv)
+;foreach(ret getCollection(ra->reticles)
+;  printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
+;  setRef(ret cv)
+;  renderRetBbox(ret)
+;)
+;dbSave(cv)
+;dbClose(cv)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Reticle Array Class Method
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 name  = "pd0164_ret_array"
 cv = dbOpenCellViewByType( lib name view type "w")
-setRef(waf cv)
-foreach(ret getCollection(waf->reticles)
-  printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
-  setRef(ret cv)
-  renderRetBbox(ret)
-)
+setRef(ra cv)
+render(ra)
 dbSave(cv)
 dbClose(cv)
-
 
 
 
