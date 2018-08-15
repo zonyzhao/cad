@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  cv.ils: Cell view class inheriting from cadObj 
+;  cv.ils: Cell view class inheriting from cadObj 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( cv (cadObj)
+defclass( cv (bbox)
 	  (
 		( name @reader getName @writer setName)
         	( view @reader getView @writer setView )
@@ -87,6 +87,14 @@ defmethod( cloneCv (( cell cv) arg )
   arg->width = cell->width     
   arg->height = cell->height    
   cloneCadObj(cell arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set cv reference of this and the bbx component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setCvRef (( cell cv ) arg)
+     setRef(cell arg)
+     setRef(cell->bbx arg)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

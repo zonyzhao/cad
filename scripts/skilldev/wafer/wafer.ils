@@ -28,7 +28,7 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->overlap = nil
   obj->retName = nil
   obj->retArray = makeInstance( 'reticleArray )
-  obj->crossLayer = "GRID"
+  obj->crossLayer = "GLASS"
   obj->center = nil
   obj->shiftHorizontal = nil
   obj->shiftVerticle = nil
@@ -43,15 +43,17 @@ defmethod( initializeInstance @after ((obj wafer))
 ; Cross Coordinates
 ; find the center of the wafer outline, it's a cross 
 ; (on GRID layer, typically):
+; FIXME: need to output a coordinate!!
 ;######################################################
 defmethod( findCenter (( waf wafer ))
-  let( (shapes cross)  
+  let( (shapes cross x y)  
     shapes = setof( i getRef(waf)~>shapes i~>layerName == waf->crossLayer)
     cross = nth(0 shapes)
     if(length(cross~>points) == 12 then
-      waf->center = abs((caadr(cross~>bBox)-caar(cross~>bBox))-(cadadr(cross~>bBox)-cadar(cross~>bBox)))
+      x = (caadr(cross~>bBox)-caar(cross~>bBox))/2.0
+      y = (cadadr(cross~>bBox)-cadar(cross~>bBox))/2.0
     );if
-    waf->center
+    waf->center = list(x y)
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

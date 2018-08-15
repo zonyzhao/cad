@@ -29,7 +29,8 @@ defmethod( initializeInstance @after ((obj bbox))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method Populates Boundary Box Member
+; This Method Populates Boundary Box Member with the contents of the
+; reference cv's boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getbb (( bb bbox ))
 	setBbx(bb getRef(bb)~>bBox) 
@@ -194,7 +195,7 @@ defmethod( bb2vert (( bb bbox ))
 ;);defmethod
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method Shifts The contetns of the targeted Cellview to the upper 
+; This Method Shifts The contents of the targeted Cellview to the upper 
 ; right hand plane of the coordinate system base upon the boundary box
 ; of the target Cellview  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -238,7 +239,7 @@ defmethod( shiftOrigin (( bb bbox ) orig)
     bbll = list(bllx blly)
     bbur = list(burx bury)
     bb->bbx = list(bbll bbur)
-    Origin(bb)
+    bb->origin = Origin(bb)
   );let
 );defMethod	
 

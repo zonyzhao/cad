@@ -4,8 +4,8 @@
 defclass( die (instance)
   (
     ( reticle @reader getReticle @writer setReticle )
-    ( number @reader getNumber @writer setNumber)
-    ( revision @reader getRev @writer setRev)
+    ( number @reader getNumber @writer setNumber )
+    ( revision @reader getRev @writer setRev )
   )
 ) ; defClass
 

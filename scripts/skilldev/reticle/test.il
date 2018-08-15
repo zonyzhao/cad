@@ -656,5 +656,80 @@ cloneRet(ret retcp)
 getName(retcp)
 getRef(retcp)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-14: Render a single reticle boundary box in a cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reticle bbox
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setCvRef(ret cv)
+getbb(ret->bbx) 
+dbClose(cv)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+lib   = "pd0164"
+name = "pd0164_bbx"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "w")
+setCvRef(ret cv)
+renderRetBbox(ret)
+dbSave(cv)
+dbClose(cv)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-15: Remove all rendered reticle boundary boxes from the cellview
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name = "pd0164_bbx"
+lib   = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "a")
+ret = makeInstance( 'reticle )
+setCvRef(ret cv)
+erase(ret)
+dbSave(cv)
+dbClose(cv)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-16: Shift (using origin) and render the boundary box 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reference reticle
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setCvRef(ret cv)
+getbb(ret->bbx)
+Origin(ret->bbx)
+Centroid(ret->bbx) 
+dbClose(cv)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+; Shift and render reticle bbox
+lib   = "pd0164"
+name = "pd0164_bbx"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "w")
+setCvRef(ret cv)
+ret->bbx->bbx
+Origin(ret->bbx)
+setOrigin(ret list(0.0 0.0))
+ret->bbx->bbx
+Origin(ret->bbx)
+renderRetBbox(ret)
+dbSave(cv)
+dbClose(cv)

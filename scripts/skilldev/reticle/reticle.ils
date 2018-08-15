@@ -294,6 +294,21 @@ defmethod( renderRetBbox (( ret reticle ))
     renderShapesOnLayer(lay)
   );let
 );
+;#####################################################
+; Delete reticle bbox shapes
+;#####################################################
+defmethod( erase (( ret reticle ))
+  let((cv)
+    cv = getRef(ret)
+    if(!null(cv~>shapes) then
+      foreach( shape cv~>shapes
+        if(shape~>layerName == "GRID" then   
+          dbDeleteObject(shape)
+        );if
+      );foreach
+    );if
+  );let
+);
 
 ;#####################################################
 ; This method searches the reticle instances for the

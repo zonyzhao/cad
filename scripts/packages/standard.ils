@@ -1486,7 +1486,8 @@ defmethod( initializeInstance @after ((obj bbox))
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method Populates Boundary Box Member
+; This Method Populates Boundary Box Member with the contents of the
+; reference cv's boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getbb (( bb bbox ))
 	setBbx(bb getRef(bb)~>bBox) 
@@ -1651,7 +1652,7 @@ defmethod( bb2vert (( bb bbox ))
 ;);defmethod
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method Shifts The contetns of the targeted Cellview to the upper 
+; This Method Shifts The contents of the targeted Cellview to the upper 
 ; right hand plane of the coordinate system base upon the boundary box
 ; of the target Cellview  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -1695,7 +1696,7 @@ defmethod( shiftOrigin (( bb bbox ) orig)
     bbll = list(bllx blly)
     bbur = list(burx bury)
     bb->bbx = list(bbll bbur)
-    Origin(bb)
+    bb->origin = Origin(bb)
   );let
 );defMethod	
 
@@ -2828,13 +2829,13 @@ defmethod( printStackUp (( st stackup ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  cv.ils: Cell view class inheriting from cadObj 
+;  cv.ils: Cell view class inheriting from cadObj 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( cv (cadObj)
+defclass( cv (bbox)
 	  (
 		( name @reader getName @writer setName)
         	( view @reader getView @writer setView )
@@ -2916,6 +2917,14 @@ defmethod( cloneCv (( cell cv) arg )
   arg->width = cell->width     
   arg->height = cell->height    
   cloneCadObj(cell arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Set cv reference of this and the bbx component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setCvRef (( cell cv ) arg)
+     setRef(cell arg)
+     setRef(cell->bbx arg)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3874,6 +3883,21 @@ defmethod( renderRetBbox (( ret reticle ))
     renderShapesOnLayer(lay)
   );let
 );
+;#####################################################
+; Delete reticle bbox shapes
+;#####################################################
+defmethod( erase (( ret reticle ))
+  let((cv)
+    cv = getRef(ret)
+    if(!null(cv~>shapes) then
+      foreach( shape cv~>shapes
+        if(shape~>layerName == "GRID" then   
+          dbDeleteObject(shape)
+        );if
+      );foreach
+    );if
+  );let
+);
 
 ;#####################################################
 ; This method searches the reticle instances for the
@@ -4115,8 +4139,8 @@ defclass( couponNumberPad (numberPad)
 defclass( die (instance)
   (
     ( reticle @reader getReticle @writer setReticle )
-    ( number @reader getNumber @writer setNumber)
-    ( revision @reader getRev @writer setRev)
+    ( number @reader getNumber @writer setNumber )
+    ( revision @reader getRev @writer setRev )
   )
 ) ; defClass
 
@@ -5356,22 +5380,33 @@ defmethod( initializeInstance @after ((obj reticleArray))
 ;        vertical. This will center the center of the
 ;        center site on the center of the wafer outline
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( centerArray (( ra reticleArray ))
-  ra->width  = xCoord(ra->ur) - xCoord(ra->origin) 
-  ra->height = yCoord(ra->ur) - yCoord(ra->origin)
-  shift(ra list(-ra->width/2.0 -ra->height/2.0))
+defmethod( centerArray (( ra reticleArray ) arg)
+  let((w h cx cy shx shy)
+    w  = xCoord(ra->ur) - xCoord(ra->origin) 
+    h  = yCoord(ra->ur) - yCoord(ra->origin)
+    cx = (w - xCoord(ra->origin))/2.0
+    cy = (h - yCoord(ra->origin))/2.0
+    shx = cx - xCoord(arg)
+    shy = cy - yCoord(arg)
+    shift(ra list(-w/2.0 -h/2.0))
+    ra->width = w
+    ra->height = h
+    ra->origin = list(-w/2.0 -h/2.0)
+    ra->ur = list(w/2.0 h/2.0)
+  );let
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Shift reticle array origin
+; Shift entire reticle array origin to the new origin 
+; given by arg
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( shift (( ra reticleArray ) arg)
   let((orig dx dy i)
     i = 0
     foreach(ret getCollection(ra->reticles)
       orig = getOrigin(ret)
-      dx = xCoord(arg) - xCoord(orig)
-      dy = yCoord(arg) - yCoord(orig)
+      dx = xCoord(orig) + xCoord(arg)
+      dy = yCoord(orig) + yCoord(arg)
       printf("INFO(reticleArray) Setting Origin %d to %L\n" i list(dx dy))
       setOrigin(ret list(dx dy))
       i++
@@ -5412,7 +5447,7 @@ defmethod( array (( ra reticleArray ))
       y = yCoord(orig) + rh - ol
     );for
     ra->origin = list(0.0 0.0)
-    ra->ur = list(x+rw y+rh)
+    ra->ur = list(x y)
     list(ra->rows ra->cols)
   );let
 );defmethod
@@ -5425,6 +5460,21 @@ defmethod( render (( ra reticleArray ))
     setRef(ret getRef(ra))
     renderRetBbox(ret)
   );foreach
+);defmethod
+;######################################################
+; Erase reticle boundary box array
+;######################################################
+defmethod( erase (( ra reticleArray ))
+  let((cv)
+    cv = getRef(ra)
+    if(!null(cv~>shapes) then
+      foreach( shape cv~>shapes
+        if(shape~>layerName == "GRID" then   
+          dbDeleteObject(shape)
+        );if
+      );foreach
+    );if
+  );let
 );defmethod
 ;######################################################
 ; Render the boundary box of a single reticle into
@@ -5481,7 +5531,7 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->overlap = nil
   obj->retName = nil
   obj->retArray = makeInstance( 'reticleArray )
-  obj->crossLayer = "GRID"
+  obj->crossLayer = "GLASS"
   obj->center = nil
   obj->shiftHorizontal = nil
   obj->shiftVerticle = nil
@@ -5496,15 +5546,17 @@ defmethod( initializeInstance @after ((obj wafer))
 ; Cross Coordinates
 ; find the center of the wafer outline, it's a cross 
 ; (on GRID layer, typically):
+; FIXME: need to output a coordinate!!
 ;######################################################
 defmethod( findCenter (( waf wafer ))
-  let( (shapes cross)  
+  let( (shapes cross x y)  
     shapes = setof( i getRef(waf)~>shapes i~>layerName == waf->crossLayer)
     cross = nth(0 shapes)
     if(length(cross~>points) == 12 then
-      waf->center = abs((caadr(cross~>bBox)-caar(cross~>bBox))-(cadadr(cross~>bBox)-cadar(cross~>bBox)))
+      x = (caadr(cross~>bBox)-caar(cross~>bBox))/2.0
+      y = (cadadr(cross~>bBox)-cadar(cross~>bBox))/2.0
     );if
-    waf->center
+    waf->center = list(x y)
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

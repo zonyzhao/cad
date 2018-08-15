@@ -42,15 +42,16 @@ dbClose(cvwo)
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3: Create the reticle array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Open reference reticle
 lib   = "pd0164"
 name  = "pd0164"
 view  = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
-ret = makeInstance( 'reticle )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-setName(ret name)
+ret = makeInstance( 'reticle )
 setRef(ret cv)
+setName(ret name)
 setRes(ret 10)
 setMaxDim(ret 20000)
 setOverlap(ret 4.0)
@@ -65,8 +66,8 @@ ret->bbx->bbx
 waf = makeInstance( 'wafer )
 setName(waf name)
 setReticle(waf->retArray ret)
-setWidth(waf->retArray 97175.0)
-setHeight(waf->retArray 99275.0)
+setWaferWidth(waf->retArray 97175.0)
+setWaferHeight(waf->retArray 99275.0)
 setOverlap(waf->retArray 4.0)
 ; Create the reticle array
 array(waf->retArray)
@@ -88,6 +89,64 @@ ret0 = nth(0 waf->retArray->reticles->list->elems)
 ;;;;;;;;;;;;;;;;;
 ; Reticle Array Render over the wafer outline layers
 ;;;;;;;;;;;;;;;;;
+name  = "pd0164_wafer"
+lib = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "a")
+setRef(waf->retArray cv)
+render(waf->retArray)
+dbSave(cv)
+dbClose(cv)
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3: Erase the reticle array
+;       and render a new  
+;       reticle array centered 
+;       on the wafer outline
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name  = "pd0164_wafer"
+lib = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "a")
+waf = makeInstance( 'wafer )
+setRef(waf->retArray cv)
+erase(waf->retArray)
+; Open the reference reticle
+lib   = "pd0164"
+name  = "pd0164"
+view  = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+checkDim(ret)
+checkRes(ret)
+checkGrid(ret)
+dbClose(cv)
+getOrigin(ret)
+ret->bbx->bbx
+; Create the wafer array
+waf = makeInstance( 'wafer )
+setName(waf name)
+setReticle(waf->retArray ret)
+setWaferWidth(waf->retArray 97175.0)
+setWaferHeight(waf->retArray 99275.0)
+setOverlap(waf->retArray 4.0)
+array(waf->retArray)
+; Center the array
+center = findCenter(waf)
+center = list(0.0 0.0)
+centerArray(waf->retArray center)
+waf->retArray->origin
+waf->retArray->ur
+; redender it in wafer cellview
 name  = "pd0164_wafer"
 lib = "pd0164"
 view = "layout"
