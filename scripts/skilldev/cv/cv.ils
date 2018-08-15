@@ -31,7 +31,7 @@ defclass( cv (bbox)
 		( height @reader getHeight @writer setHeight)
                 ( origin )			  
 	  )
-) ; defClass
+);defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

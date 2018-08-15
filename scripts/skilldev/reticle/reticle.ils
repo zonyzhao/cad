@@ -20,9 +20,11 @@ defclass( reticle (cv)
 		( validRes @reader getResValid)
 		( shiftUrq @reader getShiftUrq @writer setShiftUrq)
 		( frame @reader getFrame)
+		( frameName @reader getFrameName  @writer setFrameName)
 		( chipList @reader getChipList)
 		( olist @reader getOverheadList)
 		( couponList @reader getCouponList)
+		( dieSites @reader getDieSites )
 		( chips @reader getChips)
 		( overhead @reader getOverhead)
 		( coupons @reader getCoupons)	
@@ -51,6 +53,8 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->validRes = nil
 	   obj->shiftUrq = nil
 	   obj->frame = makeInstance( 'reticleFrame )
+	   obj->frameName = "memsChipFrame"
+	   obj->dieSites = makeInstance( 'collection )
 	   obj->chipList = nil
 	   obj->olist = nil 
 	   obj->couponList = nil
@@ -84,6 +88,7 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->chipList	   = ret->chipList
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 
+   arg->die                = ret->die
    arg->chips 	           = ret->chips 
    arg->overhead 	   = ret->overhead 
    arg->coupons	           = ret->coupons  
@@ -279,7 +284,7 @@ defmethod( chipId (( ret reticle ))
 ; provided
 ;#####################################################
 defmethod( renderRetBbox (( ret reticle ))
-  let((bbv shp lay)
+  let((bbv shp lay dsbbv dshp)
     bbv = bb2vert(ret->bbx)
     shp = makeInstance( 'shape )
     setLayer(shp "GRID")
@@ -290,6 +295,15 @@ defmethod( renderRetBbox (( ret reticle ))
     setName(lay "GRID")
     setPurpose(lay "drawing")
     addShape(lay shp)
+    foreach(ds getCollection(ret->dieSites)
+      dshp = makeInstance( 'shape )
+      dsbbv = bb2vert(ds->bbx)   
+      setLayer(dshp "GRID")
+      setPurpose(dshp "drawing")
+      setVertices(dshp dsbbv)
+      setVertices(dshp->transform bbv) 
+      addShape(lay dshp)
+    );foreach
     setRef(lay getRef(ret))
     renderShapesOnLayer(lay)
   );let
@@ -481,6 +495,47 @@ defmethod( checkSum (( ret reticle ))
        printf("ERROR: Reticle Coupon Checksum FAILED!, Chips+Overhead: %d, numPads: %d\n" psum getNumNumPads(ret))
     ); 
   );
+);defmethod
+
+;#####################################################
+; Updates the relative position, relPos member,  of the 
+; chips and pad locations within the reticle based upon
+; the reticleOrigin value
+;#####################################################
+defmethod( detectDieSites (( ret reticle ))
+  let((die i cv instances)
+    cv = getRef(ret)
+    i = 0
+    instances = cv~>instances
+    foreach( master cv~>instanceMasters
+      foreach( inst master~>instances
+        if(inst~>cellName == ret->frameName then
+	   die = makeInstance( 'die )
+	   setName(die master~>cellName)
+	   setBbx(getBbx(die) nth(i instances)~>bBox)
+	   add(ret->dieSites die)
+	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die->bbx))
+	   i++
+	);if
+      );foreach
+    );foreach
+    i
+  );let
+);defmethod
+
+;#####################################################
+; Sets the reticle and die site origins
+;#####################################################
+defmethod( setReticleOrigin (( ret reticle ) arg)
+  let((retOrig orig shx shy)
+    retOrig = getOrigin(ret)
+    shx = xCoord(arg)-xCoord(retOrig) 
+    shy = yCoord(arg)-yCoord(retOrig)
+    setOrigin(ret arg)
+    foreach(die getCollection(ret->dieSites)
+      shiftOrigin(die->bbx list(shx shy))
+    );foreach
+  );let
 );defmethod
 
 ;######################################################

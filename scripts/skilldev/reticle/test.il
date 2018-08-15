@@ -668,12 +668,14 @@ cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
 setCvRef(ret cv)
 getbb(ret->bbx) 
-dbClose(cv)
 setName(ret name)
 setRes(ret 10)
 setMaxDim(ret 20000)
 setOverlap(ret 4.0)
 setSrGrid(ret 0.1)
+detectDieSites(ret)
+dbClose(cv)
+; Render the abstract reticle
 lib   = "pd0164"
 name = "pd0164_bbx"
 view = "layout"
@@ -712,6 +714,7 @@ setCvRef(ret cv)
 getbb(ret->bbx)
 Origin(ret->bbx)
 Centroid(ret->bbx) 
+detectDieSites(ret)
 dbClose(cv)
 setName(ret name)
 setRes(ret 10)
@@ -727,9 +730,77 @@ cv = dbOpenCellViewByType( lib name view type "w")
 setCvRef(ret cv)
 ret->bbx->bbx
 Origin(ret->bbx)
-setOrigin(ret list(0.0 0.0))
+setReticleOrigin(ret list(0.0 0.0))
 ret->bbx->bbx
 Origin(ret->bbx)
 renderRetBbox(ret)
 dbSave(cv)
 dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-17: Shift (using origin) and render the boundary box 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name  = "pd0164"
+view  = "layout"
+mlview = "maskLayout"
+cv = dbOpenCellViewByType( lib name view mlview "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+checkDim(ret)
+checkRes(ret)
+checkGrid(ret)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cv~>instHeaders
+length(cv~>instHeaders)
+nth(0 cv~>instHeaders)~>cellName
+nth(1 cv~>instHeaders)~>cellName
+nth(2 cv~>instHeaders)~>cellName
+nth(3 cv~>instHeaders)~>cellName
+nth(4 cv~>instHeaders)~>cellName
+nth(5 cv~>instHeaders)~>cellName
+nth(6 cv~>instHeaders)~>cellName
+nth(7 cv~>instHeaders)~>cellName
+nth(8 cv~>instHeaders)~>cellName
+nth(9 cv~>instHeaders)~>cellName
+;
+nth(0 cv~>instances)~>cellName
+nth(0 cv~>instances)~>bBox
+nth(1 cv~>instances)~>cellName
+nth(1 cv~>instances)~>bBox
+nth(2 cv~>instances)~>cellName
+nth(2 cv~>instances)~>bBox
+nth(3 cv~>instances)~>cellName
+nth(3 cv~>instances)~>bBox
+nth(4 cv~>instances)~>cellName
+nth(4 cv~>instances)~>bBox
+nth(5 cv~>instances)~>cellName
+nth(5 cv~>instances)~>bBox
+nth(6 cv~>instances)~>cellName
+nth(6 cv~>instances)~>bBox
+nth(7 cv~>instances)~>cellName
+nth(7 cv~>instances)~>bBox
+nth(8 cv~>instances)~>cellName
+nth(8 cv~>instances)~>bBox
+nth(9 cv~>instances)~>cellName
+nth(9 cv~>instances)~>bBox
+
+cv~>instanceMasters
+nth(0 nth(0 cv~>instanceMasters)~>instances)~>cellName
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+detectDieSites(ret)
+getCollection(ret->dieSites)
+nth(0 getCollection(ret->dieSites))->bbx->bbx
+nth(1 getCollection(ret->dieSites))->bbx->bbx
+nth(2 getCollection(ret->dieSites))->bbx->bbx
+nth(3 getCollection(ret->dieSites))->bbx->bbx
+nth(4 getCollection(ret->dieSites))->bbx->bbx
+nth(5 getCollection(ret->dieSites))->bbx->bbx
+nth(6 getCollection(ret->dieSites))->bbx->bbx
+nth(7 getCollection(ret->dieSites))->bbx->bbx
+nth(8 getCollection(ret->dieSites))->bbx->bbx
+bb2vert(nth(8 getCollection(ret->dieSites))->bbx)

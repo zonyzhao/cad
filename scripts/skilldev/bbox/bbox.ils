@@ -226,9 +226,7 @@ defmethod( shiftURQ (( bb bbox ))
 );defMethod	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method Shifts The contetns of the targeted Cellview to the upper 
-; right hand plane of the coordinate system base upon the boundary box
-; of the target Cellview  
+; This Method Shifts the origin of the bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( shiftOrigin (( bb bbox ) orig)
   let( (bllx blly burx bury bbll bbur) 
