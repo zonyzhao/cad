@@ -3612,6 +3612,7 @@ defclass( reticle (cv)
 		( olist @reader getOverheadList)
 		( couponList @reader getCouponList)
 		( dieSites @reader getDieSites )
+		( die )
 		( chips @reader getChips)
 		( overhead @reader getOverhead)
 		( coupons @reader getCoupons)	
@@ -3641,6 +3642,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->shiftUrq = nil
 	   obj->frame = makeInstance( 'reticleFrame )
 	   obj->frameName = "memsChipFrame"
+ 	   obj->die = nil
 	   obj->dieSites = makeInstance( 'collection )
 	   obj->chipList = nil
 	   obj->olist = nil 
@@ -3676,6 +3678,7 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 
    arg->die                = ret->die
+   arg->dieSites           = ret->dieSites
    arg->chips 	           = ret->chips 
    arg->overhead 	   = ret->overhead 
    arg->coupons	           = ret->coupons  

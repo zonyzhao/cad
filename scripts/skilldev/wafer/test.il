@@ -59,6 +59,7 @@ setSrGrid(ret 0.1)
 checkDim(ret)
 checkRes(ret)
 checkGrid(ret)
+detectDieSites(ret)
 dbClose(cv)
 getOrigin(ret)
 ret->bbx->bbx
@@ -105,6 +106,7 @@ dbClose(cv)
 ;       reticle array centered 
 ;       on the wafer outline
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Erase all reticle abstracts
 name  = "pd0164_wafer"
 lib = "pd0164"
 view = "layout"
@@ -129,6 +131,7 @@ setSrGrid(ret 0.1)
 checkDim(ret)
 checkRes(ret)
 checkGrid(ret)
+detectDieSites(ret)
 dbClose(cv)
 getOrigin(ret)
 ret->bbx->bbx
