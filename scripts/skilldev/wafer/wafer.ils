@@ -43,7 +43,7 @@ defmethod( initializeInstance @after ((obj wafer))
 ; Cross Coordinates
 ; find the center of the wafer outline, it's a cross 
 ; (on GRID layer, typically):
-; FIXME: need to output a coordinate!!
+; FIXME: zero centered cross measures an offset!
 ;######################################################
 defmethod( findCenter (( waf wafer ))
   let( (shapes cross x y)  

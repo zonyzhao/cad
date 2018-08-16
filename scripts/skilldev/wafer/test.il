@@ -15,6 +15,7 @@ type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type)
 wafer = makeInstance( 'wafer )
 setRef(wafer cv)
+setCrossLayer(wafer "membrane")
 findCenter(wafer)
 dbClose(cv)
 

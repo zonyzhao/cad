@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  reticleArray.il: Wafer Class
+;  reticleArray.ils: Reticle Array Class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticleArray (cv)
   (
     ( waferWidth @reader getWaferWidth @writer setWaferWidth)
     ( waferHeight @reader getWaferHeight @writer setWaferHeight)
-    ( reticle  @reader getReticle @writer setReticle)
+    ( reticle @reader getReticle @writer setReticle)
     ( reticles @reader getReticles)
     ( arrayWidth @reader getArrayWidth @writer setArrayWidth)
     ( arrayHeight @reader getArrayHeight @writer setArrayHeight)
@@ -32,7 +32,6 @@ defmethod( initializeInstance @after ((obj reticleArray))
   obj->origin = nil
   obj->ur = nil
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Center the reticle array
 ; FIXME: need to generate an reticle array that has
@@ -55,7 +54,6 @@ defmethod( centerArray (( ra reticleArray ) arg)
     ra->ur = list(w/2.0 h/2.0)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Shift entire reticle array origin to the new origin 
 ; given by arg
@@ -100,7 +98,7 @@ defmethod( array (( ra reticleArray ))
 	x = xCoord(orig) + rw - ol
 	ret = makeInstance( 'reticle )
 	cloneRet(ra->reticle ret)
-	setOrigin(ret orig)	
+	setReticleOrigin(ret orig)	
         add(ra->reticles ret)
 	orig = list(x y)
       );for

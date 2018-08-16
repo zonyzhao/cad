@@ -38,7 +38,6 @@ defclass( reticle (cv)
 		( bnb @reader getBnb)			
 	  )
 );defClass
-
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -71,7 +70,6 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
 );defmethod
-
 ;######################################################
 ; Copies the contents of this reticle into arg reticle
 ;######################################################
@@ -87,6 +85,7 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->validRes           = ret->validRes
    arg->shiftUrq           = ret->shiftUrq
    arg->frame	           = ret->frame 
+   arg->frameName          = ret->frameName 
    arg->chipList	   = ret->chipList
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 

@@ -3625,7 +3625,6 @@ defclass( reticle (cv)
 		( bnb @reader getBnb)			
 	  )
 );defClass
-
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -3658,7 +3657,6 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
 );defmethod
-
 ;######################################################
 ; Copies the contents of this reticle into arg reticle
 ;######################################################
@@ -3674,6 +3672,7 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->validRes           = ret->validRes
    arg->shiftUrq           = ret->shiftUrq
    arg->frame	           = ret->frame 
+   arg->frameName          = ret->frameName 
    arg->chipList	   = ret->chipList
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 
@@ -5395,13 +5394,13 @@ defmethod( getParams (( pc pcell ))
 ;###############################################################################
 ;###############################################################################
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  reticleArray.il: Wafer Class
+;  reticleArray.ils: Reticle Array Class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( reticleArray (cv)
   (
     ( waferWidth @reader getWaferWidth @writer setWaferWidth)
     ( waferHeight @reader getWaferHeight @writer setWaferHeight)
-    ( reticle  @reader getReticle @writer setReticle)
+    ( reticle @reader getReticle @writer setReticle)
     ( reticles @reader getReticles)
     ( arrayWidth @reader getArrayWidth @writer setArrayWidth)
     ( arrayHeight @reader getArrayHeight @writer setArrayHeight)
@@ -5428,7 +5427,6 @@ defmethod( initializeInstance @after ((obj reticleArray))
   obj->origin = nil
   obj->ur = nil
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Center the reticle array
 ; FIXME: need to generate an reticle array that has
@@ -5451,7 +5449,6 @@ defmethod( centerArray (( ra reticleArray ) arg)
     ra->ur = list(w/2.0 h/2.0)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Shift entire reticle array origin to the new origin 
 ; given by arg
@@ -5496,7 +5493,7 @@ defmethod( array (( ra reticleArray ))
 	x = xCoord(orig) + rw - ol
 	ret = makeInstance( 'reticle )
 	cloneRet(ra->reticle ret)
-	setOrigin(ret orig)	
+	setReticleOrigin(ret orig)	
         add(ra->reticles ret)
 	orig = list(x y)
       );for
@@ -5602,7 +5599,7 @@ defmethod( initializeInstance @after ((obj wafer))
 ; Cross Coordinates
 ; find the center of the wafer outline, it's a cross 
 ; (on GRID layer, typically):
-; FIXME: need to output a coordinate!!
+; FIXME: zero centered cross measures an offset!
 ;######################################################
 defmethod( findCenter (( waf wafer ))
   let( (shapes cross x y)  

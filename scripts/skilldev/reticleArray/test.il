@@ -9,13 +9,14 @@ classOf(ra)
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Create the reticle array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;read in the reference reticle
 lib   = "pd0164"
 name  = "pd0164"
 view  = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; set reticle level information
 setName(ret name)
 setRef(ret cv)
 setRes(ret 10)
@@ -25,13 +26,16 @@ setSrGrid(ret 0.1)
 checkDim(ret)
 checkRes(ret)
 checkGrid(ret)
+; get the reticle die sites
+detectDieSites(ret)
 dbClose(cv)
 getOrigin(ret)
 ret->bbx->bbx
 getWidth(ret)
 getHeight(ret)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Create the array and center it
+; Create the reticle array and center 
+; in the target cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ra = makeInstance( 'reticleArray )
 setName(ra name)
@@ -55,7 +59,11 @@ nth(0 ra->reticles->list->elems)->bbx->bbx
 nth(1 ra->reticles->list->elems)->origin
 nth(1 ra->reticles->list->elems)->bbx->bbx
 
-centerArray(ra)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Center the array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+centerArray(ra list(0.0 0.0))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;
 nth(0 ra->reticles->list->elems)->origin
