@@ -18,3 +18,9 @@ cv = dbOpenCellViewByType( lib name view mview "w")
 pcell = makeInstance('memsChipFrame)
 setRef(pcell cv)
 debugPcellParams(pcell pcCellView cv)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2: Test parameter mapping
+;       Generate PCELL definition
+;       file - FIXME: Not working!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+getPcellCodeFromClass( 'memsChipFrame "reticle" "memsChipFrame" "layout" "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/pcells/memsChipFrame/pcMCF.il" "draw")

@@ -635,7 +635,7 @@ getbBox(retcp)
 bbv = bb2vert(retcp->bbx)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-13: Clone a reticle
+; UT-13: Clone a single reticle
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
 name = "pd0164"
@@ -730,6 +730,7 @@ cv = dbOpenCellViewByType( lib name view type "w")
 setCvRef(ret cv)
 ret->bbx->bbx
 Origin(ret->bbx)
+; Shift origin to URQ
 setReticleOrigin(ret list(0.0 0.0))
 ret->bbx->bbx
 Origin(ret->bbx)
@@ -804,3 +805,48 @@ nth(6 getCollection(ret->dieSites))->bbx->bbx
 nth(7 getCollection(ret->dieSites))->bbx->bbx
 nth(8 getCollection(ret->dieSites))->bbx->bbx
 bb2vert(nth(8 getCollection(ret->dieSites))->bbx)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-18: Create a clone of the reticle and shift the clone 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reference reticle
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setCvRef(ret cv)
+getbb(ret->bbx) 
+Origin(ret->bbx)
+Centroid(ret->bbx)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+detectDieSites(ret)
+ret->bbx->bbx
+dbClose(cv)
+getName(ret)
+; Clone object
+retcp = makeInstance( 'reticle )
+cloneRet(ret retcp)
+getName(retcp)
+getRef(retcp)
+; Add the clone to the bbx cv
+lib   = "pd0164"
+name = "pd0164_bbx"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "a")
+setCvRef(retcp cv)
+retcp->bbx->bbx
+Origin(retcp->bbx)
+; Shift origin to URQ
+setReticleOrigin(retcp list(21000.0 0.0))
+retcp->bbx->bbx
+Origin(retcp->bbx)
+renderRetBbox(retcp)
+dbSave(cv)
+dbClose(cv)
