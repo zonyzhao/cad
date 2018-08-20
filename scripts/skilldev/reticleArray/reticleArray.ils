@@ -115,7 +115,7 @@ defmethod( array (( ra reticleArray ))
 defmethod( render (( ra reticleArray ))
   foreach(ret getCollection(ra->reticles)
     printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
-    setCvRef(ret getRef(ra))
+    setRef(ret getRef(ra))
     renderRetBbox(ret)
   );foreach
 );defmethod

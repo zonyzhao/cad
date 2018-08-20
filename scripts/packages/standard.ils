@@ -1533,6 +1533,7 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
+    getDim(bb)
     x=caar(bb->bbox) 
     y=cadar(bb->bbox)
     bb->origin=list(x y)
@@ -2923,7 +2924,7 @@ defmethod( cloneCv (( cell cv) arg )
   arg->uLayers = cell->uLayers   
   arg->width = cell->width     
   arg->height = cell->height
-  cloneBBox(cell arg)    
+  cloneBbox(cell arg)    
   cloneCadObj(cell arg)
 );defmethod
 
@@ -3707,7 +3708,7 @@ defmethod( cloneRet ((ret reticle) arg)
 ;######################################################
 defmethod( checkDim ((ret reticle))
   ret->validDim = 't
-  getbBox(ret)
+  getbb(ret)
   getDim(ret)
   if(getWidth(ret) > getMaxDim(ret) then
     printf("ERROR: Reticle Width %8.1f exceeds maximum dimension %f\n" float(getWidth(ret)) float(ret->maxDim) )
@@ -3729,6 +3730,8 @@ defmethod( checkDim ((ret reticle))
 ; FIXME: Get grid information from TF via grid class 
 ;#####################################################
 defmethod( checkGrid ((ret reticle))
+  getbb(ret)
+  getDim(ret)
   if( abs(quotient(getWidth(ret) ret->srGrid 1.0) - round(getWidth(ret)*10)) > 0.0 then
     printf("ERROR: Reticle Width %g NOT ON a %g um grid\n" float(getWidth(ret)) float(ret->srGrid))
   else
@@ -3749,7 +3752,7 @@ defmethod( checkGrid ((ret reticle))
 defmethod( checkRes (( ret reticle ))
  let((rwidth rheight)
     ret->validRes = 't
-    getbBox(ret)
+    getbb(ret)
     getDim(ret)
     rwidth =  getWidth(ret) - ret->overlap
     rheight = getHeight(ret) - ret->overlap
@@ -4102,24 +4105,24 @@ defmethod( checkSum (( ret reticle ))
 ; the reticleOrigin value
 ;#####################################################
 defmethod( detectDieSites (( ret reticle ))
-  let((die i cv instances)
+  let((die i cv masters instances)
     cv = getRef(ret)
-    i = 0
+    masters = cv~>instanceMasters
     instances = cv~>instances
-    foreach( master cv~>instanceMasters
-      foreach( inst master~>instances
-        if(inst~>cellName == ret->frameName then
-	   die = makeInstance( 'die )
-	   setName(die master~>cellName)
-	   setLib(die master->libName)
-	   setBbox(die nth(i instances)~>bBox)
-	   add(ret->dieSites die)
-	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die))
-	   i++
-	);if
-      );foreach
+    i = 0
+    foreach( instance instances
+      if(instance~>cellName == ret->frameName then
+        die = makeInstance( 'die )
+        setName(die instance~>cellName)
+        setLib(die instance->libName)
+	setBbox(die instance~>bBox)
+	Origin(die)
+        add(ret->dieSites die)
+	printf("INFO(reticle): Die Site #%d Detected: %s\n" i  getName(die))
+        printf("               ORIGIN: %L, WIDTH: %L HEIGHT: %L\n" Origin(die) getWidth(die) getHeight(die))
+	i++
+      );if
     );foreach
-    i
   );let
 );defmethod
 
@@ -5517,7 +5520,7 @@ defmethod( array (( ra reticleArray ))
 defmethod( render (( ra reticleArray ))
   foreach(ret getCollection(ra->reticles)
     printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
-    setCvRef(ret getRef(ra))
+    setRef(ret getRef(ra))
     renderRetBbox(ret)
   );foreach
 );defmethod

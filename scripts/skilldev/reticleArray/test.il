@@ -17,7 +17,7 @@ type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
 ; set reticle level information
-setCvRef(ret cv)
+setRef(ret cv)
 setName(ret name)
 setRes(ret 10)
 setMaxDim(ret 20000)
@@ -29,12 +29,14 @@ checkGrid(ret)
 ; get the reticle die sites
 detectDieSites(ret)
 dbClose(cv)
+Origin(ret)
 getOrigin(ret)
-ret->bbx->bbx
+ret->bbox
 getWidth(ret)
 getHeight(ret)
 ; Create the reticle array and center in the target cellview
 ra = makeInstance( 'reticleArray )
+; set target reticle in reticle array
 setReticle(ra ret)
 setName(ra name)
 ; Wafer bBox dimensions - FIXME: get from wafer outline cv
@@ -52,28 +54,36 @@ nth(0 ra->reticles->list->elems)->width
 nth(0 ra->reticles->list->elems)->height
 ;
 nth(0 ra->reticles->list->elems)->origin
-nth(0 ra->reticles->list->elems)->bbx->bbx
+nth(0 ra->reticles->list->elems)->bbox
 ;
 nth(1 ra->reticles->list->elems)->origin
-nth(1 ra->reticles->list->elems)->bbx->bbx
+nth(1 ra->reticles->list->elems)->bbox
 ;
 nth(2 ra->reticles->list->elems)->origin
-nth(2 ra->reticles->list->elems)->bbx->bbx
+nth(2 ra->reticles->list->elems)->bbox
 ;
 nth(3 ra->reticles->list->elems)->origin
-nth(3 ra->reticles->list->elems)->bbx->bbx
+nth(3 ra->reticles->list->elems)->bbox
 ;
 nth(4 ra->reticles->list->elems)->origin
-nth(4 ra->reticles->list->elems)->bbx->bbx
+nth(4 ra->reticles->list->elems)->bbox
 ;
 nth(5 ra->reticles->list->elems)->origin
-nth(5 ra->reticles->list->elems)->bbx->bbx
+nth(5 ra->reticles->list->elems)->bbox
+;
+nth(6 ra->reticles->list->elems)->origin
+nth(6 ra->reticles->list->elems)->bbox
+;
+nth(7 ra->reticles->list->elems)->origin
+nth(7 ra->reticles->list->elems)->bbox
+;
+nth(8 ra->reticles->list->elems)->origin
+nth(8 ra->reticles->list->elems)->bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Center the array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 centerArray(ra list(0.0 0.0))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;
 nth(0 ra->reticles->list->elems)->origin
 nth(0 ra->reticles->list->elems)->bbx->bbx

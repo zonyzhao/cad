@@ -76,6 +76,7 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
+    getDim(bb)
     x=caar(bb->bbox) 
     y=cadar(bb->bbox)
     bb->origin=list(x y)

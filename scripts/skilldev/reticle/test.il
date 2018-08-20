@@ -849,3 +849,127 @@ Origin(retcp)
 renderRetBbox(retcp)
 dbSave(cv)
 dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-19: Create an array of reticle clones 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reference reticle
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+getbb(ret) 
+getDim(ret)
+Origin(ret)
+Centroid(ret)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+detectDieSites(ret)
+ret->bbox
+dbClose(cv)
+; create an array of reticle clones in the cv
+lib   = "pd0164"
+name = "pd0164_clones"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "w")
+; Clone and Array
+ral = 100000.0
+rah = 100000.0
+rw = getWidth(ret)
+rh = getHeight(ret)
+r = floor(ral/rh)
+c = floor(rah/rw)
+ind = 0
+x = 0.0
+y = 0.0
+ol=4.0
+for(i 0 sub1(r)
+  ind = ind + ind*i
+  x = 0.0
+  orig = list(x y)
+  for(j 0 sub1(c)
+    ind = ind + j
+    x = xCoord(orig) + rw - ol
+    retc = makeInstance( 'reticle )
+    cloneRet(ret retc)
+    setRef(retc cv)
+    setReticleOrigin(ret orig)
+    renderRetBbox(retc)	
+    orig = list(x y)
+  );for
+  y = yCoord(orig) + rh - ol
+);for
+dbSave(cv)
+dbClose(cv)
+
+ret = retc
+ds = nth(0 getCollection(ret->dieSites))
+ds = nth(1 getCollection(ret->dieSites))
+ds = nth(2 getCollection(ret->dieSites))
+ds = nth(3 getCollection(ret->dieSites))
+ds = nth(4 getCollection(ret->dieSites))
+ds = nth(5 getCollection(ret->dieSites))
+ds = nth(6 getCollection(ret->dieSites))
+ds = nth(7 getCollection(ret->dieSites))
+ds = nth(8 getCollection(ret->dieSites))
+
+ds = nth(8 getCollection(ret->dieSites))->bbox
+
+
+lib   = "pd0164"
+name = "pd164_0p_chip_01"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+dbClose(cv)
+
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+
+
+instances = cv~>instances
+
+length(instances)
+
+nth(0 instances)~>cellName
+nth(0 instances)~>bBox
+nth(1 instances)~>cellName
+
+
+nth(0 master~>instances)~>cellName
+nth(0 instances)~>cellName
+
+nth(1 master~>instances)~>cellName
+nth(1 instances)~>cellName
+
+nth(2 master~>instances)~>cellName
+nth(2 instances)~>cellName
+
+nth(8 master~>instances)~>cellName
+nth(8 instances)~>cellName
+
+nth(9 instances)~>cellName
+nth(9 instances)~>?
+
+nth(0 instances = cv~>instances)~>bBox
+
+nth(9 instances = cv~>instances)~>cellName
+nth(9 instances = cv~>instances)~>?
+nth(9 instances = cv~>instances)~>bBox
+
+
+nth(9 instances = cv~>instances)~>cellName
+nth(9 instances = cv~>instances)~>bBox
+
+nth(10 instances = cv~>instances)~>cellName
+nth(10 instances = cv~>instances)~>bBox
