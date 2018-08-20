@@ -5,12 +5,6 @@ findClass( 'bbox )
 bb = makeInstance( 'bbox )
 classp( bb 'bbox)
 classOf(bb)
-bb->bb
-bb->ur
-bb->ll
-bb->origin
-bb->width
-bb->height
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get the bbox for a cv

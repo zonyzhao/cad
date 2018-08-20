@@ -287,7 +287,7 @@ defmethod( chipId (( ret reticle ))
 ;#####################################################
 defmethod( renderRetBbox (( ret reticle ))
   let((bbv shp lay dsbbv dshp)
-    bbv = bb2vert(ret->bbx)
+    bbv = bb2vert(ret)
     shp = makeInstance( 'shape )
     setLayer(shp "GRID")
     setPurpose(shp "drawing")
@@ -299,7 +299,7 @@ defmethod( renderRetBbox (( ret reticle ))
     addShape(lay shp)
     foreach(ds getCollection(ret->dieSites)
       dshp = makeInstance( 'shape )
-      dsbbv = bb2vert(ds->bbx)   
+      dsbbv = bb2vert(ds)   
       setLayer(dshp "GRID")
       setPurpose(dshp "drawing")
       setVertices(dshp dsbbv)
@@ -514,9 +514,10 @@ defmethod( detectDieSites (( ret reticle ))
         if(inst~>cellName == ret->frameName then
 	   die = makeInstance( 'die )
 	   setName(die master~>cellName)
-	   setBbx(getBbx(die) nth(i instances)~>bBox)
+	   setLib(die master->libName)
+	   setBbox(die nth(i instances)~>bBox)
 	   add(ret->dieSites die)
-	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die->bbx))
+	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die))
 	   i++
 	);if
       );foreach
@@ -530,12 +531,12 @@ defmethod( detectDieSites (( ret reticle ))
 ;#####################################################
 defmethod( setReticleOrigin (( ret reticle ) arg)
   let((retOrig orig shx shy)
-    retOrig = getOrigin(ret)
+    retOrig = Origin(ret)
     shx = xCoord(arg)-xCoord(retOrig) 
     shy = yCoord(arg)-yCoord(retOrig)
-    setOrigin(ret arg)
+    shiftOrigin(ret list(shx shy))
     foreach(die getCollection(ret->dieSites)
-      shiftOrigin(die->bbx list(shx shy))
+      shiftOrigin(die list(shx shy))
     );foreach
   );let
 );defmethod
@@ -543,6 +544,3 @@ defmethod( setReticleOrigin (( ret reticle ) arg)
 ;######################################################
 ;######################################################
 ;######################################################
-
-
-	

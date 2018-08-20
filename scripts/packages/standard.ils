@@ -1464,7 +1464,7 @@ defclass( bbox (cadObj)
 		( ll @reader getLl @writer setLl )
 		( width @reader getWidth @writer setWidth )
 		( height @reader getHeight @writer setHeight )		
-		( bbx @reader getBbx @writer setBbx)
+		( bbox @reader getBbox @writer setBbox)
 		( origin @reader getOrigin @writer setOrigin)
 		( centroid @reader getCentroid @writer setCentroid)
 		( vertices @reader getVertices @writer setVertices)
@@ -1481,8 +1481,20 @@ defmethod( initializeInstance @after ((obj bbox))
 	   obj->width = nil
 	   obj->height = nil
 	   obj->origin = nil
-	   obj->bbx = nil
+	   obj->bbox = nil
 	   obj->transformation = makeInstance( 'transformation2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clones the cellview object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( cloneBbox (( bb bbox) arg )
+  arg->ur     = bb->ur      
+  arg->ll     = bb->ll      
+  arg->width  = bb->width  
+  arg->height = bb->height    
+  arg->origin = bb->origin    
+  arg->bbox   = bb->bbox   
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1490,17 +1502,17 @@ defmethod( initializeInstance @after ((obj bbox))
 ; reference cv's boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getbb (( bb bbox ))
-	setBbx(bb getRef(bb)~>bBox) 
+	setBbox(bb getRef(bb)~>bBox) 
 );defMethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method sets the cv bBox based on the bbx member of this class
+; This Method sets the cv bBox based on the bbox member of this class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( setbb (( bb bbox ))
-  let((bbx)
-    bbx=list(getLl(bb) getUr(bb))
-    setBbx(bb bbx)
-    getRef(bb)~>bBox = getBbx(bb)
+  let((bbox)
+    bbox=list(getLl(bb) getUr(bb))
+    setBbox(bb bbox)
+    getRef(bb)~>bBox = getBbox(bb)
   );let 
 );defMethod
 
@@ -1508,10 +1520,10 @@ defmethod( setbb (( bb bbox ))
 ; This Method Gets The Width and Height cell's boundary box 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getDim (( bb bbox ))
-	bb->width  = caadr( bb->bbx ) - caar( bb->bbx )
-	bb->height = cadadr( bb->bbx ) - cadar( bb->bbx)
-	setUr(bb caadr( bb->bbx ))
-	setLl(bb cadar( bb->bbx)) 
+	bb->width  = caadr( bb->bbox ) - caar( bb->bbox )
+	bb->height = cadadr( bb->bbox ) - cadar( bb->bbox)
+	setUr(bb caadr( bb->bbox ))
+	setLl(bb cadar( bb->bbox)) 
 	list(bb->width bb->height)
 );defMethod
 
@@ -1521,8 +1533,8 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
-    x=caar(bb->bbx) 
-    y=cadar(bb->bbx)
+    x=caar(bb->bbox) 
+    y=cadar(bb->bbox)
     bb->origin=list(x y)
   );let
 );defMethod
@@ -1533,10 +1545,10 @@ defmethod( Origin (( bb bbox ))
 defmethod( Centroid (( bb bbox ))
   let( ( urx ury llx lly  )
     getbb(bb)
-    ury = yCoord( upperRight( bb->bbx ))
-    urx = xCoord( upperRight( bb->bbx ))
-    llx = xCoord( lowerLeft( bb->bbx ))
-    lly = yCoord( lowerLeft( bb->bbx ))
+    ury = yCoord( upperRight( bb->bbox ))
+    urx = xCoord( upperRight( bb->bbox ))
+    llx = xCoord( lowerLeft( bb->bbox ))
+    lly = yCoord( lowerLeft( bb->bbox ))
     x = (urx+llx)/2 
     y = (ury+lly)/2
     bb->centroid = list(x y)
@@ -1548,10 +1560,10 @@ defmethod( Centroid (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( bb2vert (( bb bbox ))
   let( (ury urx llx lly vo v1 v2 v3)
-    ury = yCoord( upperRight( bb->bbx ))
-    urx = xCoord( upperRight( bb->bbx ))
-    llx = xCoord( lowerLeft( bb->bbx ))
-    lly = yCoord( lowerLeft( bb->bbx ))
+    ury = yCoord( upperRight( bb->bbox ))
+    urx = xCoord( upperRight( bb->bbox ))
+    llx = xCoord( lowerLeft( bb->bbox ))
+    lly = yCoord( lowerLeft( bb->bbox ))
     v0 = list(llx lly)
     v1 = list(urx lly)
     v2 = list(urx ury) 
@@ -1660,7 +1672,7 @@ defmethod( shiftURQ (( bb bbox ))
   let( (shift dx dy name cv) 
     getbb(bb)
     Origin(bb)
-    unless( caar(bb->bbx) == 0 && cadar( bb->bbx) == 0
+    unless( caar(bb->bbox) == 0 && cadar( bb->bbox) == 0
       dx = -xCoord(bb->origin)
       dy = -yCoord(bb->origin)
       shift = list( list( dx dy) "R0")
@@ -1685,15 +1697,15 @@ defmethod( shiftURQ (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts the origin of the bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( shiftOrigin (( bb bbox ) orig)
+defmethod( shiftOrigin (( bb bbox ) shift)
   let( (bllx blly burx bury bbll bbur) 
-    bllx = xCoord(nth(0 bb->bbx)) + xCoord(orig)
-    blly = yCoord(nth(0 bb->bbx)) + yCoord(orig)
-    burx = xCoord(nth(1 bb->bbx)) + xCoord(orig)
-    bury = yCoord(nth(1 bb->bbx)) + yCoord(orig)
+    bllx = xCoord(nth(0 bb->bbox)) + xCoord(shift)
+    blly = yCoord(nth(0 bb->bbox)) + yCoord(shift)
+    burx = xCoord(nth(1 bb->bbox)) + xCoord(shift)
+    bury = yCoord(nth(1 bb->bbox)) + yCoord(shift)
     bbll = list(bllx blly)
     bbur = list(burx bury)
-    bb->bbx = list(bbll bbur)
+    bb->bbox = list(bbll bbur)
     bb->origin = Origin(bb)
   );let
 );defMethod	
@@ -2854,10 +2866,7 @@ defclass( cv (bbox)
 		( iLibNames )
 		( iLevels )
 		( iLayers )
-		( uLayers @reader getuLayers )
-		( width @reader getWidth @writer setWidth)
-		( height @reader getHeight @writer setHeight)
-                ( origin )			  
+		( uLayers @reader getuLayers )			  
 	  )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2904,7 +2913,7 @@ defmethod( cloneCv (( cell cv) arg )
   arg->layers = cell->layers    
   arg->stack = cell->stack     
   arg->pcells = cell->pcells    
-  arg->bbx->bbx = cell->bbx->bbx        
+  arg->bbx->bbox = cell->bbx->bbox        
   arg->iRefs = cell->iRefs     
   arg->iCnt = cell->iCnt      
   arg->iNames = cell->iNames    
@@ -2913,36 +2922,37 @@ defmethod( cloneCv (( cell cv) arg )
   arg->iLayers = cell->iLayers   
   arg->uLayers = cell->uLayers   
   arg->width = cell->width     
-  arg->height = cell->height    
+  arg->height = cell->height
+  cloneBBox(cell arg)    
   cloneCadObj(cell arg)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set cv reference of this and the bbx component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( setCvRef (( cell cv ) arg)
-     setRef(cell arg)
-     setRef(cell->bbx arg)
-);defmethod
+;defmethod( setCvRef (( cell cv ) arg)
+;     setRef(cell arg)
+;     setRef(cell->bbx arg)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( setOrigin (( cell cv ) arg)
-  let((orig shx shy)
-     orig  = Origin(cell->bbx)
-     shx = xCoord(arg) - xCoord(orig)
-     shy = yCoord(arg) - yCoord(orig)
-     shiftOrigin(cell->bbx list(shx shy))
-  );let
-);defmethod
+;defmethod( setOrigin (( cell cv ) arg)
+;  let((orig shx shy)
+;     orig  = Origin(cell->bbx)
+;     shx = xCoord(arg) - xCoord(orig)
+;;     shy = yCoord(arg) - yCoord(orig)
+;    shiftOrigin(cell->bbx list(shx shy))
+;  );let
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( getOrigin (( cell cv ))
-  cell->origin = Origin(cell->bbx)
-);defmethod
+;defmethod( getOrigin (( cell cv ))
+;  cell->origin = Origin(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Determines if the cellview has instances (flat if no instances)
@@ -3139,23 +3149,23 @@ defmethod( getbBox (( cell cv ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-defmethod( getDim (( cell cv ))
-  setRef(cell->bbx getRef(cell))
-  getDim(cell->bbx)
-  cell->origin = Origin(cell->bbx)
-  cell->width  = getWidth(cell->bbx)
-  cell->height = getHeight(cell->bbx)
-);defmethod
+;defmethod( getDim (( cell cv ))
+;  setRef(cell->bbx getRef(cell))
+;  getDim(cell->bbx)
+;  cell->origin = Origin(cell->bbx)
+;  cell->width  = getWidth(cell->bbx)
+;  cell->height = getHeight(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-defmethod( setDim (( cell cv ))
-  getDim(cell->bbx)
-  cell->origin = Origin(cell->bbx)
-  cell->width  = getWidth(cell->bbx)
-  cell->height = getHeight(cell->bbx)
-);defmethod
+;defmethod( setDim (( cell cv ))
+;  getDim(cell->bbx)
+;  cell->origin = Origin(cell->bbx)
+;  cell->width  = getWidth(cell->bbx)
+;  cell->height = getHeight(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper method for the getTree method
@@ -3874,7 +3884,7 @@ defmethod( chipId (( ret reticle ))
 ;#####################################################
 defmethod( renderRetBbox (( ret reticle ))
   let((bbv shp lay dsbbv dshp)
-    bbv = bb2vert(ret->bbx)
+    bbv = bb2vert(ret)
     shp = makeInstance( 'shape )
     setLayer(shp "GRID")
     setPurpose(shp "drawing")
@@ -3886,7 +3896,7 @@ defmethod( renderRetBbox (( ret reticle ))
     addShape(lay shp)
     foreach(ds getCollection(ret->dieSites)
       dshp = makeInstance( 'shape )
-      dsbbv = bb2vert(ds->bbx)   
+      dsbbv = bb2vert(ds)   
       setLayer(dshp "GRID")
       setPurpose(dshp "drawing")
       setVertices(dshp dsbbv)
@@ -4101,9 +4111,10 @@ defmethod( detectDieSites (( ret reticle ))
         if(inst~>cellName == ret->frameName then
 	   die = makeInstance( 'die )
 	   setName(die master~>cellName)
-	   setBbx(getBbx(die) nth(i instances)~>bBox)
+	   setLib(die master->libName)
+	   setBbox(die nth(i instances)~>bBox)
 	   add(ret->dieSites die)
-	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die->bbx))
+	   printf("INFO(ret): Die Site #%d Detected: %s, ORIG: %L\n" i master~>cellName Origin(die))
 	   i++
 	);if
       );foreach
@@ -4117,23 +4128,19 @@ defmethod( detectDieSites (( ret reticle ))
 ;#####################################################
 defmethod( setReticleOrigin (( ret reticle ) arg)
   let((retOrig orig shx shy)
-    retOrig = getOrigin(ret)
+    retOrig = Origin(ret)
     shx = xCoord(arg)-xCoord(retOrig) 
     shy = yCoord(arg)-yCoord(retOrig)
-    setOrigin(ret arg)
+    shiftOrigin(ret list(shx shy))
     foreach(die getCollection(ret->dieSites)
-      shiftOrigin(die->bbx list(shx shy))
+      shiftOrigin(die list(shx shy))
     );foreach
   );let
 );defmethod
 
 ;######################################################
 ;######################################################
-;######################################################
-
-
-	
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  numberPad.ils: number pad class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( numberPad (instance) 
@@ -4191,7 +4198,7 @@ defclass( couponNumberPad (numberPad)
 ;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  die.ils: die class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( die (instance)
+defclass( die (cv)
   (
     ( reticle @reader getReticle @writer setReticle )
     ( number @reader getNumber @writer setNumber )
@@ -5510,7 +5517,7 @@ defmethod( array (( ra reticleArray ))
 defmethod( render (( ra reticleArray ))
   foreach(ret getCollection(ra->reticles)
     printf("Reticle Origin: (%f,%f)\n" xCoord(ret->origin) yCoord(ret->origin))
-    setRef(ret getRef(ra))
+    setCvRef(ret getRef(ra))
     renderRetBbox(ret)
   );foreach
 );defmethod

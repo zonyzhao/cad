@@ -17,8 +17,8 @@ type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
 ; set reticle level information
+setCvRef(ret cv)
 setName(ret name)
-setRef(ret cv)
 setRes(ret 10)
 setMaxDim(ret 20000)
 setOverlap(ret 4.0)
@@ -33,17 +33,15 @@ getOrigin(ret)
 ret->bbx->bbx
 getWidth(ret)
 getHeight(ret)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Create the reticle array and center 
-; in the target cellview
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create the reticle array and center in the target cellview
 ra = makeInstance( 'reticleArray )
-setName(ra name)
 setReticle(ra ret)
+setName(ra name)
+; Wafer bBox dimensions - FIXME: get from wafer outline cv
 setWaferWidth(ra 97175.0)
 setWaferHeight(ra 99275.0)
 setOverlap(ra 4.0)
-; Create the reticle array
+; Create the reticle array in URQ
 array(ra)
 length(ra->reticles->list->elems)
 nth(0 ra->reticles->list->elems)->?
@@ -58,7 +56,18 @@ nth(0 ra->reticles->list->elems)->bbx->bbx
 ;
 nth(1 ra->reticles->list->elems)->origin
 nth(1 ra->reticles->list->elems)->bbx->bbx
-
+;
+nth(2 ra->reticles->list->elems)->origin
+nth(2 ra->reticles->list->elems)->bbx->bbx
+;
+nth(3 ra->reticles->list->elems)->origin
+nth(3 ra->reticles->list->elems)->bbx->bbx
+;
+nth(4 ra->reticles->list->elems)->origin
+nth(4 ra->reticles->list->elems)->bbx->bbx
+;
+nth(5 ra->reticles->list->elems)->origin
+nth(5 ra->reticles->list->elems)->bbx->bbx
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Center the array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,6 +80,12 @@ nth(0 ra->reticles->list->elems)->bbx->bbx
 ;
 nth(1 ra->reticles->list->elems)->origin
 nth(1 ra->reticles->list->elems)->bbx->bbx
+;
+nth(2 ra->reticles->list->elems)->origin
+nth(2 ra->reticles->list->elems)->bbx->bbx
+;
+nth(3 ra->reticles->list->elems)->origin
+nth(3 ra->reticles->list->elems)->bbx->bbx
 
 ret0 = nth(0 ra->reticles->list->elems)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -100,7 +115,7 @@ ret0 = nth(0 ra->reticles->list->elems)
 ;dbSave(cv)
 ;dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Reticle Array Class Method
+; Render the array in a cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 name  = "pd0164_ret_array"
 cv = dbOpenCellViewByType( lib name view type "w")

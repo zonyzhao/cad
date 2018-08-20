@@ -7,7 +7,7 @@ defclass( bbox (cadObj)
 		( ll @reader getLl @writer setLl )
 		( width @reader getWidth @writer setWidth )
 		( height @reader getHeight @writer setHeight )		
-		( bbx @reader getBbx @writer setBbx)
+		( bbox @reader getBbox @writer setBbox)
 		( origin @reader getOrigin @writer setOrigin)
 		( centroid @reader getCentroid @writer setCentroid)
 		( vertices @reader getVertices @writer setVertices)
@@ -24,8 +24,20 @@ defmethod( initializeInstance @after ((obj bbox))
 	   obj->width = nil
 	   obj->height = nil
 	   obj->origin = nil
-	   obj->bbx = nil
+	   obj->bbox = nil
 	   obj->transformation = makeInstance( 'transformation2 )
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clones the cellview object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( cloneBbox (( bb bbox) arg )
+  arg->ur     = bb->ur      
+  arg->ll     = bb->ll      
+  arg->width  = bb->width  
+  arg->height = bb->height    
+  arg->origin = bb->origin    
+  arg->bbox   = bb->bbox   
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -33,17 +45,17 @@ defmethod( initializeInstance @after ((obj bbox))
 ; reference cv's boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getbb (( bb bbox ))
-	setBbx(bb getRef(bb)~>bBox) 
+	setBbox(bb getRef(bb)~>bBox) 
 );defMethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This Method sets the cv bBox based on the bbx member of this class
+; This Method sets the cv bBox based on the bbox member of this class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( setbb (( bb bbox ))
-  let((bbx)
-    bbx=list(getLl(bb) getUr(bb))
-    setBbx(bb bbx)
-    getRef(bb)~>bBox = getBbx(bb)
+  let((bbox)
+    bbox=list(getLl(bb) getUr(bb))
+    setBbox(bb bbox)
+    getRef(bb)~>bBox = getBbox(bb)
   );let 
 );defMethod
 
@@ -51,10 +63,10 @@ defmethod( setbb (( bb bbox ))
 ; This Method Gets The Width and Height cell's boundary box 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getDim (( bb bbox ))
-	bb->width  = caadr( bb->bbx ) - caar( bb->bbx )
-	bb->height = cadadr( bb->bbx ) - cadar( bb->bbx)
-	setUr(bb caadr( bb->bbx ))
-	setLl(bb cadar( bb->bbx)) 
+	bb->width  = caadr( bb->bbox ) - caar( bb->bbox )
+	bb->height = cadadr( bb->bbox ) - cadar( bb->bbox)
+	setUr(bb caadr( bb->bbox ))
+	setLl(bb cadar( bb->bbox)) 
 	list(bb->width bb->height)
 );defMethod
 
@@ -64,8 +76,8 @@ defmethod( getDim (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( Origin (( bb bbox ))
   let((x y)
-    x=caar(bb->bbx) 
-    y=cadar(bb->bbx)
+    x=caar(bb->bbox) 
+    y=cadar(bb->bbox)
     bb->origin=list(x y)
   );let
 );defMethod
@@ -76,10 +88,10 @@ defmethod( Origin (( bb bbox ))
 defmethod( Centroid (( bb bbox ))
   let( ( urx ury llx lly  )
     getbb(bb)
-    ury = yCoord( upperRight( bb->bbx ))
-    urx = xCoord( upperRight( bb->bbx ))
-    llx = xCoord( lowerLeft( bb->bbx ))
-    lly = yCoord( lowerLeft( bb->bbx ))
+    ury = yCoord( upperRight( bb->bbox ))
+    urx = xCoord( upperRight( bb->bbox ))
+    llx = xCoord( lowerLeft( bb->bbox ))
+    lly = yCoord( lowerLeft( bb->bbox ))
     x = (urx+llx)/2 
     y = (ury+lly)/2
     bb->centroid = list(x y)
@@ -91,10 +103,10 @@ defmethod( Centroid (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( bb2vert (( bb bbox ))
   let( (ury urx llx lly vo v1 v2 v3)
-    ury = yCoord( upperRight( bb->bbx ))
-    urx = xCoord( upperRight( bb->bbx ))
-    llx = xCoord( lowerLeft( bb->bbx ))
-    lly = yCoord( lowerLeft( bb->bbx ))
+    ury = yCoord( upperRight( bb->bbox ))
+    urx = xCoord( upperRight( bb->bbox ))
+    llx = xCoord( lowerLeft( bb->bbox ))
+    lly = yCoord( lowerLeft( bb->bbox ))
     v0 = list(llx lly)
     v1 = list(urx lly)
     v2 = list(urx ury) 
@@ -203,7 +215,7 @@ defmethod( shiftURQ (( bb bbox ))
   let( (shift dx dy name cv) 
     getbb(bb)
     Origin(bb)
-    unless( caar(bb->bbx) == 0 && cadar( bb->bbx) == 0
+    unless( caar(bb->bbox) == 0 && cadar( bb->bbox) == 0
       dx = -xCoord(bb->origin)
       dy = -yCoord(bb->origin)
       shift = list( list( dx dy) "R0")
@@ -228,15 +240,15 @@ defmethod( shiftURQ (( bb bbox ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts the origin of the bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( shiftOrigin (( bb bbox ) orig)
+defmethod( shiftOrigin (( bb bbox ) shift)
   let( (bllx blly burx bury bbll bbur) 
-    bllx = xCoord(nth(0 bb->bbx)) + xCoord(orig)
-    blly = yCoord(nth(0 bb->bbx)) + yCoord(orig)
-    burx = xCoord(nth(1 bb->bbx)) + xCoord(orig)
-    bury = yCoord(nth(1 bb->bbx)) + yCoord(orig)
+    bllx = xCoord(nth(0 bb->bbox)) + xCoord(shift)
+    blly = yCoord(nth(0 bb->bbox)) + yCoord(shift)
+    burx = xCoord(nth(1 bb->bbox)) + xCoord(shift)
+    bury = yCoord(nth(1 bb->bbox)) + yCoord(shift)
     bbll = list(bllx blly)
     bbur = list(burx bury)
-    bb->bbx = list(bbll bbur)
+    bb->bbox = list(bbll bbur)
     bb->origin = Origin(bb)
   );let
 );defMethod	

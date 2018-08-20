@@ -26,10 +26,7 @@ defclass( cv (bbox)
 		( iLibNames )
 		( iLevels )
 		( iLayers )
-		( uLayers @reader getuLayers )
-		( width @reader getWidth @writer setWidth)
-		( height @reader getHeight @writer setHeight)
-                ( origin )			  
+		( uLayers @reader getuLayers )			  
 	  )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,7 +73,7 @@ defmethod( cloneCv (( cell cv) arg )
   arg->layers = cell->layers    
   arg->stack = cell->stack     
   arg->pcells = cell->pcells    
-  arg->bbx->bbx = cell->bbx->bbx        
+  arg->bbx->bbox = cell->bbx->bbox        
   arg->iRefs = cell->iRefs     
   arg->iCnt = cell->iCnt      
   arg->iNames = cell->iNames    
@@ -85,36 +82,37 @@ defmethod( cloneCv (( cell cv) arg )
   arg->iLayers = cell->iLayers   
   arg->uLayers = cell->uLayers   
   arg->width = cell->width     
-  arg->height = cell->height    
+  arg->height = cell->height
+  cloneBbox(cell arg)    
   cloneCadObj(cell arg)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set cv reference of this and the bbx component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( setCvRef (( cell cv ) arg)
-     setRef(cell arg)
-     setRef(cell->bbx arg)
-);defmethod
+;defmethod( setCvRef (( cell cv ) arg)
+;     setRef(cell arg)
+;     setRef(cell->bbx arg)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( setOrigin (( cell cv ) arg)
-  let((orig shx shy)
-     orig  = Origin(cell->bbx)
-     shx = xCoord(arg) - xCoord(orig)
-     shy = yCoord(arg) - yCoord(orig)
-     shiftOrigin(cell->bbx list(shx shy))
-  );let
-);defmethod
+;defmethod( setOrigin (( cell cv ) arg)
+;  let((orig shx shy)
+;     orig  = Origin(cell->bbx)
+;     shx = xCoord(arg) - xCoord(orig)
+;;     shy = yCoord(arg) - yCoord(orig)
+;    shiftOrigin(cell->bbx list(shx shy))
+;  );let
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( getOrigin (( cell cv ))
-  cell->origin = Origin(cell->bbx)
-);defmethod
+;defmethod( getOrigin (( cell cv ))
+;  cell->origin = Origin(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Determines if the cellview has instances (flat if no instances)
@@ -311,23 +309,23 @@ defmethod( getbBox (( cell cv ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-defmethod( getDim (( cell cv ))
-  setRef(cell->bbx getRef(cell))
-  getDim(cell->bbx)
-  cell->origin = Origin(cell->bbx)
-  cell->width  = getWidth(cell->bbx)
-  cell->height = getHeight(cell->bbx)
-);defmethod
+;defmethod( getDim (( cell cv ))
+;  setRef(cell->bbx getRef(cell))
+;  getDim(cell->bbx)
+;  cell->origin = Origin(cell->bbx)
+;  cell->width  = getWidth(cell->bbx)
+;  cell->height = getHeight(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-defmethod( setDim (( cell cv ))
-  getDim(cell->bbx)
-  cell->origin = Origin(cell->bbx)
-  cell->width  = getWidth(cell->bbx)
-  cell->height = getHeight(cell->bbx)
-);defmethod
+;defmethod( setDim (( cell cv ))
+;  getDim(cell->bbx)
+;  cell->origin = Origin(cell->bbx)
+;  cell->width  = getWidth(cell->bbx)
+;  cell->height = getHeight(cell->bbx)
+;);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper method for the getTree method

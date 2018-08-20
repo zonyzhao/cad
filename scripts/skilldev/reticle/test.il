@@ -589,7 +589,6 @@ nth(8 cvr~>instHeaders)~>cellName
 nth(9 cvr~>instHeaders)~>cellName
 nth(10 cvr~>instHeaders)~>cellName
 
-
 nth(0 cvr~>instances)~>cellName
 nth(1 cvr~>instances)~>cellName
 nth(2 cvr~>instances)~>cellName
@@ -614,7 +613,6 @@ nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances
 nth(0 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName
 ; ERROR BAD XYN NAME
 nth(1 nth(0 nth(10 cvr~>instHeaders)~>instances)~>instHeader~>master~>instances)~>cellName
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-12: Print out the reticle heirarchy
@@ -658,6 +656,7 @@ getRef(retcp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-14: Render a single reticle boundary box in a cellview
+;        including die sites
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the reticle bbox
 lib   = "pd0164"
@@ -666,8 +665,8 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
-setCvRef(ret cv)
-getbb(ret->bbx) 
+setRef(ret cv)
+getbb(ret) 
 setName(ret name)
 setRes(ret 10)
 setMaxDim(ret 20000)
@@ -681,7 +680,7 @@ name = "pd0164_bbx"
 view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "w")
-setCvRef(ret cv)
+setRef(ret cv)
 renderRetBbox(ret)
 dbSave(cv)
 dbClose(cv)
@@ -695,7 +694,7 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "a")
 ret = makeInstance( 'reticle )
-setCvRef(ret cv)
+setRef(ret cv)
 erase(ret)
 dbSave(cv)
 dbClose(cv)
@@ -710,10 +709,10 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
-setCvRef(ret cv)
-getbb(ret->bbx)
-Origin(ret->bbx)
-Centroid(ret->bbx) 
+setRef(ret cv)
+getbb(ret)
+Origin(ret)
+Centroid(ret) 
 detectDieSites(ret)
 dbClose(cv)
 setName(ret name)
@@ -727,13 +726,13 @@ name = "pd0164_bbx"
 view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "w")
-setCvRef(ret cv)
-ret->bbx->bbx
-Origin(ret->bbx)
-; Shift origin to URQ
+setRef(ret cv)
+ret->bbox
+Origin(ret)
+; Translate origin to URQ
 setReticleOrigin(ret list(0.0 0.0))
-ret->bbx->bbx
-Origin(ret->bbx)
+ret->bbox
+Origin(ret)
 renderRetBbox(ret)
 dbSave(cv)
 dbClose(cv)
@@ -747,7 +746,7 @@ view  = "layout"
 mlview = "maskLayout"
 cv = dbOpenCellViewByType( lib name view mlview "r")
 ret = makeInstance( 'reticle )
-setRef(ret cv)
+setCvRef(ret cv)
 setRes(ret 10)
 setMaxDim(ret 20000)
 setOverlap(ret 4.0)
@@ -816,17 +815,17 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "r")
 ret = makeInstance( 'reticle )
-setCvRef(ret cv)
-getbb(ret->bbx) 
-Origin(ret->bbx)
-Centroid(ret->bbx)
+setRef(ret cv)
+getbb(ret) 
+Origin(ret)
+Centroid(ret)
 setName(ret name)
 setRes(ret 10)
 setMaxDim(ret 20000)
 setOverlap(ret 4.0)
 setSrGrid(ret 0.1)
 detectDieSites(ret)
-ret->bbx->bbx
+ret->bbox
 dbClose(cv)
 getName(ret)
 ; Clone object
@@ -840,13 +839,13 @@ name = "pd0164_bbx"
 view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "a")
-setCvRef(retcp cv)
-retcp->bbx->bbx
-Origin(retcp->bbx)
+setRef(retcp cv)
+retcp->bbox
+Origin(retcp)
 ; Shift origin to URQ
 setReticleOrigin(retcp list(21000.0 0.0))
-retcp->bbx->bbx
-Origin(retcp->bbx)
+retcp->bbox
+Origin(retcp)
 renderRetBbox(retcp)
 dbSave(cv)
 dbClose(cv)
