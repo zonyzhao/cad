@@ -133,6 +133,16 @@ defmethod( initializeInstance @after ((obj listfun))
 	   obj->cid = "lst"
 );defmethod
 
+;############################################################
+; Clones a listfun
+;#############################################################
+defmethod( cloneListfun ((list listfun) arg)
+   arg->elems = list->elems
+   arg->len   = list->len
+   arg->oid   = list->oid
+   arg->cid   = list->cid
+);defmethod
+
 ;#########################################################
 ; Initializes the elems and len
 ;#########################################################
@@ -464,6 +474,49 @@ defmethod( initializeInstance @after ((obj collection))
 	   obj->cid="col"
 	   obj->oid=""
 	   obj->cType = nil
+);defmethod
+
+;############################################################
+; Clones a collection
+;#############################################################
+defmethod( cloneCollection ((col collection) arg)
+   arg->n = col->n
+   arg->cList = col->cList
+   arg->oid = col->oid
+   arg->cType = col->cType
+   cloneListfun(col->list arg->list)  
+);defmethod
+
+;############################################################
+; Serialize a collection
+;#############################################################
+defmethod( serializeCollection ((col collection))
+  let((olist tlist)
+    olist = '()
+    tlist = '()
+    olist = cons("collection" olist)
+    tlist = cons(col->n tlist)
+    tlist = cons(col->cList tlist)
+    tlist = cons(col->oid tlist)
+    tlist = cons(col->cType tlist)
+    olist = cons("collection" olist)
+    olist = cons("collection" tlist)
+    olist = cons("collection" col->list)
+  );let
+);defmethod
+
+;############################################################
+; Deserialize a collection
+;#############################################################
+defmethod( deserializeCollection ((col collection) arg)
+  let((olist tlist)
+    tlist      = nth(1 arg)
+    col->n     = nth(0 tlist)
+    col->cList = nth(1 tlist)
+    col->oid   = nth(2 tlist)
+    col->cType = nth(3 tlist)
+    col->list  = nth(2 arg)
+  );let
 );defmethod
 
 ;############################################################
@@ -3669,7 +3722,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->bnb = makeInstance( 'collection )
 );defmethod
 ;######################################################
-; Copies the contents of this reticle into arg reticle
+; Clones the contents of this reticle into arg reticle
 ;######################################################
 defmethod( cloneRet ((ret reticle) arg)
    arg->srRes              = ret->srRes 
@@ -3688,7 +3741,6 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 
    arg->die                = ret->die
-   arg->dieSites           = ret->dieSites
    arg->chips 	           = ret->chips 
    arg->overhead 	   = ret->overhead 
    arg->coupons	           = ret->coupons  
@@ -3699,7 +3751,23 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->numRetCoups	   = ret->numRetCoups 
    arg->numNumPads 	   = ret->numNumPads 
    arg->bnb	           = ret->bnb
+   cloneDieSites(ret arg)
    cloneCv(ret arg)
+);defmethod
+
+;######################################################
+; Clones the die site collection
+;######################################################
+defmethod( cloneDieSites ((ret reticle) arg)
+  let((col die)
+    col = makeInstance( 'collection )
+    foreach(item getCollection(ret->dieSites)
+      die = makeInstance( 'die )
+      cloneDie(item die)
+      add(col die)
+    );foreach
+    arg->dieSites = col
+  );let
 );defmethod
 
 ;######################################################
@@ -4219,10 +4287,14 @@ defmethod( initializeInstance @after ((obj die))
 );defmethod
 
 ;#####################################################
-;
+; clones the die
 ;#####################################################
-;defmethod( foo (( d die ))
-;); defmethod
+defmethod( cloneDie (( d die ) arg)
+  arg->reticle = d->reticle
+  arg->number = d->number
+  arg->revision = d->revision
+  cloneCv(d arg)
+);defmethod
 
 ;######################################################
 ;######################################################

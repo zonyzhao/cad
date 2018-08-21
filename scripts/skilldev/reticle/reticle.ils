@@ -71,7 +71,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->bnb = makeInstance( 'collection )
 );defmethod
 ;######################################################
-; Copies the contents of this reticle into arg reticle
+; Clones the contents of this reticle into arg reticle
 ;######################################################
 defmethod( cloneRet ((ret reticle) arg)
    arg->srRes              = ret->srRes 
@@ -90,7 +90,6 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->olist 	           = ret->olist  
    arg->couponList 	   = ret->couponList 
    arg->die                = ret->die
-   arg->dieSites           = ret->dieSites
    arg->chips 	           = ret->chips 
    arg->overhead 	   = ret->overhead 
    arg->coupons	           = ret->coupons  
@@ -101,7 +100,23 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->numRetCoups	   = ret->numRetCoups 
    arg->numNumPads 	   = ret->numNumPads 
    arg->bnb	           = ret->bnb
+   cloneDieSites(ret arg)
    cloneCv(ret arg)
+);defmethod
+
+;######################################################
+; Clones the die site collection
+;######################################################
+defmethod( cloneDieSites ((ret reticle) arg)
+  let((col die)
+    col = makeInstance( 'collection )
+    foreach(item getCollection(ret->dieSites)
+      die = makeInstance( 'die )
+      cloneDie(item die)
+      add(col die)
+    );foreach
+    arg->dieSites = col
+  );let
 );defmethod
 
 ;######################################################

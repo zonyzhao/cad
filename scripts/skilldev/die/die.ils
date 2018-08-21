@@ -19,10 +19,14 @@ defmethod( initializeInstance @after ((obj die))
 );defmethod
 
 ;#####################################################
-;
+; clones the die
 ;#####################################################
-;defmethod( foo (( d die ))
-;); defmethod
+defmethod( cloneDie (( d die ) arg)
+  arg->reticle = d->reticle
+  arg->number = d->number
+  arg->revision = d->revision
+  cloneCv(d arg)
+);defmethod
 
 ;######################################################
 ;######################################################

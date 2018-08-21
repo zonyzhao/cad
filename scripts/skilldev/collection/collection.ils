@@ -29,6 +29,49 @@ defmethod( initializeInstance @after ((obj collection))
 );defmethod
 
 ;############################################################
+; Clones a collection
+;#############################################################
+defmethod( cloneCollection ((col collection) arg)
+   arg->n = col->n
+   arg->cList = col->cList
+   arg->oid = col->oid
+   arg->cType = col->cType
+   cloneListfun(col->list arg->list)  
+);defmethod
+
+;############################################################
+; Serialize a collection
+;#############################################################
+defmethod( serializeCollection ((col collection))
+  let((olist tlist)
+    olist = '()
+    tlist = '()
+    olist = cons("collection" olist)
+    tlist = cons(col->n tlist)
+    tlist = cons(col->cList tlist)
+    tlist = cons(col->oid tlist)
+    tlist = cons(col->cType tlist)
+    olist = cons("collection" olist)
+    olist = cons("collection" tlist)
+    olist = cons("collection" col->list)
+  );let
+);defmethod
+
+;############################################################
+; Deserialize a collection
+;#############################################################
+defmethod( deserializeCollection ((col collection) arg)
+  let((olist tlist)
+    tlist      = nth(1 arg)
+    col->n     = nth(0 tlist)
+    col->cList = nth(1 tlist)
+    col->oid   = nth(2 tlist)
+    col->cType = nth(3 tlist)
+    col->list  = nth(2 arg)
+  );let
+);defmethod
+
+;############################################################
 ; Resets the collection list to empty list
 ;#############################################################
 defmethod( resetCollection ((col collection))

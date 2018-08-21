@@ -740,6 +740,7 @@ dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-17: Shift (using origin) and render the boundary box 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reference reticle
 lib   = "pd0164"
 name  = "pd0164"
 view  = "layout"
@@ -806,10 +807,10 @@ nth(8 getCollection(ret->dieSites))->bbx->bbx
 bb2vert(nth(8 getCollection(ret->dieSites))->bbx)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-18: Create a clone of the reticle and shift the clone 
+; UT-18: Create several clones of the reticle and shift them around
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the reference reticle
-lib   = "pd0164"
+lib  = "pd0164"
 name = "pd0164"
 view = "layout"
 type = "maskLayout"
@@ -825,30 +826,116 @@ setMaxDim(ret 20000)
 setOverlap(ret 4.0)
 setSrGrid(ret 0.1)
 detectDieSites(ret)
+diesites = getCollection(ret->dieSites)
+length(diesites)
+Origin(ret)
+diesiteOrigin_0 = nth(0 diesites)->origin
+diesiteOrigin_1 = nth(1 diesites)->origin
+diesiteOrigin_2 = nth(2 diesites)->origin
+diesiteOrigin_3 = nth(3 diesites)->origin
+diesiteOrigin_4 = nth(4 diesites)->origin
+diesiteOrigin_5 = nth(5 diesites)->origin
+diesiteOrigin_6 = nth(6 diesites)->origin
+diesiteOrigin_7 = nth(7 diesites)->origin
+diesiteOrigin_8 = nth(8 diesites)->origin
 ret->bbox
 dbClose(cv)
 getName(ret)
-; Clone object
+; Clone 3 objects
+; #1
 retcp = makeInstance( 'reticle )
 cloneRet(ret retcp)
 getName(retcp)
 getRef(retcp)
-; Add the clone to the bbx cv
+; #2
+retcp0 = makeInstance( 'reticle )
+cloneRet(ret retcp0)
+getName(retcp0)
+getRef(retcp0)
+; #3 
+retcp1 = makeInstance( 'reticle )
+cloneRet(ret retcp1)
+getName(retcp1)
+getRef(retcp1)
+; Add the clones to the bbx cv
 lib   = "pd0164"
 name = "pd0164_bbx"
 view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "a")
+; render first one
 setRef(retcp cv)
 retcp->bbox
 Origin(retcp)
 ; Shift origin to URQ
 setReticleOrigin(retcp list(21000.0 0.0))
+diesites_cp = getCollection(retcp->dieSites)
+length(diesites_cp)
+Origin(retcp)
+diesiteOrigin_cp_0 = nth(0 diesites_cp)->origin
+diesiteOrigin_cp_1 = nth(1 diesites_cp)->origin
+diesiteOrigin_cp_2 = nth(2 diesites_cp)->origin
+diesiteOrigin_cp_3 = nth(3 diesites_cp)->origin
+diesiteOrigin_cp_4 = nth(4 diesites_cp)->origin
+diesiteOrigin_cp_5 = nth(5 diesites_cp)->origin
+diesiteOrigin_cp_6 = nth(6 diesites_cp)->origin
+diesiteOrigin_cp_7 = nth(7 diesites_cp)->origin
+diesiteOrigin_cp_8 = nth(8 diesites_cp)->origin
 retcp->bbox
 Origin(retcp)
+Origin(ret)
 renderRetBbox(retcp)
+; render second one
+setRef(retcp0 cv)
+retcp0->bbox
+Origin(retcp0)
+; Shift origin to URQ
+setReticleOrigin(retcp0 list(42000.0 0.0))
+diesites_cp0 = getCollection(retcp0->dieSites)
+length(diesites_cp0)
+Origin(retcp0)
+diesiteOrigin_cp0_0 = nth(0 diesites_cp0)->origin
+diesiteOrigin_cp0_1 = nth(1 diesites_cp0)->origin
+diesiteOrigin_cp0_2 = nth(2 diesites_cp0)->origin
+diesiteOrigin_cp0_3 = nth(3 diesites_cp0)->origin
+diesiteOrigin_cp0_4 = nth(4 diesites_cp0)->origin
+diesiteOrigin_cp0_5 = nth(5 diesites_cp0)->origin
+diesiteOrigin_cp0_6 = nth(6 diesites_cp0)->origin
+diesiteOrigin_cp0_7 = nth(7 diesites_cp0)->origin
+diesiteOrigin_cp0_8 = nth(8 diesites_cp0)->origin
+retcp0->bbox
+Origin(retcp0)
+Origin(ret)
+renderRetBbox(retcp0)
+; render third one
+setRef(retcp1 cv)
+retcp1->bbox
+Origin(retcp1)
+; Shift origin to URQ
+setReticleOrigin(retcp1 list(63000.0 0.0))
+diesites_cp1 = getCollection(retcp1->dieSites)
+length(diesites_cp1)
+Origin(retcp1)
+diesiteOrigin_cp1_0 = nth(0 diesites_cp1)->origin
+diesiteOrigin_cp1_1 = nth(1 diesites_cp1)->origin
+diesiteOrigin_cp1_2 = nth(2 diesites_cp1)->origin
+diesiteOrigin_cp1_3 = nth(3 diesites_cp1)->origin
+diesiteOrigin_cp1_4 = nth(4 diesites_cp1)->origin
+diesiteOrigin_cp1_5 = nth(5 diesites_cp1)->origin
+diesiteOrigin_cp1_6 = nth(6 diesites_cp1)->origin
+diesiteOrigin_cp1_7 = nth(7 diesites_cp1)->origin
+diesiteOrigin_cp1_8 = nth(8 diesites_cp1)->origin
+retcp1->bbox
+Origin(retcp1)
+Origin(ret)
+renderRetBbox(retcp1)
 dbSave(cv)
 dbClose(cv)
+
+nth(0 getCollection(ret->dieSites))
+nth(0 getCollection(retcp->dieSites))
+nth(0 getCollection(retcp0->dieSites))
+nth(0 getCollection(retcp1->dieSites))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-19: Create an array of reticle clones 
@@ -900,7 +987,7 @@ for(i 0 sub1(r)
     retc = makeInstance( 'reticle )
     cloneRet(ret retc)
     setRef(retc cv)
-    setReticleOrigin(ret orig)
+    setReticleOrigin(retc orig)
     renderRetBbox(retc)	
     orig = list(x y)
   );for

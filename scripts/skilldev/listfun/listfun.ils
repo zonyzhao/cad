@@ -20,6 +20,16 @@ defmethod( initializeInstance @after ((obj listfun))
 	   obj->cid = "lst"
 );defmethod
 
+;############################################################
+; Clones a listfun
+;#############################################################
+defmethod( cloneListfun ((list listfun) arg)
+   arg->elems = list->elems
+   arg->len   = list->len
+   arg->oid   = list->oid
+   arg->cid   = list->cid
+);defmethod
+
 ;#########################################################
 ; Initializes the elems and len
 ;#########################################################
