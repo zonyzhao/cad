@@ -5543,7 +5543,7 @@ defmethod( shift (( ra reticleArray ) arg)
       dx = xCoord(orig) + xCoord(arg)
       dy = yCoord(orig) + yCoord(arg)
       printf("INFO(reticleArray) Setting Origin %d to %L\n" i list(dx dy))
-      setOrigin(ret list(dx dy))
+      setReticleOrigin(ret list(dx dy))
       i++
     );foreach
   );let

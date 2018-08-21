@@ -5,6 +5,7 @@ findClass( 'wafer )
 waf = makeInstance( 'wafer )
 classp( waf 'wafer)
 classOf(waf)
+
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Find "CD" Cross
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -63,7 +64,7 @@ checkGrid(ret)
 detectDieSites(ret)
 dbClose(cv)
 getOrigin(ret)
-ret->bbx->bbx
+ret->bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 waf = makeInstance( 'wafer )
 setName(waf name)
@@ -134,8 +135,8 @@ checkRes(ret)
 checkGrid(ret)
 detectDieSites(ret)
 dbClose(cv)
-getOrigin(ret)
-ret->bbx->bbx
+Origin(ret)
+ret->bbox
 ; Create the wafer array
 waf = makeInstance( 'wafer )
 setName(waf name)
@@ -145,7 +146,9 @@ setWaferHeight(waf->retArray 99275.0)
 setOverlap(waf->retArray 4.0)
 array(waf->retArray)
 ; Center the array
+;FIXME: center of wafer not being found!
 center = findCenter(waf)
+; set wafer center manually for now ...
 center = list(0.0 0.0)
 centerArray(waf->retArray center)
 waf->retArray->origin
