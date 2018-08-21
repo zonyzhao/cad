@@ -36,7 +36,8 @@ defclass( reticle (cv)
 		( numNumPads @reader getNumNumPads)
 		( innerStreetOrigs @reader getInnerStreetOrigs)	
 		( bnb @reader getBnb)	
-		( dieSiteOrig @reader getDieSiteOrig)		
+		( dieSiteOrig @reader getDieSiteOrig)	
+		( dieSiteArray @reader getDieSiteArray)	
 	  )
 );defClass
 ;#####################################################
@@ -71,6 +72,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
 	   obj->dieSiteOrig
+	   obj->dieSiteArray
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -102,6 +104,8 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->numRetCoups	   = ret->numRetCoups 
    arg->numNumPads 	   = ret->numNumPads 
    arg->bnb	           = ret->bnb
+   arg->dieSiteOrig        = ret->dieSiteOrig
+   arg->dieSiteArray       = ret->dieSiteArray
    cloneDieSites(ret arg)
    cloneCv(ret arg)
 );defmethod
@@ -284,7 +288,7 @@ defmethod( checkInnerStreets (( ret reticle ))
        conform = 't
     );
     if(conform then
-      println( "Sorted Reticle Scribe Line X Coord List:")
+      println( "Reticle Vertical Scribe Line X Coord List:")
       cols=0
       slxc = '()
       foreach(sort sortedx
@@ -292,7 +296,7 @@ defmethod( checkInnerStreets (( ret reticle ))
         slxc = cons(sort slxc)
         cols++
       );foreach
-      println( "Sorted Reticle Scribe Line Y Coord List:")
+      println( "Reticle Horizontal Scribe Line Y Coord List:")
       rows=0
       slyc = '()
       foreach(sort sortedy
@@ -300,22 +304,52 @@ defmethod( checkInnerStreets (( ret reticle ))
         slyc = cons(sort slyc)
         rows++
       );foreach
-      println( "Reticle Street Array Defined Die Site Origin List:")
+      ;println( "Reticle Street Array Defined Die Site Origin List:")
       n = 0
-      dsc = '()
+      dscList = '()
       for(i 0 sub1(rows)
         for(j 0 sub1(cols)
           dsc = list(nth(i slxc) nth(j slyc))
       	  dscList = cons(dsc dscList)
-          printf("%d.) ROW: %d COL: %d, Origin: %L\n" n i j dsc)
+          ;printf("%d.) ROW: %d COL: %d, Origin: %L\n" n i j dsc)
 	  n++
         );for
-      );for
+      );for      
       ret->dieSiteOrig = dscList
-      list(cols rows)
+      ret->dieSiteArray = list(cols rows)
     else
       nil
     );if
+  );let
+);defmethod
+
+;#####################################################
+; Checks that inner streets are conformant to the
+; requirement that they extend the full length of 
+; the reticle
+;#####################################################
+defmethod( arrayDieSites (( ret reticle ))
+  let((n dorig ind aorig)
+    foreach( die getCollection(ret->dieSites)
+      dorig = Origin(die)
+      ind = 0
+      for(i 0 sub1(xCoord(ret->dieSiteArray))
+        for(j 0 sub1(yCoord(ret->dieSiteArray))
+          ind = i*xCoord(ret->dieSiteArray) + j
+          aorig = nth(ind ret->dieSiteOrig)
+	  if(xCoord(dorig) == xCoord(aorig) && yCoord(dorig) == yCoord(aorig) then
+	    setReticleRow(die i)
+	    setReticleCol(die j)
+          );if
+        );for
+      );for 
+    );foreach
+    n = 0
+    foreach( die getCollection(ret->dieSites)
+      printf("INFO: die #%d, ROW: %d COL: %d\n" n getReticleRow(die) getReticleCol(die))
+      n++
+    )
+   n
   );let
 );defmethod
 

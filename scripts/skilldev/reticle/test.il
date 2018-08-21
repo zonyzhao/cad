@@ -1083,6 +1083,7 @@ setOverlap(ret 4.0)
 setSrGrid(ret 0.1)
 detectDieSites(ret)
 checkInnerStreets(ret)
+arrayDieSites(ret)
 
 ds0 = nth(0 getCollection(ret->dieSites))->origin
 ds1 = nth(1 getCollection(ret->dieSites))->origin
@@ -1093,3 +1094,46 @@ ds5 = nth(5 getCollection(ret->dieSites))->origin
 ds6 = nth(6 getCollection(ret->dieSites))->origin
 ds7 = nth(7 getCollection(ret->dieSites))->origin
 ds8 = nth(8 getCollection(ret->dieSites))->origin
+
+
+Origin(nth(0 getCollection(ret->dieSites)))
+
+nth(0 ret->dieSiteOrig)
+nth(1 ret->dieSiteOrig)
+nth(2 ret->dieSiteOrig)
+nth(3 ret->dieSiteOrig)
+nth(4 ret->dieSiteOrig)
+nth(5 ret->dieSiteOrig)
+nth(6 ret->dieSiteOrig)
+nth(7 ret->dieSiteOrig)
+nth(8 ret->dieSiteOrig)
+
+xCoord(Origin(nth(0 getCollection(ret->dieSites)))) == xCoord(nth(8 ret->dieSiteOrig))
+yCoord(Origin(nth(0 getCollection(ret->dieSites)))) == yCoord(nth(8 ret->dieSiteOrig))
+
+ds0r = nth(0 getCollection(ret->dieSites))->row
+ds0c = nth(0 getCollection(ret->dieSites))->col
+
+ds1r = nth(1 getCollection(ret->dieSites))->row
+ds1c = nth(1 getCollection(ret->dieSites))->col
+
+ds2r = nth(2 getCollection(ret->dieSites))->row
+ds2c = nth(2 getCollection(ret->dieSites))->col
+
+ds3r = nth(3 getCollection(ret->dieSites))->row
+ds3c = nth(3 getCollection(ret->dieSites))->col
+
+ds4r = nth(4 getCollection(ret->dieSites))->row
+ds4c = nth(4 getCollection(ret->dieSites))->col
+
+ds5r = nth(5 getCollection(ret->dieSites))->row
+ds5c = nth(5 getCollection(ret->dieSites))->col
+
+ds6r = nth(6 getCollection(ret->dieSites))->row
+ds6c = nth(6 getCollection(ret->dieSites))->col
+
+ds7r = nth(7 getCollection(ret->dieSites))->row
+ds7c = nth(7 getCollection(ret->dieSites))->col
+
+ds8r = nth(8 getCollection(ret->dieSites))->row
+ds8c = nth(8 getCollection(ret->dieSites))->col

@@ -3687,7 +3687,8 @@ defclass( reticle (cv)
 		( numNumPads @reader getNumNumPads)
 		( innerStreetOrigs @reader getInnerStreetOrigs)	
 		( bnb @reader getBnb)	
-		( dieSiteOrig @reader getDieSiteOrig)		
+		( dieSiteOrig @reader getDieSiteOrig)	
+		( dieSiteArray @reader getDieSiteArray)	
 	  )
 );defClass
 ;#####################################################
@@ -3722,6 +3723,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
 	   obj->dieSiteOrig
+	   obj->dieSiteArray
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -3753,6 +3755,8 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->numRetCoups	   = ret->numRetCoups 
    arg->numNumPads 	   = ret->numNumPads 
    arg->bnb	           = ret->bnb
+   arg->dieSiteOrig        = ret->dieSiteOrig
+   arg->dieSiteArray       = ret->dieSiteArray
    cloneDieSites(ret arg)
    cloneCv(ret arg)
 );defmethod
@@ -3886,7 +3890,7 @@ defmethod( checkRes (( ret reticle ))
 ; the reticle
 ;#####################################################
 defmethod( checkInnerStreets (( ret reticle ))
-  let( ( slx sly sorted cols rows origsx origsy dieCount dieSiteCount slxc slyc dsc dscList n)
+  let( ( slx sly sorted cols rows origsx origsy dieCount dieSiteCount slxc slyc dsc dscList n conform)
     origsx = '()
     origsy = '()
     foreach( dieSite getCollection(ret->dieSites)
@@ -3906,14 +3910,14 @@ defmethod( checkInnerStreets (( ret reticle ))
        );if
     );foreach
     foreach( posx origsx
-      printf( "Die Site X Position: %L\n" posx)
+      ;printf( "Die Site X Position: %L\n" posx)
       ; create a list of chip unique x values
       ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
       unless( member( car( origsx) slx) slx = cons( car( origsx) slx))
       cdr(origsx)
     );foreach
     foreach( posy origsx
-      printf( "Die Site Y Position: %L\n" posy)
+      ;printf( "Die Site Y Position: %L\n" posy)
       ; create a list of chip unique y values
       ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
       unless( member( car( origsy) sly) sly = cons( car( origsx) sly))
@@ -3927,38 +3931,76 @@ defmethod( checkInnerStreets (( ret reticle ))
     dieCount = length(getCollection(ret->dieSites))
     if(dieSiteCount != dieCount then
        printf("ERROR: Die number: %d, NOT EQUAL TO Die site inner street defined array total: %d\n"  dieCount dieSiteCount)
+       println("ERROR: Non-Conformant Inner Street Structure!")
+       conform = nil
     else
        printf("INFO: Die number: %d, EQUALS Die site inner street defined array total: %d\n"  dieCount dieSiteCount)
+       println("INFO: Conformant Inner Street Structure")
+       conform = 't
     );
-    println( "Sorted Reticle Scribe Line X Coord List:")
-    cols=0
-    slxc = '()
-    foreach(sort sortedx
-      printf( "%L.) SLX Coord: %L\n" cols sort)
-      slxc = cons(sort slxc)
-      cols++
+    if(conform then
+      println( "Reticle Vertical Scribe Line X Coord List:")
+      cols=0
+      slxc = '()
+      foreach(sort sortedx
+        printf( "%d.) SLX Coord: %L\n" cols sort)
+        slxc = cons(sort slxc)
+        cols++
+      );foreach
+      println( "Reticle Horizontal Scribe Line Y Coord List:")
+      rows=0
+      slyc = '()
+      foreach(sort sortedy
+        printf( "%d.) SLY Coord: %L\n" rows sort)
+        slyc = cons(sort slyc)
+        rows++
+      );foreach
+      ;println( "Reticle Street Array Defined Die Site Origin List:")
+      n = 0
+      dscList = '()
+      for(i 0 sub1(rows)
+        for(j 0 sub1(cols)
+          dsc = list(nth(i slxc) nth(j slyc))
+      	  dscList = cons(dsc dscList)
+          ;printf("%d.) ROW: %d COL: %d, Origin: %L\n" n i j dsc)
+	  n++
+        );for
+      );for      
+      ret->dieSiteOrig = dscList
+      ret->dieSiteArray = list(cols rows)
+    else
+      nil
+    );if
+  );let
+);defmethod
+
+;#####################################################
+; Checks that inner streets are conformant to the
+; requirement that they extend the full length of 
+; the reticle
+;#####################################################
+defmethod( arrayDieSites (( ret reticle ))
+  let((n dorig ind aorig)
+    foreach( die getCollection(ret->dieSites)
+      dorig = Origin(die)
+      ind = 0
+      for(i 0 sub1(xCoord(ret->dieSiteArray))
+        for(j 0 sub1(yCoord(ret->dieSiteArray))
+          ind = i*xCoord(ret->dieSiteArray) + j
+          aorig = nth(ind ret->dieSiteOrig)
+	  if(xCoord(dorig) == xCoord(aorig) && yCoord(dorig) == yCoord(aorig) then
+	    setReticleRow(die i)
+	    setReticleCol(die j)
+          );if
+        );for
+      );for 
     );foreach
-    println( "Sorted Reticle Scribe Line Y Coord List:")
-    rows=0
-    slyc = '()
-    foreach(sort sortedy
-      printf( "%L.) SLY Coord: %L\n" i sort)
-      slyc = cons(sort slyc)
-      rows++
-    );foreach
-    println( "Reticle Street Defined Die Site Coord List:")
     n = 0
-    dsc = '()
-    for(i 0 sub1(rows)
-      for(j 0 sub1(cols)
-         dsc = list(nth(i slxc) nth(j slyc))
-      	 dscList = cons(dscList dsc)
-         printf("%d) Die Site Origin: %L\n" n dsc)
-	 n++
-      );for
-    );for
-    ret->dieSiteOrig = dscList
-    list(cols rows)
+    foreach( die getCollection(ret->dieSites)
+      printf("INFO: die #%d, ROW: %d COL: %d\n" n getRow(die) getCol(die))
+      n++
+    )
+   n
   );let
 );defmethod
 
@@ -4297,9 +4339,12 @@ defclass( die (cv)
     ( reticle @reader getReticle @writer setReticle )
     ( number @reader getNumber @writer setNumber )
     ( revision @reader getRev @writer setRev )
+    ( reticleRow @reader getReticleRow @writer setReticleRow )
+    ( reticleCol @reader getReticleCol @writer setReticleCol )
+    ( waferRow @reader getWaferRow @writer setWaferRow )
+    ( waferCol @reader getWaferCol @writer setWaferCol )
   )
-) ; defClass
-
+);defClass
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -4307,8 +4352,11 @@ defmethod( initializeInstance @after ((obj die))
   obj->reticle = nil 
   obj->number = nil
   obj->revision = nil
+  obj->reticleRow = nil
+  obj->reticleCol = nil
+  obj->waferRow = nil
+  obj->waferCol = nil
 );defmethod
-
 ;#####################################################
 ; clones the die
 ;#####################################################
@@ -4316,9 +4364,12 @@ defmethod( cloneDie (( d die ) arg)
   arg->reticle = d->reticle
   arg->number = d->number
   arg->revision = d->revision
+  arg->reticleRow = d->ReticleRow
+  arg->reticleCol = d->ReticleCol
+  arg->waferRow = d->WaferRow
+  arg->waferCol = d->WaferCol
   cloneCv(d arg)
 );defmethod
-
 ;######################################################
 ;######################################################
 ;######################################################
