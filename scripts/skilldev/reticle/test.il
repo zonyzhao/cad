@@ -1060,3 +1060,36 @@ nth(9 instances = cv~>instances)~>bBox
 
 nth(10 instances = cv~>instances)~>cellName
 nth(10 instances = cv~>instances)~>bBox
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-19: Ordering the reticle array and street checking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the reference reticle
+lib   = "pd0164"
+name = "pd0164"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+getbb(ret) 
+getDim(ret)
+Origin(ret)
+Centroid(ret)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+detectDieSites(ret)
+checkInnerStreets(ret)
+
+ds0 = nth(0 getCollection(ret->dieSites))->origin
+ds1 = nth(1 getCollection(ret->dieSites))->origin
+ds2 = nth(2 getCollection(ret->dieSites))->origin
+ds3 = nth(3 getCollection(ret->dieSites))->origin
+ds4 = nth(4 getCollection(ret->dieSites))->origin
+ds5 = nth(5 getCollection(ret->dieSites))->origin
+ds6 = nth(6 getCollection(ret->dieSites))->origin
+ds7 = nth(7 getCollection(ret->dieSites))->origin
+ds8 = nth(8 getCollection(ret->dieSites))->origin

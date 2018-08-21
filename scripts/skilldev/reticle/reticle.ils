@@ -35,7 +35,8 @@ defclass( reticle (cv)
 		( numRetCoups @reader getNumRetCoups @writer setNumRetCoups) 
 		( numNumPads @reader getNumNumPads)
 		( innerStreetOrigs @reader getInnerStreetOrigs)	
-		( bnb @reader getBnb)			
+		( bnb @reader getBnb)	
+		( dieSiteOrig @reader getDieSiteOrig)		
 	  )
 );defClass
 ;#####################################################
@@ -69,6 +70,7 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
+	   obj->dieSiteOrig
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -233,18 +235,12 @@ defmethod( checkRes (( ret reticle ))
 ; the reticle
 ;#####################################################
 defmethod( checkInnerStreets (( ret reticle ))
-  let( ( slx sly sorted i origsx origsy dieCount dieSiteCount)
+  let( ( slx sly sorted cols rows origsx origsy dieCount dieSiteCount slxc slyc dsc dscList n conform)
     origsx = '()
     origsy = '()
-    foreach( chip getCollection(ret->chips)
-      printf( "Chip Name: %L" getName(chip))
-      origsx = cons(xCoord(getOrigin(getBbx(chip))) origsx)
-      origsy = cons(yCoord(getOrigin(getBbx(chip))) origsy)
-    );foreach
-    foreach( oh getCollection(ret->overhead)
-      printf( "Coupon Name: %L" getName(oh))
-      origsx = cons(xCoord(getOrigin(getBbx(oh))) origsx)
-      origsy = cons(yCoord(getOrigin(getBbx(oh))) origsy)
+    foreach( dieSite getCollection(ret->dieSites)
+      origsx = cons(xCoord(Origin(dieSite)) origsx)
+      origsy = cons(yCoord(Origin(dieSite)) origsy)
     );foreach
     slx = '()
     foreach( posx origsx
@@ -259,32 +255,67 @@ defmethod( checkInnerStreets (( ret reticle ))
        );if
     );foreach
     foreach( posx origsx
-      printf( "Chip X Position: %L\n" posx)
+      ;printf( "Die Site X Position: %L\n" posx)
       ; create a list of chip unique x values
       ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
-      unless( member( car( origsx) sl) sl = cons( car( origsx) sl))
+      unless( member( car( origsx) slx) slx = cons( car( origsx) slx))
       cdr(origsx)
+    );foreach
+    foreach( posy origsx
+      ;printf( "Die Site Y Position: %L\n" posy)
+      ; create a list of chip unique y values
+      ; INLINE IF: if(member( car( posn) sl)  sl = cons( car( posn)  sl):nil)
+      unless( member( car( origsy) sly) sly = cons( car( origsx) sly))
+      cdr(origsy)
     );foreach
     sortedx = sort( slx 'lessp)
     sortedy = sort( sly 'lessp)
     printf("INFO: Number of Vertical Inner Streets Detected: %d\n" length(sortedx))
     printf("INFO: Number of Horizontal Inner Streets Detected: %d\n" length(sortedy))
     dieSiteCount = length(sortedx)*length(sortedy)
-    dieCount = getNumRetChips(ret)+getNumRetOverhead(ret)
+    dieCount = length(getCollection(ret->dieSites))
     if(dieSiteCount != dieCount then
-       printf("ERROR: Die number: %d, NOT EQUAL TO Die site inner street array total: %d\n"  dieCount dieSiteCount)
+       printf("ERROR: Die number: %d, NOT EQUAL TO Die site inner street defined array total: %d\n"  dieCount dieSiteCount)
+       println("ERROR: Non-Conformant Inner Street Structure!")
+       conform = nil
     else
-       printf("INFO: Die number: %d, EQUALS Die site inner street array total: %d\n"  dieCount dieSiteCount)
+       printf("INFO: Die number: %d, EQUALS Die site inner street defined array total: %d\n"  dieCount dieSiteCount)
+       println("INFO: Conformant Inner Street Structure")
+       conform = 't
     );
-    ;println( "Sorted Reticle Scribe Line X Coord List:")
-    ;i=0
-    ;foreach(sort sorted
-    ;  printf( "%L.) SL X Coord:%L" i nth(i sorted))
-    ;;  cdr(sorted)
-    ;  i++
-    ;);foreach
-    ;foreach(sort sorted
-    ;sort( sl )
+    if(conform then
+      println( "Sorted Reticle Scribe Line X Coord List:")
+      cols=0
+      slxc = '()
+      foreach(sort sortedx
+        printf( "%d.) SLX Coord: %L\n" cols sort)
+        slxc = cons(sort slxc)
+        cols++
+      );foreach
+      println( "Sorted Reticle Scribe Line Y Coord List:")
+      rows=0
+      slyc = '()
+      foreach(sort sortedy
+        printf( "%d.) SLY Coord: %L\n" rows sort)
+        slyc = cons(sort slyc)
+        rows++
+      );foreach
+      println( "Reticle Street Array Defined Die Site Origin List:")
+      n = 0
+      dsc = '()
+      for(i 0 sub1(rows)
+        for(j 0 sub1(cols)
+          dsc = list(nth(i slxc) nth(j slyc))
+      	  dscList = cons(dsc dscList)
+          printf("%d.) ROW: %d COL: %d, Origin: %L\n" n i j dsc)
+	  n++
+        );for
+      );for
+      ret->dieSiteOrig = dscList
+      list(cols rows)
+    else
+      nil
+    );if
   );let
 );defmethod
 
