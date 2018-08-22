@@ -1,17 +1,47 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; intersectTwoLinesPoint.ils: class representing the point where two lines
-;                             intersect
+; intersectTwoLinesPoint.ils: Class inheriting from the point class. 
+;                             class representing the point where two lines
+;                             intersect. Includes two slots which store the lines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( intersectTwoLinesPoint ( point )
+defclass( intersectTwoLines ( point )
   (
-	( L1 @initarg L1 )
-	( L2 @initarg L2 )
+	( L1 @reader getLine1 @writer setLine1 )
+	( L2 @reader getLine2 @writer setLine2 )
   )
 );defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj intersectTwoLines))
+  obj->L1 = makeInstance( 'twoPointsLine ) 
+  obj->L2 = makeInstance( 'twoPointsLine )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setL1 (( obj intersectTwoLines ) pnt1 pnt2)
+  setP1(obj->L1 pnt1)
+  setP2(obj->L1 pnt2)
+  Update(obj->L1)
+  if(Validate(obj->L1) then
+    Describe(obj->L1)
+  );if
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setL2 (( obj intersectTwoLines ) pnt1 pnt2)
+  setP1(obj->L2 pnt1)
+  setP2(obj->L2 pnt2)
+  Update(obj->L2)
+  if(Validate(obj->L2) then
+    Describe(obj->L2)
+  );if
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Describe (( obj intersectTwoLinesPoint  ))
+defmethod( Describe (( obj intersectTwoLines  ))
   callNextMethod( obj ) ;;; calls method of generic superclass point description 
   printf( "...intersection of\n")
   Describe( obj->L1 )
@@ -20,19 +50,7 @@ defmethod( Describe (( obj intersectTwoLinesPoint  ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-procedure( make_intersectTwoLinesPoint( line1 line2)
-  let( (point) 
-    point = makeInstance( 'IntersectionTwoLines_Point ?L1 line1 ?L2 line2)
-    Update( point )
-    Connect( line1 point )
-    Connect( line2 point )
-    point
-  );let
-);procedure
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Validate (( obj intersectTwoLinesPoint ))
+defmethod( Validate (( obj intersectTwoLines ))
   let( (A1 B1 C1 A2 B2 C2 x y)
     A1 = obj->L1->A
     B1 = obj->L1->B
@@ -51,9 +69,11 @@ defmethod( Validate (( obj intersectTwoLinesPoint ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; check to see if two lines have values ...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Update (( obj  intersectTwoLinesPoint ))
+defmethod( Update (( obj  intersectTwoLines ))
   ;printf("Figure out x & y from lines %L %L\n" obj->L1 obj->L2)
   let( (A1 B1 C1 A2 B2 C2 det )
+    Update(obj->L1)
+    Update(obj->L2)
     A1 = obj->L1->A
     B1 = obj->L1->B
     C1 = obj->L1->C

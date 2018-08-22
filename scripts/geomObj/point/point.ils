@@ -1,23 +1,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; point.ils: point class inheriting from geomObject
+;            Represents w point with coordinate slots x and y
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( point (geomObject)
   (
-	( name @initarg name )
-	( x @initiarg x )
-        ( y @initiarg y )
+	( name @reader getName @writer setName )
+	( x    @reader getX @writer setX )
+        ( y    @reader getY @writer setY )
   )
 );defclass
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Describe (( obj Point ))
-  printf("%s at %n:%n\n" className(classOf(obj)) obj->x obj->y )
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj point))
+  obj->name = nil 
+  obj->x = 0.0
+  obj->y = 0.0
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Validate (( obj Point ))
+defmethod( Describe (( obj point ))
+  printf("%s at (%f,%f)\n" className(classOf(obj)) float(obj->x) float(obj->y) )
+);defmethod
+; Nothing to update about a point
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( render (( obj point ))
+  t
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Nothing to update about a point
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Validate (( obj point ))
   t
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -28,6 +28,8 @@ skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   overhead reticleFrame numeric shape layer snapshot pcell \
                   reticleArray wafer
 #########################################################################
+geomObj = geomObject point line twoPointsLine
+#########################################################################
 polygons = rectangle triangle circle frame    
 #########################################################################
 geometries = trirect capsule  
@@ -51,7 +53,7 @@ paths:
 	@echo PATH is $$PATH
 	@echo CDS_LIC_FILE is $$CDS_LIC_FILE
 
-allLibs: skilldev polygon geometry assembly pcAPI pcells
+allLibs: skilldev geomObj polygon geometry assembly pcAPI pcells
 
 .phony: skilldev
 skilldev:
@@ -59,6 +61,10 @@ skilldev:
 	rm  $(sdir)/packages/$(packName).ils
 	touch $(sdir)/packages/$(packName).ils
 	$(foreach var, $(skillDevPackage), cat $(sdir)/skilldev/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: geomObj
+geomObj:
+	$(foreach var, $(geomObj), cat $(sdir)/geomObj/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
 
 .phony: polygon
 polygon:

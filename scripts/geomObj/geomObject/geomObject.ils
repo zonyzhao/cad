@@ -1,50 +1,103 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; GeometricObject.ils: generic geometric class
+; Represents all the objects in the construction. It defines the "consraints"
+; slot. This slot list all teh other objects which need to be notified when
+; the object updates.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Generic Subclass Methods:
+; Geometric Constructions:
+; 1.) A point to lie on two intersecting lines
+; 2.) A line to pass through two points
+; 3.) A line to pass through a point and be parallel to another line
+; 4.) A line to pass through a point and be perpendicular to another line
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Implementation:
+; 1.) Call a SKILL function repeatedly to specify sever free points
+; 2.) Call another SKILL function to construct the dependend points and lines
+; 3.) Enter a SKILL expression to change the coordinates of one of the free points
+; 4.) Call a SKILL function to PROPAGATE the change though the constrained points and lines
+; 5.) Call a SKILL functionto describe on of the constrained points or lines
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Heirarchy:
+; Geometric Object ------- Point --------- IntersectingTwoLinesPoint
+;                          Line  --------- TwoPointsLine
+;                                --------- parallelLineThruPoint
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generic Subclass Methods: Each of the generics base methods simply
+;                           raise an error if they are not called in
+;                           a dependent object (heirarchically via inheritance)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defgeneric( Connect ( obj constraint )
-  error("Connect is a subclass reponsibility\n")
-);defgeneric
+; This method propagates changes. It updates the 
+; coordinates or equations of an object and calls
+; itself recursively for each dependendent object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defgeneric( Update ( obj )
   error("Update is a subclass reponsibility\n")
 );defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defgeneric( Validate ( obj )
-  error("Validate is a subclass reponsibility\n")
-);defgeneric
+; Prints a description of an object and calls
+; itself recursively for each dependent object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defgeneric( Describe ( obj )
   error("Describe is a subclass reponsibility\n")
 );defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Verifies that a point or line statisfies its
+; contraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Validate ( obj )
+  error("Validate is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Adds an object to another objects list of 
+; constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Connect ( obj constraint )
+  error("Connect is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Renders a "renderable" object (points and lines)
+; into the cellview reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( renderGeo ( obj constraint )
+;  error("Connect is a subclass reponsibility\n")
+;);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class Definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( geomObject ()
   (
-	( constraints @initform nil )
+	( constraints @reader getConstraints @writer setConstraints @initform nil )
+	( ref @reader getRef @writer setRef @initform nil)
   )
 );defclass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; List of connection constraints:
 ; This method connects GeometricObjects together based upon a
 ; list of constraints. The argument is added to the existing 
 ; list of constraints. The method first checks to make sure
-; the constrainnt argument insn't already in the list
+; the constrainnt argument insn't already in the list (only new constraints
+; are added)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( Connect (( obj geomObject ) constraint )
- when( !member( constraint obj->constraints)
-  obj->constraints = cons(constraint obj->constraints)
- );when
+  if(!null(constraint) then
+    when( !member( constraint obj->constraints)
+      obj->constraints = cons(constraint obj->constraints)
+    );when
+  );if
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
+; This is a base update method which prints a list of the most current
+; constraints, validates the geomObj, and Update the most current constraints
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( Update (( obj geomObject ))
-  printf( "Updating constraints %L for %L\n" obj->constraints obj)
+  ;printf( "Updating constraints %L(%s) for %L(%s) \n" obj->constraints className(classOf(obj->constraints)) obj className(classOf(obj)))
+  printf( "Updating constraints for %L(%s) \n" obj className(classOf(obj)))
   Validate( obj )
   foreach( constraint obj->constraints
     Update( constraint )
+    printf( "      Constraint: %L(%s)\n" constraint className(classOf(constraint)))
   );foreach
   t
 );defmethod
