@@ -1,13 +1,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; twoPointsLine.ils: class that creates a line from two points
+;; twoPointsLine.ils: Inherits from the line class. Class that creates a 
+;                     line pasing through two points. Contains two members
+;                     that are points of that define the line
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( twoPointsLine ( Line )
+defclass( twoPointsLine ( line )
   (
-	( P1 @initarg P1 )
-	( P2 @initarg P2 )
+	( P1 @reader getPoint1 @writer setPoint1)
+	( P2 @reader getPoint2 @writer setPoint2)
   )
 );defclass
-
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj twoPointsLine))
+  obj->P1 = makeInstance( 'point ) 
+  obj->P2 = makeInstance( 'point )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setP1 (( obj twoPointsLine ) pnt)
+  setX(obj->P1 xCoord(pnt))
+  setY(obj->P1 yCoord(pnt))
+  Describe(obj->P1)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setP2 (( obj twoPointsLine ) pnt)
+  setX(obj->P2 xCoord(pnt))
+  setY(obj->P2 yCoord(pnt))
+  Describe(obj->P2)
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -17,16 +41,15 @@ defmethod( Describe (( obj twoPointsLine ))
   Describe( obj->P1 )
   Describe( obj->P2 )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( Validate (( obj twoPointsLine ))
   let( (x1 y1 x2 y2 A B C )
      x1 = obj->P1->x
-     x2 = obj->p2->x
-     y1 = obj->p1->y
-     y2 = obj->p2->y
+     x2 = obj->P2->x
+     y1 = obj->P1->y
+     y2 = obj->P2->y
      A = obj->A
      B = obj->B
      C = obj->C
@@ -39,7 +62,6 @@ defmethod( Validate (( obj twoPointsLine ))
      t
      );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -63,20 +85,6 @@ defmethod( Update (( obj twoPointsLine ))
   );let
   callNextMethod( obj )
 );defmethod
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Helper Procedure
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-procedure( make_TwoPoints_Line( p1 p2 )
-  let( ( line )
-       line = makeInstance( 'twoPointsLine ?P1 p1 ?P2 p2 )
-       Update( line )
-       Connect( p1 line )
-       Connect( p2 line )
-       line
-  );let
-);procedure
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

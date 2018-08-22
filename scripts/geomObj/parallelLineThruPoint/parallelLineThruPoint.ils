@@ -1,17 +1,52 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; parallelLineThruPoint.ils 
+; lineThruPnt.ils: Class inheriting from line class. Class 
+;                    represents a line that pases through a point
+;                    Members are a point and a line object
+;                    that is itself parrallel to the other line.
+;                    1.) To specify point - instantiate the point
+;                        object
+;                    2.) To specify the line - instantiate a line
+;                        object
+;                    3.) Update the line object such that it passes 
+;                        through the point object
+;                    4.) Describe the updated line
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( parallelLineThruPoint ( line )
+defclass( lineThruPnt ( line )
   (
-	( P @initarg P)
-	( L @intiarg L)
+	( P @reader getPoint @writer setPoint )
+	( L @reader getLine @writer setLine )
   )
 );defclass
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor Method
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj lineThruPnt))
+  obj->P = makeInstance( 'point ) 
+  obj->L = makeInstance( 'twoPointsLine )
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Validate (( obj parallelLineThruPoint ))
+defmethod( setP (( obj lineThruPnt ) pnt)
+  setX(obj->P xCoord(pnt))
+  setY(obj->P yCoord(pnt))
+  Describe(obj->P)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setL (( obj lineThruPnt) pnt1 pnt2)
+  setP1(obj->L pnt1)
+  setP2(obj->L pnt2)
+  Update(obj->L)
+  if(Validate(obj->L) then
+    Describe(obj->L)
+  );if
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Validate (( obj lineThruPnt ))
   let( (x1 y1 A B C LA LB LC)
        x1 = obj->P->x
        y1 = obj->P->y
@@ -22,43 +57,28 @@ defmethod( Validate (( obj parallelLineThruPoint ))
        B = obj->B
        C = obj->C
        when( A*LB-LA*B != 0.0 || A*x1+B*y1+C != 0
-         error("Invalid parallelLineThruPoint\n")
+         error("Invalid lineThruPnt\n")
        );when
        t
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Describe (( obj parallelLineThruPoint ))
+defmethod( Describe (( obj lineThruPnt ))
   callNextMethod( obj )
   printf("...Containing\n")
   Describe( obj->P )
   printf("...Parallel to\n")
   Describe( obj->L )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-procedure( make_parallelLineThruPoint( point line )
-  let( (parallel_line)
-    parallel_line = makeInstance('ParallelLineThroughPoint_Line
-				 ?P point
-				 ?L line)
-    Update( parallel_line )
-    Connect( point parallel_line )
-    Connect( line parallel_line )
-    parallel_line
-  );let
-);procedure
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( Update (( obj parallelLineThruPoint ))
-  let( (A B C x1 y1 )
+defmethod( Update (( obj lineThruPnt ))
+  let( (A B C x1 y1)
+       Update(obj->P)
+       Update(obj->L)
        A=obj->L->A
        B=obj->L->B
        C=obj->L->C
@@ -67,9 +87,9 @@ defmethod( Update (( obj parallelLineThruPoint ))
        obj->A=A
        obj->B=B
        obj->C=-(A*x1+B*y1)
+       callNextMethod( obj )
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

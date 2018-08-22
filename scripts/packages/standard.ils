@@ -3997,7 +3997,7 @@ defmethod( arrayDieSites (( ret reticle ))
     );foreach
     n = 0
     foreach( die getCollection(ret->dieSites)
-      printf("INFO: die #%d, ROW: %d COL: %d\n" n getRow(die) getCol(die))
+      printf("INFO: die #%d, ROW: %d COL: %d\n" n getReticleRow(die) getReticleCol(die))
       n++
     )
    n
@@ -5788,6 +5788,266 @@ defmethod( renderOutline (( waf wafer ) cv)
 
 
 	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; GeometricObject.ils: generic geometric class
+; Represents all the objects in the construction. It defines the "consraints"
+; slot. This slot list all teh other objects which need to be notified when
+; the object updates.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Geometric Constructions:
+; 1.) A point to lie on two intersecting lines
+; 2.) A line to pass through two points
+; 3.) A line to pass through a point and be parallel to another line
+; 4.) A line to pass through a point and be perpendicular to another line
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Implementation:
+; 1.) Call a SKILL function repeatedly to specify sever free points
+; 2.) Call another SKILL function to construct the dependend points and lines
+; 3.) Enter a SKILL expression to change the coordinates of one of the free points
+; 4.) Call a SKILL function to PROPAGATE the change though the constrained points and lines
+; 5.) Call a SKILL functionto describe on of the constrained points or lines
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Heirarchy:
+; Geometric Object ------- Point --------- IntersectingTwoLinesPoint
+;                          Line  --------- TwoPointsLine
+;                                --------- parallelLineThruPoint
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generic Subclass Methods: Each of the generics base methods simply
+;                           raise an error if they are not called in
+;                           a dependent object (heirarchically via inheritance)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method propagates changes. It updates the 
+; coordinates or equations of an object and calls
+; itself recursively for each dependendent object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Update ( obj )
+  error("Update is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Prints a description of an object and calls
+; itself recursively for each dependent object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Describe ( obj )
+  error("Describe is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Verifies that a point or line statisfies its
+; contraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Validate ( obj )
+  error("Validate is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Adds an object to another objects list of 
+; constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defgeneric( Connect ( obj constraint )
+  error("Connect is a subclass reponsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Renders a "renderable" object (points and lines)
+; into the cellview reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( renderGeo ( obj constraint )
+;  error("Connect is a subclass reponsibility\n")
+;);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class Definition
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( geomObject ()
+  (
+	( constraints @reader getConstraints @writer setConstraints @initform nil )
+	( ref @reader getRef @writer setRef @initform nil)
+  )
+);defclass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; List of connection constraints:
+; This method connects GeometricObjects together based upon a
+; list of constraints. The argument is added to the existing 
+; list of constraints. The method first checks to make sure
+; the constrainnt argument insn't already in the list (only new constraints
+; are added)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Connect (( obj geomObject ) constraint )
+  if(!null(constraint) then
+    when( !member( constraint obj->constraints)
+      obj->constraints = cons(constraint obj->constraints)
+    );when
+  );if
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This is a base update method which prints a list of the most current
+; constraints, validates the geomObj, and Update the most current constraints
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Update (( obj geomObject ))
+  ;printf( "Updating constraints %L(%s) for %L(%s) \n" obj->constraints className(classOf(obj->constraints)) obj className(classOf(obj)))
+  printf( "Updating constraints for %L(%s) \n" obj className(classOf(obj)))
+  Validate( obj )
+  foreach( constraint obj->constraints
+    Update( constraint )
+    printf( "      Constraint: %L(%s)\n" constraint className(classOf(constraint)))
+  );foreach
+  t
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; point.ils: point class inheriting from geomObject
+;            Represents w point with coordinate slots x and y
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( point (geomObject)
+  (
+	( name @reader getName @writer setName )
+	( x    @reader getX @writer setX )
+        ( y    @reader getY @writer setY )
+  )
+);defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj point))
+  obj->name = nil 
+  obj->x = 0.0
+  obj->y = 0.0
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Describe (( obj point ))
+  printf("%s at (%f,%f)\n" className(classOf(obj)) float(obj->x) float(obj->y) )
+);defmethod
+; Nothing to update about a point
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( render (( obj point ))
+  t
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Nothing to update about a point
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Validate (( obj point ))
+  t
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; line.ils: line class represents a line with slots A, B, and C.
+;           A, B, and C are coefficients of the line equation: Ax+By+C=0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( line ( geomObject )
+  (
+	( A @reader getA @writer setA )
+	( B @reader getB @writer setB )
+	( C @reader getC @writer setC )
+  )
+);defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj line))
+  obj->A = 0.0 
+  obj->B = 0.0
+  obj->C = 0.0
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method simply decribes the line equation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Describe (( obj line ))
+  printf("%s (%f)*x+(%f)*y+%f=0: (Ax+By+C=0)\n" className(classOf(obj)) float(obj->A) float(obj->B) float(obj->C))
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; twoPointsLine.ils: Inherits from the line class. Class that creates a 
+;                     line pasing through two points. Contains two members
+;                     that are points of that define the line
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( twoPointsLine ( line )
+  (
+	( P1 @reader getPoint1 @writer setPoint1)
+	( P2 @reader getPoint2 @writer setPoint2)
+  )
+);defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj twoPointsLine))
+  obj->P1 = makeInstance( 'point ) 
+  obj->P2 = makeInstance( 'point )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setP1 (( obj twoPointsLine ) pnt)
+  setX(obj->P1 xCoord(pnt))
+  setY(obj->P1 yCoord(pnt))
+  Describe(obj->P1)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setP2 (( obj twoPointsLine ) pnt)
+  setX(obj->P2 xCoord(pnt))
+  setY(obj->P2 yCoord(pnt))
+  Describe(obj->P2)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Describe (( obj twoPointsLine ))
+  callNextMethod( obj )
+  printf("...containing\n")
+  Describe( obj->P1 )
+  Describe( obj->P2 )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Validate (( obj twoPointsLine ))
+  let( (x1 y1 x2 y2 A B C )
+     x1 = obj->P1->x
+     x2 = obj->P2->x
+     y1 = obj->P1->y
+     y2 = obj->P2->y
+     A = obj->A
+     B = obj->B
+     C = obj->C
+     if( A*x1+B*y1+C != 0.0 then
+       error( "Invalid twoPointsLine\n" )
+     );if
+     if( A*x2+B*y2+C != 0.0 then
+       error( "Invalid twoPointsLine\n" )
+     );if
+     t
+     );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( Update (( obj twoPointsLine ))
+  let( (x1 y1 x2 y2 m b)
+    x1 = obj->P1->x
+    x2 = obj->P2->x
+    y1 = obj->P1->y
+    y2 = obj->P2->y
+    if( x2-x1 != 0 then
+      m = (y2-y1)*1.0/(x2-x1)
+      b = y2-m*x2
+      obj->A = -m
+      obj->B = 1
+      obj->C = -b
+    else
+      obj->A = 1.0
+      obj->B = 0.0
+      obj->C = -x1
+    );if
+  );let
+  callNextMethod( obj )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;# rectangle.ils: Rectangle class
 ;######################################################
