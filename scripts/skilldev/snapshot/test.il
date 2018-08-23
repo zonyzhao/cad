@@ -511,4 +511,18 @@ renderStack(ss)
 dbSave(cv)
 dbClose(cv)
 
-
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-16: Taking a snaphot of the 
+;        numbers cells
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="num9"
+lib="reticle"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
