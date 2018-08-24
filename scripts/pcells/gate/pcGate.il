@@ -15,6 +15,6 @@ pcDefinePCell(
     pcell = makeInstance( 'gate )
     setRef(pcell pcCellView)
     setPcellParams(pcell pcCellView)
-    draw(pcell)
+    drawGate(pcell)
   );let
 );pcDefinePCell

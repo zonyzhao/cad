@@ -1,0 +1,97 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; sdArray.ils: Source/Drain Array for FETs 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( sdArray (assembly)
+  (
+    ( m reader getM @writer setM )
+    ( width @reader getWidth @writer setWidth )
+    ( length @reader getLength @writer setLength )
+    ( spacing @reader getSpacing @writer setSpacing )
+    ( layer @reader getLayer @writer setLayer )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( sourceOrig @reader getSourceOrig @writer setSourceOrig )
+    ( refRect )
+    ( sTrans )
+    ( dTrans )			
+  )				  
+);defclass
+;######################################################
+; Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj sdArray)) 
+	   obj->m          = 1
+	   obj->width      = 100.0
+           obj->length     =  50.0
+	   obj->spacing    =  50.0 
+	   obj->layer      = "text"
+	   obj->purpose    = "drawing"
+	   obj->sourceOrig =  makeInstance( 'point2 )
+	   obj->refRect    = makeInstance( 'rectangle )
+	   obj->sTrans     = makeInstance( 'collection )
+	   obj->dTrans     = makeInstance( 'collection )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( array sdArray ))
+  let(( r2r do tran cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    r2r = 2*(array->length + array->spacing)
+    do  = array->length + array->spacing
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Initially generate even only finger structure
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the reference source
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    setWidth(array->refRect array->width)
+    setHeight(array->refRect array->length)
+    generate(array->refRect)
+    tran = makeInstance( 'transform2 )
+    setVertices(tran getVertices(array->refRect))
+    setCentroid(tran getCentroid(array->refRect))
+    cloneRectTran(tran)
+    setLayer(tran getLayer(array))
+    setPurpose(tran getPurpose(array))
+    addTransform(geomGroup tran) 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Generate all sources
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    for( i 0 sub1(sub1(array->m))
+       tran = makeInstance( 'transform2 )
+       setVertices(tran getVertices(array->refRect))
+       setCentroid(tran getCentroid(array->refRect))
+       cloneRectTran(tran)
+       setLayer(tran getLayer(array))
+       setPurpose(tran getPurpose(array))
+       translate(tran list(0.0 (i+1)*r2r))
+       addTransform(geomGroup tran)
+    );for
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Generate all drains
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    for( i 0 sub1(sub1(array->m))
+       tran = makeInstance( 'transform2 )
+       setVertices(tran getVertices(array->refRect))
+       setCentroid(tran getCentroid(array->refRect))
+       cloneRectTran(tran)
+       setLayer(tran getLayer(array))
+       setPurpose(tran getPurpose(array))
+       translate(tran list(0.0 i*r2r+do))
+       addTransform(geomGroup tran)
+    );for
+    rectTranUnion(geomGroup)
+    addGeometry(array geomGroup)
+    rtsAdd(array->rtrans getRectTran(geomGroup))
+    rtsUnion(array->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################

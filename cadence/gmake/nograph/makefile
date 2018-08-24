@@ -35,7 +35,8 @@ polygons = rectangle triangle circle frame
 geometries = trirect capsule  
 #########################################################################
 assemblies = gatePad gateStem planarResistor planarCap outline \
-             memsCapBotCont memsCapTopCont cframe cframe2
+             memsCapBotCont memsCapTopCont cframe cframe2 \
+             sdArray
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################

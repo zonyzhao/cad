@@ -206,7 +206,7 @@ waf->retArray->origin
 waf->retArray->ur
 ; wafer level die sites
 getWaferDieSites(waf)
-;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ret = getItem(waf->retArray->reticles 0)
 ; Wafer Reticle: 0, Wafer Die Site: 0
 getWaferRow(getItem(ret->dieSites 0))

@@ -33,13 +33,14 @@ superclassesOf(classOf(gt))
 ;       supermaster
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 gt = makeInstance( 'gate )
-lib = "test"
+lib = "pd0164"
 name = "gatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gt cv)
-draw(gt)
+drawGate(gt)
 setRef(gt->rtrans->rtran cv)
-render(gt->rtrans->rtran)
+; FIXME: Rendering of the geom bbox is broken ...
+;render(gt->rtrans->rtran)
 cv~>bBox
 gt->coreBBox
 dbSave(cv)

@@ -4353,25 +4353,25 @@ defclass( die (cv)
 ; Constructor Method
 ;#####################################################
 defmethod( initializeInstance @after ((obj die))
-  obj->reticle = nil 
-  obj->number = nil
-  obj->revision = nil
+  obj->reticle    = nil 
+  obj->number     = nil
+  obj->revision   = nil
   obj->reticleRow = nil
   obj->reticleCol = nil
-  obj->waferRow = nil
-  obj->waferCol = nil
+  obj->waferRow   = nil
+  obj->waferCol   = nil
 );defmethod
 ;#####################################################
 ; clones the die
 ;#####################################################
 defmethod( cloneDie (( d die ) arg)
-  arg->reticle = d->reticle
-  arg->number = d->number
-  arg->revision = d->revision
+  arg->reticle    = d->reticle
+  arg->number     = d->number
+  arg->revision   = d->revision
   arg->reticleRow = d->reticleRow
   arg->reticleCol = d->reticleCol
-  arg->waferRow = d->waferRow
-  arg->waferCol = d->waferCol
+  arg->waferRow   = d->waferRow
+  arg->waferCol   = d->waferCol
   cloneCv(d arg)
 );defmethod
 ;######################################################
@@ -5792,13 +5792,54 @@ defmethod( renderOutline (( waf wafer ) cv)
 ; array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getWaferDieSites (( waf wafer ))
-  let((rrows rcols drows dcols)
+  let((rrows rcols drows dcols rind dind ret die wrow wcol)
       rrows = getRows(waf->retArray)
       rcols = getCols(waf->retArray)
       drows = xCoord(getDieSiteArray(waf->retArray->reticle))
       dcols = yCoord(getDieSiteArray(waf->retArray->reticle))
-      waf->dieSiteRows = rrow*rcols
-      waf->getDieSiteCols = drows*dcols
+      waf->dieSiteRows = rrows*drows
+      waf->dieSiteCols = rcols*dcols
+      wrow = 0
+      wcol = 0
+      for(i 0 sub1(rrows)
+      	wrow = wrow + i*drows
+        for(j 0 sub1(rcols)
+	  wrow = wrow + j*dcols
+	  rind = i + j
+          ret = getItem(waf->retArray->reticles rind)
+	  for(k 0 sub1(drows) 
+	    wrow = wrow++	
+	    for(l 0 sub1(dcols)
+	      wcol = wcol++
+	      dind = k + l
+	      die = getItem(ret->dieSites dind)
+	      setWaferRow(die wrow)
+	      setWaferCol(die wcol)
+	    );for
+          );for
+        );for
+      );for
+      list(waf->dieSiteRows waf->dieSiteCols)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the information about the wafer level die site
+; array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( numberDieSites (( waf wafer ))
+  let(()
+    ; based upon the number of cols/rows determine the 
+    ; number of digits necessary to represent the row/col
+    ; numbers
+    for(i 0 sub1(getDieSiteRows)
+      for(j 0 sub1(getDieSiteCols)
+         ; 
+         ; print a dash in middle of numpad
+	 ; print row number to left of dash
+	 ; print col number to right of dash
+      );for
+    );for 
   );let
 );defmethod
 
@@ -8407,7 +8448,104 @@ defmethod( generate (( cfr cframe2 ))
 );defmethod
 ;###################################################################
 ;###################################################################
-;###################################################################; generic.ils: generic functions
+;###################################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; sdArray.ils: Source/Drain Array for FETs 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( sdArray (assembly)
+  (
+    ( m reader getM @writer setM )
+    ( width @reader getWidth @writer setWidth )
+    ( length @reader getLength @writer setLength )
+    ( spacing @reader getSpacing @writer setSpacing )
+    ( layer @reader getLayer @writer setLayer )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( sourceOrig @reader getSourceOrig @writer setSourceOrig )
+    ( refRect )
+    ( sTrans )
+    ( dTrans )			
+  )				  
+);defclass
+;######################################################
+; Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj sdArray)) 
+	   obj->m          = 1
+	   obj->width      = 100.0
+           obj->length     =  50.0
+	   obj->spacing    =  50.0 
+	   obj->layer      = "text"
+	   obj->purpose    = "drawing"
+	   obj->sourceOrig =  makeInstance( 'point2 )
+	   obj->refRect    = makeInstance( 'rectangle )
+	   obj->sTrans     = makeInstance( 'collection )
+	   obj->dTrans     = makeInstance( 'collection )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( array sdArray ))
+  let(( r2r do tran cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    r2r = 2*(array->length + array->spacing)
+    do  = array->length + array->spacing
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create Geometry Group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Initially generate even only finger structure
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the reference source
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    setWidth(array->refRect array->width)
+    setHeight(array->refRect array->length)
+    generate(array->refRect)
+    tran = makeInstance( 'transform2 )
+    setVertices(tran getVertices(array->refRect))
+    setCentroid(tran getCentroid(array->refRect))
+    cloneRectTran(tran)
+    setLayer(tran getLayer(array))
+    setPurpose(tran getPurpose(array))
+    addTransform(geomGroup tran) 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Generate all sources
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    for( i 0 sub1(sub1(array->m))
+       tran = makeInstance( 'transform2 )
+       setVertices(tran getVertices(array->refRect))
+       setCentroid(tran getCentroid(array->refRect))
+       cloneRectTran(tran)
+       setLayer(tran getLayer(array))
+       setPurpose(tran getPurpose(array))
+       translate(tran list(0.0 (i+1)*r2r))
+       addTransform(geomGroup tran)
+    );for
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Generate all drains
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    for( i 0 sub1(sub1(array->m))
+       tran = makeInstance( 'transform2 )
+       setVertices(tran getVertices(array->refRect))
+       setCentroid(tran getCentroid(array->refRect))
+       cloneRectTran(tran)
+       setLayer(tran getLayer(array))
+       setPurpose(tran getPurpose(array))
+       translate(tran list(0.0 i*r2r+do))
+       addTransform(geomGroup tran)
+    );for
+    rectTranUnion(geomGroup)
+    addGeometry(array geomGroup)
+    rtsAdd(array->rtrans getRectTran(geomGroup))
+    rtsUnion(array->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+; generic.ils: generic functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function
 ; removes all methods defined by the previous defgeneric from
@@ -8674,7 +8812,7 @@ defmethod( initializeInstance @after ((obj gate))
 ;######################################################
 ; Draws the gate
 ;######################################################
-defmethod( draw (( gt gate ))
+defmethod( drawGate (( gt gate ))
   let( (width length stemRectTran padRectTran)
     width = getParamValue(gt 'width)
     length = getParamValue(gt 'length)
@@ -8700,8 +8838,8 @@ defmethod( draw (( gt gate ))
     rtsAdd(gt->rtrans stemRectTran) 
     rtsAdd(gt->rtrans padRectTran)
     rtsUnion(gt->rtrans)
-    setSlotValue(gt 'coreBBox list( getLowerLeft(gt->rtrans->rtran) getUpperRight(gt->rtrans->rtran)))
-    callNextMethod()
+    setSlotValue(gt 'coreBBox list( gt->rtrans->rtran->ll gt->rtrans->rtran->ur))
+    ;callNextMethod()
   );let
 );defmethod
 
