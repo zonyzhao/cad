@@ -71,8 +71,8 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
-	   obj->dieSiteOrig
-	   obj->dieSiteArray
+	   obj->dieSiteOrig = nil
+	   obj->dieSiteArray = nil
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -324,9 +324,13 @@ defmethod( checkInnerStreets (( ret reticle ))
 );defmethod
 
 ;#####################################################
-; Checks that inner streets are conformant to the
-; requirement that they extend the full length of 
-; the reticle
+; Generates the intra reticle die sites. Need to run
+; "checkInnerStreets" method first.
+; FIXME: need checksum validation. Make sure that the number
+;        of generated die sites equals the number of
+;        die in the reticle and that the origins of 
+;        the generated die site and the actual die
+;        origins are also equivalent.
 ;#####################################################
 defmethod( arrayDieSites (( ret reticle ))
   let((n dorig ind aorig)

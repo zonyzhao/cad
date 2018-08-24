@@ -16,25 +16,25 @@ defclass( die (cv)
 ; Constructor Method
 ;#####################################################
 defmethod( initializeInstance @after ((obj die))
-  obj->reticle = nil 
-  obj->number = nil
-  obj->revision = nil
+  obj->reticle    = nil 
+  obj->number     = nil
+  obj->revision   = nil
   obj->reticleRow = nil
   obj->reticleCol = nil
-  obj->waferRow = nil
-  obj->waferCol = nil
+  obj->waferRow   = nil
+  obj->waferCol   = nil
 );defmethod
 ;#####################################################
 ; clones the die
 ;#####################################################
 defmethod( cloneDie (( d die ) arg)
-  arg->reticle = d->reticle
-  arg->number = d->number
-  arg->revision = d->revision
-  arg->reticleRow = d->ReticleRow
-  arg->reticleCol = d->ReticleCol
-  arg->waferRow = d->WaferRow
-  arg->waferCol = d->WaferCol
+  arg->reticle    = d->reticle
+  arg->number     = d->number
+  arg->revision   = d->revision
+  arg->reticleRow = d->reticleRow
+  arg->reticleCol = d->reticleCol
+  arg->waferRow   = d->waferRow
+  arg->waferCol   = d->waferCol
   cloneCv(d arg)
 );defmethod
 ;######################################################

@@ -15,7 +15,9 @@ defclass( wafer (cv)
     ( pm @reader getPm )
     ( wafNumMrk @reader getWafNumMrk )
     ( retNumMrk @reader getRefNumMrk )	
-    ( bsideMrk @reader getBsideMrk )	
+    ( bsideMrk @reader getBsideMrk )
+    ( dieSiteRows @reader getDieSiteRows )
+    ( dieSiteCols @reader getDieSiteCols ) 	
   )
 );defClass
 
@@ -69,6 +71,62 @@ defmethod( renderOutline (( waf wafer ) cv)
     renderStack(ss)
   );let
 );defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the information about the wafer level die site
+; array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getWaferDieSites (( waf wafer ))
+  let((rrows rcols drows dcols rind dind ret die wrow wcol)
+      rrows = getRows(waf->retArray)
+      rcols = getCols(waf->retArray)
+      drows = xCoord(getDieSiteArray(waf->retArray->reticle))
+      dcols = yCoord(getDieSiteArray(waf->retArray->reticle))
+      waf->dieSiteRows = rrows*drows
+      waf->dieSiteCols = rcols*dcols
+      wrow = 0
+      wcol = 0
+      for(i 0 sub1(rrows)
+      	wrow = wrow + i*drows
+        for(j 0 sub1(rcols)
+	  wrow = wrow + j*dcols
+	  rind = i + j
+          ret = getItem(waf->retArray->reticles rind)
+	  for(k 0 sub1(drows) 
+	    wrow = wrow++	
+	    for(l 0 sub1(dcols)
+	      wcol = wcol++
+	      dind = k + l
+	      die = getItem(ret->dieSites dind)
+	      setWaferRow(die wrow)
+	      setWaferCol(die wcol)
+	    );for
+          );for
+        );for
+      );for
+      list(waf->dieSiteRows waf->dieSiteCols)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the information about the wafer level die site
+; array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( numberDieSites (( waf wafer ))
+  let(()
+    ; based upon the number of cols/rows determine the 
+    ; number of digits necessary to represent the row/col
+    ; numbers
+    for(i 0 sub1(getDieSiteRows)
+      for(j 0 sub1(getDieSiteCols)
+         ; 
+         ; print a dash in middle of numpad
+	 ; print row number to left of dash
+	 ; print col number to right of dash
+      );for
+    );for 
+  );let
+);defmethod
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;######################################################

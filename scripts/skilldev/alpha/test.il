@@ -2,27 +2,27 @@
 ; UT-0: Check for object Existence
 ;       and construction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'numeric )
-num = makeInstance( 'numeric )
-classp( num 'numeric)
-classOf(num)
+findClass( 'alpha )
+al = makeInstance( 'alpha )
+classp( al 'alpha)
+classOf(al)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate the vertices of
 ;       a number
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-num0 = makeInstance( 'numeric )
-setVal(num0 "0")
-generate(num0)
-num0Tran = makeInstance( 'transform2 )
-setVertices(num0Tran generate(num0))
-num0Geom = makeInstance( 'geometry )
-addTransform(num0Geom num0Tran)
+ala = makeInstance( 'alpha )
+setVal(ala "a")
+generate(ala)
+alaTran = makeInstance( 'transform2 )
+setVertices(alaTran generate(ala))
+alaGeom = makeInstance( 'geometry )
+addTransform(num0Geom alaTran)
 lib = "reticle"
-name = "num0"
+name = "ala"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
-setRef(num0Geom cv)
-render(num0Geom)
+setRef(alaGeom cv)
+render(alaGeom)
 dbSave(cv)
 dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

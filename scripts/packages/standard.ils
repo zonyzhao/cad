@@ -3722,8 +3722,8 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->numRetCoups = nil
 	   obj->numNumPads = nil
 	   obj->bnb = makeInstance( 'collection )
-	   obj->dieSiteOrig
-	   obj->dieSiteArray
+	   obj->dieSiteOrig = nil
+	   obj->dieSiteArray = nil
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -3975,9 +3975,13 @@ defmethod( checkInnerStreets (( ret reticle ))
 );defmethod
 
 ;#####################################################
-; Checks that inner streets are conformant to the
-; requirement that they extend the full length of 
-; the reticle
+; Generates the intra reticle die sites. Need to run
+; "checkInnerStreets" method first.
+; FIXME: need checksum validation. Make sure that the number
+;        of generated die sites equals the number of
+;        die in the reticle and that the origins of 
+;        the generated die site and the actual die
+;        origins are also equivalent.
 ;#####################################################
 defmethod( arrayDieSites (( ret reticle ))
   let((n dorig ind aorig)
@@ -4364,10 +4368,10 @@ defmethod( cloneDie (( d die ) arg)
   arg->reticle = d->reticle
   arg->number = d->number
   arg->revision = d->revision
-  arg->reticleRow = d->ReticleRow
-  arg->reticleCol = d->ReticleCol
-  arg->waferRow = d->WaferRow
-  arg->waferCol = d->WaferCol
+  arg->reticleRow = d->reticleRow
+  arg->reticleCol = d->reticleCol
+  arg->waferRow = d->waferRow
+  arg->waferCol = d->waferCol
   cloneCv(d arg)
 );defmethod
 ;######################################################
@@ -5561,8 +5565,8 @@ defclass( reticleArray (cv)
     ( arrayWidth @reader getArrayWidth @writer setArrayWidth)
     ( arrayHeight @reader getArrayHeight @writer setArrayHeight)
     ( rows @reader getRows @writer setRows)
-    ( cols @read getCols @writer setCols)
-    ( overlap @read getOverlap @writer setOverlap)
+    ( cols @reader getCols @writer setCols)
+    ( overlap @reader getOverlap @writer setOverlap)
     ( origin )	
     ( ur )
   )
@@ -5727,7 +5731,9 @@ defclass( wafer (cv)
     ( pm @reader getPm )
     ( wafNumMrk @reader getWafNumMrk )
     ( retNumMrk @reader getRefNumMrk )	
-    ( bsideMrk @reader getBsideMrk )	
+    ( bsideMrk @reader getBsideMrk )
+    ( dieSiteRows @reader getDieSiteRows )
+    ( dieSiteCols @reader getDieSiteCols ) 	
   )
 );defClass
 
@@ -5781,6 +5787,21 @@ defmethod( renderOutline (( waf wafer ) cv)
     renderStack(ss)
   );let
 );defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get the information about the wafer level die site
+; array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getWaferDieSites (( waf wafer ))
+  let((rrows rcols drows dcols)
+      rrows = getRows(waf->retArray)
+      rcols = getCols(waf->retArray)
+      drows = xCoord(getDieSiteArray(waf->retArray->reticle))
+      dcols = yCoord(getDieSiteArray(waf->retArray->reticle))
+      waf->dieSiteRows = rrow*rcols
+      waf->getDieSiteCols = drows*dcols
+  );let
+);defmethod
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;######################################################

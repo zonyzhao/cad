@@ -526,3 +526,19 @@ getStackUp(ss)
 checkMfg(ss)
 dbClose(cv)
 nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-17: Taking a snaphot of the 
+;        alpha cells
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+name="Hotel"
+lib="reticle"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ss = makeInstance( 'snapshot )
+setRef(ss cv)
+getStackUp(ss)
+checkMfg(ss)
+dbClose(cv)
+nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
