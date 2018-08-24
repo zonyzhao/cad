@@ -22,7 +22,7 @@ spectre.envOpts  includePath  string "/users/1127110/project/spectre/"
 Diva.Extract    rsf     string  "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/diva/trunk/layerText.rul"  
 Diva.Extract    useRsf  boolean t
 Diva.LVS	rewire	boolean	nil
-Diva.LVS	rundir	string	"~/deslibs_oa_exp/lvs"
+Diva.LVS	rundir	string	"~/deslibs_oa_mems/lvs"
 Diva.LVS	rules	string	"divaLVS.rul"
 ui	textFont	string	"-*-courier-medium-r-*-*-12-*"
 ui	undoLevel	int	10

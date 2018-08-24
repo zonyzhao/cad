@@ -3,8 +3,8 @@
 ;       --------------------beginning of initialization---------------------
 
 println( "beginning cdsinit...")
-ilDir0 = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/skill/il"
-ilDir1 = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/skill/ils"
+ilDir0 = "/users/1127110/cad/scripts/skill/il"
+ilDir1 = "/users/1127110/cad/scripts/skill/ils"
 sstatus(writeProtect nil)       ;can overwrite il routines
 _stacktrace = 10                ;stack trace depth
 
@@ -27,7 +27,7 @@ streamInKeys = list(nil
 println( "loading default Cadence bindkeys")
 load( prependInstallPath( "samples/local/schBindKeys.il"))
 load( prependInstallPath( "samples/local/leBindKeys.il"))
-load( "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/skill/autoloads.il")
+load( "/users/1127110/cad/scripts/skill/autoloads.il")
 
 autoloads()
 

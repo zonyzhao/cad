@@ -16,7 +16,7 @@ export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cade
 #########################################################################
 # Scripts Directory
 #########################################################################
-sdir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/"
+sdir = "/users/1127110/cad/scripts/"
 #########################################################################
 #########################################################################
 #  Package File Names
