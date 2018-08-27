@@ -1,0 +1,47 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; gateArray.ils: Gate array for FETs 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( gateArray (assembly)
+  (
+    ( m reader getM @writer setM )
+    ( width @reader getWidth @writer setWidth )
+    ( length @reader getLength @writer setLength )
+    ( spacing @reader getSpacing @writer setSpacing )
+    ( layer @reader getLayer @writer setLayer )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( sourceOrig @reader getSourceOrig @writer setSourceOrig )			
+  )				  
+);defclass
+;######################################################
+; Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj gateArray)) 
+	   obj->m          = 1
+	   obj->width      = 100.0
+           obj->length     =  50.0
+	   obj->spacing    =  50.0 
+	   obj->layer      = "text"
+	   obj->purpose    = "drawing"
+	   obj-sourceOrig  = list(0.0 0.0)
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( array gateArray ))
+  let(( gate )	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Generate gate array
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    for( i 0 sub1(array->m))
+       gate = makeInstance( 'gate )
+       setLayer(gate getLayer(array))
+       setPurpose(gate getPurpose(array))
+       translate(gate list(0.0 i*spacing)
+       
+    );for
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
