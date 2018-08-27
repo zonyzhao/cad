@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( gateArray (assembly)
   (
-    ( m reader getM @writer setM )
+    ( m @reader getM @writer setM )
     ( width @reader getWidth @writer setWidth )
     ( length @reader getLength @writer setLength )
     ( spacing @reader getSpacing @writer setSpacing )
@@ -19,10 +19,10 @@ defmethod( initializeInstance @after ((obj gateArray))
 	   obj->m          = 1
 	   obj->width      = 100.0
            obj->length     =  50.0
-	   obj->spacing    =  50.0 
+	   obj->spacing    =  300.0 
 	   obj->layer      = "text"
 	   obj->purpose    = "drawing"
-	   obj-sourceOrig  = list(0.0 0.0)
+	   obj->sourceOrig  = list(0.0 0.0)
 );defmethod
 ;######################################################
 ; Generates the assembly
@@ -32,11 +32,14 @@ defmethod( generate (( array gateArray ))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Generate gate array
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    for( i 0 sub1(array->m))
-       gate = makeInstance( 'gate )
-       setLayer(gate getLayer(array))
-       setPurpose(gate getPurpose(array))
-       translate(gate list(0.0 i*spacing)
+    for( i 0 sub1(array->m)
+       gate = makeInstance( 'ganGate )
+       setRef(gate getRef(array)
+       setWidth(gate 100.0)
+       setLength(gate 0.25)
+       translate(gate list(0.0 i*array->spacing))
+       generate(gate)
+       render(gate)
     );for
   );let
 );defmethod

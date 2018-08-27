@@ -1,0 +1,59 @@
+;######################################################
+; ganFet.ils: GaN FET PCELL class. Inherits from PcellParam
+;           making it a Cadence PCELL class
+;######################################################
+defclass( ganFet (PcellParam)
+  (	  
+    ( m      @initform defineParam("int"   2) )
+    ( width  @initform defineParam("float" 100.0) )
+    ( length @initform defineParam("float" 0.25) )
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj ganFet)) 
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
+);defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( drawFet (( gf ganFet ))
+  let( (width length spacing rtran)
+    m     = getParamValue(gf 'm)
+    width = getParamValue(gf 'width)
+    length = getParamValue(gf 'length)
+    spacing = 300.0
+    shift = 0.0
+    for( i 0 sub1(m)
+       gate = makeInstance( 'ganGate )
+       setRef(gate getRef(gf))
+       setWidth(gate width)
+       setLength(gate length)
+       generate(gate)
+       translate(gate list(0.0 shift))  
+       render(gate)
+       rtran = getRectTran(gate)
+       rtsAdd(gf->rtrans rtran)
+       shift = shift + spacing
+    );for
+    rtsUnion(gf->rtrans)
+    setSlotValue(gf 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
+    ; No multiple inheritance
+    ;callNextMethod()
+  );let
+);defmethod
+;######################################################################
+; Returns gates's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((gf ganFet))
+  slotValue(gf 'coreBBox)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

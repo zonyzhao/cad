@@ -128,4 +128,17 @@ renderStack(stack)
 dbSave(cvRef)
 dbClose(cvRef)
 
- 
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-4: Translating an assembly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+gate = makeInstance( 'ganGate )
+lib = "pd0164"
+name = "ganGatePreview"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "w")
+setRef(gate cv)
+setWidth(gate 100.0)
+setLength(gate 0.25)
+translate(gate list(0.0 300.0))
+generate(gate)

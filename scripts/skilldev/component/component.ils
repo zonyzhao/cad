@@ -1,0 +1,64 @@
+;###################################################################
+;#   component.ils: Container class containing a collection
+;                   of assemblies
+;###################################################################
+defclass( component ()
+	  (
+		( assemblies )
+		( ref @reader getRef @writer setRef)
+		( rtrans )				  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( initializeInstance @after ((obj component)) 
+	   obj->assemblies = makeInstance( 'collection )
+	   obj->ref = nil
+	   obj->rtrans = makeInstance( 'rectTrans ) 
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Adds an assembly to a component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( add (( comp component ) arg)
+  add(comp->assemblies arg)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Translates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( comp component ) arg)
+  foreach(ass getCollection(comp->assemblies)
+    translate(ass arg)
+  );foreach
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Rotates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rotate (( comp component ) arg)
+  foreach(ass getCollection(comp->assemblies)
+    rotate(ass arg)
+  );foreach
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Render the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( render (( comp component ))
+  if(!isEmpty(comp->assemblies) then
+    foreach(ass getCollection(comp->assemblies)
+      setRef(ass getRef(comp))
+      render(ass)
+    );foreach
+  else
+    println("ERROR(component): no assemblies to render")
+  );if
+);defmethod
+
+
+;###################################################################
+;###################################################################
+;###################################################################

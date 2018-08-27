@@ -1,50 +1,33 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-0: Check for object Dependency Existence
-;       and construction
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'gateStem )
-gs = makeInstance( 'gateStem )
-classp( gs 'gateStem)
-classOf(gs)
-className(findClass( 'gateStem ))
-superclassesOf(classOf(gs))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'gatePad )
-gp = makeInstance( 'gatePad )
-classp( gp 'gatePad)
-classOf(gp)
-className(findClass( 'gatePad ))
-superclassesOf(classOf(gp))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Check for object Existence
-;       and construction
+; UT-0: Check for object dependency 
+;       existence
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 findClass( 'ganGate )
-gt = makeInstance( 'ganGate )
-classp( gt 'ganGate)
-classOf(gt)
+gg = makeInstance( 'ganGate )
+classp( gg 'ganGate)
+classOf(gg)
 className(findClass( 'ganGate ))
-superclassesOf(classOf(gt))
-
+superclassesOf(classOf(gg))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Preview the gate layout
+; UT-2: Preview the gate layout
 ;       prior to commiting to PCELL
 ;       supermaster
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-gt = makeInstance( 'ganGate )
-setWidth(gt 100.0)
-setLength(gt 0.25)
+gg = makeInstance( 'ganGate )
+setWidth(gg 100.0)
+setLength(gg 0.25)
 lib = "pd0164"
 name = "ganGatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
-setRef(gt cv)
-generate(gt)
+setRef(gg cv)
+generate(gg)
+render(gg)
 ; FIXME: Rendering of the geom bbox is broken ...
-;setRef(gt->rtrans->rtran cv)
-;render(gt->rtrans->rtran)
+;setRef(gg->rtrans->rtran cv)
+;render(gg->rtrans->rtran)
 ;cv~>bBox
-;gt->coreBBox
+;gg->coreBBox
 dbSave(cv)
 dbClose(cv)
+
 

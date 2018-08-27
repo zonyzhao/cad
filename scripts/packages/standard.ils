@@ -2600,7 +2600,7 @@ defmethod( render (( geom geometry ) )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
-;# edge2.ils: Polygon edge Class inheriting from line class
+;# assembly.ils: Assembly class of geometries - base class
 ;######################################################
 defclass( assembly ()
 	  (
@@ -2610,7 +2610,6 @@ defclass( assembly ()
 	     ( rtrans )
 	  )				  
 );defclass
-
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -2620,21 +2619,18 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->layers = makeInstance( 'collection )
 	   obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
-
 ;#####################################################
 ; Gets a list of layer objects in the assembly
 ;#####################################################
 defmethod( getRectTran (( ass assembly ))
   getRectTran(ass->rtrans)
 );defmethod
-
 ;#####################################################
 ; Gets a list of layer objects in the assembly
 ;#####################################################
 defmethod( getLayers (( ass assembly ))
   ass->layers->list
 );defmethod
-
 ;#####################################################
 ; Adds shapes to the assembly via the shapes container. 
 ;#####################################################
@@ -2652,14 +2648,12 @@ defmethod( addGeometry (( ass assembly ) arg )
     nil
   );if
 );defmethod
-
 ;#####################################################
 ; Adds shapes to the assembly via the shapes container. 
 ;#####################################################
 defmethod( resetLayers (( ass assembly ))
   resetCollection(ass->layers)
 );defmethod
-
 ;#####################################################
 ; Creates the layers in the layer stackup needed to 
 ; render the shape
@@ -2704,11 +2698,17 @@ defmethod( setShapesOnLayers (( ass assembly ))
 ;#####################################################
 defmethod( translate (( ass assembly ) arg )
   if(listp(arg) then
-    println("INFO:(assembly): translating assembly geometries")
-    foreach( geom getCollection(ass->geometries)
-      translate(geom arg)
-    );foreach
-    translate(ass->rtrans arg)
+    if(null(getCollection(gate->geometries)) then
+      println("ERROR(assembly): No geometries in assembly to translate")
+    else
+      println("INFO:(assembly): translating assembly geometries")
+      foreach( geom getCollection(ass->geometries)
+        println("INFO:(assembly): geometry translated")
+        translate(geom arg)
+      );foreach
+      println("INFO:(assembly): rectran translated")
+      translate(ass->rtrans arg)
+    );if
   else
     println("ERROR(assembly): requires a list argument")   
   );if
@@ -8587,14 +8587,12 @@ defmethod( generate (( gt ganGate ))
     setBsegLayer(gt->pad "thick")
     setRef(gt->pad getRef(gt))
     generate(gt->pad)
-    render(gt->pad)
     setWidth(gt->stem width)
     setLength(gt->stem length)
     setWidthTaper(gt->stem 2.5)
     setLayer(gt->stem "membrane")
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
-    render(gt->stem)
     stemRectTran = getRectTran(gt->stem)
     padRectTran = getRectTran(gt->pad)
     rtsAdd(gt->rtrans stemRectTran) 
