@@ -19,7 +19,17 @@ classOf(sda)
 className(findClass( 'sdArray ))
 superclassesOf(classOf(sda))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Check for object Existence
+; UT-2: Check for object Dependency 
+;        Existence
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+findClass( 'fetBody )
+fb = makeInstance( 'fetBody )
+classp( fb 'fetBody)
+classOf(fb)
+className(findClass( 'fetBody ))
+superclassesOf(classOf(fb))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3: Check for object Existence
 ;       and construction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 findClass( 'ganFet )
@@ -29,7 +39,7 @@ classOf(gf)
 className(findClass( 'ganFet ))
 superclassesOf(classOf(gf))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-3: Preview the ganFet layout
+; UT-4: Preview the ganFet layout
 ;       prior to commiting to PCELL
 ;       supermaster
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,7 +50,8 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "w")
 setRef(gf cv)
-setM(gf 3)
+setM(gf 2)
+setWidth(gf 100.0)
 generate(gf)
 render(gf)
 ;setRef(gf->rtrans->rtran cv)

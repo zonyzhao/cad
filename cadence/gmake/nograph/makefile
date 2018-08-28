@@ -38,7 +38,7 @@ assemblies = gatePad gateStem planarResistor planarCap outline \
              memsCapBotCont memsCapTopCont cframe cframe2 \
              sdArray 
 #########################################################################
-components = ganGate
+components = ganGate fetBody
 #########################################################################
 structures = ganFet
 #########################################################################
