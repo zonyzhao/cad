@@ -8,12 +8,12 @@
 ;IQ score is 100 (best is 100).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( collection (cadObj)
-	  (
-		( n @reader getLen)
-		( list @reader getList @writer setList )
-		( cList )
-		( cType )		  
-	  )
+  (
+    ( n @reader getLen )
+    ( list @reader getList @writer setList )
+    ( cList )
+    ( cType )		  
+  )
 );defclass
 
 ;############################################################

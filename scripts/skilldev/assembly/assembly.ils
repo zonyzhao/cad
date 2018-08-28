@@ -91,13 +91,12 @@ defmethod( setShapesOnLayers (( ass assembly ))
     );if
   );let
 );defmethod
-
 ;#####################################################
 ; Translates the assembly
 ;#####################################################
 defmethod( translate (( ass assembly ) arg )
   if(listp(arg) then
-    if(null(getCollection(gate->geometries)) then
+    if(null(getCollection(ass->geometries)) then
       println("ERROR(assembly): No geometries in assembly to translate")
     else
       println("INFO:(assembly): translating assembly geometries")
@@ -112,7 +111,6 @@ defmethod( translate (( ass assembly ) arg )
     println("ERROR(assembly): requires a list argument")   
   );if
 );defmethod
-
 ;#####################################################
 ; Rotate the assembly
 ;#####################################################
@@ -122,7 +120,6 @@ defmethod( rotate (( ass assembly ) arg )
     );foreach
     rotate(geom->rtran arg)
 );defmethod
-
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
 ; shapes of the assembly
@@ -137,7 +134,6 @@ defmethod( renderAssembly (( ass assembly ))
     t
   );if
 );defmethod
-
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
 ; shapes of the assembly
@@ -156,7 +152,6 @@ defmethod( render (( ass assembly ))
     println("ERROR(assembly): Empty geometry collection")
   );if
 );defmethod
-
 ;######################################################
 ;######################################################
 ;######################################################

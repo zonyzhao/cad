@@ -456,12 +456,12 @@ defmethod( resetList (( list listfun ))
 ;IQ score is 100 (best is 100).
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( collection (cadObj)
-	  (
-		( n @reader getLen)
-		( list @reader getList @writer setList )
-		( cList )
-		( cType )		  
-	  )
+  (
+    ( n @reader getLen )
+    ( list @reader getList @writer setList )
+    ( cList )
+    ( cType )		  
+  )
 );defclass
 
 ;############################################################
@@ -2692,13 +2692,12 @@ defmethod( setShapesOnLayers (( ass assembly ))
     );if
   );let
 );defmethod
-
 ;#####################################################
 ; Translates the assembly
 ;#####################################################
 defmethod( translate (( ass assembly ) arg )
   if(listp(arg) then
-    if(null(getCollection(gate->geometries)) then
+    if(null(getCollection(ass->geometries)) then
       println("ERROR(assembly): No geometries in assembly to translate")
     else
       println("INFO:(assembly): translating assembly geometries")
@@ -2713,7 +2712,6 @@ defmethod( translate (( ass assembly ) arg )
     println("ERROR(assembly): requires a list argument")   
   );if
 );defmethod
-
 ;#####################################################
 ; Rotate the assembly
 ;#####################################################
@@ -2723,7 +2721,6 @@ defmethod( rotate (( ass assembly ) arg )
     );foreach
     rotate(geom->rtran arg)
 );defmethod
-
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
 ; shapes of the assembly
@@ -2738,7 +2735,6 @@ defmethod( renderAssembly (( ass assembly ))
     t
   );if
 );defmethod
-
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
 ; shapes of the assembly
@@ -2757,10 +2753,119 @@ defmethod( render (( ass assembly ))
     println("ERROR(assembly): Empty geometry collection")
   );if
 );defmethod
-
 ;######################################################
 ;######################################################
 ;######################################################
+;###################################################################
+;#   component.ils: Container class containing a collection
+;                   of assemblies
+;###################################################################
+defclass( component (cadObj)
+  (
+    ( assemblies @reader getAssemblies @writer setAssemblies)
+    ( rtrans )				  
+  )
+);defClass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( initializeInstance @after ((obj component)) 
+	   obj->assemblies = makeInstance( 'collection )
+	   obj->rtrans = makeInstance( 'rectTrans ) 
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Adds an assembly to a component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( addAssembly (( comp component ) arg)
+  add(comp->assemblies arg)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Translates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( comp component ) arg)
+  foreach(ass getCollection(comp->assemblies)
+    translate(ass arg)
+  );foreach
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Rotates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rotate (( comp component ) arg)
+  foreach(ass getCollection(comp->assemblies)
+    rotate(ass arg)
+  );foreach
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Render the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( render (( comp component ))
+  if(!isEmpty(comp->assemblies) then
+    foreach(ass getCollection(comp->assemblies)
+      setRef(ass getRef(comp))
+      render(ass)
+    );foreach
+  else
+    println("ERROR(component): no assemblies to render")
+  );if
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################
+;###################################################################
+; structure.ils: Container class containing a collection
+;                   of components
+;###################################################################
+defclass( structure (cadObj)
+  (
+    ( components @reader getComponents @writer setComponents )
+    ( rtrans )				  
+  )
+);defClass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( initializeInstance @after ((obj structure)) 
+	   obj->components = makeInstance( 'collection )
+	   obj->rtrans = makeInstance( 'rectTrans ) 
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Adds an component to a structure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( addstructure (( struct structure ) arg)
+  add(struct->components arg)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Translates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( translate (( struct structure ) arg)
+  foreach(comp getCollection(struct->components)
+    translate(comp arg)
+  );foreach
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Rotates the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( rotate (( struct structure ) arg)
+  foreach(comp getCollection(struct->components)
+    rotate(comp arg)
+  );foreach
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Render the component
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( render (( struct structure ))
+  if(!isEmpty(struct->components) then
+    foreach(comp getCollection(struct->components)
+      setRef(comp getRef(struct))
+      render(comp)
+    );foreach
+  else
+    println("ERROR(structure): no components to render")
+  );if
+);defmethod
+;###################################################################
+;###################################################################
+;###################################################################
 ;######################################################
 ; stackup.ils: container class for multiple layers 
 ;               forming a layout stackup for a number
@@ -8545,65 +8650,7 @@ defmethod( generate (( array sdArray ))
 ;######################################################
 ;######################################################
 ;######################################################
-;######################################################
-; ganGate.ils: GaN fet gate class
-;######################################################
-defclass( ganGate (assembly)
-  (
-    ( width  @reader getWidth @writer setWidth )
-    ( length @reader getLength @writer setLength )
-    ( stem )
-    ( pad )
-    ( centroid )
-    ( ref @reader getRef @writer setRef )
-    ( rtrans )
-    ( coreBBox @initarg coreBBox )
-  ) 				  
-);defclass
-;#####################################################
-; This method initializes the class
-;#####################################################
-defmethod( initializeInstance @after ((obj ganGate)) 
-  obj->width = 100.0
-  obj->length = 5.0
-  obj->stem = makeInstance( 'gateStem )
-  obj->pad = makeInstance( 'gatePad )
-  obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
-);defmethod
-;######################################################
-; Draws the gate
-;######################################################
-defmethod( generate (( gt ganGate ))
-  let( (width length stemRectTran padRectTran)
-    width = getWidth(gt)
-    length = getLength(gt)
-    setWidthInner(gt->pad 13.5)
-    setHeightInner(gt->pad 4.0)
-    setWidthOutter(gt->pad 13.5)
-    setHeightOutter(gt->pad 5.6)
-    setInnerLayer(gt->pad "resistor")
-    setOutterLayer(gt->pad "membrane")
-    setBsegLayer(gt->pad "thick")
-    setRef(gt->pad getRef(gt))
-    generate(gt->pad)
-    setWidth(gt->stem width)
-    setLength(gt->stem length)
-    setWidthTaper(gt->stem 2.5)
-    setLayer(gt->stem "membrane")
-    setRef(gt->stem getRef(gt))
-    generate(gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
-    rtsUnion(gt->rtrans)
-    ;rtsSetBbx(gt list( gt->rtrans->rtran->ll gt->rtrans->rtran->ur))
-  );let
-);defmethod
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; generic.ils: generic functions
+; generic.ils: generic functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function
 ; removes all methods defined by the previous defgeneric from

@@ -23,7 +23,7 @@ sdir = "/users/1127110/cad/scripts/"
 #########################################################################
 skillDevPackage = cadObj listfun collection coord2 point2 points2 rotation2 \
                   polygon2 bbox rectTran rectTrans transform2 transformation2 \
-                  geometry assembly stackup cv instance reticle \
+                  geometry assembly component structure stackup cv instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
                   overhead reticleFrame numeric shape layer snapshot pcell \
                   reticleArray wafer
@@ -36,7 +36,11 @@ geometries = trirect capsule
 #########################################################################
 assemblies = gatePad gateStem planarResistor planarCap outline \
              memsCapBotCont memsCapTopCont cframe cframe2 \
-             sdArray ganGate
+             sdArray 
+#########################################################################
+components = ganGate
+#########################################################################
+structures = ganFet
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################

@@ -1,7 +1,8 @@
 ;######################################################
-; ganGate.ils: GaN fet gate class
+; ganGate.ils: GaN fet gate class. Inherits from 
+;              component class
 ;######################################################
-defclass( ganGate (assembly)
+defclass( ganGate (component)
   (
     ( width  @reader getWidth @writer setWidth )
     ( length @reader getLength @writer setLength )
@@ -10,10 +11,7 @@ defclass( ganGate (assembly)
     ( centroid )
     ( ref @reader getRef @writer setRef )
     ( rtrans )
-    ( coreBBox @initarg coreBBox )lib = "pd0164"
-name = "ganFetPreview"
-view = "layout"
-type = "maskLayout"
+    ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
 ;#####################################################

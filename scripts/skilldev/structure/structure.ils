@@ -1,53 +1,53 @@
 ;###################################################################
-;#   component.ils: Container class containing a collection
-;                   of assemblies
+; structure.ils: Container class containing a collection
+;                   of components
 ;###################################################################
-defclass( component (cadObj)
+defclass( structure (cadObj)
   (
-    ( assemblies @reader getAssemblies @writer setAssemblies)
+    ( components @reader getComponents @writer setComponents )
     ( rtrans )				  
   )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
-defmethod( initializeInstance @after ((obj component)) 
-	   obj->assemblies = makeInstance( 'collection )
+defmethod( initializeInstance @after ((obj structure)) 
+	   obj->components = makeInstance( 'collection )
 	   obj->rtrans = makeInstance( 'rectTrans ) 
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Adds an assembly to a component
+; Adds an component to a structure
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( addAssembly (( comp component ) arg)
-  add(comp->assemblies arg)
+defmethod( addstructure (( struct structure ) arg)
+  add(struct->components arg)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Translates the component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( translate (( comp component ) arg)
-  foreach(ass getCollection(comp->assemblies)
-    translate(ass arg)
+defmethod( translate (( struct structure ) arg)
+  foreach(comp getCollection(struct->components)
+    translate(comp arg)
   );foreach
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Rotates the component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( rotate (( comp component ) arg)
-  foreach(ass getCollection(comp->assemblies)
-    rotate(ass arg)
+defmethod( rotate (( struct structure ) arg)
+  foreach(comp getCollection(struct->components)
+    rotate(comp arg)
   );foreach
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Render the component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( render (( comp component ))
-  if(!isEmpty(comp->assemblies) then
-    foreach(ass getCollection(comp->assemblies)
-      setRef(ass getRef(comp))
-      render(ass)
+defmethod( render (( struct structure ))
+  if(!isEmpty(struct->components) then
+    foreach(comp getCollection(struct->components)
+      setRef(comp getRef(struct))
+      render(comp)
     );foreach
   else
-    println("ERROR(component): no assemblies to render")
+    println("ERROR(structure): no components to render")
   );if
 );defmethod
 ;###################################################################
