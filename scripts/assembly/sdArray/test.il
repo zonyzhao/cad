@@ -10,7 +10,7 @@ className(classOf(sda))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate and render unit 
-;       gate stem
+;       source drain array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 sda = makeInstance( 'sdArray )
 setM(sda 4)

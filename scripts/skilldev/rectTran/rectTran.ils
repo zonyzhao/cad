@@ -1,14 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  rectTran.ils: Rectangle transform class
-;  FIXME: This seems like it should inherit from bbox. Needs a big refactor!! 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTran (bbox)
-	  (
-		( anchor @reader getAnchor @writer setAnchor )
-		( pivot @reader getPivot @writer setPivot )			  
-	  )
-) ; defClass
-
+  (
+    ( anchor @reader getAnchor @writer setAnchor )
+    ( pivot @reader getPivot @writer setPivot )			  
+  )
+);defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor method
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -16,14 +14,12 @@ defmethod( initializeInstance @after ((obj rectTran))
   obj->anchor = makeInstance( 'point2 )
   obj->pivot = makeInstance( 'point2 )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Converts a rectTran to a boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( rtran2bbox (( rt rectTran ))
   setBbx(rt list(getLl(rt) getUr(rt)))
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Calculates the centroid of the rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -38,7 +34,6 @@ defmethod( calculateCentroid (( rt rectTran ))
     setCentroid(rt->transformation list(xval yval))
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Checks if the rectTran is centered at that origin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,7 +44,6 @@ defmethod( isCentered (( rt rectTran ))
     nil
   );if
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Centers the rectTran about the origin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,49 +56,42 @@ defmethod( center (( rt rectTran ))
     );if
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set Upper Right
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( setUpperRight (( rt rectTran ) arg )
   setUr(rt arg)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get Upper Right
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getUpperRight (( rt rectTran ))
   getUr(rt)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set Upper Right
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( setLowerLeft (( rt rectTran ) arg )
   setLl(rt arg)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get Upper Right
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getLowerLeft (( rt rectTran ))
   getLl(rt)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; sets the centroid of the rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( setCentroid (( rt rectTran ) arg)
   setCentroid(rt->transformation arg)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; gets the centroid of the rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getCentroid (( rt rectTran ))
   getCentroid(rt->transformation)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Zeros out the rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -113,7 +100,6 @@ defmethod( zero (( rt rectTran ))
   setUpperRight(rt list(0.0 0.0))
   setLowerLeft(rt list(0.0 0.0))
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clone the current rectTran to the input recTran argument
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -127,7 +113,6 @@ defmethod( clone (( rt rectTran ) arg)
     println("ERROR(rectTran): recTran object argument required")
   );
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Area of recTran - rectTran must be centered about origin
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -138,7 +123,6 @@ defmethod( area (( rt rectTran ))
     println("ERROR(rectTran): rectTran is not centered at origin")
   );if
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method translates the recTran about its centroid
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -154,7 +138,6 @@ defmethod( translate (( rt rectTran ) arg )
 	;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
   );let 
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the vertices from the rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,7 +156,6 @@ defmethod( getVertices (( rt rectTran ))
     list(v0 v1 v2 v3 v4)  
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method rotates the rectTran about its centroid
 ; The rectran's centroid must be centered at origin
@@ -189,14 +171,12 @@ defmethod( rotate (( rt rectTran ) arg )
       setLl(rt getLl(poly->rtran))	
   );let
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method scales the rectTran about its centroid
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;defmethod( scale (( rt rectTran ) arg)
 ;	nil
 ;);defMethod
-
 ;###############################################################################
 ; render the rectTran
 ;###############################################################################
@@ -211,20 +191,24 @@ defmethod( render (( rt rectTran ))
     println("ERROR(recTran): No UpperRight or LowerLeft Coordinate")
   );if   
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FIXME: This should be "dropped" into the bbox class
 ; This method returns the smallest bounding rectangle composed of the
 ; current bounding rectangle and the bounding rectangle of the input 
 ; rectTran argument
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( union (( rt rectTran ) arg)
- let( ( maxx minx maxy miny )
+ let( ( maxx minx maxy miny ur ll ura lla)
+    ur  = getUr(rt)
+    ll  = getLl(rt)
+    ura = getUr(arg)
+    lla = getLl(arg)
     if( classp(arg 'rectTran) then
       println("INFO(rectran): Performing the union of two rectTrans")
-      maxx =  max(xCoord(getUr(rt)) xCoord(getUr(arg)))
-      minx =  min(xCoord(getLl(rt))  xCoord(getLl(arg)))
-      maxy =  max(yCoord(getUr(rt)) yCoord(getUr(arg)))
-      miny =  min(yCoord(getLl(rt))  yCoord(getLl(arg)))
+      maxx =  max(xCoord(ur) xCoord(ura))
+      minx =  min(xCoord(ll) xCoord(lla))
+      maxy =  max(yCoord(ur) yCoord(ura))
+      miny =  min(yCoord(ll) yCoord(lla))
       setUr(rt list(maxx maxy))
       setLl(rt list(minx miny))
     else
@@ -232,8 +216,12 @@ defmethod( union (( rt rectTran ) arg)
     );if  
   );let
 );defMethod
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( validate (( rt rectTran ))
+  nil
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; FIXME: the methods below should be part of a "rectTrans" class that
 ;        operates on a collection of rectTran objects
@@ -265,7 +253,6 @@ defmethod( union (( rt rectTran ) arg)
 ; 	);cond
 ;  );let
 ;);defmethod
-	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts The bbox Origin To the Upper Right Quadrant of the 
 ; cellviews master grid field
@@ -288,7 +275,6 @@ defmethod( union (( rt rectTran ) arg)
 ;	  getbBox(bb)
 ;  );let
 ;);defMethod	
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts bbox Origin by provided dx and dy values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -296,7 +282,6 @@ defmethod( union (( rt rectTran ) arg)
 ;  let( ( sx sy )	
 ;  );let
 ;) ; defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Shifts cellview bbox Origin by provided dx and dy values
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -320,7 +305,6 @@ defmethod( union (( rt rectTran ) arg)
 ;		getbBox(bb)
 ;		)
 ;) ; defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,45 @@
+;######################################################
+; fetBody.ils: FET body class. Inherits from 
+;              component class. Container class for
+;              assemblies
+;######################################################
+defclass( fetBody (component)
+  (
+    ( m       @reader getM       @writer setM )
+    ( width   @reader getWidth   @writer setWidth )
+    ( length  @reader getLength  @writer setLength )
+    ( spacing @reader getSpacing @writer setSpacing )
+    ( centroid )
+    ( rtrans )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj fetBody))
+  obj->m        = 1 
+  obj->width    = 100.0
+  obj->length   = 50.0
+  obj->spacing  = 50.0
+  obj->centroid = makeInstance('point2)
+  obj->rtrans   = makeInstance('rectTrans)
+);defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( generate (( fb fetBody ))
+  let( (width length sd )
+    width = getWidth(fb)
+    length = getLength(fb)
+    sd = makeInstance( 'sdArray )
+    setM(sd getM(fb))
+    generate(sd)
+    rectTran = getRectTran(sd->rtrans)
+    rtsAdd(fb->rtrans rectTran) 
+    rtsUnion(fb->rtrans)
+    addAssembly(fb sd)
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

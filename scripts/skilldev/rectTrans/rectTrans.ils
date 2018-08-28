@@ -2,12 +2,11 @@
 ;;;;;;;;;;;;;;;;  rectTrans.ils: container class for rectTran 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTrans (cadObj)
-	  (
-		( rtrans @reader getRtrans )
-		( rtran @reader getRectTran )		  
-	  )
-) ; defclass
-
+  (
+    ( rtrans @reader getRtrans )
+    ( rtran @reader getRectTran )		  
+  )
+);defclass
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -15,7 +14,6 @@ defmethod( initializeInstance @after ((obj rectTrans))
   obj->rtrans = makeInstance( 'collection )
   obj->rtran = makeInstance( 'rectTran )
 );defmethod
-
 ;#####################################################
 ; Add rectTran object to rectTrans collection
 ;#####################################################
@@ -26,19 +24,22 @@ defmethod( rtsAdd ((rts rectTrans) arg)
     println("ERROR(rectTrans): Argument is not a rectTran object")
   );if
 );defmethod
-
 ;#####################################################
 ; Generate the rectTran union of all the transforms
 ; in the  geometry
 ;#####################################################
 defmethod( rtsUnion (( rts rectTrans ))
-  zero(rts->rtran)
   foreach( rt getCollection(rts->rtrans)
-    union(rts->rtran rt)
-  ) 
-  calculateCentroid(rts->rtran)
+    if(!null(rt->bbox) then
+      union(rts->rtran rt)
+    else
+      println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
+    );if
+  );foreach 
+  if(!null(rts->rtran->bbox) then
+    calculateCentroid(rts->rtran)
+  );if
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Translates a rectran and rectrans
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,7 +49,6 @@ defmethod( translate (( rts rectTrans ) arg)
   );foreach
   translate(rts->rtran arg)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
