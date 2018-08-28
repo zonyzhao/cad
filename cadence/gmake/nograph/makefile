@@ -58,7 +58,7 @@ paths:
 	@echo PATH is $$PATH
 	@echo CDS_LIC_FILE is $$CDS_LIC_FILE
 
-allLibs: skilldev geomObj polygon geometry assembly pcAPI pcells
+allLibs: skilldev geomObj polygon geometry assembly component structure pcAPI pcells
 
 .phony: skilldev
 skilldev:
@@ -82,6 +82,14 @@ geometry:
 .phony: assembly
 assembly:
 	$(foreach var, $(assemblies), cat $(sdir)/assembly/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: component
+component:
+	$(foreach var, $(components), cat $(sdir)/components/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
+
+.phony: structure
+structure:
+	$(foreach var, $(structures), cat $(sdir)/structures/$(var)/$(var).ils >>  $(sdir)/packages/$(packName).ils;)
 
 .phony: pcAPI
 pcAPI:

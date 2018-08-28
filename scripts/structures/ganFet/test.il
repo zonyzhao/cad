@@ -40,7 +40,9 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "w")
 setRef(gf cv)
-drawFet(gf)
+setM(gf 3)
+generate(gf)
+render(gf)
 ;setRef(gf->rtrans->rtran cv)
 ; FIXME: Rendering of the geom bbox is broken ...
 ;render(gf->rtrans->rtran)

@@ -1,6 +1,6 @@
 ;###################################################################
-;#   component.ils: Container class containing a collection
-;                   of assemblies
+; component.ils: Container class containing a collection
+;                of assemblies
 ;###################################################################
 defclass( component (cadObj)
   (

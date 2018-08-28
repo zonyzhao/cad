@@ -2757,8 +2757,8 @@ defmethod( render (( ass assembly ))
 ;######################################################
 ;######################################################
 ;###################################################################
-;#   component.ils: Container class containing a collection
-;                   of assemblies
+; component.ils: Container class containing a collection
+;                of assemblies
 ;###################################################################
 defclass( component (cadObj)
   (
@@ -2831,7 +2831,7 @@ defmethod( initializeInstance @after ((obj structure))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Adds an component to a structure
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
-defmethod( addstructure (( struct structure ) arg)
+defmethod( addComponent (( struct structure ) arg)
   add(struct->components arg)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8650,7 +8650,122 @@ defmethod( generate (( array sdArray ))
 ;######################################################
 ;######################################################
 ;######################################################
-; generic.ils: generic functions
+;######################################################
+; ganGate.ils: GaN fet gate class. Inherits from 
+;              component class
+;######################################################
+defclass( ganGate (component)
+  (
+    ( width  @reader getWidth @writer setWidth )
+    ( length @reader getLength @writer setLength )
+    ( stem )
+    ( pad )
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj ganGate)) 
+  obj->width = 100.0
+  obj->length = 5.0
+  obj->stem = makeInstance( 'gateStem )
+  obj->pad = makeInstance( 'gatePad )
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
+);defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( generate (( gt ganGate ))
+  let( (width length stemRectTran padRectTran)
+    width = getWidth(gt)
+    length = getLength(gt)
+    setWidthInner(gt->pad 13.5)
+    setHeightInner(gt->pad 4.0)
+    setWidthOutter(gt->pad 13.5)
+    setHeightOutter(gt->pad 5.6)
+    setInnerLayer(gt->pad "resistor")
+    setOutterLayer(gt->pad "membrane")
+    setBsegLayer(gt->pad "thick")
+    setRef(gt->pad getRef(gt))
+    generate(gt->pad)
+    addAssembly(gt gt->pad)
+    setWidth(gt->stem width)
+    setLength(gt->stem length)
+    setWidthTaper(gt->stem 2.5)
+    setLayer(gt->stem "membrane")
+    setRef(gt->stem getRef(gt))
+    generate(gt->stem)
+    addAssembly(gt gt->stem)
+    stemRectTran = getRectTran(gt->stem)
+    padRectTran = getRectTran(gt->pad)
+    rtsAdd(gt->rtrans stemRectTran) 
+    rtsAdd(gt->rtrans padRectTran)
+    rtsUnion(gt->rtrans)
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
+; ganFet.ils: GaN FET Structure. Inherits from structure
+;             class which is an aggregate component class.
+;######################################################
+defclass( ganFet (structure)
+  (	  
+    ( m      @reader getM      @writer setM )
+    ( width  @reader getWidth  @writer setWidth)
+    ( length @reader getLength @writer setLength )
+    ( centroid @reader getCentroid @writer setCentroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj ganFet)) 
+  obj->m = 1
+  obj->width = 100.0
+  obj->length = 0.2
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
+);defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( generate (( gf ganFet ))
+  let( (m width length spacing shift gate rtran)
+    m       = getM(gf)
+    width   = getWidth(gf)
+    length  = getLength(gf)
+    spacing = 50.0
+    shift   = 0.0
+    for( i 0 sub1(m)
+       println("INFO(ganFet): Generating gate structure")
+       gate = makeInstance( 'ganGate )
+       setRef(gate getRef(gf))
+       setWidth(gate width)
+       setLength(gate length)
+       generate(gate)
+       translate(gate list(0.0 shift))
+       rtran = getRectTran(gate->rtrans)
+       rtsAdd(gf->rtrans rtran)
+       addComponent(gf gate)
+       shift = shift + spacing
+    );for
+    rtsUnion(gf->rtrans)
+    ; No multiple inheritance
+    ;callNextMethod()
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; generic.ils: generic functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Defines the generic function for draw. Redefining a generic function
 ; removes all methods defined by the previous defgeneric from

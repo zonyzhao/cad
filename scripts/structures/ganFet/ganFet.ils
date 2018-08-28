@@ -19,7 +19,7 @@ defclass( ganFet (structure)
 defmethod( initializeInstance @after ((obj ganFet)) 
   obj->m = 1
   obj->width = 100.0
-  obj->length = 0.25
+  obj->length = 0.2
   obj->centroid = makeInstance('point2)
   obj->rtrans = makeInstance('rectTrans)
 );defmethod
@@ -31,7 +31,7 @@ defmethod( generate (( gf ganFet ))
     m       = getM(gf)
     width   = getWidth(gf)
     length  = getLength(gf)
-    spacing = 300.0
+    spacing = 50.0
     shift   = 0.0
     for( i 0 sub1(m)
        println("INFO(ganFet): Generating gate structure")
@@ -41,9 +41,9 @@ defmethod( generate (( gf ganFet ))
        setLength(gate length)
        generate(gate)
        translate(gate list(0.0 shift))
-       rtran = getRectTran(gate)
+       rtran = getRectTran(gate->rtrans)
        rtsAdd(gf->rtrans rtran)
-       addAssembly(gf gate)
+       addComponent(gf gate)
        shift = shift + spacing
     );for
     rtsUnion(gf->rtrans)
