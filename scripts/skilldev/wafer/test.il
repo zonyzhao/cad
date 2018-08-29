@@ -207,63 +207,103 @@ waf->retArray->ur
 ; wafer level die sites
 getWaferDieSites(waf)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Wafer Site Numbering Checks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ret = getItem(waf->retArray->reticles 0)
+getWaferRow(ret)
+getWaferCol(ret)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Wafer Reticle: 0, Wafer Die Site: 0
 getWaferRow(getItem(ret->dieSites 0))
-getWaferRow(getItem(ret->dieSites 0))
+getWaferCol(getItem(ret->dieSites 0))
 ; Wafer Reticle: 0, Wafer Die Site: 1
 getWaferRow(getItem(ret->dieSites 1))
-getWaferRow(getItem(ret->dieSites 1))
+getWaferCol(getItem(ret->dieSites 1))
 ; Wafer Reticle: 0, Wafer Die Site: 2
 getWaferRow(getItem(ret->dieSites 2))
-getWaferRow(getItem(ret->dieSites 2))
+getWaferCol(getItem(ret->dieSites 2))
 ; Wafer Reticle: 0, Wafer Die Site: 3
 getWaferRow(getItem(ret->dieSites 3))
-getWaferRow(getItem(ret->dieSites 3))
+getWaferCol(getItem(ret->dieSites 3))
 ; Wafer Reticle: 0, Wafer Die Site: 4
 getWaferRow(getItem(ret->dieSites 4))
-getWaferRow(getItem(ret->dieSites 4))
+getWaferCol(getItem(ret->dieSites 4))
 ; Wafer Reticle: 0, Wafer Die Site: 5
 getWaferRow(getItem(ret->dieSites 5))
-getWaferRow(getItem(ret->dieSites 5))
+getWaferCol(getItem(ret->dieSites 5))
 ; Wafer Reticle: 0, Wafer Die Site: 6
 getWaferRow(getItem(ret->dieSites 6))
-getWaferRow(getItem(ret->dieSites 6))
+getWaferCol(getItem(ret->dieSites 6))
 ; Wafer Reticle: 0, Wafer Die Site: 7
 getWaferRow(getItem(ret->dieSites 7))
-getWaferRow(getItem(ret->dieSites 7))
+getWaferCol(getItem(ret->dieSites 7))
 ; Wafer Reticle: 0, Wafer Die Site: 8
 getWaferRow(getItem(ret->dieSites 8))
-getWaferRow(getItem(ret->dieSites 8))
+getWaferCol(getItem(ret->dieSites 8))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ret = getItem(waf->retArray->reticles 1)
+getWaferRow(ret)
+getWaferCol(ret)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Wafer Reticle: 1, Wafer Die Site: 0
 getWaferRow(getItem(ret->dieSites 0))
-getWaferRow(getItem(ret->dieSites 0))
+getWaferCol(getItem(ret->dieSites 0))
 ; Wafer Reticle: 1, Wafer Die Site: 1
 getWaferRow(getItem(ret->dieSites 1))
-getWaferRow(getItem(ret->dieSites 1))
+getWaferCol(getItem(ret->dieSites 1))
 ; Wafer Reticle: 1, Wafer Die Site: 2
 getWaferRow(getItem(ret->dieSites 2))
-getWaferRow(getItem(ret->dieSites 2))
+getWaferCol(getItem(ret->dieSites 2))
 ; Wafer Reticle: 1, Wafer Die Site: 3
 getWaferRow(getItem(ret->dieSites 3))
-getWaferRow(getItem(ret->dieSites 3))
+getWaferCol(getItem(ret->dieSites 3))
 ; Wafer Reticle: 1, Wafer Die Site: 4
 getWaferRow(getItem(ret->dieSites 4))
-getWaferRow(getItem(ret->dieSites 4))
+getWaferCol(getItem(ret->dieSites 4))
 ; Wafer Reticle: 1, Wafer Die Site: 5
 getWaferRow(getItem(ret->dieSites 5))
-getWaferRow(getItem(ret->dieSites 5))
+getWaferCol(getItem(ret->dieSites 5))
 ; Wafer Reticle: 1, Wafer Die Site: 6
 getWaferRow(getItem(ret->dieSites 6))
-getWaferRow(getItem(ret->dieSites 6))
+getWaferCol(getItem(ret->dieSites 6))
 ; Wafer Reticle: 1, Wafer Die Site: 7
 getWaferRow(getItem(ret->dieSites 7))
-getWaferRow(getItem(ret->dieSites 7))
+getWaferCol(getItem(ret->dieSites 7))
 ; Wafer Reticle: 1, Wafer Die Site: 8
 getWaferRow(getItem(ret->dieSites 8))
+getWaferCol(getItem(ret->dieSites 8))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ret = getItem(waf->retArray->reticles 2)
+getWaferRow(ret)
+getWaferCol(ret)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Wafer Reticle: 2, Wafer Die Site: 0
+getWaferRow(getItem(ret->dieSites 0))
+getWaferCol(getItem(ret->dieSites 0))
+; Wafer Reticle: 2, Wafer Die Site: 1
+getWaferRow(getItem(ret->dieSites 1))
+getWaferCol(getItem(ret->dieSites 1))
+; Wafer Reticle: 2, Wafer Die Site: 2
+getWaferRow(getItem(ret->dieSites 2))
+getWaferCol(getItem(ret->dieSites 2))
+; Wafer Reticle: 2, Wafer Die Site: 3
+getWaferRow(getItem(ret->dieSites 3))
+getWaferCol(getItem(ret->dieSites 3))
+; Wafer Reticle: 2, Wafer Die Site: 4
+getWaferRow(getItem(ret->dieSites 4))
+getWaferCol(getItem(ret->dieSites 4))
+; Wafer Reticle: 2, Wafer Die Site: 5
+getWaferRow(getItem(ret->dieSites 5))
+getWaferCol(getItem(ret->dieSites 5))
+; Wafer Reticle: 2, Wafer Die Site: 6
+getWaferRow(getItem(ret->dieSites 6))
+getWaferCol(getItem(ret->dieSites 6))
+; Wafer Reticle: 2, Wafer Die Site: 7
+getWaferRow(getItem(ret->dieSites 7))
+getWaferCol(getItem(ret->dieSites 7))
+; Wafer Reticle: 2, Wafer Die Site: 8
 getWaferRow(getItem(ret->dieSites 8))
+getWaferCol(getItem(ret->dieSites 8))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

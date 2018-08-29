@@ -37,7 +37,9 @@ defclass( reticle (cv)
 		( innerStreetOrigs @reader getInnerStreetOrigs)	
 		( bnb @reader getBnb)	
 		( dieSiteOrig @reader getDieSiteOrig)	
-		( dieSiteArray @reader getDieSiteArray)	
+		( dieSiteArray @reader getDieSiteArray)
+		( waferRow @reader getWaferRow @writer setWaferRow)
+		( waferCol @reader getWaferCol @writer setWaferCol)	
 	  )
 );defClass
 ;#####################################################
@@ -73,6 +75,8 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->bnb = makeInstance( 'collection )
 	   obj->dieSiteOrig = nil
 	   obj->dieSiteArray = nil
+	   obj->waferRow = nil
+	   obj->waferCol = nil
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -106,6 +110,8 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->bnb	           = ret->bnb
    arg->dieSiteOrig        = ret->dieSiteOrig
    arg->dieSiteArray       = ret->dieSiteArray
+   arg->waferRow           = ret->waferRow
+   arg->waferCol           = ret->waferCol
    cloneDieSites(ret arg)
    cloneCv(ret arg)
 );defmethod

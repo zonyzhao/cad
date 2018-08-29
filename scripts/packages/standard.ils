@@ -3777,7 +3777,9 @@ defclass( reticle (cv)
 		( innerStreetOrigs @reader getInnerStreetOrigs)	
 		( bnb @reader getBnb)	
 		( dieSiteOrig @reader getDieSiteOrig)	
-		( dieSiteArray @reader getDieSiteArray)	
+		( dieSiteArray @reader getDieSiteArray)
+		( waferRow @reader getWaferRow @writer setWaferRow)
+		( waferCol @reader getWaferCol @writer setWaferCol)	
 	  )
 );defClass
 ;#####################################################
@@ -3813,6 +3815,8 @@ defmethod( initializeInstance @after ((obj reticle))
 	   obj->bnb = makeInstance( 'collection )
 	   obj->dieSiteOrig = nil
 	   obj->dieSiteArray = nil
+	   obj->waferRow = nil
+	   obj->waferCol = nil
 );defmethod
 ;######################################################
 ; Clones the contents of this reticle into arg reticle
@@ -3846,6 +3850,8 @@ defmethod( cloneRet ((ret reticle) arg)
    arg->bnb	           = ret->bnb
    arg->dieSiteOrig        = ret->dieSiteOrig
    arg->dieSiteArray       = ret->dieSiteArray
+   arg->waferRow           = ret->waferRow
+   arg->waferCol           = ret->waferCol
    cloneDieSites(ret arg)
    cloneCv(ret arg)
 );defmethod
@@ -5881,40 +5887,45 @@ defmethod( renderOutline (( waf wafer ) cv)
 ; array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( getWaferDieSites (( waf wafer ))
-  let((rrows rcols drows dcols rind dind ret die wrow wcol)
-      rrows = getRows(waf->retArray)
-      rcols = getCols(waf->retArray)
-      drows = xCoord(getDieSiteArray(waf->retArray->reticle))
-      dcols = yCoord(getDieSiteArray(waf->retArray->reticle))
-      waf->dieSiteRows = rrows*drows
-      waf->dieSiteCols = rcols*dcols
-      wrow = 0
+  let((rarows racols dsrows dscols rind dind ret die wrow wcol dsn)
+      rarows = getRows(waf->retArray)
+      racols = getCols(waf->retArray)
+      dsrows = xCoord(getDieSiteArray(waf->retArray->reticle))
+      dscols = yCoord(getDieSiteArray(waf->retArray->reticle))
+      waf->dieSiteRows = rarows*dsrows
+      waf->dieSiteCols = racols*dscols
+      printf("INFO(wafer): Total Number of Wafer Die Sites: %d\n" rarows*dsrows*racols*dscols)
       wcol = 0
-      for(i 0 sub1(rrows)
-      	wrow = wrow + i*drows
-        for(j 0 sub1(rcols)
-	  wrow = wrow + j*dcols
-	  rind = i + j
-          ret = getItem(waf->retArray->reticles rind)
-	  for(k 0 sub1(drows) 
-	    wrow = wrow++	
-	    for(l 0 sub1(dcols)
-	      wcol = wcol++
-	      dind = k + l
-	      die = getItem(ret->dieSites dind)
+      dsn  = 0
+      wrow = 0
+      for(i 0 sub1(rarows)
+        dind = 0
+	for(j 0 sub1(dsrows)
+          wcol = 0
+	  for(k 0 sub1(racols)
+	    rind = i*rarows + k
+	    ret = getItem(waf->retArray->reticles rind)
+	    setWaferRow(ret i)
+	    setWaferCol(ret k)
+	    for(l 0 sub1(dscols)
+	      dind = j*dsrows+l
+              die = getItem(ret->dieSites dind)
 	      setWaferRow(die wrow)
 	      setWaferCol(die wcol)
+	      println("##########################################################################################")
+	      printf("INFO(wafer): Numbering Wafer Die Site #%d, ROW: %d, COL: %d\n" dsn wrow wcol)
+	      printf("INFO(wafer): Reticle Array Index: ROW %d, COL %d | Die Array Index: ROW %d, COL %d\n" i k j l)
+	      dsn++
 	    );for
           );for
+	  wrow++
         );for
       );for
       list(waf->dieSiteRows waf->dieSiteCols)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Get the information about the wafer level die site
-; array
+; Print the die site numbers across the wafer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( numberDieSites (( waf wafer ))
   let(()
@@ -5923,7 +5934,7 @@ defmethod( numberDieSites (( waf wafer ))
     ; numbers
     for(i 0 sub1(getDieSiteRows)
       for(j 0 sub1(getDieSiteCols)
-         ; 
+         ; determine the pad center
          ; print a dash in middle of numpad
 	 ; print row number to left of dash
 	 ; print col number to right of dash
@@ -5931,7 +5942,6 @@ defmethod( numberDieSites (( waf wafer ))
     );for 
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
 ;######################################################
