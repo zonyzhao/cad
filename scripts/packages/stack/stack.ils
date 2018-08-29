@@ -1,0 +1,32 @@
+Stack = let( ()
+        procedure( getContents( aStack )
+          aStack->contents
+        );procedure
+	procedure( setContents( aStack aList )
+          aStack->contents = aList
+        );procedure
+	procedure( ppush( aStack aValue )
+          setContents( aStack cons( aValue getContents( aStack )))
+        );procedure
+	procedure( ppop( aStack )
+          letseq( (
+                ( contents getContents( aStack ))
+                ( v car( contents ))
+		)
+		setContents( aStack cdr( contents ))
+		v
+          );letseq
+	);procedure
+	procedure( new( initialContents )
+          list( nil 'contents initialContents )
+        );procedure
+;	list( nil
+ ;             'ppop ppop
+;	      'ppush ppush
+;	      'new new
+;             );list
+);let
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+S = Stack->new( '(1 2 3 4)) 
+Stack->ppop( S ) 
+Stack->ppush( S 1 )

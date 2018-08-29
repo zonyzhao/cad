@@ -1,0 +1,36 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Package for container functionality
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure( makeContainer( initialValue )
+  let( (( value initialValue ))
+    ; Interfaces to the package:
+    ; package getter, setter, resetter.
+    ;resetter
+    procedure( resetValue() 
+      value = initialValue
+    );procedure
+    ; setter 
+    procedure( setValue( newValue )
+      value = newValue
+    );procedure
+    ; getter
+    procedure( getValue()
+      value 
+    );procedure
+    ; Package inititializer
+    resetValue()
+    ; return the package symbolics DEPL
+    list( nil
+          'set   setValue(0)
+	  'get   getValue()
+	  'reset resetValue()
+        );list - return
+  );let
+);procedure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Example Use
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+x = makeContainer(0)
+y = makeContainer(2)
+x->get
+y->get
