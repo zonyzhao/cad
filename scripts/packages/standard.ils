@@ -8737,6 +8737,9 @@ defmethod( generate (( fb fetBody ))
     length = getLength(fb)
     sd = makeInstance( 'sdArray )
     setM(sd getM(fb))
+    setWidth(sd width)
+    setLength(sd length)
+    setSpacing(sd getSpacing(fb))
     generate(sd)
     rectTran = getRectTran(sd->rtrans)
     rtsAdd(fb->rtrans rectTran) 
@@ -8775,34 +8778,40 @@ defmethod( initializeInstance @after ((obj ganFet))
 ; Draws the gate
 ;######################################################
 defmethod( generate (( gf ganFet ))
-  let( (m width length spacing shift fb gate rtran sdLen)
-    m       = getM(gf)
-    width   = getWidth(gf)
-    length  = getLength(gf)
-    sdLen   = 10.0
-    spacing = length + sdLen
-    shift   = 0.0
+  let( (m gateWidth extension gateLength sdLength sdSpacing 
+       xtran ytran fb gate rtran gdSpacing gSdSpacing)
+    sdLength   = 25.0
+    sdSpacing  = 5.0
+    extension  = 5.0
+    gdSpacing  = 1.0
+    gSdSpacing = 5.0
+    m          = getM(gf)
+    gateWidth  = getWidth(gf) + extension + gSdSpacing
+    gateLength  = getLength(gf)
     fb = makeInstance( 'fetBody )
     setM(fb getM(gf))
     setWidth(fb getWidth(gf))
-    setLength(fb sdLen)
+    setLength(fb sdLength)
+    setSpacing(fb sdSpacing)
     generate(fb)
     rtran = getRectTran(fb->rtrans)
     rtsAdd(gf->rtrans rtran)
     addComponent(gf fb)
-    xtran = -10.4 - width/2.0
+    ytran = sdLength/2.0+sdSpacing-getLength(gf)-gdSpacing
+    gtran = sdLength + sdSpacing
+    xtran = -10.4 - getWidth(gf)/2.0 - gSdSpacing
     for( i 0 sub1(m)
        println("INFO(ganFet): Generating gate structure")
        gate = makeInstance( 'ganGate )
        setRef(gate getRef(gf))
-       setWidth(gate width)
-       setLength(gate length)
+       setWidth(gate gateWidth)
+       setLength(gate gateLength)
        generate(gate)
-       translate(gate list(xtran shift))
+       translate(gate list(xtran ytran))
        rtran = getRectTran(gate->rtrans)
        rtsAdd(gf->rtrans rtran)
        addComponent(gf gate)
-       shift = shift + spacing
+       ytran = ytran + gtran
     );for
     rtsUnion(gf->rtrans)
     ; No multiple inheritance

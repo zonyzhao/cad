@@ -23,6 +23,9 @@ superclassesOf(classOf(fb))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 fb = makeInstance( 'fetBody )
 setM(fb 2)
+setWidth(fb 50.0)
+setLength(fb 10.0)
+setSpacing(fb 5.0)
 lib = "pd0164"
 name = "fetBodyPreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")

@@ -50,8 +50,9 @@ view = "layout"
 type = "maskLayout"
 cv = dbOpenCellViewByType( lib name view type "w")
 setRef(gf cv)
-setM(gf 2)
+setM(gf 5)
 setWidth(gf 100.0)
+setLength(gf 0.2)
 generate(gf)
 render(gf)
 ;setRef(gf->rtrans->rtran cv)
