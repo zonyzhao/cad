@@ -13,10 +13,10 @@ className(classOf(sda))
 ;       source drain array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 sda = makeInstance( 'sdArray )
-setM(sda 4)
+setM(sda 6)
 setWidth(sda 100.0)
-setLength(sda 50.0)
-setSpacing(sda 50.0)
+setLength(sda 10.0)
+setSpacing(sda 5.0)
 setLayer(sda "resistor")
 setPurpose(sda "drawing")
 generate(sda)

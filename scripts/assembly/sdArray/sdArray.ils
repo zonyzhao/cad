@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( sdArray (assembly)
   (
-    ( m reader getM @writer setM )
+    ( m @reader getM @writer setM )
     ( width @reader getWidth @writer setWidth )
     ( length @reader getLength @writer setLength )
     ( spacing @reader getSpacing @writer setSpacing )
@@ -34,7 +34,15 @@ defmethod( initializeInstance @after ((obj sdArray))
 ; Generates the assembly
 ;######################################################
 defmethod( generate (( array sdArray ))
-  let(( r2r do tran cv)	
+  let(( m r2r do tran snum dnum)
+    m = getM(array)	
+    if(evenp(array->m) then
+      snum = m-(m/2-1)
+      dnum = m/2
+    else
+      snum = m - m/2
+      dnum = snum
+    );if
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Dimension Calculations
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -45,42 +53,42 @@ defmethod( generate (( array sdArray ))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     geomGroup = makeInstance('geometry)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Initially generate even only finger structure
+    ; FIXME: Initially generate EVEN only finger structure
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Create the reference source
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     setWidth(array->refRect array->width)
     setHeight(array->refRect array->length)
     generate(array->refRect)
-    tran = makeInstance( 'transform2 )
-    setVertices(tran getVertices(array->refRect))
-    setCentroid(tran getCentroid(array->refRect))
-    cloneRectTran(tran)
-    setLayer(tran getLayer(array))
-    setPurpose(tran getPurpose(array))
-    addTransform(geomGroup tran) 
+    ;tran = makeInstance( 'transform2 )
+    ;setVertices(tran getVertices(array->refRect))
+    ;setCentroid(tran getCentroid(array->refRect))
+    ;cloneRectTran(tran)
+    ;setLayer(tran getLayer(array))
+    ;setPurpose(tran getPurpose(array))
+    ;addTransform(geomGroup tran) 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Generate all sources
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    for( i 0 sub1(sub1(array->m))
+    for( i 0 sub1(snum)
        tran = makeInstance( 'transform2 )
        setVertices(tran getVertices(array->refRect))
        setCentroid(tran getCentroid(array->refRect))
        cloneRectTran(tran)
        setLayer(tran getLayer(array))
        setPurpose(tran getPurpose(array))
-       translate(tran list(0.0 (i+1)*r2r))
+       translate(tran list(0.0 i*r2r))
        addTransform(geomGroup tran)
     );for
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Generate all drains
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    for( i 0 sub1(sub1(array->m))
+    for( i 0 sub1(dnum)
        tran = makeInstance( 'transform2 )
        setVertices(tran getVertices(array->refRect))
        setCentroid(tran getCentroid(array->refRect))
        cloneRectTran(tran)
-       setLayer(tran getLayer(array))
+       setLayer(tran "electrode")
        setPurpose(tran getPurpose(array))
        translate(tran list(0.0 i*r2r+do))
        addTransform(geomGroup tran)
