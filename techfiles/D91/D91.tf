@@ -9,6 +9,16 @@ controls(
 	);viewTypeUnits
 	mfgGridResolution((0.1))
 	processFamily("D91")
+	techParams(
+          ("g2dSpacing" 1.0)
+	  ("sdHeight"  25.0)
+	  ("gateLength" 0.2)
+	  ("sd"           4)
+	  ("g"           11)
+	  ("gPad"        11)
+	  ("gBus"        10)
+	  ("gPadTop"     10)
+        );techParams
 );controls
 
 ;********************************
@@ -33,6 +43,7 @@ layerDefinitions(
   ( Bond_Ring                 32         Bond_Ri      )
   ( glass                     99         glass        )
   ( LID_ETCH                  100        LID_ETC      )
+  ( marker                    200        marker       )
  ) ;techLayers
 
  techLayerPurposePriorities(

@@ -68,6 +68,8 @@ setName(tf "D91")
 tid=getTechFileRef(tf)
 setTechLayers(tf)
 printLayers(tf)
+getControls(tf)
+isDerived(tf)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-6: derived tech file  layer names
@@ -77,6 +79,13 @@ setName(tf "reticle")
 tid=getTechFileRef(tf)
 setTechLayers(tf)
 printLayers(tf)
+tid=getTechFileRef(tf)
+setAttrList(tf)
+getAttrValueByKey(tf "libName")
+getAttrValueByKey(tf "processFamily")
+getAttrValueByKey(tf "hasConflict")
+getControls(tf)
+isDerived(tf)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
