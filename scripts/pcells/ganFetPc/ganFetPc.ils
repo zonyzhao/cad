@@ -1,5 +1,5 @@
 ;######################################################
-; ganFet.ils: GaN FET PCELL class. Inherits from PcellParam
+; ganFetPc.ils: GaN FET PCELL class. Inherits from PcellParam
 ;           making it a Cadence PCELL class
 ;######################################################
 defclass( ganFetPc (PcellParam)
@@ -21,16 +21,19 @@ defmethod( initializeInstance @after ((obj ganFetPc))
 ;######################################################
 ; Draws the gate
 ;######################################################
-defmethod( drawFet (( gf ganFetPc ))
-  let( (width length spacing rtran)
-    m     = getParamValue(gf 'm)
-    width = getParamValue(gf 'width)
+defmethod( drawFet (( gfpc ganFetPc ))
+  let( (width length spacing rtran gf)
+    m     = getParamValue(gfpc 'm)
+    width = getParamValue(gfpc 'width)
     length = 0.2
     gf = makeInstance( 'ganFet )
+    setRef(gf getRef(gfpc))
     setM(gf m)
     setWidth(gf width)
+    setLength(gf length)
     generate(gf)
-    setSlotValue(gf 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
+    render(gf)
+    setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
     ; No multiple inheritance
     ;callNextMethod()
   );let

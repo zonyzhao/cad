@@ -15,6 +15,7 @@ pcDefinePCell(
     pcell = makeInstance( 'ganFetPc )
     setRef(pcell pcCellView)
     setPcellParams(pcell pcCellView)
+    generate(pcell)
     drawFet(pcell)
   );let
 );pcDefinePCell

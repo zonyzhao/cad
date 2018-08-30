@@ -46,7 +46,7 @@ defmethod( generate (( gf ganFet ))
     rtran = getRectTran(fb->rtrans)
     rtsAdd(gf->rtrans rtran)
     addComponent(gf fb)
-    ytran = sdLength/2.0+sdSpacing-getLength(gf)-gdSpacing
+    ytran = sdLength/2.0+sdSpacing-gateLength/2.0-gdSpacing
     gtran = sdLength + sdSpacing
     xtran = -10.4 - getWidth(gf)/2.0 - gSdSpacing
     for( i 0 sub1(m)

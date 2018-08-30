@@ -44,7 +44,7 @@ structures = ganFet
 #########################################################################
 pcAPI = generics PcellParam 
 #########################################################################
-pcells = RING CORE WRAP gate res outlineChip memsChipFrame cap
+pcells = RING CORE WRAP gate res outlineChip memsChipFrame cap ganFetPc
 #########################################################################
 # Class Name
 #########################################################################

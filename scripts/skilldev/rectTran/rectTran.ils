@@ -128,14 +128,18 @@ defmethod( area (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( translate (( rt rectTran ) arg )
   let( (urx ury llx lly)
-	urx = xCoord(getUr(rt)) + xCoord(arg)
-        ury = yCoord(getUr(rt)) + yCoord(arg)
-	llx = xCoord(getLl(rt))  + xCoord(arg)
-	lly = yCoord(getLl(rt))  + yCoord(arg)
-	setUr(rt list(urx ury))
-	setLl(rt list(llx lly))
-	calculateCentroid(rt)
-	;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
+    if(!null(rt->bbox) then
+      urx = xCoord(getUr(rt)) + xCoord(arg)
+      ury = yCoord(getUr(rt)) + yCoord(arg)
+      llx = xCoord(getLl(rt))  + xCoord(arg)
+      lly = yCoord(getLl(rt))  + yCoord(arg)
+      setUr(rt list(urx ury))
+      setLl(rt list(llx lly))
+      calculateCentroid(rt)
+      ;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
+    else
+      println("ERROR(rectTran): rectTran translate failed, bbox not valid!") 
+    );if
   );let 
 );defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

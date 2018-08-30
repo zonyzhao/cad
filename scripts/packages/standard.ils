@@ -1933,14 +1933,18 @@ defmethod( area (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( translate (( rt rectTran ) arg )
   let( (urx ury llx lly)
-	urx = xCoord(getUr(rt)) + xCoord(arg)
-        ury = yCoord(getUr(rt)) + yCoord(arg)
-	llx = xCoord(getLl(rt))  + xCoord(arg)
-	lly = yCoord(getLl(rt))  + yCoord(arg)
-	setUr(rt list(urx ury))
-	setLl(rt list(llx lly))
-	calculateCentroid(rt)
-	;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
+    if(!null(rt->bbox) then
+      urx = xCoord(getUr(rt)) + xCoord(arg)
+      ury = yCoord(getUr(rt)) + yCoord(arg)
+      llx = xCoord(getLl(rt))  + xCoord(arg)
+      lly = yCoord(getLl(rt))  + yCoord(arg)
+      setUr(rt list(urx ury))
+      setLl(rt list(llx lly))
+      calculateCentroid(rt)
+      ;setCentroid(rt list( xCoord(getCentroid(rt))+xCoord(arg) yCoord(getCentroid(rt))+yCoord(arg)))
+    else
+      println("ERROR(rectTran): rectTran translate failed, bbox not valid!") 
+    );if
   );let 
 );defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5916,6 +5920,7 @@ defmethod( getWaferDieSites (( waf wafer ))
 	      printf("INFO(wafer): Numbering Wafer Die Site #%d, ROW: %d, COL: %d\n" dsn wrow wcol)
 	      printf("INFO(wafer): Reticle Array Index: ROW %d, COL %d | Die Array Index: ROW %d, COL %d\n" i k j l)
 	      dsn++
+	      wcol++
 	    );for
           );for
 	  wrow++
@@ -8799,7 +8804,7 @@ defmethod( generate (( gf ganFet ))
     gateWidth  = getWidth(gf) + extension + gSdSpacing
     gateLength  = getLength(gf)
     fb = makeInstance( 'fetBody )
-    setM(fb getM(gf))
+    setM(fb m)
     setWidth(fb getWidth(gf))
     setLength(fb sdLength)
     setSpacing(fb sdSpacing)
@@ -9544,4 +9549,52 @@ defmethod( draw ((device cap))
    setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
    callNextMethod()
   );let
+);defmethod;######################################################
+; ganFetPc.ils: GaN FET PCELL class. Inherits from PcellParam
+;           making it a Cadence PCELL class
+;######################################################
+defclass( ganFetPc (PcellParam)
+  (	  
+    ( m      @initform defineParam("int"   2) )
+    ( width  @initform defineParam("float" 100.0) )
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( coreBBox @initarg coreBBox )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj ganFetPc)) 
+  obj->centroid = makeInstance('point2)
 );defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( drawFet (( gfpc ganFetPc ))
+  let( (width length spacing rtran gf)
+    m     = getParamValue(gfpc 'm)
+    width = getParamValue(gfpc 'width)
+    length = 0.2
+    gf = makeInstance( 'ganFet )
+    setRef(gf getRef(gfpc))
+    setM(gf m)
+    setWidth(gf width)
+    setLength(gf length)
+    generate(gf)
+    render(gf)
+    setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
+    ; No multiple inheritance
+    ;callNextMethod()
+  );let
+);defmethod
+;######################################################################
+; Returns gates's bounding box which is stored in coreBBox slot
+;######################################################################
+defmethod( getCoreBBox ((gf ganFetPc))
+  slotValue(gf 'coreBBox)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
