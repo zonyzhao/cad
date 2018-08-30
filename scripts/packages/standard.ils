@@ -111,6 +111,239 @@ defmethod( getAttrValueByKey (( cobj cadObj ) key)
 ;############################################################
 ;############################################################
 ;############################################################
+;###################################################################
+;#   techfile.ils: techfile library class
+;###################################################################
+defclass( techfile (cadObj)
+	  (
+		( name @reader getName @writer setName )
+		( techFileName )
+		( techFileProcess )
+		( techFilePath )
+		( layerNames )
+		( controlParams )
+		( derived )
+		( tf )		  
+	  )
+); defclass
+
+;###############################################
+;# Class Constructor
+;###############################################
+defmethod( initializeInstance @after ((obj techfile)) 
+	   obj->name            = nil
+           obj->techFileName    = nil
+	   obj->techFileProcess = nil
+	   obj->techFilePath    = nil
+	   obj->tf              = nil
+	   obj->controlParams   = nil
+	   obj->derived         = nil
+	   obj->cid             = "tech"
+);defmethod
+
+;###############################################
+; Get techfile object from the library name
+; FIXME: does this return a list of refs if 
+;        there are multiple techfiles attached
+;        to a library
+;###############################################
+defmethod( getTechFileRef (( tech techfile ))
+	   tech->ref = techGetTechFile(ddGetObj(tech->name)) 
+);defmethod
+;###############################################
+; Is this a derived tech file
+;###############################################
+defmethod( isDerived (( tech techfile ))
+	   tech->derived = techGetTechFile(ddGetObj(tech->name)) 
+);defmethod
+;###############################################
+; Get the technology file control parameters
+;###############################################
+defmethod( getControls (( tech techfile ))
+	   tech->controlParams = techGetParams(tid=getTechFileRef(tech)) 
+);defmethod
+;###############################################
+; Unattach all techfiles from the target library
+; FIXME: getTechFileRef method may return a list 
+;        of techfile references
+;###############################################
+defmethod( unattachAllTechFiles (( tech techfile ))
+	   ;foreach( tf tech->ref
+	   	    techUnattachTechFile(ddGetObj(tech->name))
+	   ;);foreach
+); defmethod
+
+;###############################################
+; Attach a techfile from another library by name
+;###############################################
+defmethod( attachTechFile (( tech techfile ) libname)
+	   techBindTechFile(ddGetObj(tech->name) libname "tech.db" t)
+); defmethod
+
+;###############################################
+; set techfile object name
+;###############################################
+defmethod( setTechFileName (( tech techfile ))
+	   	tech->techFileName = tech->ref->libName
+); defmethod
+
+;###############################################
+; set techfile object process
+;###############################################
+defmethod( setTechFileProcess (( tech techfile ))
+	   	tech->techFileProcess = tech->ref->processFamily
+); defmethod
+
+;###############################################
+; set techfile object techfile path
+;###############################################
+defmethod( setTechFilePath (( tech techfile ))
+	   	tech->techFilePath = tech->ref->path
+); defmethod
+
+;###############################################
+; Is grid set
+;###############################################
+defmethod( isGrid (( tech techfile ))
+   techIsMfgGridResolutionSet(tech->ref)
+); defmethod
+
+;###############################################
+; Get MFG grid resolution
+;###############################################
+defmethod( getMfgGrid (( tech techfile ))
+   techGetMfgGridResolution(tech->ref)
+); defmethod
+
+;###############################################
+; Set MFG grid resolution
+;###############################################
+defmethod( setMfgGrid (( tech techfile ) res)
+   techSetMfgGridResolution(tech->ref res)
+); defmethod
+
+;###############################################
+; Get User Units
+;###############################################
+defmethod( getUserUnit (( tech techfile ))
+   techGetUserUnit(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; Get DBU per UU
+;###############################################
+defmethod( getDBUPerUU (( tech techfile ))
+   techGetDBUPerUU(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns a list of all spacing rules
+;###############################################
+defmethod( getSpacingRules (( tech techfile ))
+   techGetSpacingRules(tech->ref)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry width rule for a given layer
+;###############################################
+defmethod( getWidthRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minWidth" layer)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry spacing rule for a given layer
+;###############################################
+defmethod( getSpacingRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minSpacing" layer)
+); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry separation rule between
+; two layers
+;###############################################
+;defmethod( getSeparationRule (( tech techfile ) @key (layerA) (layerB))
+;   techGetSpacingRule(tech->ref "minSpacing" layerA layerB)
+;); defmethod
+
+;###############################################
+; PHYSICAL CONSTRAINTS SECTION
+; Returns the foundry same neet spacing rule for a given layer
+;###############################################
+defmethod( getSameNetSpacingRule (( tech techfile ) layer)
+   techGetSpacingRule(tech->ref "minSamNetSpacing" layer)
+); defmethod
+
+;###############################################
+; DEVICE SECTION
+; Returns a list of all extracted devices 
+;###############################################
+defmethod( getExtractedDevices (( tech techfile ))
+   techGetExractedDevices(tech->ref "maskLayout")
+); defmethod
+
+;###############################################
+; DEVICE SECTION
+; Returns a supermaster cellviw of the specified
+; device
+;###############################################
+defmethod( getDeviceCellViewe (( tech techfile ) name )
+   techGetDeviceCellView(tech->ref name "symbolic")
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Returns a list of tech layers in the techfile
+; name(LayerNumber) 
+;###############################################
+defmethod( setTechLayers (( tech techfile ))
+  let( (layers names)
+    layers = tech->ref~>layers
+    tech->layerNames = '()
+    foreach( layer layers
+       tech->layerNames = cons(layer~>name tech->layerNames)	  
+    );
+    tech->layerNames
+  );let
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer number get layer name
+;###############################################
+defmethod( getLayerName (( tech techfile ) number )
+   techGetLayerName(tech->ref number)
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer name get layer number
+;###############################################
+defmethod( getLayerNumber (( tech techfile ) name )
+   techGetLayerNum(tech->ref name)
+); defmethod
+
+;###############################################
+; LAYER SECTION
+; Given a layer name get layer number
+;###############################################
+defmethod( printLayers (( tech techfile ))
+  println("Name (Num)")
+  let( (num)
+    foreach(name tech->layerNames
+  	num = getLayerNumber(tech name)
+        printf("%s (%d)\n" name num)
+    );foreach
+    t
+  );let
+); defmethod
+
+;###################################################################
+;###################################################################
+;###################################################################
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  list.ils: Some extensions to skill list functionality 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

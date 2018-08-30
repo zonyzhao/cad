@@ -77,6 +77,13 @@ setName(tf "reticle")
 tid=getTechFileRef(tf)
 setTechLayers(tf)
 printLayers(tf)
+tid=getTechFileRef(tf)
+setAttrList(tf)
+getAttrValueByKey(tf "libName")
+getAttrValueByKey(tf "processFamily")
+getAttrValueByKey(tf "hasConflict")
+getControls(tf)
+isDerived(tf)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
