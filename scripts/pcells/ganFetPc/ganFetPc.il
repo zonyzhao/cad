@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ganFet.il
+; ganFetPc.il
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  PCELL generation code
 ;  for creating the GaN FET 
@@ -13,9 +13,9 @@ pcDefinePCell(
   )
   let( (pcell)
     pcell = makeInstance( 'ganFetPc )
+    setPcode(pcell "D91")
     setRef(pcell pcCellView)
     setPcellParams(pcell pcCellView)
-    generate(pcell)
     drawFet(pcell)
   );let
 );pcDefinePCell

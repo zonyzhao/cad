@@ -10,6 +10,7 @@ defclass( ganFetPc (PcellParam)
     ( ref @reader getRef @writer setRef )
     ( rtrans )
     ( coreBBox @initarg coreBBox )
+    ( pcode @reader getPcode @writer setPcode )
   ) 				  
 );defclass
 ;#####################################################
@@ -17,15 +18,20 @@ defclass( ganFetPc (PcellParam)
 ;#####################################################
 defmethod( initializeInstance @after ((obj ganFetPc)) 
   obj->centroid = makeInstance('point2)
+  obj->pcode = "D91"
 );defmethod
 ;######################################################
 ; Draws the gate
 ;######################################################
 defmethod( drawFet (( gfpc ganFetPc ))
-  let( (width length spacing rtran gf)
+  let( (width length spacing rtran gf tf)
+    tf = makeInstance( 'techfile )
+    setName(tf gfpc->pcode)
+    getControls(tf)
     m     = getParamValue(gfpc 'm)
     width = getParamValue(gfpc 'width)
-    length = 0.2
+    length = getControl(tf "gateLength")
+;    length = 0.2
     gf = makeInstance( 'ganFet )
     setRef(gf getRef(gfpc))
     setM(gf m)

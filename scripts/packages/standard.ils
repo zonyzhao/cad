@@ -164,6 +164,20 @@ defmethod( getControls (( tech techfile ))
 	   tech->controlParams = techGetParams(tid=getTechFileRef(tech)) 
 );defmethod
 ;###############################################
+; Get the technology file control parameters
+;###############################################
+defmethod( getControl (( tech techfile ) arg)
+  let((ret)
+    ret = nil
+    foreach(cont  tech->controlParams
+      if(nth(0 cont) == arg then
+        ret=nth(1 cont)
+      );if 
+    );foreach
+    ret
+  );let
+);defmethod
+;###############################################
 ; Unattach all techfiles from the target library
 ; FIXME: getTechFileRef method may return a list 
 ;        of techfile references
@@ -8891,7 +8905,7 @@ defclass( ganGate (component)
 ;#####################################################
 defmethod( initializeInstance @after ((obj ganGate)) 
   obj->width = 100.0
-  obj->length = 5.0
+  obj->length = 0.5
   obj->stem = makeInstance( 'gateStem )
   obj->pad = makeInstance( 'gatePad )
   obj->centroid = makeInstance('point2)
@@ -9774,6 +9788,7 @@ defclass( ganFetPc (PcellParam)
     ( ref @reader getRef @writer setRef )
     ( rtrans )
     ( coreBBox @initarg coreBBox )
+    ( pcode @reader getPcode @writer setPcode )
   ) 				  
 );defclass
 ;#####################################################
@@ -9781,15 +9796,20 @@ defclass( ganFetPc (PcellParam)
 ;#####################################################
 defmethod( initializeInstance @after ((obj ganFetPc)) 
   obj->centroid = makeInstance('point2)
+  obj->pcode = "D91"
 );defmethod
 ;######################################################
 ; Draws the gate
 ;######################################################
 defmethod( drawFet (( gfpc ganFetPc ))
-  let( (width length spacing rtran gf)
+  let( (width length spacing rtran gf tf)
+    tf = makeInstance( 'techfile )
+    setName(tf gfpc->pcode)
+    getControls(tf)
     m     = getParamValue(gfpc 'm)
     width = getParamValue(gfpc 'width)
-    length = 0.2
+    length = getControl(tf "gateLength")
+;    length = 0.2
     gf = makeInstance( 'ganFet )
     setRef(gf getRef(gfpc))
     setM(gf m)

@@ -19,7 +19,7 @@ defclass( ganGate (component)
 ;#####################################################
 defmethod( initializeInstance @after ((obj ganGate)) 
   obj->width = 100.0
-  obj->length = 5.0
+  obj->length = 0.5
   obj->stem = makeInstance( 'gateStem )
   obj->pad = makeInstance( 'gatePad )
   obj->centroid = makeInstance('point2)
