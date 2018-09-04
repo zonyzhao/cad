@@ -43,7 +43,6 @@ layerDefinitions(
   ( Bond_Ring                 32         Bond_Ri      )
   ( glass                     99         glass        )
   ( LID_ETCH                  100        LID_ETC      )
-  ( marker                    200        marker       )
  ) ;techLayers
 
  techLayerPurposePriorities(
