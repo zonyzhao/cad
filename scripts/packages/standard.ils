@@ -125,8 +125,7 @@ defclass( techfile (cadObj)
 		( derived )
 		( tf )		  
 	  )
-); defclass
-
+);defclass
 ;###############################################
 ;# Class Constructor
 ;###############################################
@@ -140,7 +139,6 @@ defmethod( initializeInstance @after ((obj techfile))
 	   obj->derived         = nil
 	   obj->cid             = "tech"
 );defmethod
-
 ;###############################################
 ; Get techfile object from the library name
 ; FIXME: does this return a list of refs if 
@@ -154,7 +152,10 @@ defmethod( getTechFileRef (( tech techfile ))
 ; Is this a derived tech file
 ;###############################################
 defmethod( isDerived (( tech techfile ))
-	   tech->derived = techGetTechFile(ddGetObj(tech->name)) 
+  tech->derived = getTechFileRef(tech)~>refs
+  if(!null(tech->derived) then
+      getTechFileRef(tech)~>refLibNames
+  )
 );defmethod
 ;###############################################
 ; Get the technology file control parameters
@@ -171,95 +172,82 @@ defmethod( unattachAllTechFiles (( tech techfile ))
 	   ;foreach( tf tech->ref
 	   	    techUnattachTechFile(ddGetObj(tech->name))
 	   ;);foreach
-); defmethod
-
+);defmethod
 ;###############################################
 ; Attach a techfile from another library by name
 ;###############################################
 defmethod( attachTechFile (( tech techfile ) libname)
 	   techBindTechFile(ddGetObj(tech->name) libname "tech.db" t)
-); defmethod
-
+);defmethod
 ;###############################################
 ; set techfile object name
 ;###############################################
 defmethod( setTechFileName (( tech techfile ))
 	   	tech->techFileName = tech->ref->libName
-); defmethod
-
+);defmethod
 ;###############################################
 ; set techfile object process
 ;###############################################
 defmethod( setTechFileProcess (( tech techfile ))
 	   	tech->techFileProcess = tech->ref->processFamily
-); defmethod
-
+);defmethod
 ;###############################################
 ; set techfile object techfile path
 ;###############################################
 defmethod( setTechFilePath (( tech techfile ))
 	   	tech->techFilePath = tech->ref->path
-); defmethod
-
+);defmethod
 ;###############################################
 ; Is grid set
 ;###############################################
 defmethod( isGrid (( tech techfile ))
    techIsMfgGridResolutionSet(tech->ref)
-); defmethod
-
+);defmethod
 ;###############################################
 ; Get MFG grid resolution
 ;###############################################
 defmethod( getMfgGrid (( tech techfile ))
    techGetMfgGridResolution(tech->ref)
-); defmethod
-
+);defmethod
 ;###############################################
 ; Set MFG grid resolution
 ;###############################################
 defmethod( setMfgGrid (( tech techfile ) res)
    techSetMfgGridResolution(tech->ref res)
-); defmethod
-
+);defmethod
 ;###############################################
 ; Get User Units
 ;###############################################
 defmethod( getUserUnit (( tech techfile ))
    techGetUserUnit(tech->ref "maskLayout")
-); defmethod
-
+);defmethod
 ;###############################################
 ; Get DBU per UU
 ;###############################################
 defmethod( getDBUPerUU (( tech techfile ))
    techGetDBUPerUU(tech->ref "maskLayout")
-); defmethod
-
+);defmethod
 ;###############################################
 ; PHYSICAL CONSTRAINTS SECTION
 ; Returns a list of all spacing rules
 ;###############################################
 defmethod( getSpacingRules (( tech techfile ))
    techGetSpacingRules(tech->ref)
-); defmethod
-
+);defmethod
 ;###############################################
 ; PHYSICAL CONSTRAINTS SECTION
 ; Returns the foundry width rule for a given layer
 ;###############################################
 defmethod( getWidthRule (( tech techfile ) layer)
    techGetSpacingRule(tech->ref "minWidth" layer)
-); defmethod
-
+);defmethod
 ;###############################################
 ; PHYSICAL CONSTRAINTS SECTION
 ; Returns the foundry spacing rule for a given layer
 ;###############################################
 defmethod( getSpacingRule (( tech techfile ) layer)
    techGetSpacingRule(tech->ref "minSpacing" layer)
-); defmethod
-
+);defmethod
 ;###############################################
 ; PHYSICAL CONSTRAINTS SECTION
 ; Returns the foundry separation rule between
@@ -267,24 +255,21 @@ defmethod( getSpacingRule (( tech techfile ) layer)
 ;###############################################
 ;defmethod( getSeparationRule (( tech techfile ) @key (layerA) (layerB))
 ;   techGetSpacingRule(tech->ref "minSpacing" layerA layerB)
-;); defmethod
-
+;);defmethod
 ;###############################################
 ; PHYSICAL CONSTRAINTS SECTION
 ; Returns the foundry same neet spacing rule for a given layer
 ;###############################################
 defmethod( getSameNetSpacingRule (( tech techfile ) layer)
    techGetSpacingRule(tech->ref "minSamNetSpacing" layer)
-); defmethod
-
+);defmethod
 ;###############################################
 ; DEVICE SECTION
 ; Returns a list of all extracted devices 
 ;###############################################
 defmethod( getExtractedDevices (( tech techfile ))
    techGetExractedDevices(tech->ref "maskLayout")
-); defmethod
-
+);defmethod
 ;###############################################
 ; DEVICE SECTION
 ; Returns a supermaster cellviw of the specified
@@ -292,8 +277,7 @@ defmethod( getExtractedDevices (( tech techfile ))
 ;###############################################
 defmethod( getDeviceCellViewe (( tech techfile ) name )
    techGetDeviceCellView(tech->ref name "symbolic")
-); defmethod
-
+);defmethod
 ;###############################################
 ; LAYER SECTION
 ; Returns a list of tech layers in the techfile
@@ -308,24 +292,21 @@ defmethod( setTechLayers (( tech techfile ))
     );
     tech->layerNames
   );let
-); defmethod
-
+);defmethod
 ;###############################################
 ; LAYER SECTION
 ; Given a layer number get layer name
 ;###############################################
 defmethod( getLayerName (( tech techfile ) number )
    techGetLayerName(tech->ref number)
-); defmethod
-
+);defmethod
 ;###############################################
 ; LAYER SECTION
 ; Given a layer name get layer number
 ;###############################################
 defmethod( getLayerNumber (( tech techfile ) name )
    techGetLayerNum(tech->ref name)
-); defmethod
-
+);defmethod
 ;###############################################
 ; LAYER SECTION
 ; Given a layer name get layer number
@@ -339,8 +320,7 @@ defmethod( printLayers (( tech techfile ))
     );foreach
     t
   );let
-); defmethod
-
+);defmethod
 ;###################################################################
 ;###################################################################
 ;###################################################################

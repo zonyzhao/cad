@@ -51,6 +51,20 @@ defmethod( getControls (( tech techfile ))
 	   tech->controlParams = techGetParams(tid=getTechFileRef(tech)) 
 );defmethod
 ;###############################################
+; Get the technology file control parameters
+;###############################################
+defmethod( getControl (( tech techfile ) arg)
+  let((ret)
+    ret = nil
+    foreach(cont  tech->controlParams
+      if(nth(0 cont) == arg then
+        ret=nth(1 cont)
+      );if 
+    );foreach
+    ret
+  );let
+);defmethod
+;###############################################
 ; Unattach all techfiles from the target library
 ; FIXME: getTechFileRef method may return a list 
 ;        of techfile references

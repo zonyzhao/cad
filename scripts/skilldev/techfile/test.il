@@ -87,6 +87,15 @@ getAttrValueByKey(tf "hasConflict")
 getControls(tf)
 isDerived(tf)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-7: get the tech params
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+tf = makeInstance( 'techfile )
+setName(tf "D91")
+getControls(tf)
+getControl(tf "sdHeight")
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code
