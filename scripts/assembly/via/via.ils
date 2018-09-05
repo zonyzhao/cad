@@ -1,0 +1,91 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; via.ils: Via assembly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( via (assembly)
+  (
+    ( width @reader getWidth @writer setWidth )
+    ( length @reader getLength @writer setLength )
+    ( minWidth @reader getMinWidth @writer setMinWidth )
+    ( minLength @reader getMinLength @writer setMinLength )
+    ( topPlateEnc @reader getTopPlateEnc @writer setTopPlateEnc )
+    ( postLayer @reader getPostLayer @writer setPostLayer )
+    ( postPurpose @reader getPostPurpose @writer setPostPurpose )
+    ( topPlateLayer @reader getTopPlateLayer @writer setTopPlateLayer )
+    ( topPlatePurpose @reader getTopPlatePurpose @writer setTopPlatePurpose )
+    ( centroid @reader getCentroid @writer setCentroid )			
+  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj via)) 
+  obj->width            = 40.0
+  obj->length           = 40.0
+  obj->minWidth         = 10.0
+  obj->minLength        = 10.0
+  obj->topPlateEnc      = 15.0
+  obj->postLayer        = "text"
+  obj->postPurpose      = "drawing"
+  obj->topPlateLayer    = "text"
+  obj->topPlatePurpose  = "drawing"
+  obj->centroid         = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( va via ))
+  let((topPlateWid topPlateLen post tp pTran tpTran)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    topPlateWid = va->width+va->topPlateEnc
+    topPlateLen = va->length+va->topPlateEnc
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the post
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    post = makeInstance( 'rectangle )
+    setWidth(post va->width)
+    setHeight(post va->length)
+    generate(post)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create top plate
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tp = makeInstance( 'rectangle )
+    setWidth(tp topPlateWid)
+    setHeight(tp topPlateLen)
+    generate(tp)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Post Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pTran = makeInstance( 'transform2 )
+    setVertices(pTran getVertices(post))
+    setCentroid(pTran getCentroid(post))
+    cloneRectTran(pTran)
+    setLayer(pTran getPostLayer(va))
+    setPurpose(pTran getPostPurpose(va))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Top Plate Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    tpTran = makeInstance( 'transform2 )
+    setVertices(tpTran getVertices(tp))
+    setCentroid(tpTran getCentroid(tp))
+    cloneRectTran(tpTran)
+    setLayer(tpTran getTopPlateLayer(va))
+    setPurpose(tpTran getTopPlatePurpose(va))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Add the transforms to a geometry
+    ; group
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup pTran)
+    addTransform(geomGroup tpTran)
+    rectTranUnion(geomGroup)
+    addGeometry(va geomGroup)
+    rtsAdd(va->rtrans getRectTran(geomGroup))
+    rtsUnion(va->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
