@@ -167,12 +167,16 @@ defmethod( getVertices (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( rotate (( rt rectTran ) arg )
   let( (poly)
-      poly = makeInstance( 'polygon2)
-      setVertices(poly getVertices(rt))
-      rotate(poly arg)
-      setRectTran(poly)
-      setUr(rt getUr(poly->rtran))
-      setLl(rt getLl(poly->rtran))	
+      if(!null(rt->bbox) then
+        poly = makeInstance( 'polygon2)
+        setVertices(poly getVertices(rt))
+        rotate(poly arg)
+        setRectTran(poly)
+        setUr(rt getUr(poly->rtran))
+        setLl(rt getLl(poly->rtran))
+      else
+        println("ERROR(rectran): bbox not defined. No rotation performed!")
+    );if	
   );let
 );defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

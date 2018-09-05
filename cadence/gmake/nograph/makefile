@@ -36,7 +36,7 @@ geometries = trirect capsule
 #########################################################################
 assemblies = gatePad gateStem planarResistor planarCap outline \
              memsCapBotCont memsCapTopCont cframe cframe2 \
-             sdArray 
+             sdArray ab
 #########################################################################
 components = ganGate fetBody
 #########################################################################

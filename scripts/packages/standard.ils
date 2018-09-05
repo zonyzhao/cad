@@ -2199,12 +2199,16 @@ defmethod( getVertices (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( rotate (( rt rectTran ) arg )
   let( (poly)
-      poly = makeInstance( 'polygon2)
-      setVertices(poly getVertices(rt))
-      rotate(poly arg)
-      setRectTran(poly)
-      setUr(rt getUr(poly->rtran))
-      setLl(rt getLl(poly->rtran))	
+      if(!null(rt->bbox) then
+        poly = makeInstance( 'polygon2)
+        setVertices(poly getVertices(rt))
+        rotate(poly arg)
+        setRectTran(poly)
+        setUr(rt getUr(poly->rtran))
+        setLl(rt getLl(poly->rtran))
+      else
+        println("ERROR(rectran): bbox not defined. No rotation performed!")
+    );if	
   );let
 );defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2815,7 +2819,7 @@ defmethod( render (( geom geometry ) )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;######################################################
-;# assembly.ils: Assembly class of geometries - base class
+; assembly.ils: Assembly class of geometries - base class
 ;######################################################
 defclass( assembly ()
 	  (
@@ -2823,6 +2827,7 @@ defclass( assembly ()
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
 	     ( rtrans )
+	     ( rtran  )
 	  )				  
 );defclass
 ;#####################################################
@@ -2833,6 +2838,7 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->ref = nil
 	   obj->layers = makeInstance( 'collection )
 	   obj->rtrans = makeInstance( 'rectTrans )
+	   obj->rtran  = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly
@@ -2928,13 +2934,13 @@ defmethod( translate (( ass assembly ) arg )
   );if
 );defmethod
 ;#####################################################
-; Rotate the assembly
+; Rotate the assembly - rotate individual geometeries
 ;#####################################################
 defmethod( rotate (( ass assembly ) arg )
   foreach( geom getCollection(ass->geometries)
       rotate(geom arg)
     );foreach
-    rotate(geom->rtran arg)
+    rotate(ass->rtran arg)
 );defmethod
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
@@ -8878,6 +8884,145 @@ defmethod( generate (( array sdArray ))
     addGeometry(array geomGroup)
     rtsAdd(array->rtrans getRectTran(geomGroup))
     rtsUnion(array->rtrans)
+  );let
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ab.ils: Air bridge assembly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( ab (assembly)
+	  (
+		( width @reader getWidth @writer setWidth )
+		( length @reader getLength @writer setLength )
+		( minWidth @reader getMinWidth @writer setMinWidth )
+		( minLength @reader getMinLength @writer setMinLength )
+		( termLen @reader getTermLen @writer setTermLen )
+		( termEnc @reader getTermEnc @writer setTermEnc )
+		( bodyLayer @reader getBodyLayer @writer setBodyLayer )
+	  	( bodyPurpose @reader getBodyPurpose @writer setBodyPurpose )
+		( pillowLayer @reader getPillowLayer @writer setPillowLayer )
+	  	( pillowPurpose @reader getPillowPurpose @writer setPillowPurpose )
+		( pext @reader getPext @writer setPext )
+		( contLayer @reader getContLayer @writer setContLayer )
+	  	( contPurpose @reader getContPurpose @writer setContPurpose )
+		( centroid @reader getCentroid @writer setCentroid )			
+	  )				  
+);defclass
+;######################################################
+;# Constructor
+;######################################################
+defmethod( initializeInstance @after ((obj ab)) 
+	   obj->width         = 1.0
+           obj->length        = 1.0
+	   obj->minWidth      = 0.5
+	   obj->minLength     = 0.5
+	   obj->termEnc       = 0.5
+	   obj->termLen       = 1.0
+	   obj->pext          = 20.0
+	   obj->bodyLayer     = "text"
+	   obj->bodyPurpose   = "drawing"
+	   obj->pillowLayer   = "text"
+	   obj->pillowPurpose = "drawing"
+	   obj->contLayer     = "text"
+	   obj->contPurpose   = "drawing"
+	   obj->centroid      = makeInstance( 'point2 )
+);defmethod
+;######################################################
+; Generates the assembly
+;######################################################
+defmethod( generate (( abr ab ))
+  let((termWid termLen bodyLen cptrn cntrn body pillow cont bTran 
+       pConTran nConTran pTran cv)	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Dimension Calculations
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    termWid = abr->width+2.0*abr->termEnc
+    termLen = abr->termLen+abr->termEnc
+    bodyLen = abr->length+2*abr->termLen 
+    ; Air Bridge contact transformation
+    cptrn = -1.0*(abr->termLen+abr->termEnc+abr->length)/2.0
+    cntrn = -1.0*cptrn
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Formal Parameters
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pext = 10.0
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the bridge strip
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    body = makeInstance( 'rectangle )
+    setWidth(body bodyLen)
+    setHeight(body abr->width)
+    generate(body)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the bridge "pillow"
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pillow = makeInstance( 'rectangle )
+    setWidth(pillow bodyLen-2*abr->termLen)
+    setHeight(pillow abr->width+abr->pext)
+    generate(pillow)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Create the end contacts
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    cont = makeInstance( 'rectangle )
+    setWidth(cont termLen)
+    setHeight(cont termWid)
+    generate(cont)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Bridge Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    bTran = makeInstance( 'transform2 )
+    setVertices(bTran getVertices(body))
+    setCentroid(bTran getCentroid(body))
+    cloneRectTran(bTran)
+    setLayer(bTran getBodyLayer(abr))
+    setPurpose(bTran getBodyPurpose(abr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Pillow Transform
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pTran = makeInstance( 'transform2 )
+    setVertices(pTran getVertices(pillow))
+    setCentroid(pTran getCentroid(pillow))
+    cloneRectTran(pTran)
+    setLayer(pTran getPillowLayer(abr))
+    setPurpose(pTran getPillowPurpose(abr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Bridge Footing Transform A
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    pConTran = makeInstance( 'transform2 )
+    setVertices(pConTran getVertices(cont))
+    setCentroid(pConTran getCentroid(cont))
+    cloneRectTran(pConTran)
+    setLayer(pConTran getContLayer(abr))
+    setPurpose(pConTran getContPurpose(abr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Bridge Footing Transform B
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    nConTran = makeInstance( 'transform2 )
+    setVertices(nConTran getVertices(cont))
+    setCentroid(nConTran getCentroid(cont))
+    cloneRectTran(nConTran)
+    setLayer(nConTran getContLayer(abr))
+    setPurpose(nConTran getContPurpose(abr))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Translate the Bridge Footings to 
+    ; their proper position
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    translate(pConTran list(cptrn 0))
+    translate(nConTran list(cntrn 0))
+    ; Add the transforms to a geometry
+    ; group
+    geomGroup = makeInstance('geometry)
+    addTransform(geomGroup bTran)
+    addTransform(geomGroup pTran)
+    addTransform(geomGroup pConTran)
+    addTransform(geomGroup nConTran )
+    rectTranUnion(geomGroup)
+    addGeometry(abr geomGroup)
+    rtsAdd(abr->rtrans getRectTran(geomGroup))
+    rtsUnion(abr->rtrans)
   );let
 );defmethod
 ;######################################################

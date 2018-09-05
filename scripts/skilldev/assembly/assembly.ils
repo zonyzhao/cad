@@ -1,5 +1,5 @@
 ;######################################################
-;# assembly.ils: Assembly class of geometries - base class
+; assembly.ils: Assembly class of geometries - base class
 ;######################################################
 defclass( assembly ()
 	  (
@@ -7,6 +7,7 @@ defclass( assembly ()
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
 	     ( rtrans )
+	     ( rtran  )
 	  )				  
 );defclass
 ;#####################################################
@@ -17,6 +18,7 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->ref = nil
 	   obj->layers = makeInstance( 'collection )
 	   obj->rtrans = makeInstance( 'rectTrans )
+	   obj->rtran  = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly
@@ -112,13 +114,13 @@ defmethod( translate (( ass assembly ) arg )
   );if
 );defmethod
 ;#####################################################
-; Rotate the assembly
+; Rotate the assembly - rotate individual geometeries
 ;#####################################################
 defmethod( rotate (( ass assembly ) arg )
   foreach( geom getCollection(ass->geometries)
       rotate(geom arg)
     );foreach
-    rotate(geom->rtran arg)
+    rotate(ass->rtran arg)
 );defmethod
 ;#####################################################
 ; Renders the layer stackup consisting of the layer

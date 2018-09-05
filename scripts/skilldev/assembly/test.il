@@ -140,5 +140,33 @@ cv = dbOpenCellViewByType( lib name view type "w")
 setRef(gate cv)
 setWidth(gate 100.0)
 setLength(gate 0.25)
-translate(gate list(0.0 300.0))
 generate(gate)
+translate(gate list(0.0 300.0))
+
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-4: Rotationg an assembly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+abr = makeInstance( 'ab )
+setWidth(abr 50.0)
+setLength(abr 100.0)
+setMinWidth(abr 10.0)
+setMinLength(abr 10.0)
+setTermLen(abr 25.0)
+setTermEnc(abr 5.0)
+setBodyLayer(abr "thick")
+setBodyPurpose(abr "drawing")
+setPillowLayer(abr "dielectric")
+setPillowPurpose(abr "drawing")
+setContLayer(abr "electrode")
+setContPurpose(abr "drawing")
+generate(abr)
+rotate(abr 90.0)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Experimental code
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+nth(0 getCollection(abr->geometries))
+foreach( geom getCollection(abr->geometries)
+      rotate(geom 90.0)
+);foreach	  
+rotate(abr>rtran 90.0)
