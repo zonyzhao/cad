@@ -28,7 +28,9 @@ defmethod( initializeInstance @after ((obj ganFet))
 ;######################################################
 defmethod( generate (( gf ganFet ))
   let( (m gateWidth extension gateLength sdLength sdSpacing 
-       xtran ytran fb gate rtran gdSpacing gSdSpacing)
+       xtran ytran fb gate rtran gdSpacing gSdSpacing sod
+       aba)
+    sod = nil
     sdLength   = 25.0
     sdSpacing  = 5.0
     extension  = 5.0
@@ -62,6 +64,15 @@ defmethod( generate (( gf ganFet ))
        addComponent(gf gate)
        ytran = ytran + gtran
     );for
+    if(sod then
+      aba = makeInstance( 'sodBridgeArray )
+      setM(aba m)
+      setWidth(aba getWidth(gf))
+      setLength(aba sdLength)
+      setSpacing(aba sdSpacing)
+      generate(aba)
+      addComponent(gf aba)
+    );if
     rtsUnion(gf->rtrans)
     ; No multiple inheritance
     ;callNextMethod()

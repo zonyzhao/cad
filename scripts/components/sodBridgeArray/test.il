@@ -22,15 +22,15 @@ superclassesOf(classOf(sba))
 ; UT-2: Preview the bridge array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 sba = makeInstance( 'sodBridgeArray )
-setM(sba 6)
+setM(sba 2)
 setWidth(sba 50.0)
-setLength(sba 10.0)
+setLength(sba 25.0)
 setSpacing(sba 5.0)
 lib = "pd0164"
 name = "sbaPreview"
 view = "layout"
 type = "maskLayout"
-cv = dbOpenCellViewByType( lib name view type "w")
+cv = dbOpenCellViewByType(lib name view type "w")
 setRef(sba cv)
 generate(sba)
 render(sba)

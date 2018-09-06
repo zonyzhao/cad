@@ -49,11 +49,10 @@ defmethod( generate (( ba sodBridgeArray ))
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ; Dimension Calculations
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-      blen = 3*length+2*spacing
-      s2s  = 2*(length + spacing)
-      so   = (blen+length)/2.0+2*enc
+      blen = length+2*spacing
+      so   = (blen-length)/2.0
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;m
       ; Generate bridges
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       for( i 0 sub1(num)
