@@ -1070,7 +1070,7 @@ defmethod( deserialize (( pt point2 ) fname)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  points.ils: container class for 2-D points 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( points2 ()
+defclass( points2 (cadObj)
 	  (
 		( points @reader getPoints @writer setCollection)		  
 	  )
@@ -1215,6 +1215,7 @@ defmethod( initializeInstance @after ((obj rotation2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  polygon2.ils: Layout Polygon Object 
+; FIXME: This needs to inherit from points2 class. Refactoring necessary ...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( polygon2 (cadObj)
   (	
@@ -9132,6 +9133,86 @@ defmethod( generate (( fb fetBody ))
     rtsAdd(fb->rtrans rectTran) 
     rtsUnion(fb->rtrans)
     addAssembly(fb sd)
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
+; sodBridgeArray.ils: Array of air bridges which connect
+;                     the sources of a FET forming a SOD
+;                     structure. Inherits from 
+;                     component class. Container class for
+;                     assemblies
+;######################################################
+defclass( sodBridgeArray (component)
+  (
+    ( m       @reader getM       @writer setM )
+    ( width   @reader getWidth   @writer setWidth )
+    ( length  @reader getLength  @writer setLength )
+    ( spacing @reader getSpacing @writer setSpacing )
+    ( centroid )
+    ( rtrans )
+  ) 				  
+);defclass
+;#####################################################
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj sodBridgeArray))
+  obj->m        = 1 
+  obj->width    = 100.0
+  obj->length   = 50.0
+  obj->spacing  = 50.0
+  obj->centroid = makeInstance('point2)
+  obj->rtrans   = makeInstance('rectTrans)
+);defmethod
+;######################################################
+; Draws the gate
+;######################################################
+defmethod( generate (( ba sodBridgeArray ))
+  let( (enc width length m spacing num blen s2s so br)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Formal Params
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    enc = 5.0
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    m = getM(ba)
+    if(m > 1 then
+      width = getWidth(ba)
+      length = getLength(ba)   
+      spacing = getSpacing(ba)	
+      if(evenp(m) then
+        num = m/2
+      else
+        num = m - m/2
+      );if
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Dimension Calculations
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+      blen = 3*length+2*spacing
+      s2s  = 2*(length + spacing)
+      so   = (blen+length)/2.0+2*enc
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; Generate bridges
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      for( i 0 sub1(num)
+        br = makeInstance( 'ab )
+        setWidth(br width)
+        setLength(br blen)
+	setTermLen(br length)
+	setTermEnc(br 5.0)
+        setBodyLayer(br "thick")
+        setPillowLayer(br "dielectric")
+        setContLayer(br "electrode")
+        setPext(br 25.0)
+        generate(br)
+	rotate(br 90.0)
+        translate(br list(0.0 i*blen+so))
+        addAssembly(ba br)
+      );for
+    else
+      nil
+    );if
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
