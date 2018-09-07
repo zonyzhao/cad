@@ -10,6 +10,7 @@ defclass( die (cv)
     ( reticleCol @reader getReticleCol @writer setReticleCol )
     ( waferRow @reader getWaferRow @writer setWaferRow )
     ( waferCol @reader getWaferCol @writer setWaferCol )
+    ( numpad )
   )
 );defClass
 ;#####################################################
@@ -23,6 +24,7 @@ defmethod( initializeInstance @after ((obj die))
   obj->reticleCol = nil
   obj->waferRow   = nil
   obj->waferCol   = nil
+  obj->numpad = makeInstance( 'chipNumberPad )
 );defmethod
 ;#####################################################
 ; clones the die

@@ -118,18 +118,27 @@ defmethod( getWaferDieSites (( waf wafer ))
 ; Print the die site numbers across the wafer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( numberDieSites (( waf wafer ))
-  let(()
+  let((ret)
     ; based upon the number of cols/rows determine the 
     ; number of digits necessary to represent the row/col
     ; numbers
-    for(i 0 sub1(getDieSiteRows)
-      for(j 0 sub1(getDieSiteCols)
-         ; determine the pad center
+    ;
+    ; open the target wafer cellview for applying the numbers
+    ;
+    ; get each reticle in the wafer reticle array
+;    getWaferRow(getItem(ret->dieSites 0))
+;    ret = getItem(waf->retArray->reticles 0)
+    ; get each die within the indexed reticle 
+;    for(i 0 sub1(getDieSiteRows)
+;      for(j 0 sub1(getDieSiteCols)
+         ; update pad center
+;	 update(die)
+	 
          ; print a dash in middle of numpad
 	 ; print row number to left of dash
 	 ; print col number to right of dash
-      );for
-    );for 
+;      );for
+;    );for 
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

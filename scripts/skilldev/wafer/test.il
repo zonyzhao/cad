@@ -165,7 +165,8 @@ dbSave(cv)
 dbClose(cv)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-4: Number the die sites
+; UT-4: Generate Numbering for the wafer
+;       die sites
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib   = "pd0164"
 name  = "pd0164"
@@ -305,7 +306,50 @@ getWaferCol(getItem(ret->dieSites 7))
 getWaferRow(getItem(ret->dieSites 8))
 getWaferCol(getItem(ret->dieSites 8))
 
-
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-5: Write the numbers onto each
+;       wafer die site
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib   = "pd0164"
+name  = "pd0164"
+view  = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+ret = makeInstance( 'reticle )
+setRef(ret cv)
+setName(ret name)
+setRes(ret 10)
+setMaxDim(ret 20000)
+setOverlap(ret 4.0)
+setSrGrid(ret 0.1)
+checkDim(ret)
+checkRes(ret)
+checkGrid(ret)
+detectDieSites(ret)
+checkInnerStreets(ret)
+arrayDieSites(ret)
+dbClose(cv)
+Origin(ret)
+ret->bbox
+; Create the wafer array
+waf = makeInstance( 'wafer )
+setName(waf name)
+setReticle(waf->retArray ret)
+setWaferWidth(waf->retArray 97175.0)
+setWaferHeight(waf->retArray 99275.0)
+setOverlap(waf->retArray 4.0)
+array(waf->retArray)
+; Center the array
+;FIXME: center of wafer not being found!
+center = findCenter(waf)
+; set wafer center manually for now ...
+center = list(0.0 0.0)
+centerArray(waf->retArray center)
+waf->retArray->origin
+waf->retArray->ur
+; wafer level die sites
+getWaferDieSites(waf)
+numberDieSites(waf)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

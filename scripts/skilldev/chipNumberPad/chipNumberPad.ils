@@ -2,7 +2,16 @@
 ;;;;;;;;;;;;;;;;  chipNumberPad.ils: chip number pad class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( chipNumberPad (numberPad)
+  (
+    ( type @reader getType @writer setType )
+  )
 );defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj chipNumberPad))
+  obj->type = nil 
+);defmethod
 ;######################################################
 ;######################################################
 ;######################################################

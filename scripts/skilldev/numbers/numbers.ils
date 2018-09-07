@@ -4,8 +4,9 @@
 defclass( numbers (polygon2)
 	  ( 
 		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
+		( width @reader getWidth )
+		( height @reader getHeight )
+		( scale )
 		( cd )
 		( c0 )
 		( c1 )
@@ -28,6 +29,7 @@ defmethod( initializeInstance @after ((obj numbers))
 	   obj->val = nil
 	   obj->width = nil
 	   obj->height = nil
+	   obj->scale = 1.0
 	   obj->cd  = list(list(-5.5 -45.0) 
 			   list(-5.5 1.0) 
 			   list(5.5 1.0) 
@@ -261,6 +263,8 @@ defmethod( generate (( np numbers ))
 	       )
 	    );case
 	    setVertices(np ret)
+	    np->width  = maxx(np) - minx(np) 
+	    np->height = maxy(np) - miny(np)
 	    ret
   );let
 );defmethod

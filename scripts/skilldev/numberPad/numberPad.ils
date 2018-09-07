@@ -1,42 +1,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  numberPad.ils: number pad class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( numberPad (instance) 
+defclass( numberPad (cv)
   (
-    (size @reader getSize)
-    (relOrigin)
+    ( row @reader getRow @writer setRow )
+    ( col @reader getCol @writer setCol )
   )
 );defClass
 ;#####################################################
 ; Constructor Method
 ;#####################################################
-defmethod( initializeInstance @after ((obj numberPad)) 
-  obj->size = nil
-  obj->relOrigin = nil
+defmethod( initializeInstance @after ((obj numberPad))
+  obj->row  = nil 
+  obj->col  = nil
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Update the pad center coordinates
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( update (( np numberPad ))
+  np->centroid = list(np->origin+np->width/2.0 np->origin+np->height/2.0)
 );defmethod
 ;######################################################
 ;######################################################
 ;######################################################
-;#####################################################
-; Sets numbers pad origin referenced to the origin of the
-; chip
-;#####################################################
-defmethod(setRelOrigin (( pad numberPad ))
-  let((padbbox x y)
-    pbbox = getbBox(pad)
-    x=caar(pbbpx) 
-    y=cadar(pbbox)
-    pad->relOrigin = list(x y)
-  );let
-);defmethod
-;#####################################################
-; Sets numbers pad origin referenced to the origin of the
-; chip
-;#####################################################
-defmethod(getRelOrigin (( pad numberPad ))
-  pad->relOrigin
-);defmethod
-;######################################################
-;######################################################
-;######################################################
-;#####################################################
