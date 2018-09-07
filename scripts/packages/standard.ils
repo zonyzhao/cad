@@ -9169,7 +9169,7 @@ defmethod( initializeInstance @after ((obj sodBridgeArray))
 ; Draws the gate
 ;######################################################
 defmethod( generate (( ba sodBridgeArray ))
-  let( (enc width length m spacing num blen s2s so br)
+  let( (enc width length m spacing num blen s2s shift so br)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Formal Params
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9189,6 +9189,7 @@ defmethod( generate (( ba sodBridgeArray ))
       ; Dimension Calculations
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
       blen = length+2*spacing
+      shift  = blen + length
       so   = (blen-length)/2.0
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;m
@@ -9206,7 +9207,7 @@ defmethod( generate (( ba sodBridgeArray ))
         setPext(br 25.0)
         generate(br)
 	rotate(br 90.0)
-        translate(br list(0.0 i*blen+so))
+        translate(br list(0.0 i*shift+so))
         addAssembly(ba br)
       );for
     else

@@ -22,7 +22,7 @@ superclassesOf(classOf(sba))
 ; UT-2: Preview the bridge array
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 sba = makeInstance( 'sodBridgeArray )
-setM(sba 2)
+setM(sba 4)
 setWidth(sba 50.0)
 setLength(sba 25.0)
 setSpacing(sba 5.0)
