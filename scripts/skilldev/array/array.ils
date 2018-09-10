@@ -1,0 +1,34 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  array.ils: array of collection class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( array ()
+  (
+    ( rows @reader getRows @writer setRows)
+    ( cols @reader getCols @writer setCols )
+    ( array )
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj array))
+  obj->rows   = nil 
+  obj->cols   = nil
+  obj->list  = makeInstance( 'collection )
+);defmethod
+;#####################################################
+; clones the die
+;#####################################################
+defmethod( cloneArray (( ara array ) arg)
+  arg->rows       = ara->rows
+  arg->cols       = ara->cols
+  cloneCollection(d arg->list)
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+
+	
