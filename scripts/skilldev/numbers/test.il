@@ -32,7 +32,7 @@ dbClose(cv)
 ; UT-2 Print the number on a cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
-name = "pd0164_0p_shifturq"
+name = "memsChipFrameTest"
 view = "layout"
 num0 = makeInstance( 'numeric )
 setVal(num0 "0")

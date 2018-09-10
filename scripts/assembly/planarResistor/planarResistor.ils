@@ -38,7 +38,7 @@ defmethod( initializeInstance @after ((obj planarResistor))
 ;######################################################
 defmethod( generate (( res planarResistor ))
   let((termWid termLen bodyLen cptrn cntrn body cont bTran 
-       pConTran nConTran cv)	
+       pConTran nConTran geomGroup cv)	
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Dimension Calculations
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

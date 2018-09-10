@@ -1,0 +1,81 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  numbersGenerator.ils: numbers generator class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( numbersGenerator (geometry)
+  ( 
+    ( row @reader getRow @writer setRow )
+    ( col @reader getCol @writer setCol )
+    ( centroid @reader getCentroid @writer setCentroid )
+    ( layer @reader getLayer @writer setLayer )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( digits @reader getDigits @writer setDigits )							
+  )
+);defClass
+;#####################################################
+; Class constructor
+;#####################################################
+defmethod( initializeInstance @after ((obj numbersGenerator))  
+  obj->row = nil
+  obj->col = nil
+  obj->centroid = '()
+  obj->layer = "text"
+  obj->purpose = "drawing"
+  obj->digits = 2
+);defmethod	   
+;#####################################################
+; Print a given array number within a cellview
+;#####################################################
+defmethod( generate (( np numbersGenerator ))
+  let( (digits spacing format rd cd num dTran dwidth nTran)
+    format = sprintf( nil "%%0%dd" np->digits)
+    rd = parseString( sprintf( nil format np->row) "")
+    cd = parseString( sprintf( nil format np->col) "")
+    num = makeInstance( 'numbers )
+    setVal(num "-")
+    generate(num)
+    dwidth = getWidth(num)
+    dTran = makeInstance( 'transform2 )
+    setVertices(dTran getVertices(num))
+    setCentroid(dTran getCentroid(num))
+    cloneRectTran(dTran)
+    setLayer(dTran getLayer(np))
+    setPurpose(dTran getPurpose(np))
+    addTransform(np dTran)
+    rrd = reverse(rd)
+    rdshift = - dwidth/2.0
+    foreach(d rrd
+      setVal(num d)
+      generate(num)
+      nTran = makeInstance( 'transform2 )
+      setVertices(nTran getVertices(num))
+      setCentroid(nTran getCentroid(num))
+      cloneRectTran(nTran)
+      setLayer(nTran getLayer(np))
+      setPurpose(nTran getPurpose(np))
+      rdshift = rdshift - getWidth(num)/2.0
+      translate(nTran list(rdshift 0.0))
+      rdshift = rdshift - getWidth(num)/2.0
+      addTransform(np nTran)
+    );foreach
+    rdshift = dwidth/2.0
+    foreach(d cd
+      setVal(num d)
+      generate(num)
+      nTran = makeInstance( 'transform2 )
+      setVertices(nTran getVertices(num))
+      setCentroid(nTran getCentroid(num))
+      cloneRectTran(nTran)
+      setLayer(nTran getLayer(np))
+      setPurpose(nTran getPurpose(np))
+      rdshift = rdshift + getWidth(num)/2.0
+      translate(nTran list(rdshift 0.0))
+      rdshift = rdshift + getWidth(num)/2.0
+      addTransform(np nTran)
+    );foreach
+    translate(np list(xCoord(np->centroid) yCoord(np->centroid)))
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

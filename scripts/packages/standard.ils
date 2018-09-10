@@ -6197,8 +6197,8 @@ defmethod( numberDieSites (( waf wafer ))
 defclass( numbers (polygon2)
 	  ( 
 		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
+		( width @reader getWidth )
+		( height @reader getHeight )
 		( scale )
 		( cd )
 		( c0 )
@@ -6461,7 +6461,6 @@ defmethod( generate (( np numbers ))
 	    ret
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7706,7 +7705,7 @@ defmethod( initializeInstance @after ((obj planarResistor))
 ;######################################################
 defmethod( generate (( res planarResistor ))
   let((termWid termLen bodyLen cptrn cntrn body cont bTran 
-       pConTran nConTran cv)	
+       pConTran nConTran geomGroup cv)	
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Dimension Calculations
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
