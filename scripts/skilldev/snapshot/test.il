@@ -531,7 +531,7 @@ nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
 ; UT-17: Taking a snaphot of the 
 ;        alpha cells
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="November"
+name="Zulu"
 lib="reticle"
 view = "layout"
 type = "maskLayout"

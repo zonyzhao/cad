@@ -6,6 +6,7 @@ defclass( numeric (polygon2)
 		( val @reader getVal @writer setVal) 
 		( width )
 		( height )
+		( scale )
 		( c0 )
 		( c1 )
 		( c2 )
@@ -27,6 +28,7 @@ defmethod( initializeInstance @after ((obj numeric))
 	   obj->val = nil
 	   obj->width = nil
 	   obj->height = nil
+	   obj->scale = 1.0
 	   obj->c0  = list(list(0 10) 
 			   list(10 0) 
 			   list(18 0) 
@@ -300,6 +302,8 @@ defmethod( generate (( np numeric ))
 	       )
 	    );case
 	    setVertices(np ret)
+	    np->width  = maxx(np) - minx(np) 
+	    np->height = maxy(np) - miny(np)
 	    ret
   );let
 );defmethod

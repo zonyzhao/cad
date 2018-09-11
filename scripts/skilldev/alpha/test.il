@@ -16,8 +16,8 @@ generate(ala)
 alaTran = makeInstance( 'transform2 )
 setVertices(alaTran generate(ala))
 alaGeom = makeInstance( 'geometry )
-addTransform(num0Geom alaTran)
-lib = "reticle"
+addTransform(alaGeom alaTran)
+lib = "pd0164"
 name = "ala"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
