@@ -26,7 +26,82 @@ Stack = let( ()
 ;	      'new new
 ;             );list
 );let
+
+defstruct(myStruct slot1 slot2 slot3)
+struct = make_myStruct(?slot1 "one" ?slot2 "two" ?slot3 "three")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 S = Stack->new( '(1 2 3 4)) 
 Stack->ppop( S ) 
 Stack->ppush( S 1 )
+
+defstruct(Stack 
+	  procedure( new( initialContents )
+            list( nil 'contents initialContents )
+          );procedure
+);defstruct
+
+Stack->
+
+
+
+defstruct(stack new ppop ppush get set)
+stk = make_stack(?new procedure( new( initialContents )
+          	        list( nil 'contents initialContents )
+        	      );procedure
+                 ?ppop procedure( _ppop( aStack )
+                         letseq( (
+                                   ( contents get( aStack ))
+                                   ( v car( contents ))
+		                 )
+		            set( aStack cdr( contents ))
+		            v
+                          );letseq
+	                );procedure
+		 ?get procedure( _get( aStack )
+         	        aStack->contents
+		      );procedure
+                 ?set procedure( _set( aStack aList )
+                        aStack->contents = aList
+                      );procedure
+                 ?ppush "three")
+
+stk->new( '(1 2 3 4)) 
+stk->ppop(5)
+
+defstruct(cadObject new gridCheck)
+co = make_cadObject(?new makeInstance( 'cadObj )
+                    ?gridCheck defmethod( _gridCheck (( cobj cadObj ) arg)
+		                 let(
+	                             if(cobj->grid == arg then
+	                               't
+                                     else
+                                       nil
+                                      ):if
+				  );let
+                               );defMethod
+                   );make_cadObject
+
+foo = co->new 
+foo->layer
+foo->purpose
+getLayer(foo)
+co->gridCheck
+co->gridCheck(foo 0.1)
+_gridCheck(foo 0.1)
+
+
+lib = "pd0164"
+name = "viaTest"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+setRef(foo cv)
+setAttrList(foo)
+
+defmethod( checkGrid (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+) ; defMethod

@@ -51,7 +51,16 @@ defmethod( cloneCadObj (( cobj cadObj) arg )
 defmethod( setAttrList (( cobj cadObj ))
 	cobj->attributes = cobj->ref->?
 ) ; defMethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( gridCheck (( cobj cadObj ) arg)
+;	if(cobj->grid == arg then
+;	  't
+;        else
+;           nil
+;        )
+;);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method selects an attribute from the attribute list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 

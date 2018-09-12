@@ -38,3 +38,16 @@ getOid(co)
 setLayer(cop "foo")
 getLayer(cop)
 getLayer(co)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2; Test clone (by value)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib = "pd0164"
+name = "viaTest"
+view = "layout"
+type = "maskLayout"
+cv = dbOpenCellViewByType( lib name view type "r")
+co = makeInstance( 'cadObj )
+setRef(co cv)
+setAttrList(co)
+getAttrValueByKey(co "cellName")
+getAttrValueByKey(co "libName")
