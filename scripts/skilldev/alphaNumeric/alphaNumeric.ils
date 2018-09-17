@@ -1,0 +1,57 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  alphaNumeric.ils: alphaNumeric class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( alphaNumeric ()
+  ( 
+    ( val    @reader getVal @writer setVal)
+    ( width  @reader getWidth @writer setWidth )
+    ( height @reader getHeight @writer setHeight )
+    ( scale  @reader getScale @writer setScale )							
+  )
+);defClass
+;#####################################################
+; Class constructor
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj alphaNumeric))  
+  obj->val = nil
+  obj->width = nil
+  obj->height = nil
+  obj->scale = 1.0
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generate character
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate (( an alphaNumeric ))
+  let( (char gen ret)
+    ret = nil
+    char = makeInstance( 'alpha )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      setWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    char = makeInstance( 'numeric )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      setWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    char = makeInstance( 'punctuation )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      setWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    ret
+  );let
+);defmethod

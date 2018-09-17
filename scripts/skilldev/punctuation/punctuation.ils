@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  symbol.ils: symbol class 
+;;;;;;;;;;;;;;;;  punctuation.ils: punctuation class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( symbol (polygon2)
+defclass( punctuation (polygon2)
 	  ( 
-		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
-		( scale )
+		( val @reader getVal @writer setVal ) 
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
 		( cAngleBracketOpen )
 		( cAngleBracketClose )
                 ( cBracketClose )
@@ -36,7 +36,7 @@ defclass( symbol (polygon2)
 ; Class constructor
 ; This method initializes the class
 ;#####################################################
-defmethod( initializeInstance @after ((obj symbol))  
+defmethod( initializeInstance @after ((obj punctuation))  
 	   obj->val = nil
 	   obj->width = nil
 	   obj->height = nil
@@ -273,7 +273,7 @@ defmethod( initializeInstance @after ((obj symbol))
 ;#####################################################
 ; Generates a symbol polygon
 ;#####################################################
-defmethod( generate (( np symbol ))
+defmethod( generate (( np punctuation ))
   let( (ret)
 	   ret=nil
 	   case(np->val

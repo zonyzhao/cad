@@ -6,6 +6,7 @@ findClass( 'ab )
 abr = makeInstance( 'ab )
 classp( abr 'ab)
 classOf(abr)
+className(classOf(abr))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate and render unit 

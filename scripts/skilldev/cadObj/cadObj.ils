@@ -8,6 +8,9 @@
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cadObj ()
@@ -45,36 +48,58 @@ defmethod( cloneCadObj (( cobj cadObj) arg )
   arg->grid       = cobj->grid
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Stores a List of Attributes the attributes member given
 ; that the reference to that CAD object has been set
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( setAttrList (( cobj cadObj ))
 	cobj->attributes = cobj->ref->?
-) ; defMethod
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;defmethod( gridCheck (( cobj cadObj ) arg)
-;	if(cobj->grid == arg then
-;	  't
-;        else
-;           nil
-;        )
-;);defMethod
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method selects an attribute from the attribute list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getAttrByIndex (( cobj cadObj ) index)
 		nth(index cobj->attributes)
-) ; defMethod
-
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method selects an attribute's contents from the attribute list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getAttrValueByIndex (( cobj cadObj ) index)
 		nth(index cobj->attributes)->?
-) ; defMethod
-
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Returns Attribute Based Upon the Attribute Name
 ; key value must be a string i.e. "prop"
@@ -115,8 +140,8 @@ defmethod( getAttrValueByKey (( cobj cadObj ) key)
 		) ; foreach
 		keyind = stringToSymbol(key)
         	nth(1 assq( keyind hashlist))
-	) ; let
-) ; defMethod
+	);let
+);defMethod
 ;############################################################
 ;############################################################
 ;############################################################

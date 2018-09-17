@@ -5,7 +5,8 @@ defclass( array ()
   (
     ( rows @reader getRows @writer setRows)
     ( cols @reader getCols @writer setCols )
-    ( array )
+    ( object @reader getObject @writer setObject )
+    ( list )
   )
 );defClass
 ;#####################################################
@@ -14,6 +15,7 @@ defclass( array ()
 defmethod( initializeInstance @after ((obj array))
   obj->rows   = nil 
   obj->cols   = nil
+  obj->object = nil
   obj->list  = makeInstance( 'collection )
 );defmethod
 ;#####################################################
@@ -23,6 +25,29 @@ defmethod( cloneArray (( ara array ) arg)
   arg->rows       = ara->rows
   arg->cols       = ara->cols
   cloneCollection(d arg->list)
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generate the object array
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate (( ara array ))
+  let( (len obj)
+    len = ara->rows*ara->cols
+    for(i 0 sub1(len)
+      obj = makeInstance( className(classOf(ara->object)))
+      add(ara->list obj)
+    );for
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Get an array entry by position
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getEntry (( ara array ) arg)
+  let( (r c ind)
+    r = xCoord(arg)
+    c = yCoord(arg)
+    ind = r*c+c
+    nth(ind getCollection(ara->list))
+  );let
 );defmethod
 ;######################################################
 ;######################################################

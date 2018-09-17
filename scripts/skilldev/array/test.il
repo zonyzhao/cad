@@ -1,10 +1,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-0; Existence
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'die )
-d = makeInstance( 'die )
-classp( d 'die)
-classOf(d)
+findClass( 'array )
+a = makeInstance( 'array )
+classp( a 'array)
+classOf(a)
+className(classOf(a))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-1; Generate an array of a 
+;       given cadObj object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+a = makeInstance( 'array )
+obj = makeInstance( 'cadObj )
+setRows(a 3)
+setCols(a 3)
+setObject(a obj)
+generate(a)
+getEntry(a list(0 0))
+nth(0 getCollection(a->list))
 
 
 

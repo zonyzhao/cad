@@ -25,7 +25,8 @@ skillDevPackage = cadObj techfile listfun collection coord2 point2 points2 rotat
                   polygon2 bbox rectTran rectTrans transform2 transformation2 \
                   geometry assembly component structure stackup cv instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
-                  overhead reticleFrame numeric shape layer snapshot pcell \
+                  overhead reticleFrame alpha numeric punctuation shape \
+                  alphaNumeric layer snapshot pcell \
                   reticleArray wafer numbers
 #########################################################################
 geomObj = geomObject point line twoPointsLine

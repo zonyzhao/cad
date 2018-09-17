@@ -4,9 +4,9 @@
 defclass( alpha (polygon2)
 	  ( 
 		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
-		( scale )
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
 		( ca )
 		( cb )
 		( cc )
@@ -460,6 +460,7 @@ defmethod( initializeInstance @after ((obj alpha))
 defmethod( generate (( np alpha ))
   let( (ret)
 	   ret=nil
+	   np->val = lowerCase(np->val)
 	   case(np->val
 	       ("a"
 	         ret=np->ca

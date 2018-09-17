@@ -8,6 +8,9 @@
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cadObj ()
@@ -45,27 +48,58 @@ defmethod( cloneCadObj (( cobj cadObj) arg )
   arg->grid       = cobj->grid
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Stores a List of Attributes the attributes member given
 ; that the reference to that CAD object has been set
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( setAttrList (( cobj cadObj ))
 	cobj->attributes = cobj->ref->?
-) ; defMethod
-
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method selects an attribute from the attribute list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getAttrByIndex (( cobj cadObj ) index)
 		nth(index cobj->attributes)
-) ; defMethod
-
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method selects an attribute's contents from the attribute list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getAttrValueByIndex (( cobj cadObj ) index)
 		nth(index cobj->attributes)->?
-) ; defMethod
-
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Returns Attribute Based Upon the Attribute Name
 ; key value must be a string i.e. "prop"
@@ -106,8 +140,8 @@ defmethod( getAttrValueByKey (( cobj cadObj ) key)
 		) ; foreach
 		keyind = stringToSymbol(key)
         	nth(1 assq( keyind hashlist))
-	) ; let
-) ; defMethod
+	);let
+);defMethod
 ;############################################################
 ;############################################################
 ;############################################################
@@ -860,7 +894,7 @@ defmethod( isEmpty ((col collection))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
-;# 2-D Coordinate Class
+;# coord2.ils: 2-D Coordinate Class
 ;######################################################
 defclass( coord2 ()
   (
@@ -868,7 +902,6 @@ defclass( coord2 ()
     ( y @reader getY @writer setY )	
   )				  
 ) ; defclass
-
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -876,14 +909,12 @@ defmethod( initializeInstance @after ((obj coord2))
   obj->x = nil
   obj->y = nil
 );defmethod
-
 ;#####################################################
 ; returns the coordinate in list form
 ;#####################################################
 defmethod( getCoord (( c2 coord2 ))
   list(getX(c2) getY(c2))	   
 );defmethod
-
 ;#####################################################
 ; Sets coordinated based upon a list argument
 ;#####################################################
@@ -892,7 +923,21 @@ defmethod( setCoord (( c2 coord2 ) arg )
   c2->y = yCoord(arg)
   list(c2->x c2->y)	   
 );defmethod
-
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
 ;######################################################
 ;######################################################
 ;######################################################
@@ -4829,13 +4874,570 @@ defmethod(setPadBbox  (( rf reticleFrame ) bbx)
 );defmethod
 ;######################################################
 ;######################################################;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  alpha.ils: alphabet class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( alpha (polygon2)
+	  ( 
+		( val @reader getVal @writer setVal) 
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
+		( ca )
+		( cb )
+		( cc )
+		( cd )
+		( ce )
+		( cf )
+		( cg )
+		( ch )
+		( ci )
+		( cj )
+                ( ck )
+                ( cl )
+                ( cm )
+                ( cn )
+                ( co )
+                ( cp )
+                ( cq )
+                ( cr )
+		( cs )
+		( ct )
+		( cu )
+		( cv )
+		( cw )
+		( cx )
+		( cy )
+		( cz )								
+	  )
+);defClass
+;#####################################################
+; Class constructor
+; This method initializes the class
+; Initialized/Default Heigth is 50
+;#####################################################
+defmethod( initializeInstance @after ((obj alpha))  
+	   obj->val = nil
+	   obj->width = nil
+	   obj->height = nil
+	   obj->scale = 1.0
+	   obj->ca  = list(list(4.0 0.0) 
+			   list(4.0 4.0) 
+			   list(6.8 4.0) 
+			   list(6.8 8.0) 
+			   list(4.0 8.0)
+			   list(4.0 11.2) 
+			   list(8.0 15.2) 
+			   list(12.0 11.2) 
+			   list(12.0 8.0) 
+			   list(9.2 8.0)
+			   list(9.2 4.0) 
+			   list(12.0 4.0) 
+			   list(12.0 0.0) 
+			   list(16.0 0.0) 
+		           list(16.0 14.0)
+			   list(10.0 20.0) 
+			   list(6.0 20.0) 
+			   list(0.0 14.0) 
+			   list(0.0 0.0))
+	   obj->cb = list( list(6.4 0.0) 
+		           list(6.4 4.0) 
+		           list(4.0 4.0) 
+			   list(4.0 8.0) 
+			   list(11.0 8.0)
+			   list(12.0 7.0) 
+			   list(12.0 5.0) 
+			   list(11.0 4.0) 
+			   list(8.8 4.0)
+			   list(8.8 0.0)
+			   list(13.0 0.0)	
+			   list(16.0 3.0)
+			   list(16.0 8.0)
+			   list(14.0 10.0)
+			   list(16.0 12.0)
+			   list(16.0 17.0)
+			   list(13.0 20.0)
+			   list(8.8 20.0)
+			   list(8.8 16.0)
+			   list(11.0 16.0)
+			   list(12.0 15.0)
+			   list(12.0 13.0)
+			   list(11.0 12.0)
+			   list(4.0 12.0)
+			   list(4.0 16.0)
+			   list(6.4 16.0)
+			   list(6.4 20.0)
+			   list(0.0 20.0)
+			   list(0.0 0.0))
+	   obj->cc = list(list(3.2 0.0) 
+			  list(12.8 0.0) 
+			  list(16.0 3.2) 
+			  list(16.0 7.2) 
+			  list(12.0 7.2)
+			  list(12.0 5.2) 
+			  list(10.8 4.0) 
+			  list(5.2 4.0) 
+			  list(4.0 5.2) 
+			  list(4.0 14.8)
+			  list(5.2 16.0) 
+			  list(10.8 16.0) 
+			  list(12.0 14.8) 
+			  list(12.0 13.2) 
+			  list(16.0 13.2)
+			  list(16.0 16.8) 
+			  list(12.8 20.0) 
+			  list(3.2 20.0) 
+			  list(0.0 16.8) 
+			  list(0.0 3.2))
+	   obj->cd = list(list(12.0 0.0) 
+			  list(16.0 4.0) 
+			  list(16.0 16.0) 
+			  list(12.0 20.0) 
+		          list(8.0 20.0)
+			  list(8.0 16.0) 
+			  list(10.0 16.0) 
+		          list(12.0 14.0) 
+			  list(12.0 6.0) 
+			  list(10.0 4.0)
+			  list(4.0 4.0) 
+			  list(4.0 16.0) 
+			  list(5.6 16.0) 
+		          list(5.6 20.0) 
+			  list(0.0 20.0)
+		          list(0.0 0.0))
+	   obj->ce = list(list(16.0 0.0) 
+			  list(16.0 4.0) 
+			  list(4.4 4.0) 
+			  list(4.4 8.0) 
+			  list(12.8 8.0)
+			  list(12.8 12.0) 
+			  list(4.4 12.0) 
+			  list(4.4 16.0) 
+			  list(16.0 16.0) 
+			  list(16.0 20.0)
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cf = list(list(4.0 0.0) 
+			  list(4.0 8.0) 
+			  list(12.8 8.0) 
+			  list(12.8 12.0) 
+			  list(4.0 12.0)
+			  list(4.0 16.0) 
+			  list(16.0 16.0) 
+			  list(16.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cg = list(list(3.2 0.0) 
+			  list(13.2 0.0) 
+			  list(16.0 3.2) 
+			  list(16.0 10.8) 
+			  list(8.0 10.8)
+		          list(8.0 6.8) 
+			  list(12.0 6.8) 
+			  list(12.0 5.2) 
+			  list(10.8 4.0) 
+			  list(5.2 4.0)
+			  list(4.0 5.2) 
+			  list(4.0 14.8) 
+			  list(5.2 16.0) 
+			  list(10.8 16.0) 
+			  list(12.0 14.8)
+			  list(12.0 14.0) 
+			  list(16.0 14.0) 
+			  list(16.0 16.8) 
+			  list(13.2 20.0) 
+			  list(3.2 20.0)
+			  list(0.0 16.8) 
+			  list(0.0 3.2))
+	   obj->ch = list(list(4.0 0.0) 
+		     	  list(4.0 8.4) 
+			  list(12.0 8.4) 
+			  list(12.0 0.0) 
+			  list(16.0 0.0)
+			  list(16.0 20.0) 
+			  list(12.0 20.0) 
+			  list(12.0 12.4) 
+			  list(4.0 12.4) 
+			  list(4.0 20.0)
+			  list(0.0 20.0)
+			  list(0.0 0.0))
+	   obj->ci = list(list(12.0 0.0) 
+			  list(12.0 4.0) 
+			  list(8.0 4.0) 
+			  list(8.0 16.0) 
+			  list(12.0 16.0)
+			  list(12.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 16.0) 
+			  list(4.0 16.0) 
+			  list(4.0 4.0)
+			  list(0.0 4.0) 
+			  list(0.0 0.0))
+	   obj->cj = list(list(3.2 0.0) 
+			  list(13.6 0.0) 
+			  list(16.0 2.4) 
+			  list(16.0 20.0) 
+			  list(12.0 20.0)
+			  list(12.0 4.0) 
+			  list(4.0 4.0) 
+			  list(4.0 8.8) 
+			  list(0.0 8.8) 
+			  list(0.0 3.2))
+	   obj->ck = list(list(4.4 0.0) 
+			  list(4.4 5.6) 
+			  list(5.6 5.6) 
+			  list(11.2 0.0) 
+			  list(15.2 0.0)
+			  list(15.2 1.6) 
+			  list(6.8 10.0) 
+			  list(15.2 18.4) 
+			  list(15.2 20.0) 
+			  list(11.2 20.0)
+			  list(5.6 14.4) 
+			  list(4.4 14.4) 
+			  list(4.4 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cl = list(list(12.0 0.0) 
+			  list(12.0 4.0) 
+			  list(4.0 4.0) 
+			  list(4.0 20.0) 
+			  list(0.0 20.0)
+			  list(0.0 0.0))
+	   obj->cm = list(list(4.0 0.0) 
+			  list(4.0 12.0) 
+			  list(5.2 12.0) 
+			  list(8.0 9.2) 
+			  list(10.8 12.0)
+			  list(12.0 12.0) 
+			  list(12.0 0.0) 
+			  list(16.0 0.0) 
+			  list(16.0 20.0) 
+			  list(12.8 20.0)
+			  list(8.0 15.2) 
+			  list(3.2 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cn = list(list(4.0 0.0) 
+			  list(4.0 9.2) 
+			  list(5.2 9.2) 
+			  list(12.0 2.4) 
+			  list(12.0 0.0)
+			  list(16.0 0.0) 
+			  list(16.0 20.0) 
+			  list(12.0 20.0) 
+			  list(12.0 10.4) 
+			  list(10.8 10.4)
+			  list(1.2 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->co = list(list(4.0 0.0) 
+			  list(12.0 0.0) 
+			  list(16.0 4.0) 
+			  list(16.0 8.8) 
+			  list(12.0 8.8)
+			  list(12.0 6.0) 
+			  list(10.0 4.0) 
+			  list(6.0 4.0) 
+			  list(4.0 6.0) 
+			  list(4.0 8.8)
+			  list(0.0 8.8) 
+			  list(0.0 4.0))
+	   obj->cp = list(list(4.0 0.0) 
+			  list(4.0 6.8) 
+			  list(10.8 6.8) 
+			  list(14.0 10.0) 
+			  list(14.0 16.8)
+			  list(10.8 20.0) 
+			  list(7.6 20.0) 
+			  list(7.6 16.0) 
+			  list(8.8 16.0) 
+			  list(10.0 14.8)
+			  list(10.0 12.0) 
+			  list(8.8 10.8) 
+			  list(4.0 10.8) 
+			  list(4.0 16.0) 
+			  list(5.2 16.0)
+			  list(5.2 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cq = list(list(4.0 0.0) 
+			  list(12.0 0.0) 
+			  list(13.2 1.2) 
+			  list(14.4 0.0) 
+			  list(16.0 0.0)
+			  list(16.0 2.0) 
+			  list(14.8 3.2) 
+			  list(16.0 4.4) 
+			  list(16.0 16.0) 
+			  list(12.0 20.0)
+			  list(9.2 20.0) 
+			  list(9.2 16.0) 
+			  list(10.0 16.0) 
+			  list(12.0 14.0) 
+			  list(12.0 6.0)
+			  list(10.0 6.0) 
+			  list(10.0 4.0) 
+			  list(6.0 4.0) 
+			  list(4.0 6.0) 
+			  list(4.0 14.0)
+			  list(6.0 16.0) 
+			  list(6.8 16.0) 
+			  list(6.8 20.0) 
+			  list(4.0 20.0) 
+			  list(0.0 16.0)
+			  list(0.0 4.0))
+	   obj->cr = list(list(4.0 0.0) 
+			  list(4.0 6.8) 
+			  list(7.2 6.8) 
+			  list(10.0 4.0) 
+			  list(10.0 0.0)
+			  list(14.0 0.0) 
+			  list(14.0 5.2) 
+			  list(11.2 8.0) 
+			  list(14.0 10.8) 
+			  list(14.0 16.8)
+			  list(10.8 20.0) 
+			  list(7.6 20.0) 
+			  list(7.6 16.0) 
+			  list(8.8 16.0) 
+			  list(10.0 14.8)
+			  list(10.0 12.0) 
+			  list(8.8 10.8) 
+			  list(4.0 10.8) 
+			  list(4.0 16.0) 
+			  list(5.2 16.0)
+			  list(5.2 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 0.0))
+	   obj->cs = list(list(3.2 0.0) 
+			  list(13.2 0.0) 
+			  list(16.0 3.2) 
+			  list(16.0 8.8) 
+			  list(12.8 12.0)
+			  list(5.2 12.0) 
+			  list(4.0 13.2) 
+			  list(4.0 14.8) 
+			  list(5.2 16.0) 
+			  list(10.8 16.0)
+			  list(12.0 14.8) 
+			  list(12.0 14.0) 
+			  list(16.0 14.0) 
+			  list(16.0 16.8) 
+			  list(12.8 20.0)
+			  list(3.2 20.0) 
+			  list(0.0 16.8) 
+			  list(0.0 11.2) 
+			  list(3.2 8.0) 
+			  list(10.8 8.0)
+			  list(12.0 6.8) 
+			  list(12.0 5.2) 
+			  list(10.8 4.0) 
+			  list(5.2 4.0) 
+			  list(4.0 5.2)
+			  list(4.0 6.0)
+			  list(0.0 6.0)
+			  list(0.0 3.2))
+	   obj->ct = list(list(6.0 16.0) 
+			  list(6.0 0.0) 
+			  list(10.0 0.0) 
+			  list(10.0 16.0) 
+			  list(16.0 16.0)
+			  list(16.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 16.0))
+	   obj->cu = list(list(3.2 0.0) 
+			  list(12.8 0.0) 
+			  list(16.0 3.2) 
+			  list(16.0 20.0) 
+			  list(12.0 20.0)
+			  list(12.0 5.2) 
+			  list(10.8 4.0) 
+			  list(5.2 4.0) 
+			  list(4.0 5.2) 
+			  list(4.0 20.0)
+			  list(0.0 20.0) 
+			  list(0.0 3.2))
+	   obj->cv = list(list(6.0 0.0) 
+			  list(10.0 0.0) 
+			  list(16.0 6.0) 
+			  list(16.0 20.0) 
+			  list(12.0 20.0)
+			  list(12.0 8.0) 
+			  list(8.8 4.8) 
+			  list(7.2 4.8) 
+			  list(4.0 8.0) 
+			  list(4.0 20.0)
+			  list(0.0 20.0) 
+			  list(0.0 6.0))
+	   obj->cw = list(list(5.2 0.0) 
+			  list(8.0 2.8) 
+			  list(10.8 0.0) 
+			  list(16.0 5.2) 
+			  list(16.0 20.0)
+			  list(12.0 20.0) 
+			  list(12.0 6.4) 
+			  list(10.8 6.4) 
+			  list(8.0 9.2) 
+			  list(5.2 6.4)
+			  list(4.0 6.4) 
+			  list(4.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 5.2))
+	   obj->cx = list(list(4.0 0.0) 
+			  list(4.0 3.2) 
+			  list(8.0 7.2) 
+			  list(12.0 3.2) 
+			  list(12.0 0.0)
+			  list(16.0 0.0) 
+			  list(16.0 4.8) 
+			  list(10.8 10.0) 
+			  list(16.0 15.2) 
+			  list(16.0 20.0)
+			  list(12.0 20.0) 
+			  list(12.0 17.2) 
+			  list(8.0 13.2) 
+			  list(4.0 17.2) 
+			  list(4.0 20.0)
+			  list(0.0 20.0) 
+			  list(0.0 15.2) 
+			  list(5.2 10.0) 
+			  list(0.0 4.8) 
+			  list(0.0 0.0))
+	   obj->cy = list(list(6.0 10.0) 
+			  list(6.0 0.0) 
+			  list(10.0 0.0) 
+			  list(10.0 10.0) 
+			  list(16.0 16.0)
+			  list(16.0 20.0) 
+			  list(12.0 20.0) 
+			  list(12.0 17.2) 
+			  list(8.0 13.2) 
+			  list(4.0 17.2)
+			  list(4.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 16.0))
+	   obj->cz = list(list(16.0 0.0) 
+			  list(16.0 4.0) 
+			  list(7.2 4.0) 
+			  list(7.2 5.2) 
+			  list(16.0 14.0)
+			  list(16.0 20.0) 
+			  list(0.0 20.0) 
+			  list(0.0 16.0) 
+			  list(10.8 16.0) 
+			  list(10.8 14.8)
+			  list(0.0 4.0) 
+			  list(0.0 0.0))
+);defmethod
+;#####################################################
+; Generates a number polygon
+;#####################################################
+defmethod( generate (( np alpha ))
+  let( (ret)
+	   ret=nil
+	   np->val = lowerCase(np->val)
+	   case(np->val
+	       ("a"
+	         ret=np->ca
+               )
+	       ("b"
+	         ret=np->cb
+               )
+	       ("c"
+	         ret=np->cc
+               )
+	       ("d"
+	         ret=np->cd
+               )
+	       ("e"
+	         ret=np->ce
+               )
+	       ("f"
+	         ret=np->cf
+               )
+	       ("g"
+	         ret=np->cg
+               )
+	       ("h"
+	         ret=np->ch
+               )
+	       ("i"
+	         ret=np->ci
+               )
+	       ("j"
+	         ret=np->cj
+               )
+	       ("k"
+	         ret=np->ck
+               )
+	       ("l"
+	         ret=np->cl
+               )
+	       ("m"
+	         ret=np->cm
+               )
+	       ("n"
+	         ret=np->cn
+               )
+	       ("o"
+	         ret=np->co
+               )
+	       ("p"
+	         ret=np->cp
+               )
+	       ("q"
+	         ret=np->cq
+               )
+	       ("r"
+	         ret=np->cr
+               )
+	       ("s"
+	         ret=np->cs
+               )
+               ("t"
+	         ret=np->ct
+               )
+	       ("u"
+	         ret=np->cu
+               )
+	       ("v"
+	         ret=np->cv
+               )
+	       ("w"
+	         ret=np->cw
+               )
+	       ("x"
+	         ret=np->cx
+               )
+	       ("y"
+	         ret=np->cy
+               )
+	       ("z"
+	         ret=np->cz
+               )   
+	       (t
+	         ret=nil
+	       )
+	    );case
+	    setVertices(np ret)
+	    np->width  = maxx(np) - minx(np) 
+	    np->height = maxy(np) - miny(np)
+	    ret
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  numeric.ils: numberic class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( numeric (polygon2)
 	  ( 
-		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
+		( val @reader getVal @writer setVal ) 
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
 		( c0 )
 		( c1 )
 		( c2 )
@@ -4857,6 +5459,7 @@ defmethod( initializeInstance @after ((obj numeric))
 	   obj->val = nil
 	   obj->width = nil
 	   obj->height = nil
+	   obj->scale = 1.0
 	   obj->c0  = list(list(0 10) 
 			   list(10 0) 
 			   list(18 0) 
@@ -5130,10 +5733,371 @@ defmethod( generate (( np numeric ))
 	       )
 	    );case
 	    setVertices(np ret)
+	    np->width  = maxx(np) - minx(np) 
+	    np->height = maxy(np) - miny(np)
 	    ret
   );let
 );defmethod
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  punctuation.ils: punctuation class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( punctuation (polygon2)
+	  ( 
+		( val @reader getVal @writer setVal ) 
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
+		( cAngleBracketOpen )
+		( cAngleBracketClose )
+                ( cBracketClose )
+		( cParenthClose )
+		( cColon )
+		( cComma )
+		( cDash )
+		( cDot )
+		( cEqual )
+		( cPound )
+		( cHat )
+		( cBracketOpen )
+		( cParenthOpen )
+                ( cPercent )
+                ( cQuote )
+                ( cPlus )
+                ( cQuestion )
+                ( cSemiColon )
+                ( cSlashBackward )
+                ( cSlashForward )
+		( cStar )
+		( cUnderscore )
+		( cBug )								
+	  )
+);defClass
+;#####################################################
+; Class constructor
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj punctuation))  
+	   obj->val = nil
+	   obj->width = nil
+	   obj->height = nil
+	   obj->scale = 1.0
+	   obj->cAngleBracketOpen  = list(list(7.6 0.0) 
+			                  list(8.4 0.0) 
+			             	  list(8.4 2.4) 
+			             	  list(7.6 2.4) 
+			   	     	  list(2.4 7.6)
+			   	     	  list(2.4 8.4) 
+			   	     	  list(7.6 13.6) 
+			   	     	  list(8.4 13.6) 
+			   	     	  list(8.4 16.0) 
+			   	     	  list(7.6 16.0)
+			   	     	  list(0.0 8.4) 
+			   	     	  list(0.0 7.6))
+	   obj->cAngleBracketClose = list(list(0.8 0.0) 
+		                          list(8.4 7.6) 
+		           		  list(8.4 8.4) 
+			   		  list(0.8 16.0) 
+			   		  list(0.0 16.0)
+			   		  list(0.0 13.6) 
+			   		  list(0.8 13.6) 
+			   		  list(6.0 8.4) 
+			   		  list(6.0 7.6)
+			   		  list(0.8 2.4)
+			  		  list(0.0 2.4)	
+			   		  list(0.0 0.0))
+	   obj->cBracketClose = list(list(4.4 0.0) 
+			             list(4.4 20.0) 
+			  	     list(0.0 20.0) 
+			  	     list(0.0 17.2) 
+			  	     list(1.2 17.2)
+			  	     list(1.2 2.8) 
+			  	     list(0.0 2.8) 
+			  	     list(0.0 0.0))			  
+	   obj->cParenthClose = list(list(2.8 0.0) 
+			      	     list(5.2 2.4) 
+			 	     list(5.2 17.6) 
+			  	     list(2.8 20.0) 
+			  	     list(0.0 20.0)
+			  	     list(0.0 17.2) 
+			  	     list(1.2 16.0) 
+			  	     list(1.2 4.0) 
+			  	     list(0.0 2.8) 
+			  	     list(0.0 0.0))
+	   obj->cColon = list(list(1.2 0.0) 
+			      list(3.2 0.0) 
+			      list(4.4 1.2) 
+			      list(4.4 3.2) 
+		              list(3.2 4.4)
+			      list(1.2 4.4) 
+			      list(0.0 3.2) 
+		              list(0.0 1.2))
+	   obj->cComma = list(list(2.4 0.0) 
+			      list(4.8 2.4) 
+			      list(4.8 8.8) 
+			      list(0.8 8.8) 
+			      list(0.0 8.0)
+			      list(0.0 4.8) 
+			      list(0.8 4.0) 
+			      list(1.6 4.0) 
+			      list(1.6 3.2) 
+			      list(0.0 1.6)
+			      list(0.0 0.0))
+	   obj->cDash = list(list(0.0 8.0) 
+			     list(12.4 8.0) 
+			     list(12.4 12.0) 
+			     list(0.0 12.0))
+	   obj->cDot = list(list(1.2 0.0) 
+			    list(2.8 0.0) 
+			    list(4.0 1.2) 
+			    list(4.0 2.8) 
+			    list(2.8 4.0)
+		            list(1.2 4.0) 
+			    list(0.0 2.8) 
+			    list(0.0 1.2))
+	   obj->cEqual = list(list(0.0 0.0) 
+		     	      list(12.0 0.0) 
+			      list(12.0 3.2) 
+			      list(0.0 3.2))
+	   obj->cPound = list(list(0.0 10.0) 
+			      list(5.2 10.0) 
+			      list(5.2 12.4) 
+			      list(0.0 12.4))
+	   obj->cHat = list(list(2.4 19.6) 
+			    list(2.4 20.4) 
+			    list(5.6 23.6) 
+			    list(6.4 23.6) 
+			    list(9.6 20.4)
+			    list(9.6 19.6) 
+			    list(12.0 19.6) 
+			    list(12.0 20.4) 
+			    list(6.4 26.0) 
+			    list(5.6 26.0)
+			    list(0.0 20.4)
+			    list(0.0 19.6))
+	   obj->cBracketOpen = list(list(4.4 0.0) 
+			            list(4.4 2.8) 
+			  	    list(3.2 2.8) 
+			  	    list(3.2 17.2) 
+			  	    list(4.4 17.2)
+			  	    list(4.4 20.0) 
+			  	    list(0.0 20.0) 
+			  	    list(0.0 0.0))
+	   obj->cParenthOpen = list(list(2.4 0.0) 
+			            list(5.2 0.0) 
+			       	    list(5.2 2.8) 
+			       	    list(4.0 4.0) 
+			       	    list(4.0 16.0)
+				    list(5.2 17.2)
+				    list(5.2 20.0)
+				    list(2.4 20.0)
+				    list(0.0 17.6)
+				    list(0.0 2.4))
+	   obj->cPercent = list(list(11.2 2.0) 
+			        list(12.8 2.0) 
+			  	list(14.0 3.2) 
+			  	list(14.0 4.8) 
+			  	list(12.8 6.0)
+			  	list(11.2 6.0) 
+			  	list(10.0 4.8) 
+			  	list(10.0 3.2))
+	   obj->cQuote = list(list(7.2 14.4) 
+			      list(8.8 14.4) 
+			      list(9.6 15.2) 
+			      list(9.6 20.0) 
+			      list(6.4 20.0)
+			      list(6.4 15.2))
+	   obj->cPlus = list(list(4.4 8.4) 
+			     list(4.4 4.0) 
+			     list(7.6 4.0) 
+			     list(7.6 8.4) 
+			     list(12.0 8.4)
+			     list(12.0 11.6) 
+			     list(7.6 11.6) 
+			     list(7.6 16.0) 
+			     list(4.4 16.0) 
+			     list(4.4 11.6)
+			     list(0.0 11.6) 
+			     list(0.0 8.4))
+	   obj->cQuestion = list(list(3.2 16.0) 
+			         list(4.0 16.8) 
+			  	 list(7.2 16.8) 
+			  	 list(8.0 16.0) 
+			  	 list(8.0 12.8)
+			  	 list(7.2 12.0) 
+			  	 list(3.2 12.0) 
+			  	 list(3.2 6.0) 
+			  	 list(6.4 6.0) 
+			  	 list(6.4 9.6)
+			  	 list(8.8 9.6)
+				 list(10.8 11.6)
+				 list(10.8 18.0)
+				 list(8.8 20.0)
+				 list(2.4 20.0)
+				 list(0.0 17.6)
+				 list(0.0 16.0))
+	   obj->cSemiColon = list(list(1.6 0.0) 
+			          list(4.0 2.4) 
+			  	  list(4.0 7.2) 
+			  	  list(0.8 7.2) 
+			  	  list(0.0 6.4)
+			  	  list(0.0 5.2) 
+			  	  list(0.8 4.4) 
+			  	  list(1.6 4.4) 
+			  	  list(1.6 3.2) 
+			  	  list(0.0 1.6)
+			  	  list(0.0 0.0))
+	   obj->cSlashBackward = list(list(12.0 2.8) 
+			              list(12.0 0.0) 
+			  	      list(16.0 0.0) 
+			  	      list(16.0 4.8) 
+			  	      list(4.0 16.8)
+			  	      list(4.0 20.0) 
+			  	      list(0.0 20.0) 
+			  	      list(0.0 14.8))
+	   obj->cSlashForward = list(list(4.0 0.0) 
+			             list(4.0 2.8) 
+			  	     list(16.0 14.8) 
+			  	     list(16.0 20.0) 
+			  	     list(12.0 20.0)
+			  	     list(12.0 16.8) 
+			  	     list(0.0 4.8) 
+			  	     list(0.0 0.0))
+	   obj->cStar = list(list(2.4 8.4) 
+			     list(0.8 6.8) 
+			     list(2.8 4.8) 
+			     list(4.4 6.4) 
+			     list(4.4 4.0)
+			     list(7.6 4.0) 
+			     list(7.6 6.4) 
+			     list(9.2 4.8) 
+			     list(11.2 6.8) 
+			     list(9.6 8.4)
+			     list(12.0 8.4) 
+			     list(12.0 11.6) 
+			     list(9.6 11.6) 
+			     list(11.2 13.2) 
+			     list(9.2 15.2)
+			     list(7.6 13.6) 
+			     list(7.6 16.0) 
+			     list(4.4 16.0) 
+			     list(4.4 13.6) 
+			     list(2.8 15.2)
+			     list(0.8 13.2) 
+			     list(2.4 11.6) 
+			     list(0.0 11.6) 
+			     list(0.0 8.4))
+	   obj->cUnderscore = list(list(0.0 0.0) 
+			           list(12.4 0.0) 
+			  	   list(12.4 4.0) 
+			  	   list(0.0 4.0))
+	   obj->cBug = list(list(9.0 0.0) 
+			    list(7.0 0.0) 
+			    list(7.0 4.1) 
+			    list(6.1 5.0) 
+			    list(3.0 5.0)
+			    list(3.0 7.0) 
+			    list(6.9 7.0) 
+			    list(7.0 7.9) 
+			    list(7.0 9.1) 
+			    list(6.9 10.0)
+			    list(2.0 10.0) 
+			    list(2.0 0.0)
+			    list(0.0 0.0)
+			    list(0.0 12.0)
+			    list(6.9 12.0)
+			    list(9.0 9.9)
+			    list(9.0 7.1)
+			    list(7.9 6.0)
+			    list(9.0 4.9))
+);defmethod
+;#####################################################
+; Generates a symbol polygon
+;#####################################################
+defmethod( generate (( np punctuation ))
+  let( (ret)
+	   ret=nil
+	   case(np->val
+	       ("<"
+	         ret=np->cAngleBracketOpen 
+               )
+	       (">"
+	         ret=np->cAngleBracketClose
+               )
+	       ("]"
+	         ret=np->cBracketClose
+               )
+	       (")"
+	         ret=np->cParenthClose
+               )
+	       (":"
+	         ret=np->cColon
+               )
+	       (","
+	         ret=np->cComma
+               )
+	       ("-"
+	         ret=np->cDash
+               )
+	       ("."
+	         ret=np->cDot
+               )
+	       ("="
+	         ret=np->cEqual
+               )
+	       ("^"
+	         ret=np->cHat
+               )
+	       ("["
+	         ret=np->cBracketOpen
+               )
+	       ("("
+	         ret=np->cParenthOpen
+               )
+	       ("%"
+	         ret=np->cPercent
+               )
+	       ("\""
+	         ret=np->cQuote
+               )
+	       ("+"
+	         ret=np->cPlus
+               )
+	       ("?"
+	         ret=np->cQuestion
+               )
+	       (";"
+	         ret=np->cSemiColon
+               )
+	       ("\\"
+	         ret=np->cSlashBackward
+               )
+	       ("/"
+	         ret=np->cSlashForward
+               )
+               ("*"
+	         ret=np->cStar
+               )
+	       ("_"
+	         ret=np->cUnderscore
+               )
+	       ("bug"
+	         ret=np->cBug
+               )
+	       (t
+	         ret=nil
+	       )
+	    );case
+	    setVertices(np ret)
+	    np->width  = maxx(np) - minx(np) 
+	    np->height = maxy(np) - miny(np)
+	    ret
+  );let
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5563,7 +6527,63 @@ defmethod( enclosed (( shp shape ) arg)
 
 
 
-;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  alphaNumeric.ils: alphaNumeric class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( alphaNumeric ()
+  ( 
+    ( val    @reader getVal @writer setVal)
+    ( width  @reader getWidth @writer setWidth )
+    ( height @reader getHeight @writer setHeight )
+    ( scale  @reader getScale @writer setScale )							
+  )
+);defClass
+;#####################################################
+; Class constructor
+; This method initializes the class
+;#####################################################
+defmethod( initializeInstance @after ((obj alphaNumeric))  
+  obj->val = nil
+  obj->width = nil
+  obj->height = nil
+  obj->scale = 1.0
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Generate character
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generate (( an alphaNumeric ))
+  let( (char gen ret)
+    ret = nil
+    char = makeInstance( 'alpha )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      setWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    char = makeInstance( 'numeric )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      getWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    char = makeInstance( 'punctuation )
+    setVal(char an->val)
+    setScale(char an->scale)
+    gen  = generate(char)
+    if(!null(gen) then
+      ret = gen
+      getWidth(an getWidth(char))
+      setHeight(an getHeight(char))
+    );if
+    ret
+  );let
+);defmethod;######################################################
 ;# techLayer.ils: Technology layer class. Shapes member
 ;#                is a container for all shapes on the
 ;#                target layer.

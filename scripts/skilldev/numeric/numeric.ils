@@ -3,10 +3,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( numeric (polygon2)
 	  ( 
-		( val @reader getVal @writer setVal) 
-		( width )
-		( height )
-		( scale )
+		( val @reader getVal @writer setVal ) 
+		( width @reader getWidth @writer setWidth )
+		( height @reader getHeight @writer setHeight )
+		( scale @reader getScale @writer setScale )
 		( c0 )
 		( c1 )
 		( c2 )

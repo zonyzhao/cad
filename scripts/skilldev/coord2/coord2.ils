@@ -1,5 +1,5 @@
 ;######################################################
-;# 2-D Coordinate Class
+;# coord2.ils: 2-D Coordinate Class
 ;######################################################
 defclass( coord2 ()
   (
@@ -7,7 +7,6 @@ defclass( coord2 ()
     ( y @reader getY @writer setY )	
   )				  
 ) ; defclass
-
 ;#####################################################
 ; Constructor Method
 ;#####################################################
@@ -15,14 +14,12 @@ defmethod( initializeInstance @after ((obj coord2))
   obj->x = nil
   obj->y = nil
 );defmethod
-
 ;#####################################################
 ; returns the coordinate in list form
 ;#####################################################
 defmethod( getCoord (( c2 coord2 ))
   list(getX(c2) getY(c2))	   
 );defmethod
-
 ;#####################################################
 ; Sets coordinated based upon a list argument
 ;#####################################################
@@ -31,7 +28,21 @@ defmethod( setCoord (( c2 coord2 ) arg )
   c2->y = yCoord(arg)
   list(c2->x c2->y)	   
 );defmethod
-
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
 ;######################################################
 ;######################################################
 ;######################################################
