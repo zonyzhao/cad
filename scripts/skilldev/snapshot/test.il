@@ -531,7 +531,7 @@ nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
 ; UT-17: Taking a snaphot of the 
 ;        alpha cells
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="bug"
+name="Oscar"
 lib="reticle"
 view = "layout"
 type = "maskLayout"
@@ -542,3 +542,7 @@ getStackUp(ss)
 checkMfg(ss)
 dbClose(cv)
 nth(0 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
+nth(1 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
+nth(2 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
+nth(3 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices
+nth(4 getCollection(nth(0 getCollection(ss->layers))->shapes))->vertices

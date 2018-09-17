@@ -5141,7 +5141,19 @@ defmethod( initializeInstance @after ((obj alpha))
 			  list(4.0 6.0) 
 			  list(4.0 8.8)
 			  list(0.0 8.8) 
-			  list(0.0 4.0))
+			  list(0.0 4.0)
+                          list(16.0 16.0)
+			  list(12.0 20.0)
+			  list(4.0 20.0)
+			  list(0.0 16.0)
+			  list(0.0 11.2)
+			  list(4.0 11.2)
+			  list(4.0 14.0)
+			  list(6.0 16.0)
+			  list(10.0 16.0)
+			  list(12.0 14.0)
+			  list(12.0 11.2)
+			  list(16.0 11.2))
 	   obj->cp = list(list(4.0 0.0) 
 			  list(4.0 6.8) 
 			  list(10.8 6.8) 
@@ -6569,7 +6581,7 @@ defmethod( generate (( an alphaNumeric ))
     gen  = generate(char)
     if(!null(gen) then
       ret = gen
-      getWidth(an getWidth(char))
+      setWidth(an getWidth(char))
       setHeight(an getHeight(char))
     );if
     char = makeInstance( 'punctuation )
@@ -6578,7 +6590,7 @@ defmethod( generate (( an alphaNumeric ))
     gen  = generate(char)
     if(!null(gen) then
       ret = gen
-      getWidth(an getWidth(char))
+      setWidth(an getWidth(char))
       setHeight(an getHeight(char))
     );if
     ret
@@ -7479,6 +7491,57 @@ defmethod( generate (( np numbers ))
 	    np->width  = maxx(np) - minx(np) 
 	    np->height = maxy(np) - miny(np)
 	    ret
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  stamp.ils: stamp generator class 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( stamp (geometry)
+  ( 
+    ( chars @reader getChars @writer setChars )
+    ( origin @reader getOrigin @writer setOrigin )
+    ( layer @reader getLayer @writer setLayer )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( len @reader getLength )							
+  )
+);defClass
+;#####################################################
+; Class constructor
+;#####################################################
+defmethod( initializeInstance @after ((obj stamp))
+  obj->chars = ""  
+  obj->origin = '()
+  obj->layer = "text"
+  obj->purpose = "drawing"
+  obj->len = nil
+);defmethod	   
+;#####################################################
+; Print a given array number within a cellview
+;#####################################################
+defmethod( generate (( st stamp ))
+  let( (char an shift val cTran cwidth cTran wid)
+    st->len = strlen(st->chars)
+    an = makeInstance( 'alphaNumeric )
+    shift = 0.0
+    for(i 0 sub1(st->len)
+      char = getchar(st->chars i+1)
+      setVal(an char)
+      val = generate(an)
+      cTran = makeInstance( 'transform2 )
+      setVertices(cTran val)
+      cloneRectTran(cTran)
+      setLayer(cTran getLayer(st))
+      setPurpose(cTran getPurpose(st))
+      translate(cTran list(shift 0.0))
+      addTransform(st cTran)
+      wid = getWidth(an)
+      shift = shift + 1.2*wid
+    );for
+    translate(st list(xCoord(st->origin) yCoord(st->origin)))
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
