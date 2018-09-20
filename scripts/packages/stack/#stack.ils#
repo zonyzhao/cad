@@ -204,3 +204,18 @@ procedure( makeMethods()
 M = makeMethods()
 
 gridCheck(cadObj 0.1)
+
+co = let( ()
+    
+    defmethod( gridCheck (( cobj cadObj ) arg)
+		               let((ret)
+			       nil
+			       );letseq
+                             );defMethod
+    lambda( (msg)
+      case( msg
+          (( gridCheck ) gridCheck )
+	  ( t nil )
+      );case
+    );lambda
+);let
