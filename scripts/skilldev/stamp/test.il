@@ -7,10 +7,10 @@ st = makeInstance( 'stamp )
 classp( st 'stamp)
 classOf(st)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Print a number in a cellview
+; UT-1: Print a letter + number in a cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 st = makeInstance( 'stamp )
-setChars(st "100")
+setChars(st "Hello World: 800")
 setOrigin(st list(0.0 0.0))
 setLayer(st "resistor")
 setPurpose(st "drawing")

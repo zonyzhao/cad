@@ -45,3 +45,25 @@ render(num0Geom)
 dbSave(cv)
 dbClose(cv)
 dbClose(cv)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3 Print number from a string
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib = "pd0164"
+name = "numchar"
+view = "layout"
+num = makeInstance( 'numeric )
+str = "000"
+ch = substring(str 2 1)
+setVal(num ch)
+generate(num)
+numTran = makeInstance( 'transform2 )
+setVertices(numTran generate(num))
+translate(numTran list(964.9 275.2))
+numGeom = makeInstance( 'geometry )
+addTransform(numGeom num0Tran)
+cv = dbOpenCellViewByType( lib name view "maskLayout" "a")
+setRef(numGeom cv)
+render(numGeom)
+dbSave(cv)
+dbClose(cv)
+dbClose(cv)
