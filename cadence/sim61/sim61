@@ -1,10 +1,10 @@
 #!/bin/tcsh
 #
-#setenv IBMPDK /nfs/foundry/ibm/IBM_PDK
-#setenv PROCESS bicmos8hp
+setenv IBMPDK /net/nfs-n501/LNFS01/MET/foundry/ibm/IBM_PDK
+setenv PROCESS cmos10lpe
 setenv PROJDIR ~/projects/mems
 #setenv SETUPDIR $IBMPDK/$PROCESS/metInit
-setenv SETUPDIR /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/sim61
+setenv SETUPDIR /users/1127110/cad/cadence/sim61/sim61
 setenv EDITOR /usr/bin/emacs
 setenv TERM konsole
 setenv CDS_CMI_COMPLEVEL 0
@@ -24,7 +24,6 @@ if !(-d $PROJDIR) then
 endif
 cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
 cp $SETUPDIR/.simrc $PROJDIR/.simrc
-
 
 #
 # FOR ADS2016.01_u1

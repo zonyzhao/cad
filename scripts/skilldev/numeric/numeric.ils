@@ -1,5 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  numeric.ils: numberic class 
+; FIXME: If non-unity scaling is used, the polygon needs to be re-gridded to 
+;        the current manufacturing grid setting in the technology file ...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( numeric (polygon2)
 	  ( 
@@ -302,12 +304,14 @@ defmethod( generate (( np numeric ))
 	       )
 	    );case
 	    setVertices(np ret)
+	    if(np->scale != 1.0 then
+	      scale(np np->scale)
+	    );if
 	    np->width  = maxx(np) - minx(np) 
 	    np->height = maxy(np) - miny(np)
-	    ret
+	    getVertices(np)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

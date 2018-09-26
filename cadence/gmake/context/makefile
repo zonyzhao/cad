@@ -19,6 +19,7 @@ export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cade
 #########################################################################
 localDesDir = $(HOME)/"/deslibs_oa/"
 localMemsDesDir = $(HOME)/"/deslibs_oa_mems/"
+localIbmDesDir = $(HOME)/"/deslibs_oa_ibm/"
 localCadDir = $(HOME)/"/cad_layout_61/"
 cadenceDefault = "/net/nfs-n501/ANFS01/apps/cadence/IC616/share/cdssetup/"
 avTech = "/apps/assura/ASSURA616_04.14.101/tools/assura/etc/avtech/avTech"
@@ -162,7 +163,20 @@ mems:
 	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
 	echo "INCLUDE " $(localMemsDesDir)/cds.lib  >> $(localCadDir)/cds.lib
-#	$(foreach var, $(memsLibs), echo "DEFINE " $(var) " "$(memsLibDir)/$(var) >> $(localCadDir)/cds.lib;)
+
+.phony: ibm
+ibm:
+	touch $(localCadDir)/cds.lib
+	rm $(localCadDir)/cds.lib
+	touch $(localCadDir)/cds.lib
+	rm $(localCadDir)/.cdsenv
+	rm $(localCadDir)/.cdsinit
+	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsenv $(localCadDir)/.cdsenv
+	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsinit $(localCadDir)/.cdsinit
+	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
+	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
+	touch $(localCadDir)/cds.lib
+	echo "INCLUDE " $(localIbmDesDir)/cds.lib  >> $(localCadDir)/cds.lib
 
 #############################################################################################################################################
 # Individual technology library and cellviews

@@ -67,3 +67,26 @@ render(numGeom)
 dbSave(cv)
 dbClose(cv)
 dbClose(cv)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3 Print a number scaled by 0.5
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib = "pd0164"
+name = "numchar"
+view = "layout"
+num = makeInstance( 'numeric )
+str = "020"
+ch = substring(str 2 1)
+setVal(num ch)
+setScale(num 0.5)
+generate(num)
+numTran = makeInstance( 'transform2 )
+setVertices(numTran generate(num))
+translate(numTran list(0.0 0.0))
+numGeom = makeInstance( 'geometry )
+addTransform(numGeom numTran)
+cv = dbOpenCellViewByType( lib name view "maskLayout" "a")
+setRef(numGeom cv)
+render(numGeom)
+dbSave(cv)
+dbClose(cv)
+dbClose(cv)

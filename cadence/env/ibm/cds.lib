@@ -1,0 +1,9 @@
+INCLUDE /net/nfs-n501/ANFS01/apps/cadence/IC616/share/cdssetup/cds.lib
+DEFINE analogLib /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/etc/cdslib/artist/analogLib 
+DEFINE sbaLib /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/etc/cdslib/artist/sbaLib 
+DEFINE basic /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/etc/cdslib/basic 
+DEFINE sample /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/samples/cdslib/sample 
+DEFINE US_8ths /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/etc/cdslib/sheets/US_8ths
+DEFINE rfLib /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/samples/artist/rfLib
+DEFINE ahdlLib /net/nfs-n501/ANFS01/apps/cadence/IC616/tools/dfII/samples/artist/ahdlLib
+DEFINE cmos10lpe /scratch/ibm/V1.5.0.0RF/cdslib/cmos10lpe

@@ -1271,7 +1271,6 @@ defclass( polygon2 (cadObj)
     ( rtran @reader getRectTran )			  	
   )
 );defClass
-
 ;#####################################################
 ; Constructor method
 ;#####################################################
@@ -1282,7 +1281,6 @@ defmethod( initializeInstance @after ((obj polygon2))
 	   obj->scale = 1.0
 	   obj->rtran = makeInstance( 'rectTran )
 );defmethod
-
 ;####################################################
 ; Checks to make sure that the centroid of the
 ; rectTran is at the origin
@@ -1297,7 +1295,6 @@ defmethod( isCentered (( poly polygon2 ))
     )	 
   );let	   
 );defmethod
-
 ;####################################################
 ; Centers the polygon's rectTran at the origin
 ; if not already centered
@@ -1315,7 +1312,6 @@ defmethod( center (( poly polygon2 ))
     );if
   );let	 	   
 );defmethod
-
 ;####################################################
 ; Sets the polygon vertices and calculates the
 ; area and centroid of the polygon
@@ -1325,21 +1321,18 @@ defmethod( setVertices (( poly polygon2 ) arg)
   centroid(poly)
   poly->vertices	 	   
 );defmethod
-
 ;####################################################
 ; Sets the polygon centroid value
 ;####################################################
 defmethod( setCentroid (( poly polygon2 ) arg)
   setCoord(poly->centroid arg)	   
 );defmethod
-
 ;####################################################
 ; Gets the polygon centroid value
 ;####################################################
 defmethod( getCentroid (( poly polygon2 ))
   getCoord(poly->centroid)	   
 );defmethod
-
 ;###############################################################################
 ; Area of a closed non-self intersecting polygon
 ;###############################################################################
@@ -1363,7 +1356,6 @@ defmethod( area (( poly polygon2 ))
 		poly->area = 0.5*(poly->area)
 	   );let	   
 );defmethod
-
 ;###############################################################################
 ; Centroid of a closed non-self intersecting 2-D transform
 ;###############################################################################
@@ -1401,7 +1393,6 @@ defmethod( centroid (( poly polygon2 ))
 		setCoord(poly->centroid list(cx cy))
 	   );let	   
 );defmethod
-
 ;###############################################################################
 ; Rotate Polygon. Polygon's centroid must be at origin prior to rotation
 ;###############################################################################
@@ -1418,7 +1409,6 @@ defmethod( rotate (( poly polygon2 ) arg)
       setVertices(poly rVerts)
   );let	   
 );defmethod
-
 ;#####################################################
 ; This method scales the polygon by the arg value
 ;#####################################################
@@ -1432,7 +1422,6 @@ defmethod( scale (( poly polygon2 ) arg)
       poly->vertices = new
   );let	   
 );defmethod
-
 ;###############################################################################
 ; render the polygon
 ;###############################################################################
@@ -1449,7 +1438,6 @@ defmethod( render (( poly polygon2 ))
     );if
   );if   
 );defmethod
-
 ;#####################################################
 ; Find max x 
 ;#####################################################
@@ -1470,7 +1458,6 @@ defmethod( maxx (( poly polygon2 ))
     maxx 
    );let		     	 
 );defmethod
-
 ;#####################################################
 ; Find min x 
 ;#####################################################
@@ -1491,7 +1478,6 @@ defmethod( minx (( poly polygon2 ))
     minx 
    );let		     	 
 );defmethod
-
 ;#####################################################
 ; Find max y 
 ;#####################################################
@@ -1512,7 +1498,6 @@ defmethod( maxy (( poly polygon2 ))
     maxy 
    );let		     	 
 );defmethod
-
 ;#####################################################
 ; Find min y
 ;#####################################################
@@ -1533,7 +1518,6 @@ defmethod( miny (( poly polygon2 ))
     miny
    );let		     	 
 );defmethod
-
 ;#####################################################
 ; Set the rectangular transformation rectTran of the
 ; polygon
@@ -1543,7 +1527,6 @@ defmethod( setRectTran (( poly polygon2 ))
   setLl(poly->rtran list(minx(poly) miny(poly)))
   calculateCentroid(poly->rtran)
 );defmethod
-
 ;#####################################################
 ; FIXME: this should be in transform2 class
 ; This method "spins" the polygon vertices in a 
@@ -1561,7 +1544,6 @@ defmethod( setRectTran (( poly polygon2 ))
 ;		poly->vertices = temp
 ;	    );let
 ;);defmethod
-
 ;#####################################################
 ; This method translates the position of each polygon2
 ; vertex and it's current centroid value by the point 
@@ -1580,7 +1562,6 @@ defmethod( translate (( poly polygon2 ) trn)
     poly->centroid->y = poly->centroid->y + yCoord(trn)
   );let	   
 );defmethod
-
 ;###############################################################################
 ; Check that there are at least 3 vertices (not a line or a point)
 ;###############################################################################
@@ -1750,8 +1731,6 @@ defmethod( isPointInside (( poly polygon2 ) pnt )
      ret
   );let
 );defmethod
-
-
 ;###############################################################################
 ; FIXME: Edge object?
 ; Using the vertices, generate a list of edge2 objects in the edge collection
@@ -1759,21 +1738,18 @@ defmethod( isPointInside (( poly polygon2 ) pnt )
 ;defmethod( genEdges (( poly polygon2 ) )
 ;  nil
 ;);defmethod
-
 ;###############################################################################
 ; Is polygon a rectangle
 ;###############################################################################
 defmethod( isRectangle (( poly polygon2 ))
   nil
 )
-
 ;###############################################################################
 ; Is polygon a rectangle
 ;###############################################################################
 defmethod( vertexCount (( poly polygon2 ))
   length(poly->vertices)
 )
-
 ;###############################################################################
 ;###############################################################################
 ;###############################################################################
@@ -5745,12 +5721,14 @@ defmethod( generate (( np numeric ))
 	       )
 	    );case
 	    setVertices(np ret)
+	    if(np->scale != 1.0 then
+	      scale(np np->scale)
+	    );if
 	    np->width  = maxx(np) - minx(np) 
 	    np->height = maxy(np) - miny(np)
-	    ret
+	    getVertices(np)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
