@@ -5419,6 +5419,8 @@ defmethod( generate (( np alpha ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  numeric.ils: numberic class 
+; FIXME: If non-unity scaling is used, the polygon needs to be re-gridded to 
+;        the current manufacturing grid setting in the technology file ...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( numeric (polygon2)
 	  ( 
