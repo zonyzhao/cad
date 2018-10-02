@@ -1,0 +1,42 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  serializer.ils: dump an object object's serialization list to a file
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( serializer ()
+	  (
+		( plist @reader getPlist @writer setPlist )	
+		( path @reader getPath @writer setPath )
+		( name @reader getName @writer setName )	
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj serializer)) 
+	   obj->plist=nil
+	   obj->path=nil
+	   obj->name=nil
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serialize (( ser serializer))
+  let((pl fp)
+    foreach( p ser->plist
+      putprop( pl get( ser->plist p) p)
+    )
+    fn = strcat( ser->path "/" ser->name ".dpl")
+    fp = outfile( fn)
+    cond(
+        ( fp
+	  fprintf( fp "%L" pl)
+	  close(fp)
+	  printf( "wrote %s" fn)
+	  t
+        )
+        ( t
+	  printf( "failed to write file %s" fn)
+	  nil
+	)
+  );let
+);defmethod

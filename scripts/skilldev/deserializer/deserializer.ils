@@ -1,0 +1,41 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  deserializer.ils: read object's data from a serialization file
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( deserializer ()
+	  (
+		( plist @reader getOlist @writer setPlist )	
+		( path @reader getPath @writer setPath )
+		( name @reader getName @writer setName )	
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj deserializer)) 
+	   obj->plist=nil
+	   obj->path=nil
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deserialize (( des deserializer))
+  let( ( fn fp dpl p)
+    fn = strcat( des->path des->name ".dpl")
+    fp = infile( fn)
+    cond(
+       ( fp
+	dpl = car( lineread( fp))
+	close( fp)
+	p = cdr( dpl)
+	while( p
+	  putprop( des->plist cadr( p) car( p))
+        )
+      );fp
+      ( t
+	printf( "ERROR(deserializer): failed to read data file: %s" fn)
+	nil
+      ); t
+    );cond
+  );let
+);defmethod
