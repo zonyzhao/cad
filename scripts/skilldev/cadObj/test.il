@@ -5,6 +5,14 @@ findClass( 'cadObj )
 co = makeInstance( 'cadObj )
 classp( co 'cadObj)
 classOf(co)
+superclassesOf(classOf(co))
+name = className(findClass( 'cadObj ))
+path = "/users/1127110/cad/scripts/skilldev/cadObj/regression/"
+file = "ut0.txt"
+target = strcat(path "/" file)
+fp = outfile(target)
+fprintf( fp "name: %s\n" name)  	
+close(fp)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1; Test clone (by value)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
