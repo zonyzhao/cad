@@ -1,0 +1,2 @@
+match case: nil
+mismatch case: (nil oid "foo" "foobar")

@@ -14,7 +14,22 @@ fp = outfile(target)
 fprintf( fp "name: %s\n" name)  	
 close(fp)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1; Test clone (by value)
+; UT-1; Test diff
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; match
+a = makeInstance( 'cadObj )
+setOid(a "foo")
+b = makeInstance( 'cadObj )
+setOid(b "foo")
+diff(a b)
+; mismatch
+a = makeInstance( 'cadObj )
+setOid(a "foo")
+b = makeInstance( 'cadObj )
+setOid(b "foobar")
+diff(a b)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2; Test clone (by value)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 co = makeInstance( 'cadObj )
 setOid(co 100)
@@ -47,7 +62,7 @@ setLayer(cop "foo")
 getLayer(cop)
 getLayer(co)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2; Test clone (by value)
+; UT-3; Test clone (by value)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
 name = "viaTest"
@@ -59,21 +74,7 @@ setRef(co cv)
 setAttrList(co)
 getAttrValueByKey(co "cellName")
 getAttrValueByKey(co "libName")
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-3; Test diff
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; match
-a = makeInstance( 'cadObj )
-setOid(a "foo")
-b = makeInstance( 'cadObj )
-setOid(b "foo")
-diff(a b)
-; mismatch
-a = makeInstance( 'cadObj )
-setOid(a "foo")
-b = makeInstance( 'cadObj )
-setOid(b "foobar")
-diff(a b)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4; Test serializaton
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

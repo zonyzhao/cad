@@ -16,7 +16,7 @@ export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cade
 #########################################################################
 #
 #########################################################################
-class = "cadObj"
+class = "point2"
 #########################################################################
 #  Package Name
 #########################################################################
@@ -34,10 +34,12 @@ cdir = $(sdir)/$(package)/$(class)
 #########################################################################
 testdir = $(cdir)/regression
 #########################################################################
-tests = ut0 ut1
+tests = ut0 
 #########################################################################
 header = "header.il"
 footer = "footer.il"
+########################################################################
+dependencies = cadObj coord2
 ########################################################################
 .phony: paths
 paths:
@@ -57,6 +59,8 @@ dry:
 	cat $(header) >> $(testdir)/test.il
 	$(foreach var, $(tests), cat $(testdir)/$(var).il >>  $(testdir)/test.il;)
 	cat $(footer) >>  $(testdir)/test.il
+	$(foreach var, $(dependencies), cat $(sdir)/$(package)/$(var)/$(var).ils >>  $(testdir)/dependencies.ils;)
+	cat $(cdir)/$(class).ils >>  $(testdir)/dependencies.ils
 
 .phony: test
 test:
@@ -66,7 +70,9 @@ test:
 	cat $(header) >> $(testdir)/test.il
 	$(foreach var, $(tests), cat $(testdir)/$(var).il >>  $(testdir)/test.il;)
 	cat $(footer) >>  $(testdir)/test.il
-	virtuoso -nograph -restore $(cdir)/$(class).ils -replay $(testdir)/test.il
+	$(foreach var, $(dependencies), cat $(sdir)/$(package)/$(var)/$(var).ils >>  $(testdir)/dependencies.ils;)
+	cat $(cdir)/$(class).ils >>  $(testdir)/dependencies.ils
+	virtuoso -nograph -restore $(testdir)/dependencies.ils -replay $(testdir)/test.il
 
 .phony: check
 check:
