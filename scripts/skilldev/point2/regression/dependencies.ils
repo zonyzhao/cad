@@ -2560,3 +2560,1467 @@ defmethod( deserialize (( pt point2 ) fname)
 ;######################################################
 ;######################################################
 ;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  cadObj.ils: base CAD class. Most all classes will be derived/Inherit from 
+;              this class
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  @writer setAttributes)
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.1
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cloneCadObj (( cobj cadObj) arg )
+  arg->oid        = cobj->oid
+  arg->ref        = cobj->ref
+  arg->attributes = cobj->attributes
+  arg->layer      = cobj->layer
+  arg->purpose    = cobj->purpose
+  arg->grid       = cobj->grid
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	);let
+);defMethod
+;############################################################
+;############################################################
+;############################################################
+;######################################################
+;# coord2.ils: 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;#####################################################
+; This method serializes this class to a file
+;#####################################################
+defmethod( serialize (( pt point2 ) fname)
+  let( (pl fp)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
+  );let
+);defmethod
+
+;#####################################################
+; This method deserializes this class to a file
+;#####################################################
+defmethod( deserialize (( pt point2 ) fname)
+  let((fp pl)
+    fp = infile(fname)
+    pl = car(lineread(fp))
+    close(fp)
+    pt->x = xCoord(pl)
+    pt->y = yCoord(pl)
+    pl
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  cadObj.ils: base CAD class. Most all classes will be derived/Inherit from 
+;              this class
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  @writer setAttributes)
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.1
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cloneCadObj (( cobj cadObj) arg )
+  arg->oid        = cobj->oid
+  arg->ref        = cobj->ref
+  arg->attributes = cobj->attributes
+  arg->layer      = cobj->layer
+  arg->purpose    = cobj->purpose
+  arg->grid       = cobj->grid
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	);let
+);defMethod
+;############################################################
+;############################################################
+;############################################################
+;######################################################
+;# coord2.ils: 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;#####################################################
+; This method serializes this class to a file
+;#####################################################
+defmethod( serialize (( pt point2 ) fname)
+  let( (pl fp)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
+  );let
+);defmethod
+
+;#####################################################
+; This method deserializes this class to a file
+;#####################################################
+defmethod( deserialize (( pt point2 ) fname)
+  let((fp pl)
+    fp = infile(fname)
+    pl = car(lineread(fp))
+    close(fp)
+    pt->x = xCoord(pl)
+    pt->y = yCoord(pl)
+    pl
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  cadObj.ils: base CAD class. Most all classes will be derived/Inherit from 
+;              this class
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  @writer setAttributes)
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.1
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cloneCadObj (( cobj cadObj) arg )
+  arg->oid        = cobj->oid
+  arg->ref        = cobj->ref
+  arg->attributes = cobj->attributes
+  arg->layer      = cobj->layer
+  arg->purpose    = cobj->purpose
+  arg->grid       = cobj->grid
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	);let
+);defMethod
+;############################################################
+;############################################################
+;############################################################
+;######################################################
+;# coord2.ils: 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;#####################################################
+; This method serializes this class to a file
+;#####################################################
+defmethod( serialize (( pt point2 ) fname)
+  let( (pl fp)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
+  );let
+);defmethod
+
+;#####################################################
+; This method deserializes this class to a file
+;#####################################################
+defmethod( deserialize (( pt point2 ) fname)
+  let((fp pl)
+    fp = infile(fname)
+    pl = car(lineread(fp))
+    close(fp)
+    pt->x = xCoord(pl)
+    pt->y = yCoord(pl)
+    pl
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  cadObj.ils: base CAD class. Most all classes will be derived/Inherit from 
+;              this class
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+; Program SKILL Lint started on Sep 13 13:43:12 2017.
+; IQ score is 100 (best is 100).
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defgeneric( clone (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
+defgeneric( diff (obj arg)
+  error( "Clone is a subclass responsibility\n")
+);defgeneric
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cadObj ()
+	  (
+		( oid @reader getOid @writer setOid )
+		( cid @reader getCid @writer setCid )
+		( ref @reader getRef @writer setRef )
+		( attributes @reader getAttributes  @writer setAttributes)
+		( layer @reader getLayer @writer setLayer )
+		( purpose @reader getPurpose @writer setPurpose )
+		( grid @writer setGrid @reader getGrid )			
+	  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+defmethod( initializeInstance @after ((obj cadObj)) 
+	   obj->oid=nil
+	   obj->cid=nil
+	   obj->ref=nil
+	   obj->attributes=nil
+	   obj->layer = "text"
+	   obj->purpose = "drawing"
+	   obj->grid = 0.1
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Clone ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( cloneCadObj (( cobj cadObj) arg )
+  arg->oid        = cobj->oid
+  arg->ref        = cobj->ref
+  arg->attributes = cobj->attributes
+  arg->layer      = cobj->layer
+  arg->purpose    = cobj->purpose
+  arg->grid       = cobj->grid
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Serialize ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( serializeCadObj (( cobj cadObj))
+  let((rlist)
+    rlist='()
+    rlist = cons(cobj->oid rlist)
+    rlist = cons(cobj->cid rlist)
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Diff ojbect
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( diff (( cobj cadObj) (arg cadObj) )
+  let((rlist)
+    rlist='()
+    if(cobj->oid == arg->oid then
+    else
+      rlist = cons(rlist list('oid cobj->oid arg->oid))
+    );if
+    rlist
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Attributes the attributes member given
+; that the reference to that CAD object has been set
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( setAttrList (( cobj cadObj ))
+	cobj->attributes = cobj->ref->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( gridCheck (( cobj cadObj ) arg)
+	if(cobj->grid == arg then
+	  't
+        else
+           nil
+        )
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method selects an attribute's contents from the attribute list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrValueByIndex (( cobj cadObj ) index)
+		nth(index cobj->attributes)->?
+);defMethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Returns Attribute Based Upon the Attribute Name
+; key value must be a string i.e. "prop"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( getAttrValueByKey (( cobj cadObj ) key)
+	let( (  vals
+		value
+		attribute
+		m
+		y
+		rlist
+	        hashlist
+	        keyind )
+		vals = cobj->ref->??
+		;FIXME: Need to detect cv type reference or lib reference (ddGetObj)
+		vals = cdr(vals) ;; peel off the redundant dbid
+		attribute = '()
+		value = '()
+		m = 1
+		foreach(x vals
+	  	  if( (m > 0) then
+	      	    attribute = cons(x attribute)
+	      	    m = -1
+	  	  else
+		    value = cons(x value)
+              	    m = 1
+	  	  ) ; if
+		) ; foreach
+		hashlist = '()
+		m=0
+		foreach(z attribute
+	          y = nth(m value)
+	  	  m=m+1
+	  	  rlist = '()
+	  	  rlist = cons(y rlist)
+	  	  rlist = cons(z rlist)	  
+	  	  hashlist = cons(rlist hashlist)
+		) ; foreach
+		keyind = stringToSymbol(key)
+        	nth(1 assq( keyind hashlist))
+	);let
+);defMethod
+;############################################################
+;############################################################
+;############################################################
+;######################################################
+;# coord2.ils: 2-D Coordinate Class
+;######################################################
+defclass( coord2 ()
+  (
+    ( x @reader getX @writer setX )
+    ( y @reader getY @writer setY )	
+  )				  
+) ; defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj coord2)) 
+  obj->x = nil
+  obj->y = nil
+);defmethod
+;#####################################################
+; returns the coordinate in list form
+;#####################################################
+defmethod( getCoord (( c2 coord2 ))
+  list(getX(c2) getY(c2))	   
+);defmethod
+;#####################################################
+; Sets coordinated based upon a list argument
+;#####################################################
+defmethod( setCoord (( c2 coord2 ) arg )
+  c2->x = xCoord(arg)
+  c2->y = yCoord(arg)
+  list(c2->x c2->y)	   
+);defmethod
+;#####################################################
+; Diff: difference method
+;#####################################################
+defmethod( diff (( c2 coord2 ) arg )
+  let((rlist)
+    rlist = '()
+    if(c2->x != arg->x then
+      rlist = cons(rlist list('x c2->x arg->x))
+    );if
+    if(c2->y != arg->y then
+      rlist = cons(rlist list('y c2->y arg->y))
+    );if
+    rlist
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################
+
+
+
+;######################################################
+;# Primitive 2-D Point Class
+;######################################################
+defclass( point2 (coord2 cadObj)
+  ()				  
+) ; defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+;defmethod( initializeInstance @after ((obj point2)) 
+ ; obj->point = nil
+;);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPoint (( pt point2 ) arg )
+  pt->x = xCoord(arg)
+  pt->y = yCoord(arg)
+  list(getX(pt) getY(pt))	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( getPoint (( pt point2 ))
+  list(pt->x pt->y)	   
+);defmethod
+
+;#####################################################
+; translate point in 2-D space. Argument is list:
+; list( xTran ytran)
+;#####################################################
+defmethod( translate (( pt point2 ) arg )
+	   setX(pt getX(pt)+xCoord(arg))
+	   setY(pt getY(pt)+yCoord(arg))
+);defmethod
+
+;#####################################################
+; rotate a point in 2-D space about the origin
+;#####################################################
+defmethod( rotate (( pt point2 ) arg )
+  let( (pi xcd ycd theta thetaPrime)
+    pi = 3.14159265
+    xcd = xCoord(getCoord(pt))
+    ycd = yCoord(getCoord(pt))
+    mag = (xcd**2+ycd**2)**0.5
+    theta = atan2(ycd xcd)
+    thetaPrime = theta+arg/180*pi
+    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+  );let
+);defmethod
+
+;#####################################################
+; scale a point in 2-D space. Argument is a scaler
+;#####################################################
+defmethod( scale (( pt point2 ) arg )
+	   setX(pt getX(pt)*scale)
+	   setY(pt getY(pt)*scale)
+);defmethod
+
+
+; FIXME: Need to update for new coord2 inheritance
+;#####################################################
+; This method indicates whether class member point2 point
+; is located to the lower-left of the input point argument pnt
+; (logically lower OR left )
+;#####################################################
+;defmethod( lowerLeftPoint ((pt point2) arg)
+;  let( ( pt1y pt2y )
+;       cond(
+;  ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( xCoord(pt->point) == xCoord(arg)
+;	     	   pt1y = yCoord(pt->point)
+;		   pt2y = yCoord(arg)
+;		   pt1y < pt2y
+;;	   );
+;	   ( xCoord(pt->point) < xCoord(arg)
+;	     t
+;	   );xCoord(pt->point) ...
+;	   ( t
+;	     nil
+;	   );t
+ ;      );cond
+;  );let
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( isOnGrid (( pt point2 ))
+;  let( (compFactor ret) 
+;    compFactor = 1 / pt->dbuPerUu
+;    ret = t
+;    if(float(pt->x) != round( ( float(pt->x) + compFactor ) / pt->mfg ) * pt->mfg then
+;      printf("WARNING: X Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      ret = nil
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;      else
+;        printf("WARNING: Both X and Y Coordinates are off the manufacturing grid of %f: (%f,%f)\n" pt->mfg float(pt->x) float(pt->y))
+;      );if
+;    else
+;      printf("INFO: X Coordinate is on the manufacturing grid of %f: %f\n" pt->mfg float(pt->x))
+;      if(float(pt->y) != round( ( float(pt->y) + compFactor ) / pt->mfg ) * pt->mfg then	
+;        printf("WARNING: Y Coordinate is off the manufacturing grid of %f: %f\n" pt->mfg float(pt->y))
+;        ret = nil
+;      else
+;	 printf("INFO: Y Coordinate is on the manufacturing grid of %f: %f\n" float(pt->mfg) float(pt->y))
+;      );if
+;    );if
+;    ret	       
+;  );let	     
+;);defmethod
+
+;#####################################################
+; FIXME: Should be in shape class as this is where
+;        we begin to recognize grid
+;#####################################################
+;defmethod( setOnGrid (( pt point2 ))
+;  let( (compFactor) 
+;    compFactor = 1 / pt~>dbuPerUu 
+;    pt->x=round( ( pt->x + compFactor ) / pt->mfg ) * pt->mfg
+;    pt->y=round( ( pt->y + compFactor ) / pt->mfg ) * pt->mfg
+;    list(  pt->x pt->y  ) 
+;  );let  
+;);defmethod
+
+;#####################################################
+; This method corrects machine dependent round-off error.
+;#####################################################
+defmethod( pcFixPoint (( pt point2 ))
+           setX(pt pcFix(getX(pt)))
+	   setY(pt pcFix(getY(pt)))	   
+);defmethod
+
+;#####################################################
+; This method serializes this class to a file
+;#####################################################
+defmethod( serialize (( pt point2 ) fname)
+  let( (pl fp)
+    pl = list(pt->x pt->y)
+    fp = outfile(fname "w")
+    fprintf(fp "%L" pl)
+    close(fp)
+  );let
+);defmethod
+
+;#####################################################
+; This method deserializes this class to a file
+;#####################################################
+defmethod( deserialize (( pt point2 ) fname)
+  let((fp pl)
+    fp = infile(fname)
+    pl = car(lineread(fp))
+    close(fp)
+    pt->x = xCoord(pl)
+    pt->y = yCoord(pl)
+    pl
+  );let	   
+);defmethod
+;######################################################
+;######################################################
+;######################################################

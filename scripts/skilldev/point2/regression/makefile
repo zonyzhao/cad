@@ -76,7 +76,11 @@ test:
 
 .phony: check
 check:
-	$(foreach var, $(tests), diff $(testdir)/$(var).out $(testdir)/golden/$(var).out > $(testdir)/$(var).diff || echo \* $(class) class regression testing Failed! \*;) 
+	$(foreach var, $(tests), diff $(testdir)/$(var).out $(testdir)/golden/$(var).out > $(testdir)/$(var).diff || echo \* $(class) class regression testing Failed! \*;)
+	touch $(testdir)/test.diff
+	rm  $(testdir)/test.diff
+	touch $(testdir)/test.diff
+	$(foreach var, $(tests), cat $(testdir)/$(var).diff >> test.diff;) 
 
 .phony: clean
 clean:

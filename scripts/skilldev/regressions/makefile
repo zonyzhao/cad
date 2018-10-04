@@ -16,7 +16,7 @@ export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cade
 #########################################################################
 #
 #########################################################################
-class = "coord2"
+classes = cadObj coord2 point2
 #########################################################################
 #  Package Name
 #########################################################################
@@ -26,19 +26,17 @@ package = skilldev
 #########################################################################
 sdir = "/users/1127110/cad/scripts/"
 #########################################################################
-# Class Directory
+# Package Directory
 #########################################################################
-cdir = $(sdir)/$(package)/$(class)
+pdir = $(sdir)/$(package)/
 #########################################################################
 # test Directory
 #########################################################################
-testdir = $(cdir)/regression
-#########################################################################
-tests = ut0 
+testdir = $(pdir)/regressions/
 #########################################################################
 header = "header.il"
 footer = "footer.il"
-########################################################################
+#########################################################################
 .phony: paths
 paths:
 	@echo REFLIBDIR is $$REFLIBDIR 
@@ -54,8 +52,7 @@ dry:
 	touch $(testdir)/test.il
 	rm $(testdir)/test.il
 	touch $(testdir)/test.il
-	cat $(header) >> $(testdir)/test.il
-	$(foreach var, $(tests), cat $(testdir)/$(var).il >>  $(testdir)/test.il;)
+	$(foreach var, $(classes), cat $(pdir)/$(var)/regression/test.il >>  $(testdir)/test.il;)
 	cat $(footer) >>  $(testdir)/test.il
 
 .phony: test
@@ -75,6 +72,15 @@ check:
 	rm $(testdir)/test.diff
 	touch $(testdir)/test.diff
 	$(foreach var, $(tests), cat $(testdir)/$(var).diff >> test.diff;) 
+
+.phony: run
+run:
+	touch $(testdir)/test.diff
+	rm $(testdir)/test.diff
+	touch $(testdir)/test.diff
+	$(foreach var, $(classes), cd $(pdir)/$(var)/regression &&  $(MAKE) test;)
+	$(foreach var, $(classes), cd $(pdir)/$(var)/regression &&  $(MAKE) check;)
+	$(foreach var, $(classes), cat $(pdir)/$(var)/regression/test.diff >>  $(testdir)/test.il;)
 
 .phony: clean
 clean:
