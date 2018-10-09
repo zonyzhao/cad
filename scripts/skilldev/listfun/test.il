@@ -10,7 +10,9 @@ lis->elems
 lis->len
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Test getting head of a list
+; UT-1: Test getting head of a list.
+;       Returns n values at the 
+;       head of the list
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 a=list(0 1 2 3 4 5 6 7 8 9)
 n=4

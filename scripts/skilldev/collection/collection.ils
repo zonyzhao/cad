@@ -134,7 +134,7 @@ defmethod( add ((col collection) arg)
 );defmethod
 
 ;############################################################
-; Get and item from the collection 
+; Get an item from the collection at index arg 
 ;#############################################################
 defmethod( getItem ((col collection) arg)
    getElem(col->list arg)

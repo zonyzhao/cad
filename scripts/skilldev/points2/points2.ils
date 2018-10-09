@@ -2,10 +2,10 @@
 ;;;;;;;;;;;;;;;;  points.ils: container class for 2-D points 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( points2 (cadObj)
-	  (
-		( points @reader getPoints @writer setCollection)		  
-	  )
-) ; defclass
+  (
+    ( points @reader getPoints @writer setCollection )		  
+  )
+);defclass
 
 ;#####################################################
 ; Constructor Method
@@ -64,7 +64,6 @@ defmethod( translate ((pts points2) arg)
   );if
 );defmethod 
 
-
 ;#####################################################
 ; Translate all points in the collection based
 ; upon a list coordinate input
@@ -119,6 +118,26 @@ defmethod( mirrorx ((pts points2))
   );let
 );defmethod 
 
+;#####################################################
+; Check to see if points collection is equal to an
+; input points object given by arg
+; FIXME: need to handle out of order comparison
+;#####################################################
+defmethod( diff ((pts points2) arg)
+  let( (ret)
+    ret = 't
+    if(length(getCollection(pts->points)) != length(getCollection(arg->points)) then
+      ret=nil
+    );if
+    for(i 0 length(getCollection(pts->points))
+      pnta = getItem(pts->points i)
+      pntb = getItem(arg->points i)
+      if(null(diff(pnta pntb)) then
+        ret=nil
+      );if
+    );for
+  );let
+);defmethod 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
