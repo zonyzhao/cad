@@ -1,29 +1,28 @@
 #!/bin/tcsh
 #
-setenv IBMPDK /net/nfs-n501/LNFS01/MET/foundry/ibm/IBM_PDK
-setenv PROCESS cmos10lpe
-setenv PROJDIR ~/projects/mems
-#setenv SETUPDIR $IBMPDK/$PROCESS/metInit
+setenv IBMPDK /scratch/IBM_PDK
+setenv PROCESS bicmos8hp
+setenv PROJDIR /users/1127110/deslibs_oa_ibm
 setenv SETUPDIR /users/1127110/cad/cadence/sim61/sim61
 setenv EDITOR /usr/bin/emacs
 setenv TERM konsole
 setenv CDS_CMI_COMPLEVEL 0
 setenv QRC_ENABLE_EXTRACTION t
 
-if !(-d ~/projects) then
-  mkdir ~/projects
-endif
+#if !(-d ~/projects) then
+#  mkdir ~/projects
+#endif
 
-if !(-d $PROJDIR) then
-  mkdir $PROJDIR
-  cp $SETUPDIR/cds.lib $PROJDIR/cds.lib
-  cp $SETUPDIR/display.drf $PROJDIR/display.drf
-  cp $SETUPDIR/.cdsinit $PROJDIR/.cdsinit
-  cp $SETUPDIR/.cdsenv $PROJDIR/.cdsenv
-  cp $SETUPDIR/assura_tech.lib $PROJDIR/assura_tech.lib
-endif
-cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
-cp $SETUPDIR/.simrc $PROJDIR/.simrc
+#if !(-d $PROJDIR) then
+#  mkdir $PROJDIR
+#  cp $SETUPDIR/cds.lib $PROJDIR/cds.lib
+#  cp $SETUPDIR/display.drf $PROJDIR/display.drf
+#  cp $SETUPDIR/.cdsinit $PROJDIR/.cdsinit
+#  cp $SETUPDIR/.cdsenv $PROJDIR/.cdsenv
+#  cp $SETUPDIR/assura_tech.lib $PROJDIR/assura_tech.lib
+#  cp $SETUPDIR/.cdsplotinit $PROJDIR/.cdsplotinit
+#  cp $SETUPDIR/.simrc $PROJDIR/.simrc
+#endif
 
 #
 # FOR ADS2016.01_u1
@@ -41,6 +40,8 @@ setenv ASSURAHOME /apps/assura/ASSURA616_04.14.101
 setenv MMSIMHOME /apps/mmsim/MMSIM131
 setenv QRC /apps/ext/EXT131
 setenv QRC_HOME /apps/ext/EXT131
+setenv IBM_HOME /scratch/IBM_HOME
+setenv CDS /apps/cadence/IC616
 
 # Design Kit Specific settings 
 setenv CDS_Netlisting_Mode Analog

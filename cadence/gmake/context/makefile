@@ -12,7 +12,9 @@ export CDS_AUTO_64BIT=ALL
 export CDS_LOAD_ENV=CWD
 export CDS_LIC_FILE=5280@eand-idslnxlic01.and.us.ray.com:5280@esud-lnxlic01.sud.us.ray.com:5280@epts-lnxlic01.pts.us.ray.com:27338@cadence-license01-gbs.app.ray.com
 export CDS_HOME=/apps/cadence/IC616
+export CDS=/apps/cadence/IC616
 export INSTALLDIR=/apps/cadence/IC616
+export IBM_HOME=/scratch/IBM_PDK
 export PATH :=/apps/python/python27/bin:/apps/cadence/IC616/tools/bin:/apps/cadence/IC616/tools/dfII/bin:${PATH}
 #########################################################################
 # Main Directories
@@ -70,11 +72,11 @@ paths:
 	@echo REFLIBDIR is $$REFLIBDIR 
 	@echo PROCLIBDIR is $$PROCLIBDIR
 	@echo CDS_HOME is $$CDS_HOME
+	@echo CDS is $$CDS
+	@echo IBM_HOME is $$IBM_HOME
 	@echo PATH is $$PATH
 	@echo CDS_LIC_FILE is $$CDS_LIC_FILE
-	@echo ganLibVer is $$ganLibVer
-	@echo cdsLib Location is $(cdbDrop)
-	@echo oaLib Location is $(oaLibPath)
+	@echo cad_layout_61 Location is $(localCadDir)
 
 .phony: timestamp
 timestamp:	
@@ -156,27 +158,48 @@ mems:
 	touch $(localCadDir)/cds.lib
 	rm $(localCadDir)/cds.lib
 	touch $(localCadDir)/cds.lib
+	touch $(localCadDir)/.cdsenv
 	rm $(localCadDir)/.cdsenv
+	touch $(localCadDir)/.cdsinit
 	rm $(localCadDir)/.cdsinit
+	touch $(localCadDir)/.simrc
+	rm $(localCadDir)/.simrc
 	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsenv $(localCadDir)/.cdsenv
 	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsinit $(localCadDir)/.cdsinit
+	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.simrc $(localCadDir)/.simrc
 	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
 	echo "INCLUDE " $(localMemsDesDir)/cds.lib  >> $(localCadDir)/cds.lib
 
-.phony: ibm
-ibm:
+.phony: ibm_cmos101lpe
+ibm_cmos_101lpe:
 	touch $(localCadDir)/cds.lib
 	rm $(localCadDir)/cds.lib
 	touch $(localCadDir)/cds.lib
 	rm $(localCadDir)/.cdsenv
 	rm $(localCadDir)/.cdsinit
-	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsenv $(localCadDir)/.cdsenv
-	ln -s /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/cadence/env/default/.cdsinit $(localCadDir)/.cdsinit
+	rm $(localCadDir)/.simrc
+	ln -s /scratch/ibm/V1.5.0.0RF/cdslib/examples/.cdsenv $(localCadDir)/.cdsenv
+	ln -s /scratch/ibm/V1.5.0.0RF/cdslib/examples/.cdsinit $(localCadDir)/.cdsinit
+	ln -s /scratch/ibm/V1.5.0.0RF/cdslib/examples/.simrc $(localCadDir)/.simrc
 	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
-	touch $(localCadDir)/cds.lib
 	echo "INCLUDE " $(localIbmDesDir)/cds.lib  >> $(localCadDir)/cds.lib
+
+.phony: ibm_bicmos8hp
+ibm_bicmos8hp:
+	touch $(localCadDir)/cds.lib
+	rm $(localCadDir)/cds.lib
+	touch $(localCadDir)/cds.lib
+	rm $(localCadDir)/.cdsenv
+	rm $(localCadDir)/.cdsinit
+	rm $(localCadDir)/.simrc
+	ln -s $(IBM_HOME)/bicmos8hp/relHP/cdslib/examples/.cdsenv $(localCadDir)/.cdsenv
+	ln -s $(IBM_HOME)/bicmos8hp/relHP/cdslib/examples/.cdsinit $(localCadDir)/.cdsinit
+	ln -s $(IBM_HOME)/bicmos8hp/relHP/cdslib/examples/.simrc $(localCadDir)/.simrc
+#	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
+#	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
+	echo "INCLUDE " $(localIbmDesDir)/cds.lib  > $(localCadDir)/cds.lib
 
 #############################################################################################################################################
 # Individual technology library and cellviews
