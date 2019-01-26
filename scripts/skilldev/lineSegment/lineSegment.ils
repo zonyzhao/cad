@@ -1,65 +1,74 @@
 ;######################################################
-;# Primitive 2-D Point Class
+;# Line Segment Class Comprised of two points
 ;######################################################
-defclass( point2 (coord2 cadObj)
-  ()				  
+defclass( lineSegment (cadObj)
+  (
+    ( pntA )
+    ( pntB )			  
+  )				  
 );defclass
 
 ;#####################################################
 ; Constructor Method
 ;#####################################################
-;defmethod( initializeInstance @after ((obj point2)) 
-; obj->point = nil
+defmethod( initializeInstance @after ((obj lineSegment)) 
+  obj->pntA = makeInstance( 'point2 )
+  obj->pntB = makeInstance( 'point2 )
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPntA (( ls lineSegment ) arg )
+  setPoint(ls->pnA arg)	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+defmethod( setPntB (( ls lineSegment ) arg )
+  setPoint(ls->pnB arg)	   
+);defmethod
+
+;#####################################################
+;
+;#####################################################
+;defmethod( getPointA (( ls lineSegment ))
+;  list(ls->x ls->y)	   
 ;);defmethod
-
-;#####################################################
-;
-;#####################################################
-defmethod( setPoint (( pt point2 ) arg )
-  pt->x = xCoord(arg)
-  pt->y = yCoord(arg)
-  list(getX(pt) getY(pt))	   
-);defmethod
-
-;#####################################################
-;
-;#####################################################
-defmethod( getPoint (( pt point2 ))
-  list(pt->x pt->y)	   
-);defmethod
 
 ;#####################################################
 ; translate point in 2-D space. Argument is list:
 ; list( xTran ytran)
 ;#####################################################
-defmethod( translate (( pt point2 ) arg )
-	   setX(pt getX(pt)+xCoord(arg))
-	   setY(pt getY(pt)+yCoord(arg))
-);defmethod
+;defmethod( translate (( pt point2 ) arg )
+;	   setX(pt getX(pt)+xCoord(arg))
+;	   setY(pt getY(pt)+yCoord(arg))
+;);defmethod
 
 ;#####################################################
 ; rotate a point in 2-D space about the origin
 ; arg is in degress
 ;#####################################################
-defmethod( rotate (( pt point2 ) arg )
-  let( (pi xcd ycd theta thetaPrime)
-    pi = 3.14159265
-    xcd = xCoord(getCoord(pt))
-    ycd = yCoord(getCoord(pt))
-    mag = (xcd**2+ycd**2)**0.5
-    theta = atan2(ycd xcd)
-    thetaPrime = theta+arg/180*pi
-    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
-  );let
-);defmethod
+;defmethod( rotate (( pt point2 ) arg )
+;  let( (pi xcd ycd theta thetaPrime)
+;    pi = 3.14159265
+;    xcd = xCoord(getCoord(pt))
+;    ycd = yCoord(getCoord(pt))
+;    mag = (xcd**2+ycd**2)**0.5
+;    theta = atan2(ycd xcd)
+;    thetaPrime = theta+arg/180*pi
+;    setCoord(pt list(mag*cos(thetaPrime) mag*sin(thetaPrime)))
+;  );let
+;);defmethod
 
 ;#####################################################
 ; scale a point in 2-D space. Argument is a scaler
 ;#####################################################
-defmethod( scale (( pt point2 ) scale )
-	   setX(pt getX(pt)*scale)
-	   setY(pt getY(pt)*scale)
-);defmethod
+;defmethod( scale (( pt point2 ) scale )
+;	   setX(pt getX(pt)*scale)
+;	   setY(pt getY(pt)*scale)
+;);defmethod
 
 ; FIXME: Need to update for new coord2 inheritance
 ;#####################################################
@@ -133,36 +142,36 @@ defmethod( scale (( pt point2 ) scale )
 ;#####################################################
 ; This method corrects machine dependent round-off error.
 ;#####################################################
-defmethod( pcFixPoint (( pt point2 ))
-           setX(pt pcFix(getX(pt)))
-	   setY(pt pcFix(getY(pt)))	   
-);defmethod
+;defmethod( pcFixPoint (( pt point2 ))
+;           setX(pt pcFix(getX(pt)))
+;	   setY(pt pcFix(getY(pt)))	   
+;);defmethod
 
 ;#####################################################
 ; This method serializes this class to a file
 ;#####################################################
-defmethod( serialize (( pt point2 ) fname)
-  let( (pl fp)
-    pl = list(pt->x pt->y)
-    fp = outfile(fname "w")
-    fprintf(fp "%L" pl)
-    close(fp)
-  );let
-);defmethod
+;defmethod( serialize (( pt point2 ) fname)
+;  let( (pl fp)
+;    pl = list(pt->x pt->y)
+;    fp = outfile(fname "w")
+;    fprintf(fp "%L" pl)
+;    close(fp)
+;  );let
+;);defmethod
 
 ;#####################################################
 ; This method deserializes this class to a file
 ;#####################################################
-defmethod( deserialize (( pt point2 ) fname)
-  let((fp pl)
-    fp = infile(fname)
-    pl = car(lineread(fp))
-    close(fp)
-    pt->x = xCoord(pl)
-    pt->y = yCoord(pl)
-    pl
-  );let	   
-);defmethod
+;defmethod( deserialize (( pt point2 ) fname)
+;  let((fp pl)
+;    fp = infile(fname)
+;    pl = car(lineread(fp))
+;    close(fp)
+;    pt->x = xCoord(pl)
+;    pt->y = yCoord(pl)
+;    pl
+;  );let	   
+;);defmethod
 ;######################################################
 ;######################################################
 ;######################################################

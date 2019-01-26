@@ -1,0 +1,33 @@
+;       .cdsinit for Cadence DFII version 6.1
+
+;       --------------------beginning of initialization---------------------
+
+println( "beginning cdsinit...")
+ilDir0 = "/users/1127110/cad/scripts/skill/il"
+ilDir1 = "/users/1127110/cad/scripts/skill/ils"
+sstatus(writeProtect nil)       ;can overwrite il routines
+_stacktrace = 10                ;stack trace depth
+
+;----------------- set default user preferences -----------------------:
+
+hiSetFilterOptions(nil t t nil t t t)
+hiGetCIWindow()->infix = t
+hiGetCIWindow()->expertMode = t
+hiGetCIWindow()->displayMouseBinding = t
+hiGetCIWindow()->focusToCursor = t
+streamOutKeys = list(nil
+  'caseSensitivity        "preserve"
+)
+streamInKeys = list(nil
+  'caseSensitivity        "preserve"
+)
+
+;	--------------local bindkey definitions----------------------------
+
+println( "loading default Cadence bindkeys")
+load( prependInstallPath( "samples/local/schBindKeys.il"))
+load( prependInstallPath( "samples/local/leBindKeys.il"))
+load( "/users/1127110/cad/scripts/skill/autoloads.il")
+
+autoloads()
+

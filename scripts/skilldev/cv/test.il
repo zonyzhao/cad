@@ -288,8 +288,9 @@ isLeaf(cell)
 ;        of the cellview. Flat 
 ;        - no recursion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib="pa0715"
-name="pa715_0p_chip_00"
+lib="ln0246"
+;name="ln246_3p_wafer"
+name="WaferViaMask"
 view="layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout")
 cell = makeInstance( 'cv )
@@ -297,8 +298,20 @@ setRef(cell cv)
 setView(cell "layout")
 setName(cell name)
 setLib(cell lib)
-getInstances(cell)
-
+insts = getInstances(cell)
+inst0 = nth(0 cv->instances)
+inst0~>name
+inst0~>?
+inst0~>??
+inst0~>bBox
+dbClose(cv)
+for(i 0 sub1(length(insts))
+  inst = nth(i cv->instances)
+  printf("%s\n" inst~>cellName)
+);for
+foreach(insts list(cv~>instances)
+  inst~>name	  
+);foreach
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-12: Test getting the recursive 
 ;        heirarchical tree of the cv
@@ -681,12 +694,39 @@ getName(cellcp)
 getLib(cellcp)
 getView(cellcp)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-26
+; Cellview Replace Test:
+; Test Cell Removal, Copy from reference cell,
+; and check valid replaced cell has instances ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cellA = makeInstance( 'cv )
+setName(cellA "ln246_3p_wafer")
+setLib(cellA "ln0246")
+setView(cellA "layout")
+isCell(cellA)
 
+cellB = makeInstance( 'cv )
+setName(cellB "WaferViaMask")
+setLib(cellB "ln0246")
+setView(cellB "layout")
+isCell(cellB)
+if(isCell(cellB) then
+   removeCell(cellB)
+else
+   copyCell(cellA "ln0246" "WaferViaMask")
 
-
-
-
-
+cellC = makeInstance( 'cv )
+setName(cellB "WaferViaMask")
+setLib(cellB "ln0246")
+setView(cellB "layout")
+isCell(cellB)
+hasInstance(cellB)
+insts = getInstances(cellB)
+for(i 0 sub1(length(insts))
+  inst = nth(i insts)
+  printf("%s\n" inst~>cellName)
+);for
 
 
 

@@ -414,6 +414,37 @@ defmethod( generateQuarterCircleInv (( cir circle ))
 		calculateCentroid(cir->rtran)
 	   );let
 ) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "circle" vertex list. The number of 
+; circle polygon vertices is controlled by the nvert argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generatePolygon (( cir circle ) nvert )
+	   let( (pi twoPi incr ang pnt theta x y n coord)
+                pi = 3.1425972
+		twoPi = 2*pi
+	   	incr = 360.0 / nvert
+		ang = 0.0
+		n = 0
+		while(ang < 360.0
+		  pnt = makeInstance( 'point2 )
+		  ;printf("Angle %f\n" ang)
+		  theta = ang / twoPi
+		  x = xCoord(cir->origin) + cir->radius
+		  y = xCoord(cir->origin) + cir->radius 
+		  coord = list(x y)
+		  ;printf("Coord: %L\n" coord)
+		  setPoint(pnt coord)
+		  rotate(pnt ang)
+		  scale(pnt 1.0/2**0.5)
+		  printf("Coord: %L\n" getPoint(pnt))
+		  appendPoint(cir->points pnt)
+		  ang = ang + incr
+		  n = n + 1
+                );while
+                n
+	   );let
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

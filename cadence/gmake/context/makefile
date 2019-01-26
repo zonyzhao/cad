@@ -82,6 +82,22 @@ paths:
 timestamp:	
 	date +"Now time is +%FT%T%z"
 
+.phony: xynMod
+xynMod:
+	touch $(localCadDir)/cds.lib
+	rm $(localCadDir)/cds.lib
+	touch $(localCadDir)/cds.lib
+	touch $(localCadDir)/.cdsenv
+	touch $(localCadDir)/.cdsinit
+	rm $(localCadDir)/.cdsenv
+	rm $(localCadDir)/.cdsinit
+	ln -s  /users/1127110/cad/cadence/env/default/rrfc_2m.cdsenv $(localCadDir)/.cdsenv
+	ln -s  /users/1127110/cad/cadence/env/default/rrfc_2m.cdsinit $(localCadDir)/.cdsinit
+	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
+	echo "INCLUDE " $(defaultOaTechDir)/cds.lib >> $(localCadDir)/cds.lib
+	echo "INCLUDE " $(localDesDir)/cds.lib >> $(localCadDir)/cds.lib
+	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
+
 .phony: defaultTech
 defaultTech:
 	touch $(localCadDir)/cds.lib

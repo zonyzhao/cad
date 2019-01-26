@@ -13,8 +13,8 @@ superclassesOf(classOf(ret))
 ; 2.)Resolution
 ; 3.)Grid
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib   = "pd0164"
-name  = "pd0164_0p"
+lib   = "ln0246"
+name  = "ln246_3s"
 view  = "layout"
 mlview = "maskLayout"
 cv = dbOpenCellViewByType( lib name view mlview "r")
@@ -27,6 +27,7 @@ setSrGrid(ret 0.1)
 checkDim(ret)
 checkRes(ret)
 checkGrid(ret)
+dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Primary Reticle Resolution Testing - shifted reticle
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -42,6 +43,7 @@ setSrGrid(ret 0.1)
 checkDim(ret)
 checkRes(ret)
 checkGrid(ret)
+dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3: Secondary Reticle Resolution Testing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

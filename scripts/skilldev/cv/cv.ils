@@ -135,12 +135,12 @@ defmethod( smash (( cell cv ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getInstances (( cell cv ))
   let( (instances temp)
-	  instances = cell->ref~>instances
-	  foreach( inst instances
-	  	   temp = makeInstance( 'instance )
-		   setRef(temp inst)
-	  	   add(cell->instances temp)
-	  );foreach
+    instances = cell->ref~>instances
+    foreach( inst instances
+      temp = makeInstance( 'instance )
+      setRef(temp inst)
+      add(cell->instances temp)
+    );foreach
   );let
 );defmethod	
 
@@ -200,7 +200,7 @@ defmethod( removeCell (( cell cv ))
 defmethod( Copy (( cell cv ) name)
   let((cv)
     cv = getRef(cell)
-    if( null(ddGetObj(cell->lib name cell->view)) then
+    if( null(ddGetObj(getRef(cell) name cell->view)) then
       dbCopyCellView(cv cell->lib name cell->view "" nil t)
       dbClose( cv)
       't
@@ -668,6 +668,18 @@ defmethod( clean (( cell cv ) arg )
 ;    t
 ;  );let
 ;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isCell (( cell cv))
+  let((cv)
+    if(!null(ddGetObj(cell->lib cell->name cell->view )) then
+      cv = dbOpenCellViewByType( cell->lib cell->name cell->view "" nil)
+      setRef(cell cv)
+    );if
+  );let
+);
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

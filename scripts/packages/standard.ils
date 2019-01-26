@@ -843,7 +843,7 @@ defmethod( add ((col collection) arg)
 );defmethod
 
 ;############################################################
-; Get and item from the collection 
+; Get an item from the collection at index arg 
 ;#############################################################
 defmethod( getItem ((col collection) arg)
    getElem(col->list arg)
@@ -949,13 +949,13 @@ defmethod( diff (( c2 coord2 ) arg )
 ;######################################################
 defclass( point2 (coord2 cadObj)
   ()				  
-) ; defclass
+);defclass
 
 ;#####################################################
 ; Constructor Method
 ;#####################################################
 ;defmethod( initializeInstance @after ((obj point2)) 
- ; obj->point = nil
+; obj->point = nil
 ;);defmethod
 
 ;#####################################################
@@ -985,6 +985,7 @@ defmethod( translate (( pt point2 ) arg )
 
 ;#####################################################
 ; rotate a point in 2-D space about the origin
+; arg is in degress
 ;#####################################################
 defmethod( rotate (( pt point2 ) arg )
   let( (pi xcd ycd theta thetaPrime)
@@ -1001,11 +1002,10 @@ defmethod( rotate (( pt point2 ) arg )
 ;#####################################################
 ; scale a point in 2-D space. Argument is a scaler
 ;#####################################################
-defmethod( scale (( pt point2 ) arg )
+defmethod( scale (( pt point2 ) scale )
 	   setX(pt getX(pt)*scale)
 	   setY(pt getY(pt)*scale)
 );defmethod
-
 
 ; FIXME: Need to update for new coord2 inheritance
 ;#####################################################
@@ -1116,10 +1116,10 @@ defmethod( deserialize (( pt point2 ) fname)
 ;;;;;;;;;;;;;;;;  points.ils: container class for 2-D points 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( points2 (cadObj)
-	  (
-		( points @reader getPoints @writer setCollection)		  
-	  )
-) ; defclass
+  (
+    ( points @reader getPoints @writer setCollection )		  
+  )
+);defclass
 
 ;#####################################################
 ; Constructor Method
@@ -1178,7 +1178,6 @@ defmethod( translate ((pts points2) arg)
   );if
 );defmethod 
 
-
 ;#####################################################
 ; Translate all points in the collection based
 ; upon a list coordinate input
@@ -1233,6 +1232,26 @@ defmethod( mirrorx ((pts points2))
   );let
 );defmethod 
 
+;#####################################################
+; Check to see if points collection is equal to an
+; input points object given by arg
+; FIXME: need to handle out of order comparison
+;#####################################################
+defmethod( diff ((pts points2) arg)
+  let( (ret)
+    ret = 't
+    if(length(getCollection(pts->points)) != length(getCollection(arg->points)) then
+      ret=nil
+    );if
+    for(i 0 length(getCollection(pts->points))
+      pnta = getItem(pts->points i)
+      pntb = getItem(arg->points i)
+      if(null(diff(pnta pntb)) then
+        ret=nil
+      );if
+    );for
+  );let
+);defmethod 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1268,7 +1287,8 @@ defclass( polygon2 (cadObj)
     ( area )
     ( centroid )
     ( scale )
-    ( rtran @reader getRectTran )			  	
+    ( rtran @reader getRectTran )
+    ( points )			  	
   )
 );defClass
 ;#####################################################
@@ -1280,6 +1300,7 @@ defmethod( initializeInstance @after ((obj polygon2))
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->scale = 1.0
 	   obj->rtran = makeInstance( 'rectTran )
+	   obj->points = makeInstance( 'points2 )
 );defmethod
 ;####################################################
 ; Checks to make sure that the centroid of the
@@ -1422,8 +1443,22 @@ defmethod( scale (( poly polygon2 ) arg)
       poly->vertices = new
   );let	   
 );defmethod
+;#####################################################
+; Convert points to vertex list
+;#####################################################
+defmethod( points2Vertex (( poly polygon2 ))
+  let((n)
+    n = 0
+    poly->vertices = '()
+    foreach( pnt getCollection(getPoints(poly->points))
+      poly->vertices = cons(getPoint(pnt) poly->vertices )
+      n = n + 1
+    );foreach
+    n
+   );let		     	 
+);defmethod
 ;###############################################################################
-; render the polygon
+; render the polygon using the vertex list
 ;###############################################################################
 defmethod( render (( poly polygon2 ))
   if( !null(poly->vertices) then
@@ -1434,8 +1469,9 @@ defmethod( render (( poly polygon2 ))
 		    poly->vertices
       );dbCreatePolygon
     else
-      println("ERROR(polygon): No vertices to render")
+      println("ERROR(polygon): Max Vertex Count Exceeded. Maximum Render Vertex Count is 2048.")
     );if
+    println("ERROR(polygon): No vertices to render")
   );if   
 );defmethod
 ;#####################################################
@@ -3377,12 +3413,12 @@ defmethod( smash (( cell cv ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( getInstances (( cell cv ))
   let( (instances temp)
-	  instances = cell->ref~>instances
-	  foreach( inst instances
-	  	   temp = makeInstance( 'instance )
-		   setRef(temp inst)
-	  	   add(cell->instances temp)
-	  );foreach
+    instances = cell->ref~>instances
+    foreach( inst instances
+      temp = makeInstance( 'instance )
+      setRef(temp inst)
+      add(cell->instances temp)
+    );foreach
   );let
 );defmethod	
 
@@ -3442,7 +3478,7 @@ defmethod( removeCell (( cell cv ))
 defmethod( Copy (( cell cv ) name)
   let((cv)
     cv = getRef(cell)
-    if( null(ddGetObj(cell->lib name cell->view)) then
+    if( null(ddGetObj(getRef(cell) name cell->view)) then
       dbCopyCellView(cv cell->lib name cell->view "" nil t)
       dbClose( cv)
       't
@@ -3910,6 +3946,18 @@ defmethod( clean (( cell cv ) arg )
 ;    t
 ;  );let
 ;);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( isCell (( cell cv))
+  let((cv)
+    if(!null(ddGetObj(cell->lib cell->name cell->view )) then
+      cv = dbOpenCellViewByType( cell->lib cell->name cell->view "" nil)
+      setRef(cell cv)
+    );if
+  );let
+);
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7072,7 +7120,10 @@ defclass( wafer (cv)
     ( retNumMrk @reader getRefNumMrk )	
     ( bsideMrk @reader getBsideMrk )
     ( dieSiteRows @reader getDieSiteRows )
-    ( dieSiteCols @reader getDieSiteCols ) 	
+    ( dieSiteCols @reader getDieSiteCols ) 
+    ( waferOutline )
+    ( exclusingRing )
+    ( tempCv )	
   )
 );defClass
 
@@ -7093,6 +7144,9 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->wafNumMrk = makeInstance( 'collection )
   obj->retNumMrk = makeInstance( 'collection )
   obj->bsideMrk =  makeInstance( 'collection )
+  obj->waferOutline = makeInstance( 'shape)
+  obj->exclusingRing = makeInstance( 'shape )
+  obj->tempCv = makeInstance( 'cv )
 );defmethod
 
 ;######################################################
@@ -7194,6 +7248,61 @@ defmethod( numberDieSites (( waf wafer ))
 	 ; print col number to right of dash
 ;      );for
 ;    );for 
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the bbox of a site is valid 
+; 
+; 1.) Create a shape from the bbox argument
+; 2.) First check to see if the bbox is fully within the wafer 
+;     boundaries by a set amount (1/4 of the exclusion ring width)
+;     This is done by checking the distance of each corner of the bbox
+;     from the center of the wafer. The wafer center is determined from 
+;     the bbox of the wafer overlay/outline 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( isValidSite (( waf wafer ) bbox)
+  let((shp)   
+    shp = dbCreateRect( waf->tempCv "text" bbox)
+    and(
+	 overlaping( shp waf->waferOutline)
+	 null( xynOverlaps(shp  waf->exclusingRing))
+    );and
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the given bBox overlaps a given shape
+; Converts the bBox to a shape on the text layer uses the
+; layout editor function "leLayerAnd" funtion to determine if there
+; is an intersection or overlap between the bBox and shape 
+; arguments.
+;
+; 1.) Copy the two input shapes into the temporary cellview
+; 2.) Perform the boolean and on the two shapes and return
+;     the result to the text layer
+; 3.) Clean up the temporary cell view by removing all shapes
+;     on the input argument shape layers making it clean for
+;     the next overlap operation 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( isOverlapping (( waf wafer ) shapeA shapeB)
+  let((layA layB layC result lpp)  
+    dbCopyFig( getShape(shapeA) waf->tempCv)
+    dbCopyFig( getShape(shapeB) waf->tempCv)
+    layA = getLayer(shapeA)
+    layB = getLayer(shapeB)
+    layC = "text"
+    result = leLayerAnd(waf->tempCv list( layA getPurpose(shapeA))
+			   list( layB Purpose(shapeB))
+			   list( layC "drawing"))
+    ; Delete all shapes on the layers above in the temporary cellview
+    foreach( layerName '( layA layB layC)
+      lpp = car( exists( l (waf->tempCv~>layerPurposePairs l~>layerName == layerName))
+      foreach( shape lpp~>shapes 
+        dbDeleteObject( shape))
+      )
+    )
+    result
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -8351,6 +8460,37 @@ defmethod( generateQuarterCircleInv (( cir circle ))
 		calculateCentroid(cir->rtran)
 	   );let
 ) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates the ON-GRID "circle" vertex list. The number of 
+; circle polygon vertices is controlled by the nvert argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( generatePolygon (( cir circle ) nvert )
+	   let( (pi twoPi incr ang pnt theta x y n coord)
+                pi = 3.1425972
+		twoPi = 2*pi
+	   	incr = 360.0 / nvert
+		ang = 0.0
+		n = 0
+		while(ang < 360.0
+		  pnt = makeInstance( 'point2 )
+		  ;printf("Angle %f\n" ang)
+		  theta = ang / twoPi
+		  x = xCoord(cir->origin) + cir->radius
+		  y = xCoord(cir->origin) + cir->radius 
+		  coord = list(x y)
+		  ;printf("Coord: %L\n" coord)
+		  setPoint(pnt coord)
+		  rotate(pnt ang)
+		  scale(pnt 1.0/2**0.5)
+		  printf("Coord: %L\n" getPoint(pnt))
+		  appendPoint(cir->points pnt)
+		  ang = ang + incr
+		  n = n + 1
+                );while
+                n
+	   );let
+);defMethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

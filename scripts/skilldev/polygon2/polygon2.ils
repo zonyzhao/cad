@@ -8,7 +8,8 @@ defclass( polygon2 (cadObj)
     ( area )
     ( centroid )
     ( scale )
-    ( rtran @reader getRectTran )			  	
+    ( rtran @reader getRectTran )
+    ( points )			  	
   )
 );defClass
 ;#####################################################
@@ -20,6 +21,7 @@ defmethod( initializeInstance @after ((obj polygon2))
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->scale = 1.0
 	   obj->rtran = makeInstance( 'rectTran )
+	   obj->points = makeInstance( 'points2 )
 );defmethod
 ;####################################################
 ; Checks to make sure that the centroid of the
@@ -162,8 +164,22 @@ defmethod( scale (( poly polygon2 ) arg)
       poly->vertices = new
   );let	   
 );defmethod
+;#####################################################
+; Convert points to vertex list
+;#####################################################
+defmethod( points2Vertex (( poly polygon2 ))
+  let((n)
+    n = 0
+    poly->vertices = '()
+    foreach( pnt getCollection(getPoints(poly->points))
+      poly->vertices = cons(getPoint(pnt) poly->vertices )
+      n = n + 1
+    );foreach
+    n
+   );let		     	 
+);defmethod
 ;###############################################################################
-; render the polygon
+; render the polygon using the vertex list
 ;###############################################################################
 defmethod( render (( poly polygon2 ))
   if( !null(poly->vertices) then
@@ -174,8 +190,9 @@ defmethod( render (( poly polygon2 ))
 		    poly->vertices
       );dbCreatePolygon
     else
-      println("ERROR(polygon): No vertices to render")
+      println("ERROR(polygon): Max Vertex Count Exceeded. Maximum Render Vertex Count is 2048.")
     );if
+    println("ERROR(polygon): No vertices to render")
   );if   
 );defmethod
 ;#####################################################

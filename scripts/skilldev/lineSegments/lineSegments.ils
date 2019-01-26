@@ -1,0 +1,144 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  lineSegments.ils: container class for line segments 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( lineSegments (cadObj)
+  (
+    ( segments @reader getSegments @writer setSegments )		  
+  )
+);defclass
+
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj lineSegments)) 
+  obj->segments = makeInstance( 'collection )
+);defmethod
+
+;#####################################################
+; Add segment object to segments collection
+;#####################################################
+defmethod( appendSegment ((seg lineSegments) arg) 
+  if(classp( arg 'lineSegments) then
+    add(seg->segments arg)
+  else
+    println("ERROR(lineSegments): Argument is not a lineSegment object")
+  );if
+);defmethod
+
+;#####################################################
+; Add a list of segment object to segments collection
+; argument is a simple list of segments
+;#####################################################
+;defmethod( addSegments ((seg lineSegments) arg)
+;  let( (temp) 
+;    if(listp(arg) then
+;      foreach(s arg
+;        temp = makeInstance( 'lineSegment )
+;	FIXME: setCoord(temp pt) 
+;        appendPoint(segments temp)
+;      );foreach
+;    else
+;      println("ERROR(lineSegment2): Argument is not a simple list")
+;    );if
+;  );let
+;);defmethod
+
+;#####################################################
+; Reset points points collection
+;#####################################################
+;defmethod( resetSegments ((pts points2)) 
+;  resetCollection(pts->points)
+;);defmethod
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+;defmethod( translate ((pts points2) arg)
+;  if( listp(arg) then
+;    foreach(p2 getCollection(pts->points)
+;      translate(p2 arg)
+;    );foreach
+;  else
+;    println("ERROR(points2): argument must be a simple list")
+;  );if
+;);defmethod 
+
+;#####################################################
+; Translate all points in the collection based
+; upon a list coordinate input
+;#####################################################
+;defmethod( rotate ((pts points2) arg)
+;    foreach(p2 getCollection(pts->points)
+;      rotate(p2 arg)
+;    );foreach
+;);defmethod 
+
+;#####################################################
+; scale all points in the collection based
+; upon a scalar argument
+;#####################################################
+;defmethod( scale ((pts points2) arg)
+;  foreach(p2 getCollection(pts->points)
+;    scale(p2 arg)
+;  );foreach
+;);defmethod
+
+;#####################################################
+; mirror all points about the y axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+;defmethod( mirrory ((pts points2))
+;  let( (newpnts temp)
+;    newPnts = makeInstance( 'collection )
+;    foreach( pnt getCollection(pts->points)
+;      temp = makeInstance( 'point2 )
+;      setCoord(temp list(-1*xCoord(getCoord(pnt)) yCoord(getCoord(pnt))))
+;      add(newPnts temp)
+;    );foreach
+;    setCollection(pts newPnts)
+;  );let
+;);defmethod 
+
+;#####################################################
+; mirror all points about the x axis referenced to
+; origin. Origin of the points list should be translated
+; to the centroid of it's rectTran
+;#####################################################
+;defmethod( mirrorx ((pts points2))
+;  let( (newpnts temp)
+;    newPnts = makeInstance( 'collection )
+;    foreach( pnt getCollection(pts->points)
+;      temp = makeInstance( 'point2 )
+;      setCoord(temp list(xCoord(getCoord(pnt)) -1*yCoord(getCoord(pnt))))
+;      add(newPnts temp)
+;    );foreach
+;    setCollection(pts newPnts)
+;  );let
+;);defmethod 
+
+;#####################################################
+; Check to see if points collection is equal to an
+; input points object given by arg
+; FIXME: need to handle out of order comparison
+;#####################################################
+;defmethod( diff ((pts points2) arg)
+;  let( (ret)
+;    ret = 't
+;    if(length(getCollection(pts->points)) != length(getCollection(arg->points)) then
+;      ret=nil
+;    );if
+;    for(i 0 length(getCollection(pts->points))
+;      pnta = getItem(pts->points i)
+;      pntb = getItem(arg->points i)
+;      if(null(diff(pnta pntb)) then
+;        ret=nil
+;      );if
+;    );for
+;  );let
+;);defmethod 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

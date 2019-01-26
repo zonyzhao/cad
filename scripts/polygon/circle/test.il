@@ -189,3 +189,67 @@ setRef(cir cv)
 render(cir)
 dbSave(cv)
 dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-8: Generate a circle polygon based
+;       upon fixed angle increments
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; form the wafer outline - no flats
+waferRadius = 50000.0
+cir = makeInstance( 'circle )
+setRadius(cir waferRadius)
+generatePolygon(cir 360.0 )
+pnts = getPoints(cir->points)
+classOf(pnts)
+isEmpty(pnts)
+getLen(pnts)
+pntsCollection = getCollection(pnts)
+pnt0 = nth(0 pntsCollection)
+classOf(pnt0)
+getPoint(pnt0)
+pnt1 = nth(1 pntsCollection)
+getPoint(pnt1)
+pnt2 = nth(2 pntsCollection)
+getPoint(pnt2)
+foreach(pnt pntsCollection
+  printf("point: %L\n" getPoint(pnt))
+)
+points2Vertex(cir)
+;------------------
+lib="ln0246"
+name="cirlePolygonTest"
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+setRef(cir cv)
+render(cir)
+dbSave(cv)
+dbClose(cv)
+
+; Form the exluson ring
+exclusionRing = 3500
+cir = makeInstance( 'circle )
+setRadius(cir waferRadius-exclusionRing)
+generatePolygon(cir 360.0 )
+pnts = getPoints(cir->points)
+classOf(pnts)
+isEmpty(pnts)
+getLen(pnts)
+pntsCollection = getCollection(pnts)
+pnt0 = nth(0 pntsCollection)
+classOf(pnt0)
+getPoint(pnt0)
+pnt1 = nth(1 pntsCollection)
+getPoint(pnt1)
+pnt2 = nth(2 pntsCollection)
+getPoint(pnt2)
+foreach(pnt pntsCollection
+  printf("point: %L\n" getPoint(pnt))
+)
+points2Vertex(cir)
+;------------------
+lib="ln0246"
+name="cirlePolygonTest"
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "a")
+setRef(cir cv)
+render(cir)
+dbSave(cv)
+dbClose(cv)

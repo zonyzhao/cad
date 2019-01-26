@@ -17,7 +17,10 @@ defclass( wafer (cv)
     ( retNumMrk @reader getRefNumMrk )	
     ( bsideMrk @reader getBsideMrk )
     ( dieSiteRows @reader getDieSiteRows )
-    ( dieSiteCols @reader getDieSiteCols ) 	
+    ( dieSiteCols @reader getDieSiteCols ) 
+    ( waferOutline )
+    ( exclusingRing )
+    ( tempCv )	
   )
 );defClass
 
@@ -38,6 +41,9 @@ defmethod( initializeInstance @after ((obj wafer))
   obj->wafNumMrk = makeInstance( 'collection )
   obj->retNumMrk = makeInstance( 'collection )
   obj->bsideMrk =  makeInstance( 'collection )
+  obj->waferOutline = makeInstance( 'shape)
+  obj->exclusingRing = makeInstance( 'shape )
+  obj->tempCv = makeInstance( 'cv )
 );defmethod
 
 ;######################################################
@@ -139,6 +145,61 @@ defmethod( numberDieSites (( waf wafer ))
 	 ; print col number to right of dash
 ;      );for
 ;    );for 
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the bbox of a site is valid 
+; 
+; 1.) Create a shape from the bbox argument
+; 2.) First check to see if the bbox is fully within the wafer 
+;     boundaries by a set amount (1/4 of the exclusion ring width)
+;     This is done by checking the distance of each corner of the bbox
+;     from the center of the wafer. The wafer center is determined from 
+;     the bbox of the wafer overlay/outline 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( isValidSite (( waf wafer ) bbox)
+  let((shp)   
+    shp = dbCreateRect( waf->tempCv "text" bbox)
+    and(
+	 overlaping( shp waf->waferOutline)
+	 null( xynOverlaps(shp  waf->exclusingRing))
+    );and
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Determines if the given bBox overlaps a given shape
+; Converts the bBox to a shape on the text layer uses the
+; layout editor function "leLayerAnd" funtion to determine if there
+; is an intersection or overlap between the bBox and shape 
+; arguments.
+;
+; 1.) Copy the two input shapes into the temporary cellview
+; 2.) Perform the boolean and on the two shapes and return
+;     the result to the text layer
+; 3.) Clean up the temporary cell view by removing all shapes
+;     on the input argument shape layers making it clean for
+;     the next overlap operation 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( isOverlapping (( waf wafer ) shapeA shapeB)
+  let((layA layB layC result lpp)  
+    dbCopyFig( getShape(shapeA) waf->tempCv)
+    dbCopyFig( getShape(shapeB) waf->tempCv)
+    layA = getLayer(shapeA)
+    layB = getLayer(shapeB)
+    layC = "text"
+    result = leLayerAnd(waf->tempCv list( layA getPurpose(shapeA))
+			   list( layB Purpose(shapeB))
+			   list( layC "drawing"))
+    ; Delete all shapes on the layers above in the temporary cellview
+    foreach( layerName '( layA layB layC)
+      lpp = car( exists( l (waf->tempCv~>layerPurposePairs l~>layerName == layerName))
+      foreach( shape lpp~>shapes 
+        dbDeleteObject( shape))
+      )
+    )
+    result
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
