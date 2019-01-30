@@ -1,0 +1,106 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  ipc.ils: abstract cadence IPC class 
+;:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( ipc ()
+  (
+    ( oid @reader getOid @writer setOid )
+    ( cid @reader getCid @writer setCid )
+    ( ref )
+    ( path @reader getPath @writer setPath )
+    ( cmd @reader getCmd @writer setCmd )
+    ( wrStr @reader getWrStr @writer setWrStr )
+    ( rdStr @reader getRdStr @writer setRdStr )
+  )
+);defclass
+;########################################################
+;# Class Constructor
+;########################################################
+
+defmethod( initializeInstance @after ((obj ipc)) 
+  obj->oid=nil
+  obj->cid=nil
+  obj->ref=nil
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Starts A Child Process and waits unit the child process
+; has started
+; Use linux command line to check status: "ps -alt | grep python"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( startIpc (( ip ipc ))
+  ip->ref = ipcBeginProcess( ip->cmd )
+  ipcWaitForProcess( ip->ref )
+) ; defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Starts A Child Process and waits unit the child process
+; has started
+; Use linux command line to check status: "ps -alt | grep python"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( startIpcAsync (( ip ipc ))
+  ip->ref = ipcBeginProcess( ip->cmd "" 'ipcDataHandler 'ipcErrHandler 'ipcFinishHandler "./ipcAsync.log")
+  ipcWaitForProcess( ip->ref )
+) ; defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure(ipcDataHandler(ipcId data)
+  let((result)
+    printf("in ipcDataHandler with %L\n" data)
+    foreach(d parseString(data "\n")
+        unless(errset(result=evalstring(d))
+             printf("ERROR: %L\n" errset.errset)
+             ipcWriteProcess(ipcId sprintf(nil "ERROR %L\n" errset.errset))
+        ) ; unless
+    )
+  )
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; IPC Error handler procedure 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure(ipcErrHandler(ipcId data)
+    println(list("ERROR: ipcErrHandler called with:" ipcId data))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; IPC Finish handler procedure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+procedure(ipcFinishHandler(ipcId data)
+  let((exitStatus)
+    printf("Finished at %s: %L %L  " getCurrentTime() ipcId data)
+    exitStatus = ipcGetExitStatus(ipcId)
+    printf("Return value = %L\n" exitStatus)
+    if(exitStatus==0 then
+        printf("The IPC call has finished normally!!\n")
+    else
+        printf("**ERROR: operation failed\n")
+    )
+  )
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Writes to the Child Process - always end with newline "\n"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( writeIpc (( ip ipc ))
+	ipcWriteProcess(ip->ref ip->wrStr)
+) ; defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Reads from the Child Process 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( readIpc (( ip ipc ))
+	ip->rdStr=ipcReadProcess(ip->ref)
+) ; defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Kills The Child Process 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( killIpc (( ip ipc ))
+	ipcKillProcess( ip->ref )	
+) ; defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method executes the received string command
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( execute (( ip ipc ))
+	evalstring( ip->rdStr )	
+) ; defmethod
+;############################################################
+;############################################################
+;############################################################
+

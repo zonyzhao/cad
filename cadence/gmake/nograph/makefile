@@ -116,6 +116,25 @@ nographRestore:
 run:
 	virtuoso -restore $(sdir)/$(filename)
 
+.phony: streamOutHelp
+streamOutHelp:
+	strmout  
+
+.phony: streamInHelp
+streamInHelp:
+	strmin 
+
+outputTemplateFile = "ln246_3_p_wafer_vias_output.template"
+.phony: streamOut
+streamOut:
+	strmout -templateFile $(outputTemplateFile) > streamOut.log
+
+
+inputTemplateFile = "ln246_3_p_wafer_vias_input.template"
+.phony: streamIn
+streamIn:
+	strmin -templateFile $(inputTemplateFile) > streamIn.log
+
 .phony: clean
 clean:
 	touch foo.err

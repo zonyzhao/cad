@@ -1225,7 +1225,11 @@ procedure( xynCloseCVs()
 
     foreach( cvn '( mapCV wafCV flatCV numCV)
       cv = get( xynpl cvn)
-      when( cv && dbIsId( cv) dbPurge( cv))
+      ;when( cv && dbIsId( cv) dbPurge( cv))
+      when( !null(cv) && dbIsId( cv) 
+        dbSave( cv)
+        dbClose(cv)
+      );when
       putprop( xynpl nil cvn)
     )
   )
@@ -3498,26 +3502,33 @@ procedure( xynPlaceChipNumbers()
          nChips nd ns exceed slerror numerr)
 
     numerr = nil
-;   preset the probed-chips counters to zero:
-    foreach( c xynpl->mergedChipList c->nChips = 0)
+    ;   preset the probed-chips counters to zero:
+    foreach( c xynpl->mergedChipList 
+      c->nChips = 0
+    );foreach
 
-;   create the list of chip names omitting coupons:
+    ; create the list of chip names omitting coupons:
     nonCoupons = setof( c xynpl->mergedChipList c->chipType == "chip")
     chipNames = foreach( mapcar c nonCoupons c->name)
 
-;   get the list of vertical scribe lines in the primary reticle:
+    ; get the list of vertical scribe lines in the primary reticle:
     sl = xynGetVerticalScribes()
 
     xynMsg( "Numbering chips... %s" buildString( chipNames))
 
-;   get the instances of these chips across the wafer:
+    ; get the instances of these chips across the wafer:
     instances = setof( i xynpl->flatCV~>instances member( i~>cellName chipNames))
     xynMsg( "Total of %d instances (not all are complete chips)" length( instances))
-
-;   sort them by xy position:
-;   This sort is used to order the numbering such that the lowest x y numbers
-;   originate in the lower left corner of the reticle array, and that the 
-;   numbering is from left to right and bottom to top???? (Need to verify this)
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;   sort them by xy position:
+    ;   This sort is used to order the numbering such that the lowest x y numbers
+    ;   originate in the lower left corner of the reticle array, and that the 
+    ;   numbering is from left to right and bottom to top???? (Need to verify this)
+    ;   UPDATE: this sorting reverses the rows and col order such that the chips
+    ;           are numbered in the reverse of the labels on the wafer cellview.
+    ;   FIXME: The labels in the figure should be reversed to reflect that the
+    ;          the numbering has been reversed. It is way too confusing right now!!
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     instances = sort( instances 'xynInstXySort)
 
     slerror = 0
@@ -3525,28 +3536,28 @@ procedure( xynPlaceChipNumbers()
     nChips = 0
     foreach( inst instances
       exceed = nil
-;     keep track of steps in the y direction:
+      ; keep track of steps in the y direction:
       when( cadr( inst~>xy) > ly
-;	reset the x number to zero:
+        ;reset the x number to zero:
 	ix = 0
-;	set the scribe pointer to the first scribe line (x = 0 in reticle):
+	;set the scribe pointer to the first scribe line (x = 0 in reticle):
 	xs = sl
-;	advance the y number:
+	;advance the y number:
 	jy = jy + 1
-;	keep track of this row's y-coordinate:
+	;keep track of this row's y-coordinate:
 	ly = cadr( inst~>xy)
-;	reset the intra-reticle x-counter:
+	;reset the intra-reticle x-counter:
 	lx = 0
-      )
+      );when
       xynMsg( "Processing Chip Name: %L" inst~>cellName)
       xynMsg( "Processing Chip Instance: %L" inst~>name)
       xynMsg( "Reticle Row Index X: %L" ix)
       xynMsg( "Reticle Col Index Y: %L" jy)
       xynMsg( "Intra Reticle Row Y Coord: %L" ly)
       xynMsg( "Intra Reticle Col X Coord: %L" lx)
-;     keep track of vertical scribe lines
-;     (to handle rows that contain chips and non-chips) NON-CHIPS == COUPONS??
-;     get the chip's x-coord WRT the reticle:
+      ;keep track of vertical scribe lines
+      ;(to handle rows that contain chips and non-chips) NON-CHIPS == COUPONS??
+      ;get the chip's x-coord WRT the reticle:
 
       ; FIXME: inst~>xy is the origin of each chip in the reticle assigned during S&R processing
       ; lx is intra reticle column position as calculated locally in this procedure
@@ -3557,24 +3568,24 @@ procedure( xynPlaceChipNumbers()
       while( car( inst~>xy) - lx > xynpl->retW
 	ix = ix + length( sl)
 	lx = lx + xynpl->retW
-      )
+      );while
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; FIXME: Commented out the code below because it was confusing the numbers generation on when
-;        using MEMS chip outlines. Appears as if this code is performing a periodicity check on
-;        the vertical innner streets of the reticle. If it does not find a "particular" peridicity
-;        it makes assumptions about the next die site in the reticle being a coupon. If this is 
-;        a valid inner street periodicity check it should be performed in the reticle pre-checks
-;        and not here. Checks should be made that the inner streets have proper periodicity and
-;        run the complete width and height of the reticle well before numbers are printed. In addition,
-;        only a check of verticle inner streets is performed here. What about horizontal streets? They
-;        are not being checked here. Based upon all of this confusion about what is going on here, the
-;        inner reticle street validity checks (both horizontal and verticle) will be performed at the 
-;        input to xyn rather than doing it within the numbers generation procedure
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ; FIXME: Commented out the code below because it was confusing the numbers generation on when
+      ;        using MEMS chip outlines. Appears as if this code is performing a periodicity check on
+      ;        the vertical innner streets of the reticle. If it does not find a "particular" peridicity
+      ;        it makes assumptions about the next die site in the reticle being a coupon. If this is 
+      ;        a valid inner street periodicity check it should be performed in the reticle pre-checks
+      ;        and not here. Checks should be made that the inner streets have proper periodicity and
+      ;        run the complete width and height of the reticle well before numbers are printed. In addition,
+      ;        only a check of verticle inner streets is performed here. What about horizontal streets? They
+      ;        are not being checked here. Based upon all of this confusion about what is going on here, the
+      ;        inner reticle street validity checks (both horizontal and verticle) will be performed at the 
+      ;        input to xyn rather than doing it within the numbers generation procedure
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ; This is where the x coordinate value is reset to zero at the end of each
       ; reticle processed. Represents the commutative behavior aligning the the periodicity of
@@ -3604,22 +3615,20 @@ procedure( xynPlaceChipNumbers()
       ;  slerror++
       ;  if(null(exceed) then
       ;    xynMsg( "WARNING: MIN ONE OCCURRENCE: Coord x:%L is further right than expected as compared to vertical scribe xs:%L" x xs)
-;	  exceed = 't
-    ;    )
-;;       FIXME: This is describing the skipping of a coupon as we are only interested in chips ...
-;;	here x is farther right than expected, must be one or more non-chips
-;;	was skipped in this row, so advance the x number:
-       ; ; pop off the first entry in list xs and place previously popped value at the end
-       ; ; circular stack
-;	xs = or( cdr( xs) sl)
-;	ix = ix + 1 ; Increment the Reticle column index by one
-;      )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+      ;	  exceed = 't
+      ;    )
+      ;;       FIXME: This is describing the skipping of a coupon as we are only interested in chips ...
+      ;;	here x is farther right than expected, must be one or more non-chips
+      ;;	was skipped in this row, so advance the x number:
+      ; ; pop off the first entry in list xs and place previously popped value at the end
+      ; ; circular stack
+      ;	xs = or( cdr( xs) sl)
+      ;	ix = ix + 1 ; Increment the Reticle column index by one
+      ;      )
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ; Watchdog Condition: If x index value is 10,000 then there must have been a problem 
       ;                     error out ... 
@@ -3630,70 +3639,62 @@ procedure( xynPlaceChipNumbers()
 	xynMsg( "vertical scribe lines %L:\n" sl)
 	xynMsg( "Number of scribe line alignment errors: %d" slerror)	
 	numerr = 't
-      )
-  ;     add the wafer position numbers to the instance as properties:
-  ;     mod 2/5/05 to ensure all chip instances have x-y numbers stored on them
-        inst~>iX = ix
-        inst~>jY = jy
-
-  ;     number only the complete chips:
-        xynMsg( "Full Chip: %L" xynIsFullObject( inst))
-        cond(
-          ( xynIsFullObject( inst)
-
-  ;	  new instance property indicates:  0 = off-wafer, 1 = partial, 2 = full chip
-	  inst~>onWafer = 2
-  
-  ;      determine orientation of numbers:
-         chip = car( exists( c xynpl->mergedChipList c->name == inst~>cellName))
-         orient = xynMapPadOrient( chip->chipOrient chip->padOrient)
-
-;	  map the pad origin:
-	  pp = dbTransformPoint( chip->padLocn
-			         list( inst~>xy inst~>orient))
-
-;	  check for 3rd digit, requires down-sized numbers:
-;	  NOTE THIS OVERRIDES DIGITS CHOSEN DURING CHIP LISTING
-	  nd = if( ix > 99 || jy > 99 3 2)
-	  ns = chip->numSize
-	  when( nd == 3 ns = case( ns ("L"  "M")  ("M"  "S")  ("S"  "S")))
-
-;	  number the site:
-	  ;if(null(numerr) then
-	     xynNumberChip( ix jy car( pp) cadr( pp) nd orient chip->numType ns)
-          ;else 
-	  ;   xynErr( "Skipping number site %d,%d" ix jy)
-          ;)
-
-	  chip->nChips = chip->nChips + 1
-	  nChips = nChips + 1
-	  when( mod( nChips 100) == 0 xynMsg( "%d chips done..." nChips))
-        )
+      );when
+      ;     add the wafer position numbers to the instance as properties:
+      ;     mod 2/5/05 to ensure all chip instances have x-y numbers stored on them
+      inst~>iX = ix
+      inst~>jY = jy
+      ;number only the complete chips:
+      xynMsg( "Full Chip: %L" xynIsFullObject( inst))
+      cond(
+        ( xynIsFullObject( inst)
+        ; new instance property indicates:  0 = off-wafer, 1 = partial, 2 = full chip
+	inst~>onWafer = 2
+	dbCreateProp(inst "validSite" "boolean" t)
+        ; determine orientation of numbers:
+        chip = car( exists( c xynpl->mergedChipList c->name == inst~>cellName))
+        orient = xynMapPadOrient( chip->chipOrient chip->padOrient)
+        ;map the pad origin:
+	pp = dbTransformPoint( chip->padLocn list( inst~>xy inst~>orient))
+        ; Check for 3rd digit, requires down-sized numbers:
+        ; NOTE THIS OVERRIDES DIGITS CHOSEN DURING CHIP LISTING
+	nd = if( ix > 99 || jy > 99 3 2)
+	ns = chip->numSize
+	when( nd == 3 ns = case( ns ("L"  "M")  ("M"  "S")  ("S"  "S")));when
+	;number the site:
+	;if(null(numerr) then
+	xynNumberChip( ix jy car( pp) cadr( pp) nd orient chip->numType ns)
+        ;else 
+	;   xynErr( "Skipping number site %d,%d" ix jy)
+        ;)
+	chip->nChips = chip->nChips + 1
+	nChips = nChips + 1
+	when( mod( nChips 100) == 0 xynMsg( "%d chips done..." nChips));when
+        );xynIsFullObject( inst)
 	( xynIsPartialObject( inst)
 	  inst~>onWafer = 1
-	)
+	);xynIsPartialObject( inst)
 	( t
 	  inst~>onWafer = 0
-	)
-      )
-
-;     advance to the next scribe line, 
-;     or reset to the first scribe when we pass the right edge of reticle:
+	);t
+      );cond
+      ;advance to the next scribe line, 
+      ;or reset to the first scribe when we pass the right edge of reticle:
       xs = or( cdr( xs) sl)
 
-;     advance the x number:
+      ;advance the x number:
       ix = ix + 1
-    )
+    );foreach( inst instances
 
-;   echo number of complete chips:
+    ;   echo number of complete chips:
     xynMsg( "Numbers completed for %d total chips:" nChips)
     foreach( c xynpl->mergedChipList
       when( c->chipType == "chip"
 	xynMsg( "%-25s %4d numbered/tested chips" c->name c->nChips)
-      )
-    )
-  )
-)
+      );when
+    );foreach
+  );let
+);procedure
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;	xynGetVerticalScribes

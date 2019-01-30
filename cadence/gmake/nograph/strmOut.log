@@ -1,0 +1,292 @@
+********************************************************************************
+Product   : Virtuoso(R) XStream Out
+Program   : @(#)$CDS: strmout version 6.1.6-64b 09/26/2013 21:49 (sjfnl154) $
+          : sub-version  IC6.1.6-64b.500.2.1 
+Started at: 30-Jan-2019  15:21:51
+User Name : 1127110
+Host Name : lid10018974
+Directory : /users/1127110/cad/cadence/gmake/nograph
+CADENCE Design Systems, Inc.
+********************************************************************************
+Info: Cellview Rev Num:99,  Tech Rev Num:59
+
+WARNING (XSTRM-20): Output Stream file './ln246_3p_wafer_flat_copy.gds' already exists. It will be overwritten.
+INFO (XSTRM-217): Reading the refliblist file, /users/1127110/cad_layout_61/.cadence/xstream/OUT/reflib.list
+INFO (XSTRM-217): Reading the layer map file, /users/1127110/cad_layout_61/../rrfc_2metal.map
+
+Summary of Options :
+library                                 ln0246
+strmFile                                ln246_3p_wafer_flat_copy.gds
+topCell                                 ln246_3p_wafer_flat_copy
+view                                    layout
+logFile                                 strmOut.log
+techLib                                 RRFC_2metal
+layerMap                                /users/1127110/cad_layout_61/../rrfc_2metal.map
+refLibList                              /users/1127110/cad_layout_61/.cadence/xstream/OUT/reflib.list
+case                                    Preserve
+convertDot                              node
+outputDir                               .
+
+INFO (XSTRM-223): 1. Translating cellView ln0246/ln246_3p_cb_landings/layout as STRUCTURE ln246_3p_cb_landings
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'text:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'nitEtch:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'capBot:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 2. Translating cellView ln0246/ln246_3p_chip_00_tmp/layout as STRUCTURE ln246_3p_chip_00_tmp
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'PTMXover:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'DCpad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'tmPlate:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'TMPost:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 3. Translating cellView ln0246/ln246_3p_am_int12_back_v5/layout as STRUCTURE ln246_3p_am_int12_back_v5
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'stub:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'thick:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'bridge:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'ta:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 4. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_548879711951
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'gatePad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'GateFlag:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'leGatePad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'leGate:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'mesa:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'TgateTop:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'gate1:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'sd:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 5. Translating cellView PLL_70/p70_2_sq_fet_mult_A/layout as STRUCTURE p70_2_sq_fet_mult_A_CDNS_548879711950
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'taProt:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 6. Translating cellView ln0246/ln246_3p_am_q2_net_v5b/layout as STRUCTURE ln246_3p_am_q2_net_v5b
+INFO (XSTRM-223): 7. Translating cellView ln0246/ln246_3p_am_int23_front_v5/layout as STRUCTURE ln246_3p_am_int23_front_v5
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'rstub:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'spiral:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 8. Translating cellView ln0246/ln246_3p_am_omn_v5/layout as STRUCTURE ln246_3p_am_omn_v5
+INFO (XSTRM-223): 9. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_548879711953
+INFO (XSTRM-223): 10. Translating cellView PLL_70/p70_2_sq_fet_1x_A/layout as STRUCTURE p70_2_sq_fet_1x_A_CDNS_548879711952
+INFO (XSTRM-223): 11. Translating cellView ln0246/ln246_3p_am_mHEMT70_swfet_v5/layout as STRUCTURE ln246_3p_am_mHEMT70_swfet_v5
+INFO (XSTRM-223): 12. Translating cellView ln0246/ln246_3p_am_lna_iso_switch_v5/layout as STRUCTURE ln246_3p_am_lna_iso_switch_v5
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'sdText:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 13. Translating cellView ln0246/ln246_3p_am_q1_net_v5b/layout as STRUCTURE ln246_3p_am_q1_net_v5b
+INFO (XSTRM-223): 14. Translating cellView ln0246/ln246_3p_am_interface_out/layout as STRUCTURE ln246_3p_am_interface_out
+INFO (XSTRM-223): 15. Translating cellView ln0246/ln246_3p_am_interface_in/layout as STRUCTURE ln246_3p_am_interface_in
+INFO (XSTRM-223): 16. Translating cellView ln0246/ln246_3p_am_imn_v5b/layout as STRUCTURE ln246_3p_am_imn_v5b
+INFO (XSTRM-223): 17. Translating cellView ln0246/ln246_3p_am_vdbias_v5/layout as STRUCTURE ln246_3p_am_vdbias_v5
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'glass:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 18. Translating cellView ln0246/ln246_3p_am_int23_back_v5/layout as STRUCTURE ln246_3p_am_int23_back_v5
+INFO (XSTRM-223): 19. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_548879711955
+INFO (XSTRM-223): 20. Translating cellView PLL_70/p70_2_sq_fet_mult_A/layout as STRUCTURE p70_2_sq_fet_mult_A_CDNS_548879711954
+INFO (XSTRM-223): 21. Translating cellView ln0246/ln246_3p_am_q3_net_v5/layout as STRUCTURE ln246_3p_am_q3_net_v5
+INFO (XSTRM-223): 22. Translating cellView ln0246/ln246_3p_am_int12_front_v5/layout as STRUCTURE ln246_3p_am_int12_front_v5
+INFO (XSTRM-223): 23. Translating cellView ln0246/ln246_3p_am_int12_5b/layout as STRUCTURE ln246_3p_am_int12_5b
+INFO (XSTRM-223): 24. Translating cellView ln0246/ln246_3p_am_int23_shR_v5b/layout as STRUCTURE ln246_3p_am_int23_shR_v5b
+INFO (XSTRM-223): 25. Translating cellView ln0246/ln246_3p_int12_stub/layout as STRUCTURE ln246_3p_int12_stub
+INFO (XSTRM-223): 26. Translating cellView ln0246/ln246_3p_am_lna_v5b/layout as STRUCTURE ln246_3p_am_lna_v5b
+INFO (XSTRM-223): 27. Translating cellView ln0246/ln246_3p_xyPad_SLA/layout as STRUCTURE ln246_3p_xyPad_SLA
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'BCB:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 28. Translating cellView PLL_70/p70_2_grid_A/layout as STRUCTURE p70_2_grid_A_CDNS_548879711956
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'GRID:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 29. Translating cellView PLL_70/p70_1_rayLogo_A/layout as STRUCTURE p70_1_rayLogo_A
+INFO (XSTRM-223): 30. Translating cellView PLL_70/p70_1_Label_0_Size_50_A/layout as STRUCTURE p70_1_Label_0_Size_50_A
+INFO (XSTRM-223): 31. Translating cellView PLL_70/p70_1_Label_dashA_Size_50_A/layout as STRUCTURE p70_1_Label_dashA_Size_50_A
+INFO (XSTRM-223): 32. Translating cellView PLL_70/p70_1_Label_00_Size_50_A/layout as STRUCTURE p70_1_Label_00_Size_50_A
+INFO (XSTRM-223): 33. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_548879711957
+INFO (XSTRM-223): 34. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_548879711958
+INFO (XSTRM-223): 35. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_548879711959
+INFO (XSTRM-223): 36. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119510
+INFO (XSTRM-223): 37. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119511
+INFO (XSTRM-223): 38. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119512
+INFO (XSTRM-223): 39. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119513
+INFO (XSTRM-223): 40. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119514
+INFO (XSTRM-223): 41. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119515
+INFO (XSTRM-223): 42. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119516
+INFO (XSTRM-223): 43. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119517
+INFO (XSTRM-223): 44. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119518
+INFO (XSTRM-223): 45. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119519
+INFO (XSTRM-223): 46. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119520
+INFO (XSTRM-223): 47. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119521
+INFO (XSTRM-223): 48. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119522
+INFO (XSTRM-223): 49. Translating cellView ln0246/ln246_3p_chip_00/layout as STRUCTURE ln246_3p_chip_00
+INFO (XSTRM-223): 50. Translating cellView ln0246/ln246_3p_grid1/layout as STRUCTURE ln246_3p_grid1
+INFO (XSTRM-223): 51. Translating cellView PLL_70/p70_1_Label_4_Size_50_A/layout as STRUCTURE p70_1_Label_4_Size_50_A
+INFO (XSTRM-223): 52. Translating cellView PLL_70/p70_1_Label_04_Size_50_A/layout as STRUCTURE p70_1_Label_04_Size_50_A
+INFO (XSTRM-223): 53. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5488797119526
+INFO (XSTRM-223): 54. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5488797119525
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'obsolete:drc' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 55. Translating cellView PLL_70/p70_2_label_D_A/layout as STRUCTURE p70_2_label_D_A
+INFO (XSTRM-223): 56. Translating cellView PLL_70/p70_2_label_G_A/layout as STRUCTURE p70_2_label_G_A
+INFO (XSTRM-223): 57. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119527
+INFO (XSTRM-223): 58. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119528
+INFO (XSTRM-223): 59. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119529
+INFO (XSTRM-223): 60. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5488797119524
+INFO (XSTRM-223): 61. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5488797119531
+INFO (XSTRM-223): 62. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5488797119530
+INFO (XSTRM-223): 63. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119533
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'RFpad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 64. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119534
+INFO (XSTRM-223): 65. Translating cellView POL_70/p70_2_coupPads19_26_A/layout as STRUCTURE p70_2_coupPads19_26_A_CDNS_5488797119532
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'keepout:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 66. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119535
+INFO (XSTRM-223): 67. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119536
+INFO (XSTRM-223): 68. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119537
+INFO (XSTRM-223): 69. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119538
+INFO (XSTRM-223): 70. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5488797119540
+INFO (XSTRM-223): 71. Translating cellView PLL_70/p70_2_viaRound_40_A/layout as STRUCTURE p70_2_viaRound_40_A_CDNS_5488797119541
+INFO (XSTRM-223): 72. Translating cellView PLL_70/p70_2_fet_mult_A/layout as STRUCTURE p70_2_fet_mult_A_CDNS_5488797119539
+INFO (XSTRM-223): 73. Translating cellView POL_70/p70_2_FET99_A/layout as STRUCTURE p70_2_FET99_A
+INFO (XSTRM-223): 74. Translating cellView ln0246/ln246_3p_chip_04/layout as STRUCTURE ln246_3p_chip_04
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'marker:error' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 75. Translating cellView ln0246/ln246_3p_grid2/layout as STRUCTURE ln246_3p_grid2
+INFO (XSTRM-223): 76. Translating cellView PLL_70/p70_1_Label_3_Size_50_A/layout as STRUCTURE p70_1_Label_3_Size_50_A
+INFO (XSTRM-223): 77. Translating cellView PLL_70/p70_1_Label_03_Size_50_A/layout as STRUCTURE p70_1_Label_03_Size_50_A
+INFO (XSTRM-223): 78. Translating cellView ln0246/ln246_3p_chip_03/layout as STRUCTURE ln246_3p_chip_03
+INFO (XSTRM-223): 79. Translating cellView ln0246/ln246_3p_tm_1_cal_rfpad_in_am/layout as STRUCTURE ln246_3p_tm_1_cal_rfpad_in_am
+INFO (XSTRM-223): 80. Translating cellView ln0246/ln246_3p_tm_1_cal_rfpad_out_am/layout as STRUCTURE ln246_3p_tm_1_cal_rfpad_out_am
+INFO (XSTRM-223): 81. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119542
+INFO (XSTRM-223): 82. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119543
+INFO (XSTRM-223): 83. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119544
+INFO (XSTRM-223): 84. Translating cellView ln0246/ln246_3p_dealy=1090_thru/layout as STRUCTURE ln246_3p_dealy_1090_thru
+INFO (XSTRM-223): 85. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119545
+INFO (XSTRM-223): 86. Translating cellView ln0246/ln246_3p_delay=0_thru/layout as STRUCTURE ln246_3p_delay_0_thru
+INFO (XSTRM-223): 87. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5488797119546
+INFO (XSTRM-223): 88. Translating cellView PLL_70/p70_1_Label_2_Size_50_A/layout as STRUCTURE p70_1_Label_2_Size_50_A
+INFO (XSTRM-223): 89. Translating cellView PLL_70/p70_1_Label_02_Size_50_A/layout as STRUCTURE p70_1_Label_02_Size_50_A
+INFO (XSTRM-223): 90. Translating cellView ln0246/ln246_3p_chip_02/layout as STRUCTURE ln246_3p_chip_02
+INFO (XSTRM-223): 91. Translating cellView PLL_70/p70_2_sq_viaSquare_40_A/layout as STRUCTURE p70_2_sq_viaSquare_40_A_CDNS_5488797119547
+INFO (XSTRM-223): 92. Translating cellView ln0246/ln246_3p_short/layout as STRUCTURE ln246_3p_short
+INFO (XSTRM-223): 93. Translating cellView ln0246/ln246_3p_open/layout as STRUCTURE ln246_3p_open
+INFO (XSTRM-223): 94. Translating cellView PLL_70/p70_1_Label_1_Size_50_A/layout as STRUCTURE p70_1_Label_1_Size_50_A
+INFO (XSTRM-223): 95. Translating cellView PLL_70/p70_1_Label_01_Size_50_A/layout as STRUCTURE p70_1_Label_01_Size_50_A
+INFO (XSTRM-223): 96. Translating cellView ln0246/ln246_3p_chip_01/layout as STRUCTURE ln246_3p_chip_01
+INFO (XSTRM-223): 97. Translating cellView ln0246/ln246_3p_xyPad_SMB/layout as STRUCTURE ln246_3p_xyPad_SMB
+INFO (XSTRM-223): 98. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5488797119549
+INFO (XSTRM-223): 99. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119550
+INFO (XSTRM-223): 100. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119551
+INFO (XSTRM-223): 101. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119552
+INFO (XSTRM-223): 102. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119553
+INFO (XSTRM-223): 103. Translating cellView POL_70/p70_2_coup_dualFinger2_B/layout as STRUCTURE p70_2_coup_dualFinger2_B
+INFO (XSTRM-223): 104. Translating cellView PLL_70/p70_2_rayLogo_A/layout as STRUCTURE p70_2_rayLogo_A
+INFO (XSTRM-223): 105. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119554
+INFO (XSTRM-223): 106. Translating cellView POL_70/p70_2_align_sd_gate_A/layout as STRUCTURE p70_2_align_sd_gate_A
+INFO (XSTRM-223): 107. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5488797119555
+INFO (XSTRM-223): 108. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119556
+INFO (XSTRM-223): 109. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119557
+INFO (XSTRM-223): 110. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119558
+INFO (XSTRM-223): 111. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119559
+INFO (XSTRM-223): 112. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119560
+INFO (XSTRM-223): 113. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_5488797119561
+INFO (XSTRM-223): 114. Translating cellView POL_70/p70_2_coup4Pt_ta_A/layout as STRUCTURE p70_2_coup4Pt_ta_A
+INFO (XSTRM-223): 115. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5488797119562
+INFO (XSTRM-223): 116. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119563
+INFO (XSTRM-223): 117. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5488797119564
+INFO (XSTRM-223): 118. Translating cellView POL_70/p70_2_coup_99_SFinger_A/layout as STRUCTURE p70_2_coup_99_SFinger_A
+INFO (XSTRM-223): 119. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_5488797119565
+INFO (XSTRM-223): 120. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119566
+INFO (XSTRM-223): 121. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119567
+INFO (XSTRM-223): 122. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119568
+INFO (XSTRM-223): 123. Translating cellView POL_70/p70_2_guts_7099A_C/layout as STRUCTURE p70_2_guts_7099A_C_CDNS_5488797119548
+INFO (XSTRM-223): 124. Translating cellView ln0246/ln246_3p_chip_7099C/layout as STRUCTURE ln246_3p_chip_7099C
+INFO (XSTRM-223): 125. Translating cellView POL_70/p70_2_coup_tmpSnake_A/layout as STRUCTURE p70_2_coup_tmpSnake_A
+INFO (XSTRM-223): 126. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119570
+INFO (XSTRM-223): 127. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119571
+INFO (XSTRM-223): 128. Translating cellView POL_70/p70_2_coup_vdp_mesa_A/layout as STRUCTURE p70_2_coup_vdp_mesa_A
+INFO (XSTRM-223): 129. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119572
+INFO (XSTRM-223): 130. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119573
+INFO (XSTRM-223): 131. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119574
+INFO (XSTRM-223): 132. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119575
+INFO (XSTRM-223): 133. Translating cellView POL_70/p70_2_coup_TLM_A/layout as STRUCTURE p70_2_coup_TLM_A
+INFO (XSTRM-223): 134. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119576
+INFO (XSTRM-223): 135. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119577
+INFO (XSTRM-223): 136. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119578
+INFO (XSTRM-223): 137. Translating cellView POL_70/p70_2_coupIso_A/layout as STRUCTURE p70_2_coupIso_A
+INFO (XSTRM-223): 138. Translating cellView POL_70/p70_2_label_angstroms20_A/layout as STRUCTURE p70_2_label_angstroms20_A
+INFO (XSTRM-223): 139. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119579
+INFO (XSTRM-223): 140. Translating cellView POL_70/p70_2_coup_10pf_TA_A/layout as STRUCTURE p70_2_coup_10pf_TA_A
+INFO (XSTRM-223): 141. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119580
+INFO (XSTRM-223): 142. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119581
+INFO (XSTRM-223): 143. Translating cellView POL_70/p70_2_coup_vdp_sd_A/layout as STRUCTURE p70_2_coup_vdp_sd_A
+INFO (XSTRM-223): 144. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_5488797119582
+INFO (XSTRM-223): 145. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119583
+INFO (XSTRM-223): 146. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119584
+INFO (XSTRM-223): 147. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119585
+INFO (XSTRM-223): 148. Translating cellView POL_70/p70_2_guts_7098A_C/layout as STRUCTURE p70_2_guts_7098A_C_CDNS_5488797119569
+INFO (XSTRM-223): 149. Translating cellView ln0246/ln246_3p_chip_7098C/layout as STRUCTURE ln246_3p_chip_7098C
+INFO (XSTRM-223): 150. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119588
+INFO (XSTRM-223): 151. Translating cellView POL_70/p70_2_coupPads_1_6_noSD/layout as STRUCTURE p70_2_coupPads_1_6_noSD_CDNS_5488797119587
+INFO (XSTRM-223): 152. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_5488797119589
+INFO (XSTRM-223): 153. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119590
+INFO (XSTRM-223): 154. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119591
+INFO (XSTRM-223): 155. Translating cellView POL_70/p70_2_coup_Xbridge_gateTop_B/layout as STRUCTURE p70_2_coup_Xbridge_gateTop_B
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'gateTop:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 156. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_5488797119592
+INFO (XSTRM-223): 157. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119593
+INFO (XSTRM-223): 158. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119594
+INFO (XSTRM-223): 159. Translating cellView POL_70/p70_2_coup_Xbridge_cb_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_cb_5_20_A
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'solderBar:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 160. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_5488797119595
+INFO (XSTRM-223): 161. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119596
+INFO (XSTRM-223): 162. Translating cellView POL_70/p70_2_nogate_A/layout as STRUCTURE p70_2_nogate_A
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'recess:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+INFO (XSTRM-223): 163. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5488797119598
+INFO (XSTRM-223): 164. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_5488797119597
+INFO (XSTRM-223): 165. Translating cellView PLL_70/p70_2_label_ohms_A/layout as STRUCTURE p70_2_label_ohms_A
+INFO (XSTRM-223): 166. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5488797119599
+INFO (XSTRM-223): 167. Translating cellView PLL_70/p70_2_label_6p35ohmsSq_A/layout as STRUCTURE p70_2_label_6p35ohmsSq_A
+INFO (XSTRM-223): 168. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195100
+INFO (XSTRM-223): 169. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195101
+INFO (XSTRM-223): 170. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195102
+INFO (XSTRM-223): 171. Translating cellView POL_70/p70_2_ILCR_tm_ta6_A/layout as STRUCTURE p70_2_ILCR_tm_ta6_A
+INFO (XSTRM-223): 172. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195103
+INFO (XSTRM-223): 173. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195104
+INFO (XSTRM-223): 174. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195105
+INFO (XSTRM-223): 175. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195106
+INFO (XSTRM-223): 176. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195107
+INFO (XSTRM-223): 177. Translating cellView POL_70/p70_2_guts_7097A_C/layout as STRUCTURE p70_2_guts_7097A_C_CDNS_5488797119586
+INFO (XSTRM-223): 178. Translating cellView ln0246/ln246_3p_chip_7097C/layout as STRUCTURE ln246_3p_chip_7097C
+INFO (XSTRM-223): 179. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195109
+INFO (XSTRM-223): 180. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195110
+INFO (XSTRM-223): 181. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195111
+INFO (XSTRM-223): 182. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195112
+INFO (XSTRM-223): 183. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_54887971195113
+INFO (XSTRM-223): 184. Translating cellView POL_70/p70_2_coup_taRes_A/layout as STRUCTURE p70_2_coup_taRes_A
+INFO (XSTRM-223): 185. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_54887971195115
+INFO (XSTRM-223): 186. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_54887971195114
+INFO (XSTRM-223): 187. Translating cellView POL_70/p70_2_ILCR_cb_tmp_A/layout as STRUCTURE p70_2_ILCR_cb_tmp_A
+INFO (XSTRM-223): 188. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195119
+INFO (XSTRM-223): 189. Translating cellView POL_70/p70_2_coup_Xbridge_ta_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_ta_5_20_A
+INFO (XSTRM-223): 190. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195120
+INFO (XSTRM-223): 191. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195121
+INFO (XSTRM-223): 192. Translating cellView POL_70/p70_2_coup_Xbridge_tmp_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_tmp_5_20_A
+INFO (XSTRM-223): 193. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195122
+INFO (XSTRM-223): 194. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195123
+INFO (XSTRM-223): 195. Translating cellView POL_70/p70_2_guts_7096A_C/layout as STRUCTURE p70_2_guts_7096A_C_CDNS_54887971195108
+INFO (XSTRM-223): 196. Translating cellView POL_70/p70_2_coupPads_19_26_A/layout as STRUCTURE p70_2_coupPads_19_26_A_CDNS_54887971195125
+INFO (XSTRM-223): 197. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_54887971195126
+INFO (XSTRM-223): 198. Translating cellView POL_70/p70_2_FET_96_A/layout as STRUCTURE p70_2_FET_96_A_CDNS_54887971195124
+INFO (XSTRM-223): 199. Translating cellView ln0246/ln246_3p_chip_7096C/layout as STRUCTURE ln246_3p_chip_7096C
+INFO (XSTRM-223): 200. Translating cellView ln0246/ln246_3p_wafer_flat_copy/layout as STRUCTURE ln246_3p_wafer_flat_copy
+INFO (XSTRM-180): You have not used the objectMap option. The design has instance(s) of at least one of following OpenAccess objects: oaBlockage, oaBoundary, oaRow, and oaMarker. Any information about these objects will not be translated into the generated stream file. Use the objectMap option to translate/preserve these objects using XStream. For details on the objectMap option, refer to the "Design Data Translator's Reference" guide for XStream.
+WARNING (XSTRM-35): The objects in the layer-purpose pair 'outline:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
+
+Summary of Objects Translated:
+	Scalar Instances:                       1894
+	Array Instances:                        0
+	Polygons:                               29
+	Paths:                                  0
+	Rectangles:                             48
+	Lines:                                  0
+	Arcs:                                   0
+	Donuts:                                 0
+	Dots:                                   0
+	Ellipses:                               2
+	Boundaries:                             0
+	Area Blockages:                         0
+	Layer Blockages:                        0
+	Area Halos:                             0
+	Markers:                                0
+	Rows:                                   0
+	Standard Vias                           0
+	Custom Vias:                            0
+	CdsGen Vias:                            0
+	Pathsegs:                               0
+	Text:                                   0
+	TextDisplay:                            0
+	Cells:                                  200
+
+Elapsed Time: 5.7s   User Time: 0.9s   CPU Time: 0.2s   Peak VM: 77400KB
+INFO (XSTRM-234): Translation completed. '0' error(s) and '35' warning(s) found.

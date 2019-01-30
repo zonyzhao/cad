@@ -289,7 +289,7 @@ isLeaf(cell)
 ;        - no recursion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib="ln0246"
-;name="ln246_3p_wafer"
+;name="ln246_3p_wafer_flat"
 name="WaferViaMask"
 view="layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout")
@@ -299,15 +299,20 @@ setView(cell "layout")
 setName(cell name)
 setLib(cell lib)
 insts = getInstances(cell)
+length(insts)
 inst0 = nth(0 cv->instances)
 inst0~>name
+inst0~>cellName
+inst0~>isFull
 inst0~>?
 inst0~>??
 inst0~>bBox
 dbClose(cv)
 for(i 0 sub1(length(insts))
   inst = nth(i cv->instances)
-  printf("%s\n" inst~>cellName)
+  printf("%s " inst~>name)
+  printf("%s " inst~>cellName)
+  printf("%L\n" inst~>isFull)
 );for
 foreach(insts list(cv~>instances)
   inst~>name	  
@@ -727,6 +732,83 @@ for(i 0 sub1(length(insts))
   inst = nth(i insts)
   printf("%s\n" inst~>cellName)
 );for
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-27: Remove all instances in a cellview that are not in the
+;        target library 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="ln0246"
+name="ln246_3p_wafer_flat_copy"
+view="layout"
+;cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
+cv = dbOpenCellViewByType( lib name view "maskLayout" "a")
+;cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
+dbIsId(cv)
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setView(cell "layout")
+setName(cell name)
+setLib(cell lib)
+insts = getInstances(cell)
+length(insts)
+
+; Deleting instances without the isFull property being true
+for(i 0 sub1(length(insts))
+  inst = nth(i insts)
+  if(dbIsId(inst) then
+    if(inst~>isFull then
+      printf("INFO: Full Site Detected: %s\n" inst~>cellName)
+    else   
+      printf("INFO: Deleting full site instance %s\n" inst~>cellName)
+      dbDeleteObject(inst)
+    );if
+  );if	  
+);for
+
+insts = getInstances(cell)
+length(insts)
+
+; Deleting instances that are not in the target library
+for(i 0 sub1(length(insts))
+  inst = nth(i cv->instances)
+  cvi = dbOpenCellViewByType( lib inst~>cellName view "maskLayout")
+  if(null(cvi) then
+    if(!null(dbDeleteObject(inst)) then
+      println("INFO: Deleting instance not in local library")
+    );if
+  );if	  
+);for
+insts = getInstances(cell)
+length(insts)
+inst0 = nth(0 cv->instances)
+inst0~>name
+inst0~>cellName
+inst0~>isFull
+inst0~>?
+inst0~>??
+inst0~>bBox
+for(i 0 sub1(length(insts))
+  inst = nth(i cv->instances)
+  if(inst~>isFull then
+    printf("%s " inst~>name)
+    printf("%s \n" inst~>cellName)
+  else
+;    if(dbIsId(inst) then
+      print("INFO: Removing non full site instance %s \n" inst~>cellName)
+      dbDeleteObject(inst)
+;    );if
+  );if
+;  printf("%L\n" inst~>isFull)
+);for
+
+insts = getInstances(cell)
+length(insts)
+
+foreach(insts list(cv~>instances)
+  inst~>name	  
+);foreach
+dbSave(cv)
+dbClose(cv)
 
 
 

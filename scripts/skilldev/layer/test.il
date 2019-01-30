@@ -182,6 +182,93 @@ nth(0 ml)~>layerName
 nth(0 ml)~>points
 ;FIXME: should render and check
 
+:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Single Layer Wafer Contact Mask Layer Generation  
+;      1.) Open a cellview containing instances that have the target layer
+;      2.) Create a new cell view which will hold the mask layer
+;      3.) Sequence through all the instances in the original cellview and 
+;          "layer filter" only the target layer.
+;      4.) Copy all shapes on the target layer into the new cellview on a 
+;          given layer (could be the same layer)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;name="ln246_3p_wafer_flat"
+;name="ln246_3p_am_lna_v5b"
+name="ln246_3p_am_int23_front_v5"
+lib="ln0246"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+cell = makeInstance( 'cv )
+setRef(cell cv)
+setView(cell "layout")
+setName(cell name)
+setLib(cell lib)
+insts = getInstances(cell)
+length(insts)
+;;
+for(i 0 sub1(length(insts))
+  inst = nth(i cv->instances)
+  printf("%d: %s " i inst~>name)
+  printf("%d: %s \n" i inst~>cellName)
+  lay = makeInstance( 'techLayer )
+  setRef(lay inst)
+  layName = "via"
+  layPurp = "drawing"
+  setName(lay layName)
+  setPurpose(lay layPurp)
+  if(!null(getShapesOnLayer(lay)) then
+    println("found via shapes")
+  );if
+);for
+;;
+inst0 = nth(0 cv->instances)
+inst0~>name
+inst0~>cellName
+inst0~>isFull
+inst0~>?
+inst0~>??
+inst0~>bBox
+;;;
+inst10 = nth(10 cv->instances)
+inst10~>name
+inst10~>cellName
+inst10~>isFull
+inst10~>?
+inst10~>??
+inst10~>bBox
+
+cvi10 = dbOpenCellViewByType( lib inst10~>cellName view "maskLayout")
+ci10 = makeInstance( 'cv )
+setRef(ci10 cvi10)
+setView(ci10 "layout")
+setName(ci10 inst10~>cellName)
+setLib(ci10 lib)
+insts = getInstances(cell)
+length(insts)
+cvi10Inst0 = nth(0 cv->instances)
+cvi10Inst0~>name
+cvi10Inst0~>cellName
+cvi10Inst0~>?
+cvi10Inst0~>??
+cvi10Inst0~>bBox
+
+;;
+name="ln246_3p_am_int23_front_v5"
+lib="ln0246"
+view = "layout"
+cv = dbOpenCellViewByType( lib name view "maskLayout")
+lay = makeInstance( 'techLayer )
+setRef(lay cv)
+layName = "via"
+layPurp = "drawing"
+setName(lay layName)
+setPurpose(lay layPurp)
+getShapesOnLayer(lay)
+shapes = lay->shapes->list->elems
+nth(0 shapes)->ref~>layerName
+nth(0 shapes)~>vertices
+;nth(1 shapes)->ref~>layerName
+;nth(1 shapes)->vertices
 
 ;#########################################################
 ; Experimental Code

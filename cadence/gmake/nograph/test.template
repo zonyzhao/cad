@@ -1,0 +1,66 @@
+#dbuPerUU                          "0"
+#donutNumSides                     "64"
+#ellipseNumSides                   "64"
+#gdsCellNameLength                 "0"
+#hierDepth                         "32767"
+#strmTextNS                        "cdba"
+#viaCutArefThreshold               "0"
+#arrayInstToScalar
+#backupGdsLogFiles
+case                               "preserve"
+cellListFile                       ""
+cellMap                            ""
+cellNamePrefix                     ""
+cellNameSuffix                     ""
+#checkPolygon
+convertDot                         "node"
+convertPin                         "geometry"
+#doNotPreservePcellPins
+#flattenPcells
+#flattenVias
+fontMap                            ""
+#ignoreLines
+#ignoreMissingCells
+#ignorePcellEvalFail
+#ignoreTopCellPrefixSuffix
+infoToWarn                         ""
+labelCase                          "preserve"
+labelDepth                         "1"
+labelMap                           ""
+layerMap                           ""
+library                            "ln0246"
+logFile                            "strmOut.log"
+maxVertices                        "200"
+#mergePathSegsToPath
+#noConvertHalfWidthPath
+noInfo                             ""
+#noObjectProp
+#noOutputTextDisplays
+#noOutputUnplacedInst
+noWarn                             ""
+objectMap                          ""
+outputDir                          "."
+#pathToPolygon
+pinAttNum                          "0"
+propMap                            ""
+#propValueOnly
+#rectToBox
+refLibList                         ""
+#replaceBusBitChar
+#reportPrecisionLoss
+#respectGDSIINameLimit
+runDir                             "."
+showCompletionMsgBox
+#snapToGrid
+strmFile                           "ln246_3p_wafer_flat_copy.gds"
+strmVersion                        "5"
+subMasterSeparator                 "_CDNS_"
+summaryFile                        ""
+techLib                            ""
+topCell                            "ln246_3p_wafer_flat_copy"
+userSkillFile                      ""
+viaMap                             ""
+view                               "layout"
+#virtualMemory
+warnToErr                          ""
+#wildCardInCellMap

@@ -1,0 +1,80 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  stream.ils: cellview stream class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( stream (cv)
+  (
+    (logFile @reader getLogFile @writer setLogFile)
+    (errFile @reader getErrFile @writer setErrFile)
+    (templatePath @reader getTemplatePath @writer setTemplatePath)
+    (templateFile @reader getTemplateFile @writer setTemplateFile)
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj stream)) 
+  obj->logFile = "PIPO.log"
+  obj->errFile = "PIPO.err"
+  obj->templatePath = "./"
+  obj->templateFile = nil
+);defmethod
+;######################################################
+;#####################################################
+; Sets the boundary box of the chip numbers pad
+;#####################################################
+defmethod(streamOut  (( str stream ))
+  let((streamOutKeys tFile fp id)
+    if(null(str->templateFile) then
+      ; create a dpl for the IPC 
+      streamOutKeys=ncons(nil)
+      streamOutKeys->libName=str->lib
+      streamOutKeys->primaryCell=str->name
+      streamOutKeys->viewName=str->view
+      streamOutKeys->outFile="PIPO.log"
+      streamOutKeys->errFile="PIPO.err"
+      ; Create a default template file
+      tFile=strcat(str->templatePath "streamOutKeys")
+      fp=outfile(tFile)
+      fprintf(fp "streamOutKeys='")
+      pprint(streamOutKeys fp)
+      newline(fp)
+      close(fp)
+    else
+      tFile = str->templateFile
+    );if
+    id=ipcBeginProcess(
+      sprintf(nil "strmout -templateFile %s" tFile)
+      ""
+      'strmDataHandler
+      'strmDataHandler
+      'strmExitHandler
+      "./ipcAsync.log"
+    );ipcBeginProcess
+    ; use ipcWait(id) if you want to wait for it to finish
+  );let
+);defmethod
+;#####################################################
+; FIXME: Should integrate this with the IPC class and
+;        use this as a test case ... CONFIRMED!!
+;#####################################################
+; IPC Data Handler
+;##################################################### 
+defun(strmDataHandler (_id data)
+  printf("%s" data)
+);defun
+;#####################################################
+; IPC Exit Handler Callback
+;#####################################################    
+defun(strmExitHandler (_id status)
+  printf("Stream Out exited with status %L\n" status)
+);defun
+;######################################################
+;#####################################################
+; Get the target template path and file
+;#####################################################
+defmethod(getTemplateTarget  (( str stream ))
+  printf("INFO(stream): Target Template File:  %s\n" strcat(str->templatePath str->templateFile))
+);defmethod
+;######################################################
+;######################################################
+;######################################################
