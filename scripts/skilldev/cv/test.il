@@ -10,8 +10,8 @@ classOf(cell)
 ; UT-1: Generate Recursive Tree (DFS)
 ; Simple cell: pcell instance
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib="pd0164"
-name="memsChipFrameTest"
+lib="ln0246"
+name="ln246_3p_chip_00"
 view="layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout")
 cell = makeInstance( 'cv )
@@ -20,10 +20,120 @@ setView(cell view)
 setName(cell name)
 setLib(cell lib)
 getTree(cell)
-leaf = nth(0 cell->leafCells->list->elems)
+leafs = getLeafCells(cell)
+length(leafs)
+;;
+; list all the leafs in the design
+;;
+for(i 0 sub1(length(leafs))
+  leaf = nth(i leafs)
+  printf("%d) Cell name:  %s \n" i leaf->name)
+);for
+;;
+; Define the target layer
+;;
+lay = makeInstance( 'techLayer )
+layName = "via"
+layPurp = "drawing"
+setName(lay layName)
+setPurpose(lay layPurp)
+;;
+; list all the leafs that contain a via
+;;
+for(i 0 sub1(length(leafs))
+  leaf = nth(i leafs)
+  cv = dbOpenCellViewByType( leaf->lib leaf->name "layout" "maskLayout")
+  setRef(lay cv)
+  if(!null(getShapesOnLayer(lay)) then
+    printf("%d) %s found via shapes in leaf cell\n" i leaf->name)
+  );if
+);for
+
+leaf = nth(0 leafs)
+;leaf = nth(0 cell->leafCells->list->elems)
+;length(cell->leafCells->list->elems)
 leaf->name
 leaf->lib
-leaf->bbx->bbx
+leaf->bbx->bbox
+
+
+cell_flat = makeInstance( 'cv )
+lib="ln0246"
+view="layout"
+name_flat="ln246_3p_chip_00_flat"
+setView(cell_flat view)
+setName(cell_flat name_flat)
+setLib(cell_flat lib)
+if(!null(isCell(cell_flat))
+  println("Flattened cellview exists in library - removing ...")
+  removeCell(cell_flat)
+  Copy(cell name_flat)
+else
+  Copy(cell name_flat)
+);if
+
+cv_flat = dbOpenCellViewByType( lib name_flat "layout" "maskLayout" "a")
+setRef(cell_flat cv_flat)
+smash(cell_flat)
+dbSave(cv_flat)
+dbClose(cv_flat)
+
+insts = getInstances(cell)
+for(i 0 sub1(length(insts))
+  inst = nth(i insts)
+  dbFlattenInst(inst 32 t)
+);for
+dbSave(cv_flat)
+dbClose(cv_flat)
+
+lib="ln0246"
+view="layout"
+cv_via = dbOpenCellViewByType( lib "viaTest" "layout" "maskLayout" "w")
+
+name_flat="ln246_3p_chip_00_flat"
+cv_flat = dbOpenCellViewByType( lib name_flat "layout" "maskLayout" "r")
+
+lay = makeInstance( 'techLayer )
+layName = "via"
+layPurp = "drawing"
+setName(lay layName)
+setPurpose(lay layPurp)
+setRef(lay cv_flat)
+getShapesOnLayer(lay)
+setRef(lay cv_via)
+renderShapesOnLayer2(lay)
+dbSave(cv_via)
+dbClose(cv_via)
+dbClose(cv_flat)
+
+;;
+; Check for the presence of a layer in any leaf cell of the 
+; cellview
+;;
+
+for(i 0 sub1(length(leafs))
+  leaf = nth(i leafs)
+  cv = dbOpenCellViewByType( leaf->lib leaf->name "layout" "maskLayout")
+  setRef(lay cv) 
+  if(!null(getShapesOnLayer(lay)) then
+    printf("%d) %s found via shapes in leaf cell\n" i leaf->name)
+    setRef(lay cv_via)
+    renderShapesOnLayer2(lay)
+  );if
+);for
+
+dbSave(cv_via)
+dbClose(cv_via)
+dbClose(cv)
+
+leaf3 = nth(2 leafs)
+leaf3->name
+l3cv = dbOpenCellViewByType( leaf3->lib leaf3->name "layout" "maskLayout")
+setRef(lay l3cv) 
+getShapesOnLayer(lay)
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Generate Recursive Tree (DFS)

@@ -6,22 +6,20 @@
 ;#                       transform2 class
 ;######################################################
 defclass( techLayer (cadObj)
-	  (
-		( name @reader getName @writer setName )
-		( purpose @reader getPurpose @writer setPurpose )
-		( shapes @reader getShapes )
-	  )				  
+  (
+    ( name @reader getName @writer setName )
+    ( purpose @reader getPurpose @writer setPurpose )
+    ( shapes @reader getShapes )
+  )				  
 );defclass
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj techLayer)) 
-	   obj->name = nil
-	   obj->purpose = nil
-	   obj->shapes = makeInstance( 'collection )
+  obj->name = nil
+  obj->purpose = nil
+  obj->shapes = makeInstance( 'collection )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method gets all the shapes on the target layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,7 +34,6 @@ defmethod( getShapesOnLayer (( lay techLayer ))
     );foreach	       
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method deletes all shapes on the target layer
 ; Rendor shapes on the layer
@@ -46,7 +43,6 @@ defmethod( deleteShapesOnLayer (( lay techLayer ))
       dbDeleteObject(shape)
   )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Render shapes on the layer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -66,7 +62,22 @@ defmethod( renderShapesOnLayer (( lay techLayer ))
     );foreach
   );let
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Render shapes on the layer - V2.0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderShapesOnLayer2 (( lay techLayer ))
+  let((i)
+    i=0
+    foreach(shp lay->shapes->list->elems
+      printf("INFO: Rendering Shape %d\n" i)
+      setLayer(shp getName(lay))
+      setPurpose(shp getPurpose(lay))
+      setRef(shp getRef(lay))
+      renderShape(shp)
+      i++
+    );foreach
+  );let
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method adds a shape to a layer by reference
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,67 +91,56 @@ defmethod( addShape (( lay techLayer ) arg )
     nil
   );if  
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Performs the logical AND of the two input layer objects
 ;  Returns: A list of shapes that satisfy the logical AND operation
 ;           nil if there is no output from the AND
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( andLayers (( lay techLayer ) other )
-  let((layA purA temp)
-    layA = getLayer(other)
-    purA = getPurpose(other)
-    layB = getLayer(lay)
-    purB = getPurpose(lay)
-    leLayerAnd(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+defmethod( andLayers (( lay techLayer ) lppIn lppOut )
+  let((layer purpose)
+    layer = getName(lay)
+    purpose = getPurpose(lay)
+    leLayerAnd(getRef(lay) list(layer purpose) lppIn lppOut)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Performs the logical AND NOT of the two input layer objects
 ;  Returns: A list of shapes that satisfy the logical AND operation
 ;           nil if there is no output from the AND
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( andNotLayers (( lay techLayer ) other )
-  let((layA purA temp)
-    layA = getLayer(other)
-    purA = getPurpose(other)
-    layB = getLayer(lay)
-    purB = getPurpose(lay)
-    leLayerAndNot(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+defmethod( andNotLayers (( lay techLayer ) lppIn lppOut )
+  let((layer purpose)
+    layer = getName(lay)
+    purpose = getPurpose(lay)
+    leLayerAndNot(getRef(lay) list(layer purpose) lppIn lppOut)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Performs the logical OR of the two input layer objects
 ;  Returns: A list of shapes that satisfy the logical AND operation
 ;           nil if there is no output from the AND
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( orLayers (( lay techLayer ) other )
-  let((layA purA temp)
-    layA = getLayer(other)
-    purA = getPurpose(other)
-    layB = getLayer(lay)
-    purB = getPurpose(lay)
-    leLayerOr(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+defmethod( orLayers (( lay techLayer ) lppIn lppOut )
+  let((layer purpose)
+    layer = getName(lay)
+    purpose = getPurpose(lay)
+    leLayerOr(getRef(lay) list(layer purpose) lppIn lppOut)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Performs the logical XOR of the two input layer objects
-;  Returns: A list of shapes that satisfy the logical AND operation
-;           nil if there is no output from the AND
+;  Performs the logical XoR of the two input layer objects
+;  Returns: A list of shapes that satisfy the logical XoR operation in
+;           the target cellview (cv argument) on the error marker layer
+;  NOTE: To save XoR shapes in target cellview, open the cellview in 
+;        append mode and then save/close it.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( xOrLayers (( lay techLayer ) other )
-  let((layA purA temp)
-    layA = getLayer(other)
-    purA = getPurpose(other)
-    layB = getLayer(lay)
-    purB = getPurpose(lay)
-    leLayerXor(getRef(lay) list(layA purA) list(layB purB) list("text" "drawing"))
+defmethod( xOrLayers (( lay techLayer ) lppIn lppOut)
+  let((layer purpose)
+    layer = getName(lay)
+    purpose = getPurpose(lay)
+    leLayerXor(getRef(lay) list(layer purpose) lppIn lppOut)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Resizes the shapes on this layer by useru (um) and returns 
 ;  a list of newly resized shapes on this layer
@@ -152,7 +152,6 @@ defmethod( resizeLayer (( lay techLayer ) uu )
     leLayerSize(getRef(lay) list(lay pur) uu list(lay pur))
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Merge all shapes on a layer. Returnts a list of shapes that have
 ;  been returned from the merger operation
@@ -172,7 +171,6 @@ defmethod( mergeLayer (( lay techLayer ))
     leMergeShapes(sList)
   )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

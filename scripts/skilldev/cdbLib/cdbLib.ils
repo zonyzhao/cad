@@ -1,0 +1,63 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  cdbLib.ils: Class operates on the contents of the cds.lib file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( cdbLib ()
+ (
+   ( libList )
+   ( name )
+   ( attr )
+   ( techfile )
+   ( cellNames )	  
+ )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method initializes the class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj cdbLib))
+	   obj->libList = makeInstance( 'listfun )  
+	   obj->name = nil 
+	   obj->attr = makeInstance( 'listfun )  
+	   obj->techfile = makeInstance( 'techfile ) 
+	   obj->cellNames = makeInstance( 'listfun )  	     
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates the libraries member via the cds.lib libraries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( genLibList (( lib cdbLib ))
+	       setElems(lib->libList sort( ddGetLibList()~>name 'alphalessp))
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Library Attributes in the Library Object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( getAttrList (( lib  cdbLib ))
+	let( ( libid )
+	       libid = ddGetObj(lib->name)
+	       setElems(attr libid~>?)
+	       ) ; let
+) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Generates a list of cellnames in the library object
+; FIXME: this should be done in lib class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( genLibCellList (( lib cdbLib ))
+;	let( ( libid
+;	       cells
+;	       list)
+;	libid = ddGetObj(lib->name)
+;	cells = libid->cells
+;        list = '()
+;	foreach(cell cells
+;       		     list = cons(cell->name list)
+;        )
+;	setElems(lib->cellNames list)
+;    ) ; let
+;) ; defMethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	

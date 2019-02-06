@@ -17,7 +17,6 @@ defclass( shape (cadObj)
 		( area )			
 	  )
 ) ; defClass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
@@ -33,14 +32,12 @@ defmethod( initializeInstance @after ((obj shape))
 	   obj->mfg = nil
 	   obj->area = nil	     
 );defmethod
-
 ;#####################################################
 ; Add polygon to polygons collection of the shape
 ;#####################################################
 defmethod( addGeometry (( shp shape ) arg)
   add(shp->geometries arg)
 );defmethod
-
 ;#####################################################
 ; Shape is the "foundation" Rendering Class for all
 ; higher "layer" classes above shape - assembly, layer,
@@ -64,14 +61,33 @@ defmethod( render (( shp shape ))
     printf("ERROR(shape): Shape Null Vertices - ")
  );if   
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This render method renders a single shape given by
+; the vertices class member
+; FIXME: There is a tangle with the render method above.
+;        Need some refactoring here, but I a wary of
+;        doing so in the absence of a regressible test suite.
+;        Also, it looks like there might be an inheritance
+;        opportunity here with the polygon class. This could
+;        possible link dependencies between this class
+;        and the geometry class!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( renderShape (( shp shape ))
+  if( !null(shp->vertices) then
+    dbCreatePolygon(getRef(shp)
+	     	    list(shp->layer shp->purpose)
+		    shp->vertices
+		    );dbCreatePolygon   
+  else
+    printf("ERROR(shape): Shape Null Vertices - ")
+  );if   
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; FIXME: Need to update code below to process multiple 
 ;        polygons in the new polygons collection 
 ;        member. Most of this code should drop down
 ;        into the geometry and polygon2 class definitions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;#####################################################
 ; Reset the shape's transform
 ;#####################################################
@@ -81,7 +97,6 @@ defmethod( shapeReset (( shp shape ))
 	   shp->transform->polygon->centroid->x = shp->centroid->x
 	   shp->transform->polygon->centroid->y = shp->centroid->y
 );defmethod
-
 ;#####################################################
 ; This method sets the vertex list the the vertices
 ; argument
@@ -97,7 +112,6 @@ defmethod( setVertices (( shp shape ) vertices)
 	   shp->centroid->y = shp->transform->polygon->centroid->y
 	   length(getCollection(shp->transform->vertices->points))
 );defmethod
-
 ;#####################################################
 ; This method works on an existing Cadence layout, and
 ; creates polygons for all layout shapes
@@ -169,11 +183,19 @@ defmethod( genVertices (( shp shape ))
 		    shp->purpose = shp~>ref~>purpose
 		    shp->type = shp~>ref~>objType
 		  );path
+                  ( "ellipse"
+		    println("ellipse detected")
+		    foreach(point shp~>ref~>points
+	      	      shp~>vertices=cons(point shp~>vertices)
+		      shp~>transform~>vertices=cons(point shp~>transform~>vertices)
+	    	    )
+		  );ellipse
 		  ( "label"
 		    println("label detected")
 		    shp->vertices=nil
 		  );label
 		  ( t
+                        printf("ERROR(shape): Unknown shape %s\n" shp~>ref~>objType )
 			error( "ERROR SHAPE: Encountered unknown shape" )
 			return()
 		  );t
@@ -186,7 +208,6 @@ defmethod( genVertices (( shp shape ))
 		list(shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
 	   );let	   
 );defmethod
-
 ;#####################################################
 ; Translates the shape's transform
 ;#####################################################
@@ -200,7 +221,6 @@ defmethod( shapeTranslate (( shp shape ) trn)
 	      println("ERROR(shape): argument must be a coordinate list")
            );if
 );defmethod
-
 ;#####################################################
 ; Scales the shape's transform
 ;#####################################################
@@ -210,7 +230,6 @@ defmethod( shapeScale (( shp shape ) arg)
 	   scale(shp->transform arg)
 	   list(shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
 );defmethod
-
 ;#####################################################
 ; Rotate the shape's transform (rot is in degrees
 ; with positive being counter-clockwise about the origin)
@@ -220,7 +239,6 @@ defmethod( shapeScale (( shp shape ) arg)
 ;  ;FIXME: Need to check that input arg in on grid increments
 ;  rotate(shp->transform rot/180*3.14159)
 ;);defmethod
-
 ;#####################################################
 ; Returns the transform's centroid
 ;#####################################################
@@ -228,7 +246,6 @@ defmethod( shapeScale (( shp shape ) arg)
 defmethod( shapeCentroid (( shp shape ))
 	   list( shp->transform->polygon->centroid->x shp->transform->polygon->centroid->y)
 );defmethod
-
 ;#####################################################
 ; Returns the transform's area
 ;#####################################################
@@ -236,7 +253,6 @@ defmethod( shapeCentroid (( shp shape ))
 defmethod( shapeArea (( shp shape ))
 	   shp->transform->area 
 );defmethod
-
 ;#####################################################
 ; Checks that all the vertices are on the manufacturing grid
 ;#####################################################
@@ -248,7 +264,6 @@ defmethod( checkMfg (( shp shape ))
     );foreach
   );foreach
 );defmethod
-
 ;#####################################################
 ;
 ;#####################################################
@@ -264,8 +279,6 @@ defmethod( checkMfg (( shp shape ))
 ;    shp->vertices=reverse(vertices)
 ;  );let	   
 ;);defmethod
-
-
 ;#####################################################
 ; quotient(xCoord(vert)/grid 1.0) - round(xCoord(vert)*10)
 ;#####################################################
@@ -284,7 +297,6 @@ defmethod( isOnMfg (( shp shape ))
     );foreach
   );let	   
 );defmethod
-
 ;#####################################################
 ;
 ;#####################################################
@@ -301,7 +313,6 @@ defmethod( setOnMfg (( shp shape ))
       shp->vertices=reverse(vertices)
   );let	   
 );defmethod
-
 ;#####################################################
 ; Center the shape's transform centroid to align to the 
 ; origin
@@ -316,7 +327,6 @@ defmethod( setOnMfg (( shp shape ))
 ;		list(shp->transform->polygon->centroid->x shp->transform->centroid->y)
 ;	   );let
 ;);defmethod
-
 ;#####################################################
 ; Generate a bounding box for the shape
 ; FIXME: Is this simply getting the shape's bBox from
@@ -325,7 +335,6 @@ defmethod( setOnMfg (( shp shape ))
 ;defmethod( genBbox (( shp shape ))
 ;	   nil
 ;);defmethod
-
 ;#####################################################
 ; Shift the shape's lower left corner to the 
 ; upper left quadrant of the cellview window
@@ -335,7 +344,6 @@ defmethod( setOnMfg (( shp shape ))
 ;defmethod( shiftUrq (( shp shape ))
 ;	   nil
 ;);defmethod
-
 ;#####################################################
 ; Does the bbox exactly match the veritices. If it
 ; does the bbox is a rectangle
@@ -343,7 +351,6 @@ defmethod( setOnMfg (( shp shape ))
 ;defmethod( isRect (( shp shape ))
 ;	   nil
 ;);defmethod
-
 ;#####################################################
 ; Merge the two shapes into one 
 ; argument is another shape reference
@@ -351,35 +358,30 @@ defmethod( setOnMfg (( shp shape ))
 defmethod( mergeShapes (( shp shape ) arg)
 	  shp->ref = leMergeShapes(list(shp->ref arg))
 );defmethod
-
 ;#####################################################
 ; Union of two shapes
 ;#####################################################
 defmethod( unionShapes (( shp shape ) arg)
 	  leOr(shp->ref shp->ref arg)
 );defmethod
-
 ;#####################################################
 ; Union minus intersection of two shapes
 ;#####################################################
 defmethod( intersectionShapes (( shp shape ) arg)
 	  leXor(shp->ref shp->ref arg)
 );defmethod
-
 ;#####################################################
 ; Union minus intersection of two shapes
 ;#####################################################
 defmethod( unionMinusintersectionShapes (( shp shape ) arg)
 	   leXor(shp->ref shp->ref arg)
 );defmethod
-
 ;#####################################################
 ; Fiter out redundant adjacent vertexes
 ;#####################################################
 ;defmethod( filter (( shp shape ) )
 ;	   nil
 ;);defmethod
-
 ;#####################################################
 ; Determines if two shapes have collided. the second
 ; shape is arg
@@ -391,7 +393,6 @@ defmethod( collide (( shp shape ) arg)
     t
   );if
 );defmethod
-
 ;#####################################################
 ; Determines if two the shape arg is enclosed in this
 ; shape object. 
@@ -403,7 +404,6 @@ defmethod( enclosed (( shp shape ) arg)
     t
   );if
 );defmethod
-
 ;#####################################################
 ; Resize the shape by uu user units (um)
 ; FIXME: need to create a binding between shape object
@@ -415,7 +415,6 @@ defmethod( enclosed (( shp shape ) arg)
 ;   leSizeShape(cvShp)
 ; );let  
 ;);defmethod
-
 ;###############################################################################
 ;###############################################################################
 ;###############################################################################

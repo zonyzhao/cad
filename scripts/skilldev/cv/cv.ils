@@ -19,7 +19,7 @@ defclass( cv (bbox)
 		( stack )
 		( layers )
 		( pcells )
-		( bbx @reader getBbx)	
+		( bbx @reader getBbx )	
 		( iRefs )
                 ( iCnt )
                 ( iNames )
@@ -125,9 +125,13 @@ defmethod( hasInstance (( cell cv ))
 ; Completely flatten the entire cellview hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( smash (( cell cv ))
-  foreach( inst cell->instances->list->elems
-     flattenInstance(inst)
-  )
+  let((insts)
+    insts = getInstances(cell)
+    for(i 0 sub1(length(insts))
+      inst = nth(i insts)
+      dbFlattenInst(inst 32 t)
+    );for
+  );let
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,11 +202,13 @@ defmethod( removeCell (( cell cv ))
 ; Copys layout view to another name in the same library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( Copy (( cell cv ) name)
-  let((cv)
+  let((cv cpCv)
     cv = getRef(cell)
-    if( null(ddGetObj(getRef(cell) name cell->view)) then
-      dbCopyCellView(cv cell->lib name cell->view "" nil t)
-      dbClose( cv)
+    if( null(ddGetObj(cell->lib name cell->view )) then
+      println("INFO(cv): Copying cellview")
+      cpCv = dbCopyCellView(cv cell->lib name cell->view "" nil t)
+      dbSave( cpCv )
+      dbClose( cpCv )
       't
     else
       printf("ERROR: layout cell %s exists in library\n" name)
@@ -344,7 +350,7 @@ defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
 	     ic = makeInstance( 'cv )
 	     setName(ic cv~>cellName)
 	     setLib(ic cv~>libName)
-	     setBbx(ic->bbx cv~>bBox)
+	     setBbox(ic->bbx cv~>bBox)
 	     add(cell->instances ic)
              rlist = cons(getRecursiveTree(cell ?cv instRef ?cLst llist) rlist)  
 	     ;dbClose(instRef)
@@ -355,7 +361,7 @@ defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
 	   lc = makeInstance( 'cv )
 	   setName(lc cv~>cellName)
 	   setLib(lc cv~>libName)
-	   setBbx(lc->bbx cv~>bBox)
+	   setBbox(lc->bbx cv~>bBox)
 	   add(cell->leafCells lc)
            return(cv)
          );if
@@ -364,7 +370,7 @@ defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
 	 lc = makeInstance( 'cv )
 	 setName(lc cv~>cellName)
 	 setLib(lc cv~>libName)
-	 setBbx(lc->bbx cv~>bBox)
+	 setBbox(lc->bbx cv~>bBox)
 	 add(cell->leafCells lc)
 	 return(cv)
        );if
@@ -601,7 +607,7 @@ defmethod(  printStackUp (( cell cv ))
 ; Get the leaf cells used in the cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getLeafCells (( cell cv ))
-    nil
+  cell->leafCells->list->elems
 );
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -677,6 +683,9 @@ defmethod( isCell (( cell cv))
     if(!null(ddGetObj(cell->lib cell->name cell->view )) then
       cv = dbOpenCellViewByType( cell->lib cell->name cell->view "" nil)
       setRef(cell cv)
+      t
+    else
+      nil
     );if
   );let
 );

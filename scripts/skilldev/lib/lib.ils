@@ -1,0 +1,165 @@
+;###################################################################
+;#   lib.ils: design library class
+;###################################################################
+defclass( lib (cadObj)
+	  (
+		( name 	@reader getName @writer setName )
+		( cellNameList)
+		( techLib )
+		( uLayers )
+		( path @reader getPath @writer setPath )				  
+	  )
+) ; defClass
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Class constructor
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( initializeInstance @after ((obj lib)) 
+	   obj->name = nil
+	   obj->cellNameList=nil
+	   obj->techLib= makeInstance('techfile)
+	   obj->path = nil
+	   obj->cid="lib"   
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method sets the library reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( setLibRef (( tl lib ))
+   tl->ref = ddGetObj(tl->name)
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This gets and sets the techfile reference
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+defmethod( getTechLib (( tl lib ))
+	tl->techLib->name = tl->name
+	getTechFileRef(tl->techLib)
+	setTechFileName(tl->techLib)
+	setTechFileProcess(tl->techLib)
+	setTechFilePath(tl->techLib)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method removes the attached techfile from the target
+; library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( unattachTechFile (( tl lib ))
+	getTechLib(tl)
+	unattachAllTechFiles(tl->techLib)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method attaches a techfile to the target library
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( attachTechFile (( tl lib ) techLibName)
+	attachTechFile(tl->techLib techLibName)
+) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Stores a List of Library Attributes in the lib
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;defmethod( getAttrList (( tl lib ))
+;	
+;	      
+;	       tl->techLib->?
+;
+;) ; defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the libraries last modify data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getCreateDate (( tl lib ))
+  tlib->ref~>lastModify
+);defmethod
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method returns the libraries last modify data
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getModifyDate (( tl lib ))
+  tlib->ref~>lastModify
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method Generates a list of cell view names in the lib
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( genCellNameList (( tl lib ))
+	let( ( libid
+	       cells
+	       list)
+	libid = ddGetObj(tl->name)
+	cells = libid->cells
+        list = '()
+	foreach(cell cells
+       		     list = cons(cell->name list)
+        )
+	tl->cellNameList = list
+    ); let
+); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method calls for the creation of the child "lib" object list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+defmethod( init (( lib library ))
+	   let( (enList
+	   	 i)
+		; set the cid to "lib" class
+		lib->cid="lib"
+	   	enList='()
+		i=0
+		foreach( sw lib->enables->elems
+			 if(sw then
+		     	   lib->enLibList = nth(i lib->libList->elems)
+			   i=i+1
+			 else
+			   return nil
+			 );if
+		);foreach
+	   	lib->objNum = i
+		; Generate the list of empty "lib" class objects
+		genCon(lib) 
+	   );let 
+); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This method generates a list of used layers in the library
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( getUsedLayers (( tl lib ))
+  let( (cell lst)
+    genCellNameList(tl)
+    tl->uLayers = '()
+    printf("INFO: Getting all layers used in library: %s\n" tl->name)
+    cell = makeInstance( 'cv )
+    foreach( name tl->cellNameList
+    	 printf("INFO: Processing Cell View: %s\n" name)
+	 cvRef = dbOpenCellViewByType( tl->name name "layout" "maskLayout")
+	 setRef(cell cvRef)
+	 tl->uLayers = append( getUsedLayers(cell) tl->uLayers)
+   );foreach
+   lst = makeInstance( 'listfun )
+   setElems(lst tl->uLayers)
+   tl->uLayers = removeRedundant(lst)
+  );let
+);defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates lib object and calls the cellview container based upon the 
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;defmethod( populate (( tl lib ) name)
+;	nil
+;); defmethod
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This Method populates lib object and calls the cellview container based upon the 
+; cellname argument
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( setLibPath (( tl lib ))
+    tl->path=ddGetObjReadPath( ddGetObj( tl->name))
+); defmethod
+
+;###################################################################
+;###################################################################
+;###################################################################
