@@ -827,7 +827,7 @@ defmethod( class ((col collection))
 ; if list is not empty (isEmpty = nil) enforce classOf test
 ;#############################################################
 defmethod( add ((col collection) arg)
-   if(isEmpty then
+   if(isEmpty(col) then
      addTail(col->list arg)
      col->cType = classOf(arg)
      col->n = col->n + 1
@@ -840,6 +840,13 @@ defmethod( add ((col collection) arg)
      );if
    );if
    col->n
+);defmethod
+
+;############################################################
+;
+;############################################################
+defmethod( removeItem ((col collection) arg)
+  removeElem(col->list arg)
 );defmethod
 
 ;############################################################
@@ -3284,28 +3291,29 @@ defmethod( printStackUp (( st stackup ))
 ;);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cv (bbox)
-	  (
-		( name @reader getName @writer setName)
-        	( view @reader getView @writer setView )
-		( lib @reader getLib @writer setLib )
-		( orient @reader getOrient @writer setOrient) 
-		( cvLeaf )
-                ( cvPcell )
-		( instances )
-		( leafs )
-		( leafCells )
-		( stack )
-		( layers )
-		( pcells )
-		( bbx @reader getBbx )	
-		( iRefs )
-                ( iCnt )
-                ( iNames )
-		( iLibNames )
-		( iLevels )
-		( iLayers )
-		( uLayers @reader getuLayers )			  
-	  )
+  (
+    ( name @reader getName @writer setName )
+    ( view @reader getView @writer setView )
+    ( lib @reader getLib @writer setLib )
+    ( orient @reader getOrient @writer setOrient )
+    ( cvLeaf )
+    ( cvPcell )
+    ( instances )
+    ( shapes )
+    ( leafs )
+    ( leafCells )
+    ( stack )
+    ( layers )
+    ( pcells )
+    ( bbx @reader getBbx )
+    ( iRefs )
+    ( iCnt )
+    ( iNames )
+    ( iLibNames )
+    ( iLevels )
+    ( iLayers )
+    ( uLayers @reader getuLayers ) 
+  )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Class constructor
@@ -3318,6 +3326,7 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->cvLeaf    = nil
            obj->cvPcell   = nil
 	   obj->instances = makeInstance('collection)
+	   obj->shapes    = makeInstance('collection)
 	   obj->leafs     = nil
 	   obj->leafCells = makeInstance('collection)
 	   obj->layers    = nil
@@ -3334,7 +3343,6 @@ defmethod( initializeInstance @after ((obj cv))
 	   obj->width     = nil
 	   obj->height    = nil
 );defmethod	
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clones the cellview object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -3364,7 +3372,6 @@ defmethod( cloneCv (( cell cv) arg )
   cloneBbox(cell arg)    
   cloneCadObj(cell arg)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set cv reference of this and the bbx component
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -3372,7 +3379,6 @@ defmethod( cloneCv (( cell cv) arg )
 ;     setRef(cell arg)
 ;     setRef(cell->bbx arg)
 ;);defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -3384,34 +3390,58 @@ defmethod( cloneCv (( cell cv) arg )
 ;    shiftOrigin(cell->bbx list(shx shy))
 ;  );let
 ;);defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get origin of cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 ;defmethod( getOrigin (( cell cv ))
 ;  cell->origin = Origin(cell->bbx)
 ;);defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Checks critical members being non-nil
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( checkSettings (( cell cv ))
+  let((ret)
+    ret = 't
+    if(null(getName(cell)) then
+      println("Warning cell name not set")
+      ret=nil
+    );if
+    if(null(getName(lib)) then
+      println("Warning cell library not set")
+      ret=nil
+    );if
+     if(null(getView(lib)) then
+      println("Warning cell view not set")
+      ret=nil
+    );if
+    if(null(getRef(cell)) then
+      println("Warning cell reference not set")
+      ret=nil
+    );if
+    ret
+  );let
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Determines if the cellview has instances (flat if no instances)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( hasInstance (( cell cv ))
   !null(dbHasInstance(getRef(cell)))
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Completely flatten the entire cellview hierarchy
+; Completely flatten (smash) the entire cellview hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( smash (( cell cv ))
-  let((insts)
+  let((insts i)
     insts = getInstances(cell)
     for(i 0 sub1(length(insts))
       inst = nth(i insts)
       dbFlattenInst(inst 32 t)
+      i++
     );for
+    resetCollection(cell->instances)
+    i
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get all the instances in the current cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -3423,9 +3453,84 @@ defmethod( getInstances (( cell cv ))
       setRef(temp inst)
       add(cell->instances temp)
     );foreach
+    instances = cell->ref~>instances
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Synchronizes the instances and shapes of the db cellview to the 
+; cv object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( synchronize (( cell cv ))
+  let((refs temp)
+    resetCollection(cell->instances)
+    resetCollection(cell->shapes)
+    refs = getRef(cell)~>instances
+    if(!null(refs) then   				          
+      foreach(ref refs
+        temp = makeInstance( 'instance )
+        setName(cell ref~>cellName)
+	setLib(cell ref~>libName)
+	setView(cell ref~>view)
+	add(cell->instances temp)
+      );foreach
+    );if
+    refs = getRef(cell)~>shapes
+    if(!null(refs) then   				          
+      foreach(ref refs
+      	if(ref~>isShape then
+          temp = makeInstance( 'shape )
+	  temp->transform->vertices = ref~>points
+          setType(temp ref~>objType)
+	  setLayer(temp ref~>layerName)
+	  setNumber(temp ref~>layerNum)
+	  setPurpose(temp yCoord(ref~>lpp))
+	  setNumVertices(temp ref~>nPoints)
+	  add(cell->shapes temp)
+        );if
+      );foreach
+    );if
+  );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Delete all instances in the current cellview
+; FIXME: might want a checksum between db and object here
+;        it can be corrected here to ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( deleteAllInstances (( cell cv ))
+  let((instances refs i)
+    synchronize(cell)
+    instances = getInstances(cell)
+    refs = getRef(cell)~>instances
+    if(!null(refs) then
+      i=0   				          
+      ; delete from instances from the db cellview
+      foreach(ref refs
+        dbDeleteObject(ref)
+        i++
+      );foreach
+      printf("INFO: Deleted %d cellview instances.\n" i)
+    );if 
+    refs = getRef(cell)~>shapes
+    if(!null(refs) then   
+      i=0				          
+      ; delete from shapes from the db cellview
+      foreach(ref refs
+        dbDeleteObject(ref)
+        i++
+      );foreach
+      printf("INFO: Deleted %d cellview shapes.\n" i)
+    );if
+    ; delete from the object
+    if(!null(instances) then
+      i=0
+      foreach(inst instances
+        removeItem(cell->instances inst)
+	i++   
+      );foreach
+      printf("INFO: Deleted %d cell object instances.\n" i)
+    );if
   );let
 );defmethod	
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create a new instance in the cellview
 ; FIXME: Create and container of instances
@@ -3434,9 +3539,24 @@ defmethod( getInstances (( cell cv ))
 ;        Don't know why - xyn crises so no time to debug!!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( createInstance (( cell cv ) inst )
-	   	cell->instances = const(dbCreateInst( inst cv->ref nil 0:0 "R0" 1) cell->instances)
+  add(cell->instances dbCreateInst( inst getRef(cell) nil 0:0 "R0" 1) )
 );defmethod
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Create a new instance in the cellview
+; FIXME: Create and container of instances
+; FIXME: If i try to fix this skill++ won't load into cad61 session.
+;        Don't know why - xyn crises so no time to debug!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
+defmethod( copyInstance (( cell cv ) arg )
+  let((inst temp)
+    inst = dbCopyFig(arg getRef(cell) list(0:0 "R0" 1))
+    temp = makeInstance( 'instance )
+    setRef(temp inst)
+    setName(temp inst~>cellName)
+    setLib(temp inst~>libName)
+    add(cell->instances temp)
+  );let
+);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create a new instance in the cellview
 ; version used in reticle builder
@@ -3445,7 +3565,6 @@ defmethod( createInstance (( cell cv ) inst )
 defmethod( createInstance2 (( cell cv ) inst name orig orient)
   dbCreateInst( getRef(cell) inst name orig orient 1)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Gets Cell Grid Information
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
@@ -3454,7 +3573,6 @@ defmethod( getGridInfo (( cell cv ))
 		dbGetGlobalGridDefaultRepeatMode(cell->ref)
 		dbGetGlobalGridRepeatMode(cell->ref "wsspDefName" "wspName")
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Removes layout cell from library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3475,7 +3593,6 @@ defmethod( removeCell (( cell cv ))
                 );if
 	); let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Copys layout view to another name in the same library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3494,9 +3611,8 @@ defmethod( Copy (( cell cv ) name)
     );if 
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Copys layout view from another library into the cell object's library
+; Copies layout view from another library into the cell object's library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( copyCell (( cell cv ) copyLib copyCell)
   if( !ddGetObj(copyLib copyCell "layout") then
@@ -3506,7 +3622,6 @@ defmethod( copyCell (( cell cv ) copyLib copyCell)
     nil
   );if 
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Creates a new cell in the target library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3525,7 +3640,6 @@ defmethod( createCell (( cell cv ))
 		);if 
 	); let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Copies a cellview instance into the a new cell in the target library
 ; at the origin of the object's cellview
@@ -3557,7 +3671,6 @@ defmethod( newCellInstance (( cell cv ) instLib instCell)
 		);if 
 	); let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method determines if the cv is a leaf cell
 ; returns t if it is and nil if it is not
@@ -3569,7 +3682,6 @@ defmethod( isLeaf (( cell cv ))
      t
    )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method determines if the cv is a Pcell
 ; returns t if it is and nil if it is not
@@ -3581,7 +3693,6 @@ defmethod( isPcell (( cell cv ))
      t
    )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3589,7 +3700,6 @@ defmethod( getbBox (( cell cv ))
   setRef(cell->bbx cell->ref)
   getbb(cell->bbx)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv bbox
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3600,7 +3710,6 @@ defmethod( getbBox (( cell cv ))
 ;  cell->width  = getWidth(cell->bbx)
 ;  cell->height = getHeight(cell->bbx)
 ;);defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3610,7 +3719,6 @@ defmethod( getbBox (( cell cv ))
 ;  cell->width  = getWidth(cell->bbx)
 ;  cell->height = getHeight(cell->bbx)
 ;);defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper method for the getTree method
 ; Get cv recursive instance tree
@@ -3654,7 +3762,6 @@ defmethod( getRecursiveTree (( cell cv ) @key cv cLst)
        );if
   );prog
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get cv instance tree
 ; populates the leafCell collection
@@ -3663,7 +3770,6 @@ defmethod( getTree (( cell cv ))
   cell->iRefs = '()
   cell->iRefs = getRecursiveTree(cell ?cv cell->ref ?cLst '())
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper Method for printTree method
 ; Auxilliary Print cv instance tree 
@@ -3696,7 +3802,6 @@ defmethod( printRecursiveTree (( cell cv ) @key hlist nlev cnt)
 	);if
   );prog
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Prints recursive Instance Tree (Uses Auxilliary method " printRecursiveTree"                            
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3704,7 +3809,6 @@ defmethod( printTree (( cell cv ))
   cell->iCnt = 0
   cell->iCnt = printRecursiveTree(cell ?hlist cell->iRefs ?nlev 0 ?cnt 0)
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Helper Method for getTreeNames method
 ; Auxilliary Get the instance names of the cv (recursive)                                        
@@ -3731,7 +3835,6 @@ defmethod( getRecursiveTreeNames (( cell cv ) @key hlist nlev nList)
 	);if
   );prog
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3739,7 +3842,6 @@ defmethod( getTreeNames (( cell cv ))
   cell->iNames = ()
   cell->iNames = reverse(getRecursiveTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Auxilliary Get the instance names of the cv (recursive)                                        
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3765,7 +3867,6 @@ defmethod( getRecursiveLibTreeNames (( cell cv ) @key hlist nlev nList)
 	);if
   );prog
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3773,7 +3874,6 @@ defmethod( getLibTreeNames (( cell cv ))
   cell->iLibNames = ()
   cell->iLibNames = reverse(getRecursiveLibTreeNames(cell ?hlist cell->iRefs ?nlev 0 ?nList '()))
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the layers used in the cv 
 ; (use list remove() function to filter out repeated layers - lstFun??)                                        
@@ -3829,14 +3929,12 @@ defmethod( getLpps (( cell cv ) @key cv cLst)
       );if
   );prog
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the layers in the cv                                         
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getLayers (( cell cv ))
   cell->layers = getLpps( cell ?cv cell->ref ?cLst '())
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the layers used in the cv 
 ; (use list remove() function to filter out repeated layers )                                        
@@ -3848,7 +3946,6 @@ defmethod( getUsedLayers (( cell cv ))
     cell->uLayers = removeRedundant(cell->iLayers)
     cell->uLayers
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Gets the technology layer stackup from the target cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3856,7 +3953,6 @@ defmethod( getStackUp (( cell cv ))
     setRef(cell->stack cell->ref)
     getStackUp(cell->stack)
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Create a snapshot using a currently targeted smashed (fully flattened) 
 ; cellview object reference. Argument is a freshly opened layout cellview
@@ -3866,14 +3962,12 @@ defmethod( snapshot (( cell cv ))
     setRef(cell->stack cell->ref)
     renderStack(cell->stack)
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Removes layers from the stackup object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod(  removeLayerFromStackup (( cell cv ) arg)
     deleteLayer(cell->stack arg)
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Prints the stackup layer contents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
@@ -3887,16 +3981,14 @@ defmethod(  printStackUp (( cell cv ))
 defmethod( getLeafCells (( cell cv ))
   cell->leafCells->list->elems
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get the pcells used in the cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( getPcells (( cell cv ))
     nil
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  close and purge the cv
+;  Close and purge the cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( closeAndPurge (( cell cv ))
     cell->ref = dbOpenCellViewByType( cell->lib cell->name cell->view "maskLayout")
@@ -3910,7 +4002,6 @@ defmethod( closeAndPurge (( cell cv ))
       printf("WARNING: Cellview not found: %s\n:" cell->name )
     );if
 );
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  "Cleans" up a list of cellviews. Open's, closes, purges and then 
 ;   deletes the list of cellviews in the input argument list.
@@ -3927,7 +4018,6 @@ defmethod( clean (( cell cv ) arg )
 	   cell->name = cvName
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method recursively finds all the instances of the given name in
 ; a cellview heirarchy (See reference procedure in test.il)
@@ -3952,21 +4042,25 @@ defmethod( clean (( cell cv ) arg )
 ;    t
 ;  );let
 ;);defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Gets recursive Instance Tree Names (Uses  auxilliary method "getRecursiveTreeNames"                             
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( isCell (( cell cv))
   let((cv)
-    if(!null(ddGetObj(cell->lib cell->name cell->view )) then
+    if(!null(ddGetObj(cell->lib cell->name cell->view )) then  
       cv = dbOpenCellViewByType( cell->lib cell->name cell->view "" nil)
-      setRef(cell cv)
-      t
-    else
-      nil
+      if(dbIsId(cv) then
+         printf("INFO(cv): Cellview %s has valid library and cellview IDs.\n" cell->name)
+         t
+      else
+        printf("ERROR(cv): Cellview %s does not have a valid library ID (purge state?).\n" cell->name)
+        ;FIXME: Attempt to clear purge state with a dbSave() and dbClose()??
+        nil
+      );if
+      dbClose(cv)
     );if
   );let
-);
+);defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6160,25 +6254,29 @@ defclass( shape (cadObj)
 	  (	
 	  	( geometries )	
 		( layer @writer setLayer @reader getLayer )
+		( number @writer setNumber @reader getNumber )
 		( purpose @writer setPurpose @reader getPurpose )
-		( type )
+		( type @writer setType @reader getType)
 		( vertices @reader getVertices)
+		( numVert @reader getNumVertices @writer setNumVertices)
 		( transform )
 		( centroid )
 		( dbg )
 		( mfg )	
 		( area )			
 	  )
-) ; defClass
+);defClass
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj shape))
 	   obj->geometries = makeInstance( 'collection )  
 	   obj->layer = nil 
+	   obj->number = nil
 	   obj->purpose = nil 
 	   obj->type = nil
 	   obj->vertices = nil
+	   obj->numVert = nil
 	   obj->transform = makeInstance( 'transform2 )
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->dbg = nil

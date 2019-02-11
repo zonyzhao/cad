@@ -469,7 +469,7 @@ dbSave(cv)
 dbClose(cv)
 
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-8: Using XoR, test the "diff" of one layer in two
+; UT-8: Using leAndNot, test the "diff" of one layer in two
 ;       cellviews.
 ;       This is checking what is the difference
 ;       or "diff" between the two layers
@@ -478,6 +478,7 @@ dbClose(cv)
 ;               2.) Create a new cellview with a "_(layer name)_diff"
 ;                   extension in order to visualize the differences
 ;                   in the two same named layers
+; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ; Open the reference cellview in read mode
@@ -553,17 +554,25 @@ setName(lay_diff "text")
 setPurpose(lay_diff "drawing")
 setRef(lay_diff cv_diff)
 ;;
+;
 ; Choose One
 ;
 ; NOTE: "andNot" gives the diff result desired.
 ;
 ; WARNING: It appears that the "and" and the "andNot" work,
 ;          but "xOr" and "or" appear to give "and" results
+;
+; FIXME: Try using the db booleans instead of le booleans (i.e dbAndNot, dbXor, etc ...)
+;
+;
+; 1.) xOrShapes = xOrLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
+; 2.) orShapes = orLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
+; 3.) andShapes = andLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
+; 4.) andNotShapes = andNotLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
+;
+; FIXME: There needs to be db "Geomtric" booleans that are PCELL compatible!!
+;
 ;;
-;1.) xOrShapes = xOrLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
-;2.) orShapes = orLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
-;3.) andShapes = andLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
-;4.) andNotShapes = andNotLayers(lay_diff list("stretch" "drawing") list("via" "drawing"))
 dbSave(cv_diff)
 dbClose(cv_diff)
 dbClose(cv_ref)

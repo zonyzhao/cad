@@ -118,7 +118,7 @@ defmethod( class ((col collection))
 ; if list is not empty (isEmpty = nil) enforce classOf test
 ;#############################################################
 defmethod( add ((col collection) arg)
-   if(isEmpty then
+   if(isEmpty(col) then
      addTail(col->list arg)
      col->cType = classOf(arg)
      col->n = col->n + 1
@@ -131,6 +131,13 @@ defmethod( add ((col collection) arg)
      );if
    );if
    col->n
+);defmethod
+
+;############################################################
+;
+;############################################################
+defmethod( removeItem ((col collection) arg)
+  removeElem(col->list arg)
 );defmethod
 
 ;############################################################

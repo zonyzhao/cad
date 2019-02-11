@@ -7,26 +7,30 @@ defclass( shape (cadObj)
 	  (	
 	  	( geometries )	
 		( layer @writer setLayer @reader getLayer )
+		( number @writer setNumber @reader getNumber )
 		( purpose @writer setPurpose @reader getPurpose )
-		( type )
+		( type @writer setType @reader getType)
 		( vertices @reader getVertices)
+		( numVert @reader getNumVertices @writer setNumVertices)
 		( transform )
 		( centroid )
 		( dbg )
 		( mfg )	
 		( area )			
 	  )
-) ; defClass
+);defClass
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj shape))
 	   obj->geometries = makeInstance( 'collection )  
 	   obj->layer = nil 
+	   obj->number = nil
 	   obj->purpose = nil 
 	   obj->type = nil
 	   obj->vertices = nil
-	   obj->transform = makeInstance( 'transform2 )
+	   obj->numVert = nil
+	e   obj->transform = makeInstance( 'transform2 )
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->dbg = nil
 	   obj->mfg = nil
