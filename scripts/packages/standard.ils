@@ -3550,11 +3550,17 @@ defmethod( createInstance (( cell cv ) inst )
 defmethod( copyInstance (( cell cv ) arg )
   let((inst temp)
     inst = dbCopyFig(arg getRef(cell) list(0:0 "R0" 1))
-    temp = makeInstance( 'instance )
-    setRef(temp inst)
-    setName(temp inst~>cellName)
-    setLib(temp inst~>libName)
-    add(cell->instances temp)
+    if(dbIsId(inst) then
+      temp = makeInstance( 'instance )
+      setRef(temp inst)
+      setName(temp inst~>cellName)
+      setLib(temp inst~>libName)
+      setView(temp inst~>viewName)
+      add(cell->instances temp)
+    else
+      printf("ERROR: No Instance ID. Instance not copied to cellview: %s"  temp inst~>cellName);
+      nil
+    );if
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4055,9 +4061,21 @@ defmethod( isCell (( cell cv))
       else
         printf("ERROR(cv): Cellview %s does not have a valid library ID (purge state?).\n" cell->name)
         ;FIXME: Attempt to clear purge state with a dbSave() and dbClose()??
-        nil
+	println("INFO(cv): Attempting to fix a potential purged state issue ...")
+	dbSave(cv)
+	dbClose(cv)
+	cv = dbOpenCellViewByType( cell->lib cell->name cell->view "" nil)
+	if(dbIsId(cv) then
+	  printf("INFO(cv): Cellview %s has valid library and cellview IDs.\n" cell->name)
+          t
+	else
+          printf("ERROR(cv): Cellview %s does not have a valid library ID.\n" cell->name)
+	  nil
+        );if
       );if
       dbClose(cv)
+     else
+      nil
     );if
   );let
 );defmethod

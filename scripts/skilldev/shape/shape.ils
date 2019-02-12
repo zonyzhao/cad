@@ -30,7 +30,7 @@ defmethod( initializeInstance @after ((obj shape))
 	   obj->type = nil
 	   obj->vertices = nil
 	   obj->numVert = nil
-	e   obj->transform = makeInstance( 'transform2 )
+	   obj->transform = makeInstance( 'transform2 )
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->dbg = nil
 	   obj->mfg = nil
