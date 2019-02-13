@@ -3431,7 +3431,8 @@ defmethod( hasInstance (( cell cv ))
 ; Completely flatten (smash) the entire cellview hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( smash (( cell cv ))
-  let((insts i)
+  let((insts n)
+    n=1
     insts = getInstances(cell)
     for(i 0 sub1(length(insts))
       inst = nth(i insts)
@@ -3439,7 +3440,7 @@ defmethod( smash (( cell cv ))
       i++
     );for
     resetCollection(cell->instances)
-    i
+    n
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6768,6 +6769,12 @@ defmethod( initializeInstance @after ((obj techLayer))
   obj->name = nil
   obj->purpose = nil
   obj->shapes = makeInstance( 'collection )
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Reset layer. Remove all shapes from layer collection
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( resetLayer (( lay techLayer ))
+  resetCollection(lay->shapes)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method gets all the shapes on the target layer

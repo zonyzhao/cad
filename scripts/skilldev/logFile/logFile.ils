@@ -1,0 +1,98 @@
+;######################################################
+;# Log File Class
+;######################################################
+defclass( logFile (cadObj)
+  ( 
+    ( name @reader getName @writer setName )
+    ( path @reader getPath @writer setPath )
+    ( design @reader getDesign @writer setDesign )
+    ( app  @reader getApp @writer setApp )
+    ( id   @reader getId @writer setId )	
+  )				  
+);defclass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj logFile)) 
+  obj->name = nil
+  obj->path = nil
+  obj->design = nil
+  obj->app = nil
+  obj->id = nil
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( openLog (( log logFile ))
+  let((ref)
+    ref = outfile(strcat(getPath(log) "/" getName(log)))
+    setRef(log ref)
+  );let
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( closeLog (( log logFile ))
+  close(getRef(log))
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( writeLog (( log logFile ) s )
+  when( getRef(log) fprintf( getRef(log) "%s\n" s))
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( writeLogList (( log logFile ) lst )
+  let((item) 
+    for(i 0 sub1(length(lst))
+      item = nth(i lst)
+      when( getRef(log) fprintf( getRef(log) "%L\n" item))
+    );for
+  );let
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( writeLogHeader (( log logFile ))
+  let((sep des app date lst item)
+    sep  = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+    des  = sprintf( nil "Design: %s" getDesign(log))
+    app  = sprintf( nil "Application: %s" getApp(log))
+    date = sprintf( nil "Date: %s" getCurrentTime())
+    id = sprintf( nil "ID: %s" getId(log))
+    lst = list(sep date des app id sep)
+    for(i 0 sub1(length(lst))
+      item = nth(i lst)
+      if(!null(item) then
+        when( getRef(log) fprintf( getRef(log) "%L\n" item))
+      );if
+    );for
+  );let
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( openEncryptedFile (( log logFile ))
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( closeEncryptedFile (( log logFile ))
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( writeEncrypted (( log logFile ) s )
+  nil
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( readEncrypted (( log logFile ) s )
+  nil
+);defmethod
+;######################################################
+;######################################################
+;######################################################

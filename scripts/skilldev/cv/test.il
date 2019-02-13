@@ -1092,7 +1092,9 @@ setRef(cell_via cv_via)
 ; Step 2.)
 ; Open the reference wafer flat cellview
 ;;
-name_wf="ln246_3p_wafer_flat_copy_small"
+name_wf="ln246_3p_wafer_flat_copy"
+;name_wf="ln246_3p_wafer_flat_copy_small"
+;name_wf="ln246_3p_wafer_flat_secondary"
 view="layout"
 cv_wf = dbOpenCellViewByType( lib name_wf view "maskLayout" "r")
 cell_wf = makeInstance( 'cv )
@@ -1146,18 +1148,16 @@ for(i 0 sub1(length(insts_wf))
        copyInstance(cell_temp inst)
        smash(cell_temp)
        dbSave(cv_temp) 
-       setRef(lay inst)
        if(!null(getShapesOnLayer(lay)) then
          printf("INFO: Instance Containing Via Shapes Detected: %s\n" inst~>cellName) 
          copyInstance(cell_via inst)
          dbSave(cv_via)
-         deleteAllInstances(cell_temp)
-         dbSave(cv_temp)
+	 resetLayer(lay)
        else      
          printf("INFO: No via shapes found. Ignoring Instance: %s\n" inst~>cellName)
-         deleteAllInstances(cell_temp)
-         dbSave(cv_temp)
        );if
+       deleteAllInstances(cell_temp)
+       dbSave(cv_temp)
     );if
     else
       printf("ERROR: Invalid Instance. No instance ID. Deleting Instance %s\n" inst~>cellName)      
@@ -1183,6 +1183,116 @@ dbClose(cv_wf)
 ;        6.) If the diff comes out clean stream out the new wafer via mask into the release directory
 ;        7.) If the diff is not clean print out an error to the console and no stream out is performed
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+; Trim the Wafer Via Cellview into a cellview copy
+;;
+lib="ln0246"
+name_via="ln246_3p_wafer_via"
+view="layout"
+cv_via = dbOpenCellViewByType( lib name_via view "maskLayout" "r")
+cell_via = makeInstance( 'cv )
+setView(cell_via "layout")
+setName(cell_via name_via)
+setLib(cell_via lib)
+setRef(cell_via cv_via)
+; FIXME: Use this as a check that there are instances to operate on ...
+insts_via = getInstances(cell_via)
+
+name_trim = "ln246_3p_wafer_via_trimmed"
+cell_trim = makeInstance( 'cv )
+setName(cell_trim name_trim)
+setLib(cell_trim lib)
+setView(cell_trim view)
+if(isCell(cell_trim) then
+  println("INFO: Wafer Via Trim cellview exists in library - removing ...")
+  removeCell(cell_trim)
+  println("INFO: Copying Wafer Via cellview to Wafer Via Trim cellview.")
+  Copy(cell_via name_trim)
+else
+  println("INFO: Copying Wafer Via cellview to Wafer Via Trim cellview.")
+  Copy(cell_via name_trim)
+);if
+cv_trim = dbOpenCellViewByType( lib name_trim view "maskLayout" "a")
+setRef(cell_trim cv_trim)
+insts_trim = getInstances(cell_trim)
+
+printf("INFO: Wafer Instances : %d\n" length(insts_trim))
+for(i 0 sub1(length(insts_trim))  
+  inst = nth(i insts_trim)
+  printf("INFO: Process wafer instance [ %d ] Instance name : %s\n" i inst~>cellName)
+  if(dbIsId(inst) then
+    if(inst~>isFull then
+       printf("INFO: Full Site Detected. Deleting Instance: %s\n" inst~>cellName)
+       dbDeleteObject(inst)
+    else
+       printf("INFO: Non-Full Site Detected: %s\n" inst~>cellName) 
+    );if
+  else
+      printf("ERROR: Invalid Instance. No instance ID. Deleting Instance %s\n" inst~>cellName)      
+  );if
+);for
+
+dbSave(cv_trim)
+dbClose(cv_trim)
+dbClose(cv_via)
+
+;;
+; Trim the flattened wafer Cellview in a cellview copy
+;;
+lib="ln0246"
+name_wf = "ln246_3p_wafer_flat_copy"
+view="layout"
+cv_wf = dbOpenCellViewByType( lib name_wf view "maskLayout" "r")
+cell_wf = makeInstance( 'cv )
+setView(cell_wf "layout")
+setName(cell_wf name_wf)
+setLib(cell_wf lib)
+setRef(cell_wf cv_wf)
+; FIXME: Use this as a check that there are instances to operate on ...
+insts_wf = getInstances(cell_wf)
+
+name_trim = "ln246_3p_wafer_flat_trimmed"
+cell_trim = makeInstance( 'cv )
+setName(cell_trim name_trim)
+setLib(cell_trim lib)
+setView(cell_trim view)
+if(isCell(cell_trim) then
+  println("INFO: Wafer Via Trim cellview exists in library - removing ...")
+  removeCell(cell_trim)
+  println("INFO: Copying Wafer Via cellview to Wafer Flat Trim cellview.")
+  Copy(cell_wf name_trim)
+else
+  println("INFO: Copying Wafer Via cellview to Wafer Flat Trim cellview.")
+  Copy(cell_wf name_trim)
+);if
+cv_trim = dbOpenCellViewByType( lib name_trim view "maskLayout" "a")
+setRef(cell_trim cv_trim)
+insts_trim = getInstances(cell_trim)
+
+printf("INFO: Wafer Instances : %d\n" length(insts_trim))
+for(i 0 sub1(length(insts_trim))  
+  inst = nth(i insts_trim)
+  printf("INFO: Process wafer instance [ %d ] Instance name : %s\n" i inst~>cellName)
+  if(dbIsId(inst) then
+    if(inst~>isFull then
+       printf("INFO: Full Site Detected. Deleting Instance: %s\n" inst~>cellName)
+       dbDeleteObject(inst)
+    else
+       printf("INFO: Non-Full Site Detected: %s\n" inst~>cellName) 
+    );if
+  else
+      printf("ERROR: Invalid Instance. No instance ID. Deleting Instance %s\n" inst~>cellName)      
+  );if
+);for
+
+dbSave(cv_trim)
+dbClose(cv_trim)
+dbClose(cv_wf)
+
+;;
+; Open both of the copies and diff all shapes on the via layer.
+; Report via layer differences
+;;
 
 
 

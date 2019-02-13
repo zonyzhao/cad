@@ -146,7 +146,8 @@ defmethod( hasInstance (( cell cv ))
 ; Completely flatten (smash) the entire cellview hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 	 
 defmethod( smash (( cell cv ))
-  let((insts i)
+  let((insts n)
+    n=1
     insts = getInstances(cell)
     for(i 0 sub1(length(insts))
       inst = nth(i insts)
@@ -154,7 +155,7 @@ defmethod( smash (( cell cv ))
       i++
     );for
     resetCollection(cell->instances)
-    i
+    n
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
