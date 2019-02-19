@@ -6,6 +6,7 @@ defclass( logFile (cadObj)
     ( name @reader getName @writer setName )
     ( path @reader getPath @writer setPath )
     ( design @reader getDesign @writer setDesign )
+    ( version @reader getDesignVersion @writer setDesignVersion )
     ( app  @reader getApp @writer setApp )
     ( id   @reader getId @writer setId )	
   )				  
@@ -17,6 +18,7 @@ defmethod( initializeInstance @after ((obj logFile))
   obj->name = nil
   obj->path = nil
   obj->design = nil
+  obj->version = nil
   obj->app = nil
   obj->id = nil
 );defmethod
@@ -48,7 +50,7 @@ defmethod( writeLogList (( log logFile ) lst )
   let((item) 
     for(i 0 sub1(length(lst))
       item = nth(i lst)
-      when( getRef(log) fprintf( getRef(log) "%L\n" item))
+      when( getRef(log) fprintf( getRef(log) "%L " item))
     );for
   );let
 );defmethod
@@ -56,9 +58,10 @@ defmethod( writeLogList (( log logFile ) lst )
 ;
 ;#####################################################
 defmethod( writeLogHeader (( log logFile ))
-  let((sep des app date lst item)
+  let((sep des ver app date lst item)
     sep  = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
     des  = sprintf( nil "Design: %s" getDesign(log))
+    ver  = sprintf( nil "Design: %s" getVersion(log))
     app  = sprintf( nil "Application: %s" getApp(log))
     date = sprintf( nil "Date: %s" getCurrentTime())
     id = sprintf( nil "ID: %s" getId(log))
@@ -70,6 +73,16 @@ defmethod( writeLogHeader (( log logFile ))
       );if
     );for
   );let
+);defmethod
+;#####################################################
+;
+;#####################################################
+defmethod( writeDpl (( log logFile ) lst )
+  when( getRef(log) 
+    fprintf( getRef(log) sprintf(nil "(nil ( "))
+    writeLogList(log lst)
+    fprintf( getRef(log) sprintf(nil " ) )"))
+  );when
 );defmethod
 ;#####################################################
 ;
