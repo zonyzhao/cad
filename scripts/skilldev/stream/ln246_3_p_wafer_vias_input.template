@@ -1,0 +1,57 @@
+#compressLevel                     "1"
+#dbuPerUU                          "0"
+#hierDepth                         "32767"
+#maxCellsInTargetLib               "20000"
+#numThreads                        "1"
+#strmTextNS                        "cdba"
+#writeMode                         "overwrite"
+#arrayInstToScalar
+attachTechFileOfLib                "RRFC_2metal"
+case                               "preserve"
+cellMap                            ""
+#checkPolygon
+#compress
+#convertPathToPathSeg
+#detectVias
+#enableIncrementalImport
+#enableLocking
+excludeMapToVia                    ""
+fontMap                            ""
+#ignoreBoxes
+#ignoreZeroWidthPath
+infoToWarn                         ""
+#keepStreamCells
+labelCase                          "preserve"
+layerMap                           "/users/1127110/cad/scripts/skilldev/stream/layer.map"
+library                            "pa0715_sfw"
+loadTechFile                       ""
+logFile                            "strmIn.log"
+#mergeUndefPurposToDrawing
+noInfo                             ""
+noWarn                             ""
+objectMap                          ""
+#overwriteRootCells
+pinAttNum                          "0"
+propMap                            ""
+propSeparator                      ","
+refLibList                         ""
+#replaceBusBitChar
+#reportPrecisionLoss
+runDir                             "/users/1127110/deslibs_oa/ln0246/release"
+scale                              "1.00000"
+scaleTextHeight                    "1.00000"
+showCompletionMsgBox
+#skipUndefinedLPP
+#snapToGrid
+strmFile                           "/users/1127110/cad_layout_61/ln246_3p_wafer_flat_copy.gds"
+strmTechGen                        ""
+summaryFile                        ""
+techRefs                           ""
+topCell                            ""
+#translateNode
+userSkillFile                      ""
+viaMap                             ""
+view                               "layout"
+#virtualMemory
+warnToErr                          ""
+#wildCardInCellMap

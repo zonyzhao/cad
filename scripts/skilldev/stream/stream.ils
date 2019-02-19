@@ -3,44 +3,64 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( stream (cv)
   (
-    (logFile @reader getLogFile @writer setLogFile)
-    (errFile @reader getErrFile @writer setErrFile)
-    (templatePath @reader getTemplatePath @writer setTemplatePath)
-    (templateFile @reader getTemplateFile @writer setTemplateFile)
+    ( strmFile @reader getStrmFile @writer setStrmFile )
+    ( runDir @reader getRunDir @writer setRunDir )
+    ( logFile @reader getLogFile @writer setLogFile )
+    ( errFile @reader getErrFile @writer setErrFile )   
+    ( maxVertices @reader getMaxVertices @writer setMaxVertices )
+    ( mapFile @reader getMapFile @writer setMapFile )
+    ( mapPath @reader getMapPath @writer setMapPath )
+    ( templatePath @reader getTemplatePath @writer setTemplatePath )
+    ( templateFile @reader getTemplateFile @writer setTemplateFile )
   )
 );defClass
 ;#####################################################
 ; Constructor Method
 ;#####################################################
 defmethod( initializeInstance @after ((obj stream)) 
-  obj->logFile = "PIPO.log"
-  obj->errFile = "PIPO.err"
-  obj->templatePath = "./"
+  obj->strmFile = nil
+  obj->runDir = "."
+  obj->logFile = "strmOut.log"
+  obj->errFile = "strmOut.err"
+  obj->maxVertices = "200"
+  obj->mapFile = "layer.map"
+  obj->mapPath = "."
+  obj->templatePath = "."
   obj->templateFile = nil
 );defmethod
 ;######################################################
 ;#####################################################
 ; Sets the boundary box of the chip numbers pad
-;#####################################################
+;################################################f#####
 defmethod(streamOut  (( str stream ))
   let((streamOutKeys tFile fp id)
     if(null(str->templateFile) then
-      ; create a dpl for the IPC 
+      ; create a dpl for the default stream out template file 
       streamOutKeys=ncons(nil)
-      streamOutKeys->libName=str->lib
-      streamOutKeys->primaryCell=str->name
-      streamOutKeys->viewName=str->view
-      streamOutKeys->outFile="PIPO.log"
-      streamOutKeys->errFile="PIPO.err"
+      streamOutKeys->topCell=str->name
+      streamOutKeys->library=str->lib
+      streamOutKeys->view=str->view
+      streamOutKeys->logFile=str->logFile
+      streamOutKeys->errFile=str->errFile
+      streamOutKeys->maxVertices="200"
+      streamOutKeys->layerMap=strcat(str->mapPath "/" str->mapFile)
+      streamOutKeys->labelCase="preserve"
+      streamOutKeys->case="preserve"
+      streamOutKeys->labelDepth="1"
+      streamOutKeys->subMasterSeparator="_CDNS_"
+      streamOutKeys->strmVersion="5"
+;      streamOutKeys->strmFile=str->strmFile
+;      streamOutKeys->runDir=str->runDir
+      str->templatePath = str->runDir
       ; Create a default template file
-      tFile=strcat(str->templatePath "streamOutKeys")
+      tFile=strcat(str->runDir "/.streamOutKeys")
       fp=outfile(tFile)
       fprintf(fp "streamOutKeys='")
       pprint(streamOutKeys fp)
       newline(fp)
       close(fp)
     else
-      tFile = str->templateFile
+      tFile = strcat(str->templatePath "/" str->templateFile)
     );if
     id=ipcBeginProcess(
       sprintf(nil "strmout -templateFile %s" tFile)

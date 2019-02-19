@@ -1,0 +1,7 @@
+streamOutKeys='(nil strmVersion "5" subMasterSeparator "_CDNS_"
+labelDepth "1" case "preserve" labelCase
+"preserve" layerMap "/users/1127110/cad/scripts/skilldev/stream//layer.map" maxVertice "200"
+errFile "strmOut.err" logFile "strmOut.log" strmFile
+"ln246_3p_wafer_vias.gds" view "layout" library "ln0246"
+topCell "ln246_3p_wafer_flat"
+)

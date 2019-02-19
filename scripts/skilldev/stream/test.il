@@ -15,10 +15,25 @@ strm = makeInstance( 'stream )
 setName(strm name)
 setLib(strm lib)
 setView(strm view)
+setTemplatePath(strm "/users/1127110/cad/scripts/skilldev/stream")
 setTemplateFile(strm "ln246_3_p_wafer_vias_output.template")
 getTemplateTarget(strm)
 streamOut(strm)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-2: Stream out using member variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="ln0246"
+name="ln246_3p_wafer_flat"
+view="layout"
+strm = makeInstance( 'stream )
+setName(strm name)
+setLib(strm lib)
+setView(strm view)
+setStrmFile(strm "ln246_3p_wafer_vias.gds")
+setRunDir(strm "/users/1127110/deslibs_oa/ln0246/release/")
+setMapPath(strm "/users/1127110/cad/scripts/skilldev/stream/")
+setMapFile(strm "layer.map")
+streamOut(strm)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code
