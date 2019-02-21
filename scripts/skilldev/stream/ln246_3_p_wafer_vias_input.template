@@ -22,7 +22,7 @@ fontMap                            ""
 infoToWarn                         ""
 #keepStreamCells
 labelCase                          "preserve"
-layerMap                           "/users/1127110/cad/scripts/skilldev/stream/layer.map"
+layerMap                           "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk/via_layer.map"
 library                            "pa0715_sfw"
 loadTechFile                       ""
 logFile                            "strmIn.log"
@@ -43,7 +43,7 @@ scaleTextHeight                    "1.00000"
 showCompletionMsgBox
 #skipUndefinedLPP
 #snapToGrid
-strmFile                           "/users/1127110/cad_layout_61/ln246_3p_wafer_flat_copy.gds"
+strmFile                           "/users/1127110/cad_layout_61/ln246_3p_wafer_flat.gds"
 strmTechGen                        ""
 summaryFile                        ""
 techRefs                           ""

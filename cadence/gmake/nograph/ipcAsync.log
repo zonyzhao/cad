@@ -1,4 +1,4 @@
-Virtuoso Framework License (111) was checked out successfully. Total checkout time was 0.40s.
+Virtuoso Framework License (111) was checked out successfully. Total checkout time was 0.47s.
 *WARNING* '/users/1127110/cad/cadence/gmake/nograph/cds.lib', Line 3, Repeat of INCLUDE of '/users/1127110/deslibs_oa/cds.lib'.
 *WARNING* LIB ln0246 from File /users/1127110/deslibs_oa/cds.lib Line 1 redefines
 LIB ln0246 from the same file (defined earlier.)
@@ -28,7 +28,7 @@ LIB tr0046 from the same file (defined earlier.)
 Product   : Virtuoso(R) XStream Out
 Program   : @(#)$CDS: strmout version 6.1.6-64b 09/26/2013 21:49 (sjfnl154) $
           : sub-version  IC6.1.6-64b.500.2.1 
-Started at: 19-Feb-2019  16:17:01
+Started at: 21-Feb-2019  10:36:16
 User Name : 1127110
 Host Name : lid10018974
 Directory : /users/1127110/cad/cadence/gmake/nograph
@@ -38,66 +38,65 @@ Info: Cellview Rev Num:99,  Tech Rev Num:59
 
 *WARNING* LIB tr0069 from File /users/1127110/deslibs_oa/cds.lib Line 13 redefines
 LIB tr0069 from the same file (defined earlier.)
-INFO (XSTRM-217): Reading the layer map file, /users/1127110/cad_layout_61/../rrfc_2metal.map
+WARNING (XSTRM-20): Output Stream file '/users/1127110/deslibs_oa/ln0246/release//ln246_3p_wafer_vias.gds' already exists. It will be overwritten.
+INFO (XSTRM-217): Reading the layer map file, /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk//via_layer.map
 
 Summary of Options :
 library                                 ln0246
-strmFile                                ln246_3p_wafer_flat_copy.gds
-topCell                                 ln246_3p_wafer_flat_copy
+strmFile                                ln246_3p_wafer_vias.gds
+topCell                                 ln246_3p_wafer_flat
 view                                    layout
-runDir                                  /users/1127110/deslibs_oa/ln0246/release
+runDir                                  /users/1127110/deslibs_oa/ln0246/release/
 logFile                                 strmOut.log
-techLib                                 RRFC_2metal
-layerMap                                /users/1127110/cad_layout_61/../rrfc_2metal.map
+layerMap                                /net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk//via_layer.map
 case                                    Preserve
 convertDot                              node
-outputDir                               /users/1127110/deslibs_oa/ln0246/release
 
-INFO (XSTRM-223): 1. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021640
+INFO (XSTRM-223): 1. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376230
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'nitEtch:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 2. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021641
+INFO (XSTRM-223): 2. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376231
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'mesa:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 3. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021642
+INFO (XSTRM-223): 3. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376232
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'sdText:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 4. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021643
+INFO (XSTRM-223): 4. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376233
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'glass:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 5. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021644
+INFO (XSTRM-223): 5. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376234
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'TMPost:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 6. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021645
-INFO (XSTRM-223): 7. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021646
+INFO (XSTRM-223): 6. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376235
+INFO (XSTRM-223): 7. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376236
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'ta:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 8. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021647
+INFO (XSTRM-223): 8. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376237
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'taProt:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 9. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021648
+INFO (XSTRM-223): 9. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376238
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'capBot:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 10. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550611021649
+INFO (XSTRM-223): 10. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_550763376239
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'TgateTop:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 11. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216410
+INFO (XSTRM-223): 11. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762310
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'recess:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 12. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216411
-INFO (XSTRM-223): 13. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216412
-INFO (XSTRM-223): 14. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216413
+INFO (XSTRM-223): 12. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762311
+INFO (XSTRM-223): 13. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762312
+INFO (XSTRM-223): 14. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762313
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'LayerZero:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 15. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216414
-INFO (XSTRM-223): 16. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216415
-INFO (XSTRM-223): 17. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216416
-INFO (XSTRM-223): 18. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216417
-INFO (XSTRM-223): 19. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216418
+INFO (XSTRM-223): 15. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762314
+INFO (XSTRM-223): 16. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762315
+INFO (XSTRM-223): 17. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762316
+INFO (XSTRM-223): 18. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762317
+INFO (XSTRM-223): 19. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762318
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'tmPlate:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 20. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216419
-INFO (XSTRM-223): 21. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216420
-INFO (XSTRM-223): 22. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216421
-INFO (XSTRM-223): 23. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216422
-INFO (XSTRM-223): 24. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5506110216423
-INFO (XSTRM-223): 25. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216424
+INFO (XSTRM-223): 20. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762319
+INFO (XSTRM-223): 21. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762320
+INFO (XSTRM-223): 22. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762321
+INFO (XSTRM-223): 23. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762322
+INFO (XSTRM-223): 24. Translating cellView CommonOverhead/co_1_label_anyLayer_A/layout as STRUCTURE co_1_label_anyLayer_A_CDNS_5507633762323
+INFO (XSTRM-223): 25. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762324
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'leGatePad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'gateTop:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 26. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216425
+INFO (XSTRM-223): 26. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762325
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'gatePad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 27. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216426
-INFO (XSTRM-223): 28. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216427
-INFO (XSTRM-223): 29. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216428
-INFO (XSTRM-223): 30. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5506110216429
+INFO (XSTRM-223): 27. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762326
+INFO (XSTRM-223): 28. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762327
+INFO (XSTRM-223): 29. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762328
+INFO (XSTRM-223): 30. Translating cellView CommonOverhead/co_1_label_leGate_A/layout as STRUCTURE co_1_label_leGate_A_CDNS_5507633762329
 INFO (XSTRM-223): 31. Translating cellView ln0246/ln246_3p_labels/layout as STRUCTURE ln246_3p_labels
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'capPad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 INFO (XSTRM-223): 32. Translating cellView ASML/asml_1_cd_cross_1X_A/layout as STRUCTURE asml_1_cd_cross_1X_A
@@ -150,32 +149,32 @@ WARNING (XSTRM-35): The objects in the layer-purpose pair 'SCFP:drawing' are ign
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'Metal2:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'noDrc:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'gatePass:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 53. Translating cellView ASML/asml_1_leicaCell_A/layout as STRUCTURE asml_1_leicaCell_A_CDNS_5506110216432
+INFO (XSTRM-223): 53. Translating cellView ASML/asml_1_leicaCell_A/layout as STRUCTURE asml_1_leicaCell_A_CDNS_5507633762332
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'keepout:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 54. Translating cellView ASML/gaas_1_leica_eng2_s_B/layout as STRUCTURE gaas_1_leica_eng2_s_B_CDNS_5506110216431
+INFO (XSTRM-223): 54. Translating cellView ASML/gaas_1_leica_eng2_s_B/layout as STRUCTURE gaas_1_leica_eng2_s_B_CDNS_5507633762331
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'obsolete:drc' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 55. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216434
-INFO (XSTRM-223): 56. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216435
+INFO (XSTRM-223): 55. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762334
+INFO (XSTRM-223): 56. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762335
 INFO (XSTRM-223): 57. Translating cellView ASML/gaas_1_boxnbox_SD-Plug_A/layout as STRUCTURE gaas_1_boxnbox_SD_Plug_A
-INFO (XSTRM-223): 58. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216436
+INFO (XSTRM-223): 58. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762336
 INFO (XSTRM-223): 59. Translating cellView ASML/asml_1_IVS_B/layout as STRUCTURE asml_1_IVS_B
-INFO (XSTRM-223): 60. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216437
+INFO (XSTRM-223): 60. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762337
 INFO (XSTRM-223): 61. Translating cellView ASML/gaas_1_boxnbox_SD-gl_A/layout as STRUCTURE gaas_1_boxnbox_SD_gl_A
-INFO (XSTRM-223): 62. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216438
+INFO (XSTRM-223): 62. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762338
 INFO (XSTRM-223): 63. Translating cellView ASML/gaas_1_boxnbox_SD-TAP_A/layout as STRUCTURE gaas_1_boxnbox_SD_TAP_A
-INFO (XSTRM-223): 64. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216439
-INFO (XSTRM-223): 65. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216440
+INFO (XSTRM-223): 64. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762339
+INFO (XSTRM-223): 65. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762340
 INFO (XSTRM-223): 66. Translating cellView ASML/gaas_1_boxnbox_SD-tmp_th_A/layout as STRUCTURE gaas_1_boxnbox_SD_tmp_th_A
-INFO (XSTRM-223): 67. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216441
+INFO (XSTRM-223): 67. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762341
 INFO (XSTRM-223): 68. Translating cellView ASML/gaas_1_boxnbox_SD-TA_A/layout as STRUCTURE gaas_1_boxnbox_SD_TA_A
-INFO (XSTRM-223): 69. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216442
-INFO (XSTRM-223): 70. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216443
+INFO (XSTRM-223): 69. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762342
+INFO (XSTRM-223): 70. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762343
 INFO (XSTRM-223): 71. Translating cellView ASML/gaas_1_boxnbox_SD-AB_Post_A/layout as STRUCTURE gaas_1_boxnbox_SD_AB_Post_A
 INFO (XSTRM-223): 72. Translating cellView ASML/gaas_1_boxnbox_L0-me_A/layout as STRUCTURE gaas_1_boxnbox_L0_me_A
-INFO (XSTRM-223): 73. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216444
+INFO (XSTRM-223): 73. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762344
 INFO (XSTRM-223): 74. Translating cellView ASML/gaas_1_boxnbox_SD-cb_A/layout as STRUCTURE gaas_1_boxnbox_SD_cb_A
-INFO (XSTRM-223): 75. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216445
-INFO (XSTRM-223): 76. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216446
+INFO (XSTRM-223): 75. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762345
+INFO (XSTRM-223): 76. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762346
 INFO (XSTRM-223): 77. Translating cellView ASML/gaas_1_boxnbox_sd-gs_A/layout as STRUCTURE gaas_1_boxnbox_sd_gs_A
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'gateStem:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 INFO (XSTRM-223): 78. Translating cellView ASML/gaas_1_boxnbox_ofr-gs_A/layout as STRUCTURE gaas_1_boxnbox_ofr_gs_A
@@ -187,12 +186,12 @@ INFO (XSTRM-223): 83. Translating cellView ASML/gaas_1_boxnbox_L0-gt_B/layout as
 INFO (XSTRM-223): 84. Translating cellView ASML/gaas_1_boxnbox_sd-gt_B/layout as STRUCTURE gaas_1_boxnbox_sd_gt_B
 INFO (XSTRM-223): 85. Translating cellView ASML/gaas_1_boxnbox_L0_gt-gs_B/layout as STRUCTURE gaas_1_boxnbox_L0_gt_gs_B
 INFO (XSTRM-223): 86. Translating cellView ASML/gaas_1_bnb_Leica_Prod_C_A/layout as STRUCTURE gaas_1_bnb_Leica_Prod_C_A
-INFO (XSTRM-223): 87. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216448
-INFO (XSTRM-223): 88. Translating cellView ASML/gaas_1_bnb_Leica_eng2_LL_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_LL_A_CDNS_5506110216447
-INFO (XSTRM-223): 89. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216450
-INFO (XSTRM-223): 90. Translating cellView ASML/gaas_1_bnb_Leica_eng2_UL_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_UL_A_CDNS_5506110216449
-INFO (XSTRM-223): 91. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5506110216452
-INFO (XSTRM-223): 92. Translating cellView ASML/gaas_1_bnb_Leica_eng2_UR_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_UR_A_CDNS_5506110216451
+INFO (XSTRM-223): 87. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762348
+INFO (XSTRM-223): 88. Translating cellView ASML/gaas_1_bnb_Leica_eng2_LL_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_LL_A_CDNS_5507633762347
+INFO (XSTRM-223): 89. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762350
+INFO (XSTRM-223): 90. Translating cellView ASML/gaas_1_bnb_Leica_eng2_UL_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_UL_A_CDNS_5507633762349
+INFO (XSTRM-223): 91. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_5507633762352
+INFO (XSTRM-223): 92. Translating cellView ASML/gaas_1_bnb_Leica_eng2_UR_A/layout as STRUCTURE gaas_1_bnb_Leica_eng2_UR_A_CDNS_5507633762351
 INFO (XSTRM-223): 93. Translating cellView ASML/asml_1_cd_A/layout as STRUCTURE asml_1_cd_A
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'outline:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'sputNit:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
@@ -201,39 +200,39 @@ INFO (XSTRM-223): 94. Translating cellView ASML/gaas_1_align_ur_L0_D/layout as S
 INFO (XSTRM-223): 95. Translating cellView ASML/gaas_1_align_ll_L0_D/layout as STRUCTURE gaas_1_align_ll_L0_D
 INFO (XSTRM-223): 96. Translating cellView ASML/gaas_1_align_lr_L0_D/layout as STRUCTURE gaas_1_align_lr_L0_D
 INFO (XSTRM-223): 97. Translating cellView ASML/gaas_1_align_ul_L0_D/layout as STRUCTURE gaas_1_align_ul_L0_D
-INFO (XSTRM-223): 98. Translating cellView ASML/gaas_1_Leica_eng2_bnb_B/layout as STRUCTURE gaas_1_Leica_eng2_bnb_B_CDNS_5506110216433
-INFO (XSTRM-223): 99. Translating cellView ASML/asml_1_leicaCell_A/layout as STRUCTURE asml_1_leicaCell_A_CDNS_5506110216453
-INFO (XSTRM-223): 100. Translating cellView ASML/gaas_1_Leica_eng2_B/layout as STRUCTURE gaas_1_Leica_eng2_B_CDNS_5506110216430
+INFO (XSTRM-223): 98. Translating cellView ASML/gaas_1_Leica_eng2_bnb_B/layout as STRUCTURE gaas_1_Leica_eng2_bnb_B_CDNS_5507633762333
+INFO (XSTRM-223): 99. Translating cellView ASML/asml_1_leicaCell_A/layout as STRUCTURE asml_1_leicaCell_A_CDNS_5507633762353
+INFO (XSTRM-223): 100. Translating cellView ASML/gaas_1_Leica_eng2_B/layout as STRUCTURE gaas_1_Leica_eng2_B_CDNS_5507633762330
 INFO (XSTRM-223): 101. Translating cellView ln0246/ln246_3p_grid1/layout as STRUCTURE ln246_3p_grid1
 INFO (XSTRM-223): 102. Translating cellView ln0246/ln246_3p_xyPad_SLA/layout as STRUCTURE ln246_3p_xyPad_SLA
 INFO (XSTRM-223): 103. Translating cellView PLL_70/p70_1_Label_dashA_Size_50_A/layout as STRUCTURE p70_1_Label_dashA_Size_50_A
 INFO (XSTRM-223): 104. Translating cellView PLL_70/p70_1_Label_0_Size_50_A/layout as STRUCTURE p70_1_Label_0_Size_50_A
 INFO (XSTRM-223): 105. Translating cellView PLL_70/p70_1_Label_4_Size_50_A/layout as STRUCTURE p70_1_Label_4_Size_50_A
 INFO (XSTRM-223): 106. Translating cellView PLL_70/p70_1_Label_04_Size_50_A/layout as STRUCTURE p70_1_Label_04_Size_50_A
-INFO (XSTRM-223): 107. Translating cellView ASML/gaas_1_SuperPost_A/layout as STRUCTURE gaas_1_SuperPost_A_CDNS_5506110216454
+INFO (XSTRM-223): 107. Translating cellView ASML/gaas_1_SuperPost_A/layout as STRUCTURE gaas_1_SuperPost_A_CDNS_5507633762354
 INFO (XSTRM-223): 108. Translating cellView PLL_70/p70_1_rayLogo_A/layout as STRUCTURE p70_1_rayLogo_A
-INFO (XSTRM-223): 109. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216455
-INFO (XSTRM-223): 110. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5506110216458
-INFO (XSTRM-223): 111. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5506110216457
+INFO (XSTRM-223): 109. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762355
+INFO (XSTRM-223): 110. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5507633762358
+INFO (XSTRM-223): 111. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5507633762357
 INFO (XSTRM-223): 112. Translating cellView PLL_70/p70_2_label_D_A/layout as STRUCTURE p70_2_label_D_A
 INFO (XSTRM-223): 113. Translating cellView PLL_70/p70_2_label_G_A/layout as STRUCTURE p70_2_label_G_A
-INFO (XSTRM-223): 114. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216459
-INFO (XSTRM-223): 115. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216460
-INFO (XSTRM-223): 116. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216461
-INFO (XSTRM-223): 117. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5506110216456
-INFO (XSTRM-223): 118. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5506110216463
-INFO (XSTRM-223): 119. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5506110216462
-INFO (XSTRM-223): 120. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5506110216465
+INFO (XSTRM-223): 114. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762359
+INFO (XSTRM-223): 115. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762360
+INFO (XSTRM-223): 116. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762361
+INFO (XSTRM-223): 117. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5507633762356
+INFO (XSTRM-223): 118. Translating cellView PLL_70/p70_2_fet_2x_A/layout as STRUCTURE p70_2_fet_2x_A_CDNS_5507633762363
+INFO (XSTRM-223): 119. Translating cellView POL_70/p70_2_FET_2X50_A/layout as STRUCTURE p70_2_FET_2X50_A_CDNS_5507633762362
+INFO (XSTRM-223): 120. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5507633762365
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'RFpad:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 121. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5506110216466
-INFO (XSTRM-223): 122. Translating cellView POL_70/p70_2_coupPads19_26_A/layout as STRUCTURE p70_2_coupPads19_26_A_CDNS_5506110216464
-INFO (XSTRM-223): 123. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216467
-INFO (XSTRM-223): 124. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216468
-INFO (XSTRM-223): 125. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216469
-INFO (XSTRM-223): 126. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216470
-INFO (XSTRM-223): 127. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5506110216472
-INFO (XSTRM-223): 128. Translating cellView PLL_70/p70_2_viaRound_40_A/layout as STRUCTURE p70_2_viaRound_40_A_CDNS_5506110216473
-INFO (XSTRM-223): 129. Translating cellView PLL_70/p70_2_fet_mult_A/layout as STRUCTURE p70_2_fet_mult_A_CDNS_5506110216471
+INFO (XSTRM-223): 121. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_5507633762366
+INFO (XSTRM-223): 122. Translating cellView POL_70/p70_2_coupPads19_26_A/layout as STRUCTURE p70_2_coupPads19_26_A_CDNS_5507633762364
+INFO (XSTRM-223): 123. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762367
+INFO (XSTRM-223): 124. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762368
+INFO (XSTRM-223): 125. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762369
+INFO (XSTRM-223): 126. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762370
+INFO (XSTRM-223): 127. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5507633762372
+INFO (XSTRM-223): 128. Translating cellView PLL_70/p70_2_viaRound_40_A/layout as STRUCTURE p70_2_viaRound_40_A_CDNS_5507633762373
+INFO (XSTRM-223): 129. Translating cellView PLL_70/p70_2_fet_mult_A/layout as STRUCTURE p70_2_fet_mult_A_CDNS_5507633762371
 INFO (XSTRM-223): 130. Translating cellView POL_70/p70_2_FET99_A/layout as STRUCTURE p70_2_FET99_A
 INFO (XSTRM-223): 131. Translating cellView ln0246/ln246_3p_chip_04/layout as STRUCTURE ln246_3p_chip_04
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'marker:error' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
@@ -243,162 +242,162 @@ INFO (XSTRM-223): 134. Translating cellView PLL_70/p70_1_Label_03_Size_50_A/layo
 INFO (XSTRM-223): 135. Translating cellView ln0246/ln246_3p_chip_03/layout as STRUCTURE ln246_3p_chip_03
 INFO (XSTRM-223): 136. Translating cellView ln0246/ln246_3p_tm_1_cal_rfpad_in_am/layout as STRUCTURE ln246_3p_tm_1_cal_rfpad_in_am
 INFO (XSTRM-223): 137. Translating cellView ln0246/ln246_3p_tm_1_cal_rfpad_out_am/layout as STRUCTURE ln246_3p_tm_1_cal_rfpad_out_am
-INFO (XSTRM-223): 138. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216474
-INFO (XSTRM-223): 139. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216475
-INFO (XSTRM-223): 140. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216476
+INFO (XSTRM-223): 138. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762374
+INFO (XSTRM-223): 139. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762375
+INFO (XSTRM-223): 140. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762376
 INFO (XSTRM-223): 141. Translating cellView ln0246/ln246_3p_dealy=1090_thru/layout as STRUCTURE ln246_3p_dealy_1090_thru
-INFO (XSTRM-223): 142. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216477
+INFO (XSTRM-223): 142. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762377
 INFO (XSTRM-223): 143. Translating cellView ln0246/ln246_3p_delay=0_thru/layout as STRUCTURE ln246_3p_delay_0_thru
-INFO (XSTRM-223): 144. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5506110216478
-INFO (XSTRM-223): 145. Translating cellView PLL_70/p70_2_grid_A/layout as STRUCTURE p70_2_grid_A_CDNS_5506110216479
+INFO (XSTRM-223): 144. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_5507633762378
+INFO (XSTRM-223): 145. Translating cellView PLL_70/p70_2_grid_A/layout as STRUCTURE p70_2_grid_A_CDNS_5507633762379
 INFO (XSTRM-223): 146. Translating cellView PLL_70/p70_1_Label_2_Size_50_A/layout as STRUCTURE p70_1_Label_2_Size_50_A
 INFO (XSTRM-223): 147. Translating cellView PLL_70/p70_1_Label_02_Size_50_A/layout as STRUCTURE p70_1_Label_02_Size_50_A
 INFO (XSTRM-223): 148. Translating cellView ln0246/ln246_3p_chip_02/layout as STRUCTURE ln246_3p_chip_02
-INFO (XSTRM-223): 149. Translating cellView PLL_70/p70_2_sq_viaSquare_40_A/layout as STRUCTURE p70_2_sq_viaSquare_40_A_CDNS_5506110216480
+INFO (XSTRM-223): 149. Translating cellView PLL_70/p70_2_sq_viaSquare_40_A/layout as STRUCTURE p70_2_sq_viaSquare_40_A_CDNS_5507633762380
 INFO (XSTRM-223): 150. Translating cellView ln0246/ln246_3p_short/layout as STRUCTURE ln246_3p_short
 INFO (XSTRM-223): 151. Translating cellView ln0246/ln246_3p_open/layout as STRUCTURE ln246_3p_open
 INFO (XSTRM-223): 152. Translating cellView PLL_70/p70_1_Label_1_Size_50_A/layout as STRUCTURE p70_1_Label_1_Size_50_A
 INFO (XSTRM-223): 153. Translating cellView PLL_70/p70_1_Label_01_Size_50_A/layout as STRUCTURE p70_1_Label_01_Size_50_A
 INFO (XSTRM-223): 154. Translating cellView ln0246/ln246_3p_chip_01/layout as STRUCTURE ln246_3p_chip_01
 INFO (XSTRM-223): 155. Translating cellView ln0246/ln246_3p_xyPad_SMB/layout as STRUCTURE ln246_3p_xyPad_SMB
-INFO (XSTRM-223): 156. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5506110216482
-INFO (XSTRM-223): 157. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216483
-INFO (XSTRM-223): 158. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216484
-INFO (XSTRM-223): 159. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216485
-INFO (XSTRM-223): 160. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216486
+INFO (XSTRM-223): 156. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5507633762382
+INFO (XSTRM-223): 157. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762383
+INFO (XSTRM-223): 158. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762384
+INFO (XSTRM-223): 159. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762385
+INFO (XSTRM-223): 160. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762386
 INFO (XSTRM-223): 161. Translating cellView POL_70/p70_2_coup_dualFinger2_B/layout as STRUCTURE p70_2_coup_dualFinger2_B
 INFO (XSTRM-223): 162. Translating cellView PLL_70/p70_2_rayLogo_A/layout as STRUCTURE p70_2_rayLogo_A
-INFO (XSTRM-223): 163. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216487
+INFO (XSTRM-223): 163. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762387
 INFO (XSTRM-223): 164. Translating cellView POL_70/p70_2_align_sd_gate_A/layout as STRUCTURE p70_2_align_sd_gate_A
-INFO (XSTRM-223): 165. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5506110216488
-INFO (XSTRM-223): 166. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216489
-INFO (XSTRM-223): 167. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216490
-INFO (XSTRM-223): 168. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216491
-INFO (XSTRM-223): 169. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216492
-INFO (XSTRM-223): 170. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216493
-INFO (XSTRM-223): 171. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_5506110216494
+INFO (XSTRM-223): 165. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5507633762388
+INFO (XSTRM-223): 166. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762389
+INFO (XSTRM-223): 167. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762390
+INFO (XSTRM-223): 168. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762391
+INFO (XSTRM-223): 169. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762392
+INFO (XSTRM-223): 170. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762393
+INFO (XSTRM-223): 171. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_5507633762394
 INFO (XSTRM-223): 172. Translating cellView POL_70/p70_2_coup4Pt_ta_A/layout as STRUCTURE p70_2_coup4Pt_ta_A
-INFO (XSTRM-223): 173. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5506110216495
-INFO (XSTRM-223): 174. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216496
-INFO (XSTRM-223): 175. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5506110216497
+INFO (XSTRM-223): 173. Translating cellView POL_70/p70_2_coupPads_1_6/layout as STRUCTURE p70_2_coupPads_1_6_CDNS_5507633762395
+INFO (XSTRM-223): 174. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762396
+INFO (XSTRM-223): 175. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_5507633762397
 INFO (XSTRM-223): 176. Translating cellView POL_70/p70_2_coup_99_SFinger_A/layout as STRUCTURE p70_2_coup_99_SFinger_A
-INFO (XSTRM-223): 177. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_5506110216498
-INFO (XSTRM-223): 178. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5506110216499
-INFO (XSTRM-223): 179. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164100
-INFO (XSTRM-223): 180. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164101
-INFO (XSTRM-223): 181. Translating cellView POL_70/p70_2_guts_7099A_C/layout as STRUCTURE p70_2_guts_7099A_C_CDNS_5506110216481
+INFO (XSTRM-223): 177. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_5507633762398
+INFO (XSTRM-223): 178. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_5507633762399
+INFO (XSTRM-223): 179. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623100
+INFO (XSTRM-223): 180. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623101
+INFO (XSTRM-223): 181. Translating cellView POL_70/p70_2_guts_7099A_C/layout as STRUCTURE p70_2_guts_7099A_C_CDNS_5507633762381
 INFO (XSTRM-223): 182. Translating cellView ln0246/ln246_3p_chip_7099C/layout as STRUCTURE ln246_3p_chip_7099C
 INFO (XSTRM-223): 183. Translating cellView POL_70/p70_2_coup_tmpSnake_A/layout as STRUCTURE p70_2_coup_tmpSnake_A
-INFO (XSTRM-223): 184. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164103
-INFO (XSTRM-223): 185. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164104
+INFO (XSTRM-223): 184. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623103
+INFO (XSTRM-223): 185. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623104
 INFO (XSTRM-223): 186. Translating cellView POL_70/p70_2_coup_vdp_mesa_A/layout as STRUCTURE p70_2_coup_vdp_mesa_A
-INFO (XSTRM-223): 187. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164105
+INFO (XSTRM-223): 187. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623105
 INFO (XSTRM-223): 188. Translating cellView ASML/gaas_1_coup_ne_sd_align_B/layout as STRUCTURE gaas_1_coup_ne_sd_align_B
-INFO (XSTRM-223): 189. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164106
+INFO (XSTRM-223): 189. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623106
 INFO (XSTRM-223): 190. Translating cellView ASML/gaas_1_tmp_cb_align_B/layout as STRUCTURE gaas_1_tmp_cb_align_B
-INFO (XSTRM-223): 191. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164107
-INFO (XSTRM-223): 192. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164108
-INFO (XSTRM-223): 193. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164109
-INFO (XSTRM-223): 194. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164110
+INFO (XSTRM-223): 191. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623107
+INFO (XSTRM-223): 192. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623108
+INFO (XSTRM-223): 193. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623109
+INFO (XSTRM-223): 194. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623110
 INFO (XSTRM-223): 195. Translating cellView POL_70/p70_2_coup_TLM_A/layout as STRUCTURE p70_2_coup_TLM_A
-INFO (XSTRM-223): 196. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55061102164111
-INFO (XSTRM-223): 197. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164112
-INFO (XSTRM-223): 198. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164113
+INFO (XSTRM-223): 196. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55076337623111
+INFO (XSTRM-223): 197. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623112
+INFO (XSTRM-223): 198. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623113
 INFO (XSTRM-223): 199. Translating cellView POL_70/p70_2_coupIso_A/layout as STRUCTURE p70_2_coupIso_A
 INFO (XSTRM-223): 200. Translating cellView POL_70/p70_2_label_angstroms20_A/layout as STRUCTURE p70_2_label_angstroms20_A
-INFO (XSTRM-223): 201. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164114
+INFO (XSTRM-223): 201. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623114
 INFO (XSTRM-223): 202. Translating cellView POL_70/p70_2_coup_10pf_TA_A/layout as STRUCTURE p70_2_coup_10pf_TA_A
-INFO (XSTRM-223): 203. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55061102164115
-INFO (XSTRM-223): 204. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164116
+INFO (XSTRM-223): 203. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55076337623115
+INFO (XSTRM-223): 204. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623116
 INFO (XSTRM-223): 205. Translating cellView POL_70/p70_2_coup_vdp_sd_A/layout as STRUCTURE p70_2_coup_vdp_sd_A
-INFO (XSTRM-223): 206. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_55061102164117
-INFO (XSTRM-223): 207. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164118
-INFO (XSTRM-223): 208. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164119
-INFO (XSTRM-223): 209. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164120
-INFO (XSTRM-223): 210. Translating cellView ASML/gaas_1_label_A/layout as STRUCTURE gaas_1_label_A_CDNS_55061102164121
+INFO (XSTRM-223): 206. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_55076337623117
+INFO (XSTRM-223): 207. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623118
+INFO (XSTRM-223): 208. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623119
+INFO (XSTRM-223): 209. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623120
+INFO (XSTRM-223): 210. Translating cellView ASML/gaas_1_label_A/layout as STRUCTURE gaas_1_label_A_CDNS_55076337623121
 INFO (XSTRM-223): 211. Translating cellView ASML/gaas_1_me_l0_align_A/layout as STRUCTURE gaas_1_me_l0_align_A
-INFO (XSTRM-223): 212. Translating cellView POL_70/p70_2_guts_7098A_C/layout as STRUCTURE p70_2_guts_7098A_C_CDNS_55061102164102
+INFO (XSTRM-223): 212. Translating cellView POL_70/p70_2_guts_7098A_C/layout as STRUCTURE p70_2_guts_7098A_C_CDNS_55076337623102
 INFO (XSTRM-223): 213. Translating cellView ln0246/ln246_3p_chip_7098C/layout as STRUCTURE ln246_3p_chip_7098C
-INFO (XSTRM-223): 214. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55061102164124
-INFO (XSTRM-223): 215. Translating cellView POL_70/p70_2_coupPads_1_6_noSD/layout as STRUCTURE p70_2_coupPads_1_6_noSD_CDNS_55061102164123
-INFO (XSTRM-223): 216. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_55061102164125
-INFO (XSTRM-223): 217. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164126
-INFO (XSTRM-223): 218. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164127
+INFO (XSTRM-223): 214. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55076337623124
+INFO (XSTRM-223): 215. Translating cellView POL_70/p70_2_coupPads_1_6_noSD/layout as STRUCTURE p70_2_coupPads_1_6_noSD_CDNS_55076337623123
+INFO (XSTRM-223): 216. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_55076337623125
+INFO (XSTRM-223): 217. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623126
+INFO (XSTRM-223): 218. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623127
 INFO (XSTRM-223): 219. Translating cellView POL_70/p70_2_coup_Xbridge_gateTop_B/layout as STRUCTURE p70_2_coup_Xbridge_gateTop_B
-INFO (XSTRM-223): 220. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_55061102164128
-INFO (XSTRM-223): 221. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164129
-INFO (XSTRM-223): 222. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164130
+INFO (XSTRM-223): 220. Translating cellView POL_70/p70_2_coup_footprint_A/layout as STRUCTURE p70_2_coup_footprint_A_CDNS_55076337623128
+INFO (XSTRM-223): 221. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623129
+INFO (XSTRM-223): 222. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623130
 INFO (XSTRM-223): 223. Translating cellView POL_70/p70_2_coup_Xbridge_cb_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_cb_5_20_A
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'solderBar:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 224. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164131
+INFO (XSTRM-223): 224. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623131
 INFO (XSTRM-223): 225. Translating cellView ASML/gaas_1_coup_cb_sd_align_B/layout as STRUCTURE gaas_1_coup_cb_sd_align_B
-INFO (XSTRM-223): 226. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_55061102164132
-INFO (XSTRM-223): 227. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164133
+INFO (XSTRM-223): 226. Translating cellView POL_70/p70_2_finger_coup_A/layout as STRUCTURE p70_2_finger_coup_A_CDNS_55076337623132
+INFO (XSTRM-223): 227. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623133
 INFO (XSTRM-223): 228. Translating cellView POL_70/p70_2_nogate_A/layout as STRUCTURE p70_2_nogate_A
-INFO (XSTRM-223): 229. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55061102164135
-INFO (XSTRM-223): 230. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_55061102164134
+INFO (XSTRM-223): 229. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55076337623135
+INFO (XSTRM-223): 230. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_55076337623134
 INFO (XSTRM-223): 231. Translating cellView PLL_70/p70_2_label_ohms_A/layout as STRUCTURE p70_2_label_ohms_A
-INFO (XSTRM-223): 232. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164136
+INFO (XSTRM-223): 232. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623136
 INFO (XSTRM-223): 233. Translating cellView PLL_70/p70_2_label_6p35ohmsSq_A/layout as STRUCTURE p70_2_label_6p35ohmsSq_A
-INFO (XSTRM-223): 234. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164137
-INFO (XSTRM-223): 235. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164138
-INFO (XSTRM-223): 236. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164139
+INFO (XSTRM-223): 234. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623137
+INFO (XSTRM-223): 235. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623138
+INFO (XSTRM-223): 236. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623139
 INFO (XSTRM-223): 237. Translating cellView POL_70/p70_2_ILCR_tm_ta6_A/layout as STRUCTURE p70_2_ILCR_tm_ta6_A
-INFO (XSTRM-223): 238. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164140
-INFO (XSTRM-223): 239. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164141
-INFO (XSTRM-223): 240. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164142
-INFO (XSTRM-223): 241. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164143
-INFO (XSTRM-223): 242. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164144
-INFO (XSTRM-223): 243. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164145
+INFO (XSTRM-223): 238. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623140
+INFO (XSTRM-223): 239. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623141
+INFO (XSTRM-223): 240. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623142
+INFO (XSTRM-223): 241. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623143
+INFO (XSTRM-223): 242. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623144
+INFO (XSTRM-223): 243. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623145
 INFO (XSTRM-223): 244. Translating cellView ASML/gaas_1_coup_l0_sd_align_A/layout as STRUCTURE gaas_1_coup_l0_sd_align_A
-INFO (XSTRM-223): 245. Translating cellView POL_70/p70_2_guts_7097A_C/layout as STRUCTURE p70_2_guts_7097A_C_CDNS_55061102164122
+INFO (XSTRM-223): 245. Translating cellView POL_70/p70_2_guts_7097A_C/layout as STRUCTURE p70_2_guts_7097A_C_CDNS_55076337623122
 INFO (XSTRM-223): 246. Translating cellView ln0246/ln246_3p_chip_7097C/layout as STRUCTURE ln246_3p_chip_7097C
-INFO (XSTRM-223): 247. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164147
-INFO (XSTRM-223): 248. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164148
-INFO (XSTRM-223): 249. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164149
-INFO (XSTRM-223): 250. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164150
-INFO (XSTRM-223): 251. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_55061102164151
+INFO (XSTRM-223): 247. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623147
+INFO (XSTRM-223): 248. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623148
+INFO (XSTRM-223): 249. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623149
+INFO (XSTRM-223): 250. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623150
+INFO (XSTRM-223): 251. Translating cellView PLL_70/p70_2_res_ta_std_C/layout as STRUCTURE p70_2_res_ta_std_C_CDNS_55076337623151
 INFO (XSTRM-223): 252. Translating cellView POL_70/p70_2_coup_taRes_A/layout as STRUCTURE p70_2_coup_taRes_A
-INFO (XSTRM-223): 253. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55061102164153
-INFO (XSTRM-223): 254. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_55061102164152
-INFO (XSTRM-223): 255. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164154
-INFO (XSTRM-223): 256. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164155
-INFO (XSTRM-223): 257. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164156
+INFO (XSTRM-223): 253. Translating cellView POL_70/p70_2_coupBondpad_A/layout as STRUCTURE p70_2_coupBondpad_A_CDNS_55076337623153
+INFO (XSTRM-223): 254. Translating cellView POL_70/p70_2_coupPads_4_A/layout as STRUCTURE p70_2_coupPads_4_A_CDNS_55076337623152
+INFO (XSTRM-223): 255. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623154
+INFO (XSTRM-223): 256. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623155
+INFO (XSTRM-223): 257. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623156
 INFO (XSTRM-223): 258. Translating cellView POL_70/p70_2_ILCR_cb_tmp_A/layout as STRUCTURE p70_2_ILCR_cb_tmp_A
-INFO (XSTRM-223): 259. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164157
+INFO (XSTRM-223): 259. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623157
 INFO (XSTRM-223): 260. Translating cellView POL_70/p70_2_coup_Xbridge_ta_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_ta_5_20_A
-INFO (XSTRM-223): 261. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164158
-INFO (XSTRM-223): 262. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164159
+INFO (XSTRM-223): 261. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623158
+INFO (XSTRM-223): 262. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623159
 INFO (XSTRM-223): 263. Translating cellView POL_70/p70_2_coup_Xbridge_tmp_5_20_A/layout as STRUCTURE p70_2_coup_Xbridge_tmp_5_20_A
-INFO (XSTRM-223): 264. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164160
-INFO (XSTRM-223): 265. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164161
-INFO (XSTRM-223): 266. Translating cellView POL_70/p70_2_guts_7096A_C/layout as STRUCTURE p70_2_guts_7096A_C_CDNS_55061102164146
-INFO (XSTRM-223): 267. Translating cellView POL_70/p70_2_coupPads_19_26_A/layout as STRUCTURE p70_2_coupPads_19_26_A_CDNS_55061102164163
-INFO (XSTRM-223): 268. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164164
-INFO (XSTRM-223): 269. Translating cellView POL_70/p70_2_FET_96_A/layout as STRUCTURE p70_2_FET_96_A_CDNS_55061102164162
+INFO (XSTRM-223): 264. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623160
+INFO (XSTRM-223): 265. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623161
+INFO (XSTRM-223): 266. Translating cellView POL_70/p70_2_guts_7096A_C/layout as STRUCTURE p70_2_guts_7096A_C_CDNS_55076337623146
+INFO (XSTRM-223): 267. Translating cellView POL_70/p70_2_coupPads_19_26_A/layout as STRUCTURE p70_2_coupPads_19_26_A_CDNS_55076337623163
+INFO (XSTRM-223): 268. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623164
+INFO (XSTRM-223): 269. Translating cellView POL_70/p70_2_FET_96_A/layout as STRUCTURE p70_2_FET_96_A_CDNS_55076337623162
 INFO (XSTRM-223): 270. Translating cellView ln0246/ln246_3p_chip_7096C/layout as STRUCTURE ln246_3p_chip_7096C
-INFO (XSTRM-223): 271. Translating cellView PLL_70/p70_2_viaSquare_40_A/layout as STRUCTURE p70_2_viaSquare_40_A_CDNS_55061102164166
-INFO (XSTRM-223): 272. Translating cellView PLL_46/p46_2_viaSquare_60_A/layout as STRUCTURE p46_2_viaSquare_60_A_CDNS_55061102164167
-INFO (XSTRM-223): 273. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164168
-INFO (XSTRM-223): 274. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164169
-INFO (XSTRM-223): 275. Translating cellView CommonOverhead/co_1_ald_coupBondpad_A/layout as STRUCTURE co_1_ald_coupBondpad_A_CDNS_55061102164170
-INFO (XSTRM-223): 276. Translating cellView ASML/gaas_1_viaAlignment_prod_asml_C/layout as STRUCTURE gaas_1_viaAlignment_prod_asml_C_CDNS_55061102164165
+INFO (XSTRM-223): 271. Translating cellView PLL_70/p70_2_viaSquare_40_A/layout as STRUCTURE p70_2_viaSquare_40_A_CDNS_55076337623166
+INFO (XSTRM-223): 272. Translating cellView PLL_46/p46_2_viaSquare_60_A/layout as STRUCTURE p46_2_viaSquare_60_A_CDNS_55076337623167
+INFO (XSTRM-223): 273. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623168
+INFO (XSTRM-223): 274. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623169
+INFO (XSTRM-223): 275. Translating cellView CommonOverhead/co_1_ald_coupBondpad_A/layout as STRUCTURE co_1_ald_coupBondpad_A_CDNS_55076337623170
+INFO (XSTRM-223): 276. Translating cellView ASML/gaas_1_viaAlignment_prod_asml_C/layout as STRUCTURE gaas_1_viaAlignment_prod_asml_C_CDNS_55076337623165
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'AlignBCB:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'met2Pass:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'bumpalt:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 277. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164171
-INFO (XSTRM-223): 278. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164172
+INFO (XSTRM-223): 277. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623171
+INFO (XSTRM-223): 278. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623172
 INFO (XSTRM-223): 279. Translating cellView ASML/gaas_1_boxnbox_sd-free_B/layout as STRUCTURE gaas_1_boxnbox_sd_free_B
-INFO (XSTRM-223): 280. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164173
+INFO (XSTRM-223): 280. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623173
 INFO (XSTRM-223): 281. Translating cellView ASML/gaas_1_boxnbox_L0-gl_C/layout as STRUCTURE gaas_1_boxnbox_L0_gl_C
-INFO (XSTRM-223): 282. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164174
-INFO (XSTRM-223): 283. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164175
-INFO (XSTRM-223): 284. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164176
+INFO (XSTRM-223): 282. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623174
+INFO (XSTRM-223): 283. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623175
+INFO (XSTRM-223): 284. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623176
 INFO (XSTRM-223): 285. Translating cellView ASML/gaas_1_boxnbox_L0-TMP_B/layout as STRUCTURE gaas_1_boxnbox_L0_TMP_B
 INFO (XSTRM-223): 286. Translating cellView ASML/gaas_1_boxnbox_L0-post_B/layout as STRUCTURE gaas_1_boxnbox_L0_post_B
-INFO (XSTRM-223): 287. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164177
+INFO (XSTRM-223): 287. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623177
 INFO (XSTRM-223): 288. Translating cellView ASML/gaas_1_boxnbox_L0-ta_B/layout as STRUCTURE gaas_1_boxnbox_L0_ta_B
-INFO (XSTRM-223): 289. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55061102164178
+INFO (XSTRM-223): 289. Translating cellView ASML/asml_1_label_anyLayer_A/layout as STRUCTURE asml_1_label_anyLayer_A_CDNS_55076337623178
 INFO (XSTRM-223): 290. Translating cellView ASML/gaas_1_boxnbox_L0-tap_B/layout as STRUCTURE gaas_1_boxnbox_L0_tap_B
 INFO (XSTRM-223): 291. Translating cellView ASML/gaas_1_boxnbox_sd-cb_B/layout as STRUCTURE gaas_1_boxnbox_sd_cb_B
 INFO (XSTRM-223): 292. Translating cellView ASML/gaas_1_boxnbox_L0-cb_C/layout as STRUCTURE gaas_1_boxnbox_L0_cb_C
@@ -406,89 +405,89 @@ INFO (XSTRM-223): 293. Translating cellView ASML/gaas_1_boxnbox_L0-free_A/layout
 INFO (XSTRM-223): 294. Translating cellView ASML/gaas_1_boxnbox_L0-ne_A/layout as STRUCTURE gaas_1_boxnbox_L0_ne_A
 INFO (XSTRM-223): 295. Translating cellView ASML/gaas_1_boxnbox_L0_me-sd_A/layout as STRUCTURE gaas_1_boxnbox_L0_me_sd_A
 INFO (XSTRM-223): 296. Translating cellView ASML/gaas_1_boxnbox_Center_L0_G/layout as STRUCTURE gaas_1_boxnbox_Center_L0_G
-INFO (XSTRM-223): 297. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55061102164179
-INFO (XSTRM-223): 298. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55061102164180
-INFO (XSTRM-223): 299. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55061102164181
+INFO (XSTRM-223): 297. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55076337623179
+INFO (XSTRM-223): 298. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55076337623180
+INFO (XSTRM-223): 299. Translating cellView PLL_70/p70_1_label_A/layout as STRUCTURE p70_1_label_A_CDNS_55076337623181
 INFO (XSTRM-223): 300. Translating cellView POL_70/p70_2_gateEtchDepth_A/layout as STRUCTURE p70_2_gateEtchDepth_A
 INFO (XSTRM-223): 301. Translating cellView POL_70/p70_2_viaTest_A/layout as STRUCTURE p70_2_viaTest_A
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'nitEtch1:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 302. Translating cellView ASML/asml_1_bloat_prod_A/layout as STRUCTURE asml_1_bloat_prod_A_CDNS_55061102164182
-INFO (XSTRM-223): 303. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164184
-INFO (XSTRM-223): 304. Translating cellView ASML/gaas_1_DC_TestAlign_H_B/layout as STRUCTURE gaas_1_DC_TestAlign_H_B_CDNS_55061102164183
-INFO (XSTRM-223): 305. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164185
-INFO (XSTRM-223): 306. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164186
+INFO (XSTRM-223): 302. Translating cellView ASML/asml_1_bloat_prod_A/layout as STRUCTURE asml_1_bloat_prod_A_CDNS_55076337623182
+INFO (XSTRM-223): 303. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623184
+INFO (XSTRM-223): 304. Translating cellView ASML/gaas_1_DC_TestAlign_H_B/layout as STRUCTURE gaas_1_DC_TestAlign_H_B_CDNS_55076337623183
+INFO (XSTRM-223): 305. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623185
+INFO (XSTRM-223): 306. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623186
 INFO (XSTRM-223): 307. Translating cellView ASML/gaas_1_biasVernier_NE_A/layout as STRUCTURE gaas_1_biasVernier_NE_A
-INFO (XSTRM-223): 308. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164187
+INFO (XSTRM-223): 308. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623187
 INFO (XSTRM-223): 309. Translating cellView ASML/gaas_1_biasVernier_OFR_A/layout as STRUCTURE gaas_1_biasVernier_OFR_A
-INFO (XSTRM-223): 310. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164188
+INFO (XSTRM-223): 310. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623188
 INFO (XSTRM-223): 311. Translating cellView ASML/gaas_1_biasVernier_GT_A/layout as STRUCTURE gaas_1_biasVernier_GT_A
-INFO (XSTRM-223): 312. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164189
-INFO (XSTRM-223): 313. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164190
+INFO (XSTRM-223): 312. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623189
+INFO (XSTRM-223): 313. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623190
 INFO (XSTRM-223): 314. Translating cellView ASML/gaas_1_biasVernier_TGT_A/layout as STRUCTURE gaas_1_biasVernier_TGT_A
-INFO (XSTRM-223): 315. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164192
-INFO (XSTRM-223): 316. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164193
-INFO (XSTRM-223): 317. Translating cellView ASML/gaas_1_biasVernier_TMP_A/layout as STRUCTURE gaas_1_biasVernier_TMP_A_CDNS_55061102164191
-INFO (XSTRM-223): 318. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164195
-INFO (XSTRM-223): 319. Translating cellView ASML/gaas_1_biasVernier_POST_A/layout as STRUCTURE gaas_1_biasVernier_POST_A_CDNS_55061102164194
-INFO (XSTRM-223): 320. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164196
+INFO (XSTRM-223): 315. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623192
+INFO (XSTRM-223): 316. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623193
+INFO (XSTRM-223): 317. Translating cellView ASML/gaas_1_biasVernier_TMP_A/layout as STRUCTURE gaas_1_biasVernier_TMP_A_CDNS_55076337623191
+INFO (XSTRM-223): 318. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623195
+INFO (XSTRM-223): 319. Translating cellView ASML/gaas_1_biasVernier_POST_A/layout as STRUCTURE gaas_1_biasVernier_POST_A_CDNS_55076337623194
+INFO (XSTRM-223): 320. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623196
 INFO (XSTRM-223): 321. Translating cellView ASML/gaas_1_biasVernier_TAP_A/layout as STRUCTURE gaas_1_biasVernier_TAP_A
-INFO (XSTRM-223): 322. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164197
+INFO (XSTRM-223): 322. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623197
 INFO (XSTRM-223): 323. Translating cellView ASML/gaas_1_biasVernier_TA_A/layout as STRUCTURE gaas_1_biasVernier_TA_A
-INFO (XSTRM-223): 324. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164198
-INFO (XSTRM-223): 325. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164199
+INFO (XSTRM-223): 324. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623198
+INFO (XSTRM-223): 325. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623199
 INFO (XSTRM-223): 326. Translating cellView ASML/gaas_1_biasVernier_CB_A/layout as STRUCTURE gaas_1_biasVernier_CB_A
-INFO (XSTRM-223): 327. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164200
-INFO (XSTRM-223): 328. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164201
+INFO (XSTRM-223): 327. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623200
+INFO (XSTRM-223): 328. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623201
 INFO (XSTRM-223): 329. Translating cellView ASML/gaas_1_biasVernier_SD_A/layout as STRUCTURE gaas_1_biasVernier_SD_A
-INFO (XSTRM-223): 330. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164202
+INFO (XSTRM-223): 330. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623202
 INFO (XSTRM-223): 331. Translating cellView ASML/gaas_1_biasVernier_ME_A/layout as STRUCTURE gaas_1_biasVernier_ME_A
-INFO (XSTRM-223): 332. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164203
-INFO (XSTRM-223): 333. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164204
+INFO (XSTRM-223): 332. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623203
+INFO (XSTRM-223): 333. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623204
 INFO (XSTRM-223): 334. Translating cellView ASML/gaas_1_biasVernier_L0_A/layout as STRUCTURE gaas_1_biasVernier_L0_A
-INFO (XSTRM-223): 335. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164205
-INFO (XSTRM-223): 336. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164206
-INFO (XSTRM-223): 337. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164207
-INFO (XSTRM-223): 338. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164208
+INFO (XSTRM-223): 335. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623205
+INFO (XSTRM-223): 336. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623206
+INFO (XSTRM-223): 337. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623207
+INFO (XSTRM-223): 338. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623208
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'eBeamMark:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
-INFO (XSTRM-223): 339. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164209
-INFO (XSTRM-223): 340. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164210
-INFO (XSTRM-223): 341. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164211
-INFO (XSTRM-223): 342. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164212
-INFO (XSTRM-223): 343. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164213
-INFO (XSTRM-223): 344. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164214
-INFO (XSTRM-223): 345. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164215
-INFO (XSTRM-223): 346. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55061102164216
-INFO (XSTRM-223): 347. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164217
-INFO (XSTRM-223): 348. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164218
-INFO (XSTRM-223): 349. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164219
-INFO (XSTRM-223): 350. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55061102164220
+INFO (XSTRM-223): 339. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623209
+INFO (XSTRM-223): 340. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623210
+INFO (XSTRM-223): 341. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623211
+INFO (XSTRM-223): 342. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623212
+INFO (XSTRM-223): 343. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623213
+INFO (XSTRM-223): 344. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623214
+INFO (XSTRM-223): 345. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623215
+INFO (XSTRM-223): 346. Translating cellView ASML/gaas_1_leicaCell_exp_A/layout as STRUCTURE gaas_1_leicaCell_exp_A_CDNS_55076337623216
+INFO (XSTRM-223): 347. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623217
+INFO (XSTRM-223): 348. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623218
+INFO (XSTRM-223): 349. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623219
+INFO (XSTRM-223): 350. Translating cellView CommonOverhead/co_1_label_A/layout as STRUCTURE co_1_label_A_CDNS_55076337623220
 INFO (XSTRM-223): 351. Translating cellView ASML/gaas_1_LeicaCells_exp_A/layout as STRUCTURE gaas_1_LeicaCells_exp_A
-INFO (XSTRM-223): 352. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164222
-INFO (XSTRM-223): 353. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164223
-INFO (XSTRM-223): 354. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164224
-INFO (XSTRM-223): 355. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164225
-INFO (XSTRM-223): 356. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164226
-INFO (XSTRM-223): 357. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164227
+INFO (XSTRM-223): 352. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623222
+INFO (XSTRM-223): 353. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623223
+INFO (XSTRM-223): 354. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623224
+INFO (XSTRM-223): 355. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623225
+INFO (XSTRM-223): 356. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623226
+INFO (XSTRM-223): 357. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623227
 INFO (XSTRM-223): 358. Translating cellView ASML/gaas_1_leicaVern_l0-gs_sd-gs_Y_B/layout as STRUCTURE gaas_1_leicaVern_l0_gs_sd_gs_Y_B
-INFO (XSTRM-223): 359. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164228
-INFO (XSTRM-223): 360. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164229
+INFO (XSTRM-223): 359. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623228
+INFO (XSTRM-223): 360. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623229
 INFO (XSTRM-223): 361. Translating cellView ASML/gaas_1_leicaVern_l0-gt_gs-gt_Y_B/layout as STRUCTURE gaas_1_leicaVern_l0_gt_gs_gt_Y_B
-INFO (XSTRM-223): 362. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164231
-INFO (XSTRM-223): 363. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164232
+INFO (XSTRM-223): 362. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623231
+INFO (XSTRM-223): 363. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623232
 INFO (XSTRM-223): 364. Translating cellView ASML/gaas_1_lv_l0-gt_gs-gt_base_A/layout as STRUCTURE gaas_1_lv_l0_gt_gs_gt_base_A
-INFO (XSTRM-223): 365. Translating cellView ASML/gaas_1_leicaVern_l0-gt_gs-gt_X_B/layout as STRUCTURE gaas_1_leicaVern_l0_gt_gs_gt_X_B_CDNS_55061102164230
-INFO (XSTRM-223): 366. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164233
-INFO (XSTRM-223): 367. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164234
+INFO (XSTRM-223): 365. Translating cellView ASML/gaas_1_leicaVern_l0-gt_gs-gt_X_B/layout as STRUCTURE gaas_1_leicaVern_l0_gt_gs_gt_X_B_CDNS_55076337623230
+INFO (XSTRM-223): 366. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623233
+INFO (XSTRM-223): 367. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623234
 INFO (XSTRM-223): 368. Translating cellView ASML/gaas_1_leicaVern_l0-sd_Y_A/layout as STRUCTURE gaas_1_leicaVern_l0_sd_Y_A
 INFO (XSTRM-223): 369. Translating cellView ASML/gaas_1_leicaVern_l0-sd_X_A/layout as STRUCTURE gaas_1_leicaVern_l0_sd_X_A
 INFO (XSTRM-223): 370. Translating cellView ASML/gaas_1_leicaVern_l0-gs_sd-gs_X_A/layout as STRUCTURE gaas_1_leicaVern_l0_gs_sd_gs_X_A
-INFO (XSTRM-223): 371. Translating cellView ASML/gaas_1_LeicaVerniers_B/layout as STRUCTURE gaas_1_LeicaVerniers_B_CDNS_55061102164221
+INFO (XSTRM-223): 371. Translating cellView ASML/gaas_1_LeicaVerniers_B/layout as STRUCTURE gaas_1_LeicaVerniers_B_CDNS_55076337623221
 INFO (XSTRM-223): 372. Translating cellView ASML/ASML_PM_L0_A/layout as STRUCTURE ASML_PM_L0_A
 INFO (XSTRM-223): 373. Translating cellView ASML/ASML_PM_SD_L0_C/layout as STRUCTURE ASML_PM_SD_L0_C
 INFO (XSTRM-223): 374. Translating cellView ASML/gaas_1_TMplateBox_A/layout as STRUCTURE gaas_1_TMplateBox_A
 INFO (XSTRM-223): 375. Translating cellView ASML/gaas_1_lbar_mesa_A/layout as STRUCTURE gaas_1_lbar_mesa_A
-INFO (XSTRM-223): 376. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164235
-INFO (XSTRM-223): 377. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55061102164236
+INFO (XSTRM-223): 376. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623235
+INFO (XSTRM-223): 377. Translating cellView ASML/asml_1_label_A/layout as STRUCTURE asml_1_label_A_CDNS_55076337623236
 INFO (XSTRM-223): 378. Translating cellView ASML/gaas_1_cv_A/layout as STRUCTURE gaas_1_cv_A
 INFO (XSTRM-223): 379. Translating cellView ASML/gaas_1_numAlign_ME_R_C/layout as STRUCTURE gaas_1_numAlign_ME_R_C
 WARNING (XSTRM-35): The objects in the layer-purpose pair 'gap:drawing' are ignored. This is because the layer-purpose pair used in the design is not specified in the layer map file. Specify the layer-purpose pair in the layer map file and try again.
@@ -496,18 +495,18 @@ INFO (XSTRM-223): 380. Translating cellView ASML/gaas_1_numAlign_ME_L_C/layout a
 INFO (XSTRM-223): 381. Translating cellView ASML/ASML_SPM_L0_X_GaAs_A/layout as STRUCTURE ASML_SPM_L0_X_GaAs_A
 INFO (XSTRM-223): 382. Translating cellView ASML/ASML_SPM_L0_Y_GaAs_A/layout as STRUCTURE ASML_SPM_L0_Y_GaAs_A
 INFO (XSTRM-223): 383. Translating cellView ASML/ASML_1_gridCornerASML_GaAs_A/layout as STRUCTURE ASML_1_gridCornerASML_GaAs_A
-INFO (XSTRM-223): 384. Translating cellView ASML/ASML_1_grid_gaAs_C/layout as STRUCTURE ASML_1_grid_gaAs_C_CDNS_55061102164237
+INFO (XSTRM-223): 384. Translating cellView ASML/ASML_1_grid_gaAs_C/layout as STRUCTURE ASML_1_grid_gaAs_C_CDNS_55076337623237
 INFO (XSTRM-223): 385. Translating cellView ASML/gaas_1_L0_gateLines_leica_A/layout as STRUCTURE gaas_1_L0_gateLines_leica_A
-INFO (XSTRM-223): 386. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164238
-INFO (XSTRM-223): 387. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164239
-INFO (XSTRM-223): 388. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164240
-INFO (XSTRM-223): 389. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164241
-INFO (XSTRM-223): 390. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164242
-INFO (XSTRM-223): 391. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55061102164243
-INFO (XSTRM-223): 392. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_55061102164245
-INFO (XSTRM-223): 393. Translating cellView PLL_70/p70_2_sq_fet_mult_A/layout as STRUCTURE p70_2_sq_fet_mult_A_CDNS_55061102164244
+INFO (XSTRM-223): 386. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623238
+INFO (XSTRM-223): 387. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623239
+INFO (XSTRM-223): 388. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623240
+INFO (XSTRM-223): 389. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623241
+INFO (XSTRM-223): 390. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623242
+INFO (XSTRM-223): 391. Translating cellView PLL_70/p70_2_label_A/layout as STRUCTURE p70_2_label_A_CDNS_55076337623243
+INFO (XSTRM-223): 392. Translating cellView PLL_70/p70_2_finger_A/layout as STRUCTURE p70_2_finger_A_CDNS_55076337623245
+INFO (XSTRM-223): 393. Translating cellView PLL_70/p70_2_sq_fet_mult_A/layout as STRUCTURE p70_2_sq_fet_mult_A_CDNS_55076337623244
 INFO (XSTRM-223): 394. Translating cellView POL_70/p70_2_sq_metroFET_A/layout as STRUCTURE p70_2_sq_metroFET_A
-INFO (XSTRM-223): 395. Translating cellView ln0246/ln246_3p_wafer_flat_copy/layout as STRUCTURE ln246_3p_wafer_flat_copy
+INFO (XSTRM-223): 395. Translating cellView ln0246/ln246_3p_wafer_flat/layout as STRUCTURE ln246_3p_wafer_flat
 
 Summary of Objects Translated:
 	Scalar Instances:                       9876
@@ -534,5 +533,5 @@ Summary of Objects Translated:
 	TextDisplay:                            0
 	Cells:                                  395
 
-Elapsed Time: 5.6s   User Time: 0.9s   CPU Time: 0.3s   Peak VM: 92216KB
-INFO (XSTRM-234): Translation completed. '0' error(s) and '60' warning(s) found.
+Elapsed Time: 9.2s   User Time: 0.9s   CPU Time: 0.3s   Peak VM: 92216KB
+INFO (XSTRM-234): Translation completed. '0' error(s) and '61' warning(s) found.

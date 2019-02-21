@@ -5,13 +5,14 @@ defclass( stream (cv)
   (
     ( strmFile @reader getStrmFile @writer setStrmFile )
     ( runDir @reader getRunDir @writer setRunDir )
-    ( logFile @reader getLogFile @writer setLogFile )
-    ( errFile @reader getErrFile @writer setErrFile )   
+    ( logFile @reader getLogFile @writer setLogFile ) 
     ( maxVertices @reader getMaxVertices @writer setMaxVertices )
     ( mapFile @reader getMapFile @writer setMapFile )
     ( mapPath @reader getMapPath @writer setMapPath )
     ( templatePath @reader getTemplatePath @writer setTemplatePath )
     ( templateFile @reader getTemplateFile @writer setTemplateFile )
+    ( streamOutKvps @reader getOutKeys )
+    ( streamInKvps @reader getInKeys )
   )
 );defClass
 ;#####################################################
@@ -21,36 +22,141 @@ defmethod( initializeInstance @after ((obj stream))
   obj->strmFile = nil
   obj->runDir = "."
   obj->logFile = "strmOut.log"
-  obj->errFile = "strmOut.err"
   obj->maxVertices = "200"
   obj->mapFile = "layer.map"
   obj->mapPath = "."
   obj->templatePath = "."
   obj->templateFile = nil
+  obj->streamOutKvps = nil
+  obj->streamInKvps = nil
 );defmethod
 ;######################################################
-;#####################################################
-; Sets the boundary box of the chip numbers pad
-;################################################f#####
+; Create KVPs
+; create a dpl for the default stream out dot file
+;######################################################
+defmethod(createOutputKvps  (( str stream ))
+  let((tFile)
+    str->streamOutKvps=ncons(nil)
+    if(!null(str->name) then
+      str->streamOutKvps->topCell=str->name
+    else
+      println("WARNING: Cell Name Not Defined")
+    );if
+    if(!null(str->lib) then
+      str->streamOutKvps->library=str->lib
+    else
+      println("WARNING: Library Not Defined")
+    );if
+    if(!null(str->view) then
+      str->streamOutKvps->view=str->view
+    else
+      println("WARNING: Cell View Not Defined")
+    );if
+    if(!null(str->logFile) then
+      str->streamOutKvps->logFile=str->logFile
+    else
+      println("WARNING: Ouput Logfile Name Not Defined")
+    );if
+    str->streamOutKvps->maxVertices="200"
+    if(!null(str->mapPath) then
+      if(!null(str->mapFile) then
+        str->streamOutKvps->layerMap=strcat(str->mapPath "/" str->mapFile)
+      else
+        println("WARNING: Ouput Map File Name Not Defined")
+      );if
+    else
+      println("WARNING: Ouput Map File Path Not Defined")
+    );if
+    str->streamOutKvps->labelCase="preserve"
+    str->streamOutKvps->case="preserve"
+    str->streamOutKvps->labelDepth="1"
+    str->streamOutKvps->subMasterSeparator="_CDNS_"
+    str->streamOutKvps->strmVersion="5"
+    if(!null(str->strmFile) then
+      str->streamOutKvps->strmFile=str->strmFile
+    else
+      println("WARNING: Output Stream File Name Not Defined")
+    );if
+    if(!null(str->runDir) then
+      str->streamOutKvps->runDir=str->runDir
+    else
+      println("WARNING: Output Run Directory Not Defined")
+    );if
+    tFile=strcat(str->runDir "/.streamOutKvps")
+    fp=outfile(tFile)
+    fprintf(fp "streamOutKvps='")
+    pprint(str->streamOutKvps fp)
+    newline(fp)
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Method to create a custom template file
+;######################################################
+defmethod(createTemplateFile  (( str stream ))
+  let((tFile fp keys key val)
+    str->templatePath = str->runDir
+    str->templateFile=strcat(str->name "_out.template")
+    tFile = strcat(str->runDir "/" str->templateFile)
+    fp=outfile(tFile)
+    keys = str->streamOutKvps
+    pop(keys)
+    while(keys
+      key = pop(keys)
+      val = pop(keys)
+      fprintf(fp "%s " key ) 
+      fprintf(fp "\"%s\"\n" val)
+    );while
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Stream out method
+;######################################################
 defmethod(streamOut  (( str stream ))
-  let((streamOutKeys tFile fp id)
+  let((tFile id)
+    if(null(str->templateFile) then
+      println("INFO: Generating output template file.")
+      createOutputKvps(str)
+      createTemplateFile(str)
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    else
+      println("INFO: Using existing template file.")
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    );if
+    printf("INFO: IPC COMMAND: strmout -templatefile %s\n" tFile)
+    id=ipcBeginProcess(
+      sprintf(nil "strmout -templateFile %s" tFile)
+      ""
+      'strmDataHandler
+      'strmDataHandler
+      'strmExitHandler
+      "./ipcAsync.log"
+    );ipcBeginProcess
+    ; use ipcWait(id) if you want to wait for it to finish
+  );let
+);defmethod
+;######################################################
+; Stream in method
+;######################################################
+defmethod(streamIn  (( str stream ))
+  let((streamInKeys tFile fp id)
     if(null(str->templateFile) then
       ; create a dpl for the default stream out template file 
-      streamOutKeys=ncons(nil)
-      streamOutKeys->topCell=str->name
-      streamOutKeys->library=str->lib
-      streamOutKeys->view=str->view
-      streamOutKeys->logFile=str->logFile
-      streamOutKeys->errFile=str->errFile
-      streamOutKeys->maxVertices="200"
-      streamOutKeys->layerMap=strcat(str->mapPath "/" str->mapFile)
-      streamOutKeys->labelCase="preserve"
-      streamOutKeys->case="preserve"
-      streamOutKeys->labelDepth="1"
-      streamOutKeys->subMasterSeparator="_CDNS_"
-      streamOutKeys->strmVersion="5"
-;      streamOutKeys->strmFile=str->strmFile
-;      streamOutKeys->runDir=str->runDir
+      streamInKeys=ncons(nil)
+      streamInKeys->topCell=str->name
+      streamInKeys->library=str->lib
+      streamInKeys->view=str->view
+      streamInKeys->logFile=str->logFile
+      streamInKeys->maxVertices="200"
+      streamInKeys->layerMap=strcat(str->mapPath "/" str->mapFile)
+      streamInKeys->labelCase="preserve"
+      streamInKeys->case="preserve"
+      streamInKeys->labelDepth="1"
+      streamInKeys->subMasterSeparator="_CDNS_"
+      streamInKeys->strmVersion="5"
+      streamInKeys->strmFile=str->strmFile
+      streamInKeys->runDir=str->runDir
       str->templatePath = str->runDir
       ; Create a default template file
       tFile=strcat(str->runDir "/.streamOutKeys")
@@ -63,7 +169,7 @@ defmethod(streamOut  (( str stream ))
       tFile = strcat(str->templatePath "/" str->templateFile)
     );if
     id=ipcBeginProcess(
-      sprintf(nil "strmout -templateFile %s" tFile)
+      sprintf(nil "strmin -templateFile %s" tFile)
       ""
       'strmDataHandler
       'strmDataHandler
@@ -86,14 +192,18 @@ defun(strmDataHandler (_id data)
 ; IPC Exit Handler Callback
 ;#####################################################    
 defun(strmExitHandler (_id status)
-  printf("Stream Out exited with status %L\n" status)
+  printf("Stream exited with status %L\n" status)
 );defun
 ;######################################################
 ;#####################################################
 ; Get the target template path and file
 ;#####################################################
 defmethod(getTemplateTarget  (( str stream ))
-  printf("INFO(stream): Target Template File:  %s\n" strcat(str->templatePath str->templateFile))
+  if(!null(str->templateFile) then
+    printf("INFO(stream): Target Template File:  %s\n" strcat(str->templatePath str->templateFile))
+  else
+    nil
+  );if
 );defmethod
 ;######################################################
 ;######################################################

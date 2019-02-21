@@ -50,6 +50,7 @@ setMapPath(strm "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk/
 setMapFile(strm "via_layer.map")
 createOutputKvps(strm)
 createTemplateFile(strm)
+getTemplateTarget(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4: Stream out using member variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
