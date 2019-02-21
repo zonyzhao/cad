@@ -4195,6 +4195,293 @@ defmethod( isCell (( cell cv))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;  stream.ils: cellview stream class
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defclass( stream (cv)
+  (
+    ( strmFile @reader getStrmFile @writer setStrmFile )
+    ( runDir @reader getRunDir @writer setRunDir )
+    ( logFile @reader getLogFile @writer setLogFile ) 
+    ( maxOutVertices @reader getMaxOutVertices @writer setMaxOutVertices )
+    ( mapFile @reader getMapFile @writer setMapFile )
+    ( mapPath @reader getMapPath @writer setMapPath )
+    ( templatePath @reader getTemplatePath @writer setTemplatePath )
+    ( templateFile @reader getTemplateFile @writer setTemplateFile )
+    ( streamOutKvps @reader getOutKeys )
+    ( streamInKvps @reader getInKeys )
+    ( techFile @reader getTechFile @writer setTechFile )
+  )
+);defClass
+;#####################################################
+; Constructor Method
+;#####################################################
+defmethod( initializeInstance @after ((obj stream)) 
+  obj->strmFile = nil
+  obj->runDir = "."
+  obj->logFile = "strmOut.log"
+  obj->maxOutVertices = "200"
+  obj->mapFile = "layer.map"
+  obj->mapPath = "."
+  obj->templatePath = "."
+  obj->templateFile = nil
+  obj->streamOutKvps = nil
+  obj->streamInKvps = nil
+  obj->techFile = nil
+);defmethod
+;######################################################
+; Create Output KVPs
+; create a dpl for the default stream out dot file
+;######################################################
+defmethod(createOutputKvps  (( str stream ))
+  let((tFile)
+    str->streamOutKvps=ncons(nil)
+    if(!null(str->name) then
+      str->streamOutKvps->topCell=str->name
+    else
+      println("WARNING: Cell Name Not Defined")
+    );if
+    if(!null(str->lib) then
+      str->streamOutKvps->library=str->lib
+    else
+      println("WARNING: Library Not Defined")
+    );if
+    if(!null(str->view) then
+      str->streamOutKvps->view=str->view
+    else
+      println("WARNING: Cell View Not Defined")
+    );if
+    if(!null(str->logFile) then
+      str->streamOutKvps->logFile=str->logFile
+    else
+      println("WARNING: Ouput Logfile Name Not Defined")
+    );if
+    if(!null(str->maxOutVertices) then
+      str->streamOutKvps->maxVertices=str->maxOutVertices
+    else
+      println("WARNING: Ouput Maximum Vertices Not Defined")
+    );if
+    if(!null(str->mapPath) then
+      if(!null(str->mapFile) then
+        str->streamOutKvps->layerMap=strcat(str->mapPath "/" str->mapFile)
+      else
+        println("WARNING: Ouput Map File Name Not Defined")
+      );if
+    else
+      println("WARNING: Ouput Map File Path Not Defined")
+    );if
+    str->streamOutKvps->labelCase="preserve"
+    str->streamOutKvps->case="preserve"
+    str->streamOutKvps->labelDepth="1"
+    str->streamOutKvps->subMasterSeparator="_CDNS_"
+    str->streamOutKvps->strmVersion="5"
+    str->streamOutKvps->convertDot="node"
+    str->streamOutKvps->convertPin="geometry"
+    if(!null(str->strmFile) then
+      str->streamOutKvps->strmFile=str->strmFile
+    else
+      println("WARNING: Output Stream File Name Not Defined")
+    );if
+    if(!null(str->runDir) then
+      str->streamOutKvps->runDir=str->runDir
+    else
+      println("WARNING: Output Run Directory Not Defined")
+    );if
+    tFile=strcat(str->runDir "/.streamOutKvps")
+    fp=outfile(tFile)
+    fprintf(fp "streamOutKvps='")
+    pprint(str->streamOutKvps fp)
+    newline(fp)
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Create Input KVPs
+; Create a dpl for the default stream out dot file
+;######################################################
+defmethod(createInputKvps  (( str stream ))
+  let((tFile)
+    str->streamInKvps=ncons(nil)
+;    if(!null(str->name) then
+;      str->streamInKvps->topCell=str->name
+;    else
+;      println("WARNING: Cell Name Not Defined")
+;    );if
+    str->streamInKvps->topCell=""
+    if(!null(str->lib) then
+      str->streamInKvps->library=str->lib
+    else
+      println("WARNING: Library Not Defined")
+    );if
+    if(!null(str->view) then
+      str->streamInKvps->view=str->view
+    else
+      println("WARNING: Cell View Not Defined")
+    );if
+    if(!null(str->logFile) then
+      str->streamInKvps->logFile=str->logFile
+    else
+      println("WARNING: Input Logfile Name Not Defined")
+    );if
+    if(!null(str->mapPath) then
+      if(!null(str->mapFile) then
+        str->streamInKvps->layerMap=strcat(str->mapPath "/" str->mapFile)
+      else
+        println("WARNING: Input Map File Name Not Defined")
+      );if
+    else
+      println("WARNING: Input Map File Path Not Defined")
+    );if
+    str->streamInKvps->labelCase="preserve"
+    str->streamInKvps->case="preserve"
+    str->streamInKvps->writeMode="overwrite"
+    str->streamInKvps->scale="1.00000"
+    str->streamInKvps->scaleTextHeight="1.00000"
+    str->streamInKvps->pinAttNum="0"
+    str->streamInKvps->propSeparator=","
+    if(!null(str->strmFile) then
+      str->streamInKvps->strmFile=str->strmFile
+    else
+      println("WARNING: Input Stream File Name Not Defined")
+    );if
+    if(!null(str->runDir) then
+      str->streamInKvps->runDir=str->runDir
+    else
+      println("WARNING: Input Run Directory Not Defined")
+    );if
+    if(!null(str->techFile) then
+      str->streamInKvps->attachTechFileOfLib=str->techFile
+    else
+      println("WARNING: Attached Techfile Not Defined")
+    );if
+    tFile=strcat(str->runDir "/.streamInKvps")
+    fp=outfile(tFile)
+    fprintf(fp "streamInKvps='")
+    pprint(str->streamInKvps fp)
+    newline(fp)
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Method to create a custom output template file
+;######################################################
+defmethod(createOutputTemplateFile  (( str stream ))
+  let((tFile fp keys key val)
+    str->templatePath = str->runDir
+    str->templateFile=strcat(str->name "_out.template")
+    tFile = strcat(str->runDir "/" str->templateFile)
+    fp=outfile(tFile)
+    keys = str->streamOutKvps
+    pop(keys)
+    while(keys
+      key = pop(keys)
+      val = pop(keys)
+      fprintf(fp "%s " key ) 
+      fprintf(fp "\"%s\"\n" val)
+    );while
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Method to create a custom input template file
+;######################################################
+defmethod(createInputTemplateFile  (( str stream ))
+  let((tFile fp keys key val)
+    str->templatePath = str->runDir
+    str->templateFile=strcat(str->name "_in.template")
+    tFile = strcat(str->runDir "/" str->templateFile)
+    fp=outfile(tFile)
+    keys = str->streamInKvps
+    pop(keys)
+    while(keys
+      key = pop(keys)
+      val = pop(keys)
+      fprintf(fp "%s " key ) 
+      fprintf(fp "\"%s\"\n" val)
+    );while
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Stream out method
+;######################################################
+defmethod(streamOut  (( str stream ))
+  let((tFile id)
+    if(null(str->templateFile) then
+      println("INFO: Generating output template file.")
+      createOutputKvps(str)
+      createOutputTemplateFile(str)
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    else
+      println("INFO: Using existing template file.")
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    );if
+    printf("INFO: EXECUTING IPC COMMAND: strmout -templatefile %s\n" tFile)
+    id=ipcBeginProcess(
+      sprintf(nil "strmout -templateFile %s" tFile)
+      ""
+      'strmDataHandler
+      'strmDataHandler
+      'strmExitHandler
+      "./ipcAsync.log"
+    );ipcBeginProcess
+    ; use ipcWait(id) if you want to wait for it to finish
+  );let
+);defmethod
+;######################################################
+; Stream in method
+;######################################################
+defmethod(streamIn  (( str stream ))
+  let((tFile id)
+    if(null(str->templateFile) then
+      println("INFO: Generating input template file.")
+      createInputKvps(str)
+      createInputTemplateFile(str)
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    else
+      tFile = strcat(str->templatePath "/" str->templateFile)
+    );if
+    printf("INFO: EXECUTING IPC COMMAND: strmin -templatefile %s\n" tFile)
+    id=ipcBeginProcess(
+      sprintf(nil "strmin -templateFile %s" tFile)
+      ""
+      'strmDataHandler
+      'strmDataHandler
+      'strmExitHandler
+      "./ipcAsync.log"
+    );ipcBeginProcess
+    ; use ipcWait(id) if you want to wait for it to finish
+  );let
+);defmethod
+;#####################################################
+; FIXME: Should integrate this with the IPC class and
+;        use this as a test case ... CONFIRMED!!
+;#####################################################
+; IPC Data Handler
+;##################################################### 
+defun(strmDataHandler (_id data)
+  printf("%s" data)
+);defun
+;#####################################################
+; IPC Exit Handler Callback
+;#####################################################    
+defun(strmExitHandler (_id status)
+  printf("Stream exited with status %L\n" status)
+);defun
+;######################################################
+;#####################################################
+; Get the target template path and file
+;#####################################################
+defmethod(getTemplateTarget  (( str stream ))
+  if(!null(str->templateFile) then
+    printf("INFO(stream): Target Template File:  %s\n" strcat(str->templatePath str->templateFile))
+  else
+    nil
+  );if
+);defmethod
+;######################################################
+;######################################################
+;######################################################
 ;###################################################################
 ;#   instance.ils: instance class
 ;###################################################################

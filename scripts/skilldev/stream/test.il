@@ -6,7 +6,7 @@ strm = makeInstance( 'stream )
 classp( strm 'stream)
 classOf(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Stream out a test layout using a fixed template file
+; UT-1: Stream out a test layout using a FIXED template file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib="ln0246"
 name="ln246_3p_wafer_flat"
@@ -20,9 +20,9 @@ setTemplateFile(strm "ln246_3_p_wafer_vias_output.template")
 getTemplateTarget(strm)
 streamOut(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Stream in a test GDS using a fixed template file
+; UT-2: Stream in a test GDS using a FIXED template file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib="test"
+lib="pa0715_sfw"
 name="ln246_3p_wafer_flat"
 view="layout"
 strm = makeInstance( 'stream )
@@ -34,7 +34,7 @@ setTemplateFile(strm "ln246_3_p_wafer_vias_input.template")
 getTemplateTarget(strm)
 streamIn(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-3: Test generation of .streamOutKvps and template files
+; UT-3: Test generation of .streamOutKvps and stream output template files
 ;       from member variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib="ln0246"
@@ -49,11 +49,31 @@ setRunDir(strm "/users/1127110/deslibs_oa/ln0246/release/")
 setMapPath(strm "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk/")
 setMapFile(strm "via_layer.map")
 createOutputKvps(strm)
-createTemplateFile(strm)
+createOutputTemplateFile(strm)
+getTemplateTarget(strm)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3: Test generation of .streamInKvps and stream input template files
+;       from member variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+lib="pa0715_sfw"
+name="ln246_3p_wafer_flat_streamIn"
+view="layout"
+strm = makeInstance( 'stream )
+setName(strm name)
+setLib(strm lib)
+setView(strm view)
+setTechFile(strm "RRFC_2metal")
+setStrmFile(strm "ln246_3p_wafer_vias.gds")
+setRunDir(strm "/users/1127110/deslibs_oa/ln0246/release/")
+setMapPath(strm "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk/")
+setMapFile(strm "rrfc_2metal.map")
+createInputKvps(strm)
+createInputTemplateFile(strm)
+getTemplateTarget(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4: Stream out using member variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib="ln0246"
+lib="pa0715_sfw"
 name="ln246_3p_wafer_flat"
 view="layout"
 strm = makeInstance( 'stream )
@@ -72,18 +92,21 @@ getTemplateTarget(strm)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4: Stream in using member variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib="ln0246"
-name="ln246_3p_wafer_flat"
+lib="pa0715_sfw"
+name="ln246_3p_wafer_vias"
 view="layout"
 strm = makeInstance( 'stream )
 setName(strm name)
 setLib(strm lib)
 setView(strm view)
+setTechFile(strm "RRFC_2metal")
 setStrmFile(strm "ln246_3p_wafer_vias.gds")
 setRunDir(strm "/users/1127110/deslibs_oa/ln0246/release/")
 setMapPath(strm "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa/cad/maps/trunk/")
 setMapFile(strm "rrfc_2metal.map")
+getTemplateTarget(strm)
 streamIn(strm)
+getTemplateTarget(strm)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Experimental Code

@@ -6,13 +6,14 @@ defclass( stream (cv)
     ( strmFile @reader getStrmFile @writer setStrmFile )
     ( runDir @reader getRunDir @writer setRunDir )
     ( logFile @reader getLogFile @writer setLogFile ) 
-    ( maxVertices @reader getMaxVertices @writer setMaxVertices )
+    ( maxOutVertices @reader getMaxOutVertices @writer setMaxOutVertices )
     ( mapFile @reader getMapFile @writer setMapFile )
     ( mapPath @reader getMapPath @writer setMapPath )
     ( templatePath @reader getTemplatePath @writer setTemplatePath )
     ( templateFile @reader getTemplateFile @writer setTemplateFile )
     ( streamOutKvps @reader getOutKeys )
     ( streamInKvps @reader getInKeys )
+    ( techFile @reader getTechFile @writer setTechFile )
   )
 );defClass
 ;#####################################################
@@ -22,16 +23,17 @@ defmethod( initializeInstance @after ((obj stream))
   obj->strmFile = nil
   obj->runDir = "."
   obj->logFile = "strmOut.log"
-  obj->maxVertices = "200"
+  obj->maxOutVertices = "200"
   obj->mapFile = "layer.map"
   obj->mapPath = "."
   obj->templatePath = "."
   obj->templateFile = nil
   obj->streamOutKvps = nil
   obj->streamInKvps = nil
+  obj->techFile = nil
 );defmethod
 ;######################################################
-; Create KVPs
+; Create Output KVPs
 ; create a dpl for the default stream out dot file
 ;######################################################
 defmethod(createOutputKvps  (( str stream ))
@@ -57,7 +59,11 @@ defmethod(createOutputKvps  (( str stream ))
     else
       println("WARNING: Ouput Logfile Name Not Defined")
     );if
-    str->streamOutKvps->maxVertices="200"
+    if(!null(str->maxOutVertices) then
+      str->streamOutKvps->maxVertices=str->maxOutVertices
+    else
+      println("WARNING: Ouput Maximum Vertices Not Defined")
+    );if
     if(!null(str->mapPath) then
       if(!null(str->mapFile) then
         str->streamOutKvps->layerMap=strcat(str->mapPath "/" str->mapFile)
@@ -72,6 +78,8 @@ defmethod(createOutputKvps  (( str stream ))
     str->streamOutKvps->labelDepth="1"
     str->streamOutKvps->subMasterSeparator="_CDNS_"
     str->streamOutKvps->strmVersion="5"
+    str->streamOutKvps->convertDot="node"
+    str->streamOutKvps->convertPin="geometry"
     if(!null(str->strmFile) then
       str->streamOutKvps->strmFile=str->strmFile
     else
@@ -91,15 +99,102 @@ defmethod(createOutputKvps  (( str stream ))
   );let
 );defmethod
 ;######################################################
-; Method to create a custom template file
+; Create Input KVPs
+; Create a dpl for the default stream out dot file
 ;######################################################
-defmethod(createTemplateFile  (( str stream ))
+defmethod(createInputKvps  (( str stream ))
+  let((tFile)
+    str->streamInKvps=ncons(nil)
+;    if(!null(str->name) then
+;      str->streamInKvps->topCell=str->name
+;    else
+;      println("WARNING: Cell Name Not Defined")
+;    );if
+    str->streamInKvps->topCell=""
+    if(!null(str->lib) then
+      str->streamInKvps->library=str->lib
+    else
+      println("WARNING: Library Not Defined")
+    );if
+    if(!null(str->view) then
+      str->streamInKvps->view=str->view
+    else
+      println("WARNING: Cell View Not Defined")
+    );if
+    if(!null(str->logFile) then
+      str->streamInKvps->logFile=str->logFile
+    else
+      println("WARNING: Input Logfile Name Not Defined")
+    );if
+    if(!null(str->mapPath) then
+      if(!null(str->mapFile) then
+        str->streamInKvps->layerMap=strcat(str->mapPath "/" str->mapFile)
+      else
+        println("WARNING: Input Map File Name Not Defined")
+      );if
+    else
+      println("WARNING: Input Map File Path Not Defined")
+    );if
+    str->streamInKvps->labelCase="preserve"
+    str->streamInKvps->case="preserve"
+    str->streamInKvps->writeMode="overwrite"
+    str->streamInKvps->scale="1.00000"
+    str->streamInKvps->scaleTextHeight="1.00000"
+    str->streamInKvps->pinAttNum="0"
+    str->streamInKvps->propSeparator=","
+    if(!null(str->strmFile) then
+      str->streamInKvps->strmFile=str->strmFile
+    else
+      println("WARNING: Input Stream File Name Not Defined")
+    );if
+    if(!null(str->runDir) then
+      str->streamInKvps->runDir=str->runDir
+    else
+      println("WARNING: Input Run Directory Not Defined")
+    );if
+    if(!null(str->techFile) then
+      str->streamInKvps->attachTechFileOfLib=str->techFile
+    else
+      println("WARNING: Attached Techfile Not Defined")
+    );if
+    tFile=strcat(str->runDir "/.streamInKvps")
+    fp=outfile(tFile)
+    fprintf(fp "streamInKvps='")
+    pprint(str->streamInKvps fp)
+    newline(fp)
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Method to create a custom output template file
+;######################################################
+defmethod(createOutputTemplateFile  (( str stream ))
   let((tFile fp keys key val)
     str->templatePath = str->runDir
     str->templateFile=strcat(str->name "_out.template")
     tFile = strcat(str->runDir "/" str->templateFile)
     fp=outfile(tFile)
     keys = str->streamOutKvps
+    pop(keys)
+    while(keys
+      key = pop(keys)
+      val = pop(keys)
+      fprintf(fp "%s " key ) 
+      fprintf(fp "\"%s\"\n" val)
+    );while
+    close(fp)
+  );let
+);defmethod
+;######################################################
+; Method to create a custom input template file
+;######################################################
+defmethod(createInputTemplateFile  (( str stream ))
+  let((tFile fp keys key val)
+    str->templatePath = str->runDir
+    str->templateFile=strcat(str->name "_in.template")
+    tFile = strcat(str->runDir "/" str->templateFile)
+    fp=outfile(tFile)
+    keys = str->streamInKvps
     pop(keys)
     while(keys
       key = pop(keys)
@@ -118,13 +213,13 @@ defmethod(streamOut  (( str stream ))
     if(null(str->templateFile) then
       println("INFO: Generating output template file.")
       createOutputKvps(str)
-      createTemplateFile(str)
+      createOutputTemplateFile(str)
       tFile = strcat(str->templatePath "/" str->templateFile)
     else
       println("INFO: Using existing template file.")
       tFile = strcat(str->templatePath "/" str->templateFile)
     );if
-    printf("INFO: IPC COMMAND: strmout -templatefile %s\n" tFile)
+    printf("INFO: EXECUTING IPC COMMAND: strmout -templatefile %s\n" tFile)
     id=ipcBeginProcess(
       sprintf(nil "strmout -templateFile %s" tFile)
       ""
@@ -140,34 +235,16 @@ defmethod(streamOut  (( str stream ))
 ; Stream in method
 ;######################################################
 defmethod(streamIn  (( str stream ))
-  let((streamInKeys tFile fp id)
+  let((tFile id)
     if(null(str->templateFile) then
-      ; create a dpl for the default stream out template file 
-      streamInKeys=ncons(nil)
-      streamInKeys->topCell=str->name
-      streamInKeys->library=str->lib
-      streamInKeys->view=str->view
-      streamInKeys->logFile=str->logFile
-      streamInKeys->maxVertices="200"
-      streamInKeys->layerMap=strcat(str->mapPath "/" str->mapFile)
-      streamInKeys->labelCase="preserve"
-      streamInKeys->case="preserve"
-      streamInKeys->labelDepth="1"
-      streamInKeys->subMasterSeparator="_CDNS_"
-      streamInKeys->strmVersion="5"
-      streamInKeys->strmFile=str->strmFile
-      streamInKeys->runDir=str->runDir
-      str->templatePath = str->runDir
-      ; Create a default template file
-      tFile=strcat(str->runDir "/.streamOutKeys")
-      fp=outfile(tFile)
-      fprintf(fp "streamOutKeys='")
-      pprint(streamOutKeys fp)
-      newline(fp)
-      close(fp)
+      println("INFO: Generating input template file.")
+      createInputKvps(str)
+      createInputTemplateFile(str)
+      tFile = strcat(str->templatePath "/" str->templateFile)
     else
       tFile = strcat(str->templatePath "/" str->templateFile)
     );if
+    printf("INFO: EXECUTING IPC COMMAND: strmin -templatefile %s\n" tFile)
     id=ipcBeginProcess(
       sprintf(nil "strmin -templateFile %s" tFile)
       ""
