@@ -23,7 +23,7 @@ sdir = "/users/1127110/cad/scripts/"
 #########################################################################
 skillDevPackage = cadObj logFile techfile listfun collection coord2 point2 points2 rotation2 \
                   polygon2 bbox rectTran rectTrans transform2 transformation2 \
-                  geometry assembly component structure stackup cv instance reticle \
+                  geometry assembly component structure stackup cv stream instance reticle \
                   numberPad chipNumberPad couponNumberPad die chip coupon \
                   overhead reticleFrame alpha numeric punctuation shape \
                   alphaNumeric layer snapshot pcell \
