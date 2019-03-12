@@ -1,0 +1,142 @@
+\# Program start time UTC 2019.03.12 15:29:00.893
+\# Local time Tuesday 12 March 2019, 11:29 am
+\o Program:		@(#)$CDS: virtuoso version 6.1.6-64b 09/26/2013 22:30 (sjfnl160) $
+\o Hierarchy:		/net/nfs-n501/ANFS01/apps/cadence/IC616/tools.lnx86/dfII/
+\o Sub version:		sub-version  IC6.1.6-64b.500.2.1  (64-bit addresses)
+\# Host name (type):	lid10018974 (x86_64)
+\# Operating system:	Linux 2.6.32-696.3.2.el6.x86_64 #1 SMP Tue Jun 20 01:26:55 UTC 2017
+\# Linux /etc/issue:	CentOS release 6.9 (Final)
+\# Linux /etc/issue:	Kernel \r on an \m
+\# X display name (WxH):	lid10018974:80 (1024x868)
+\# Available geometry:			TL(0:0) BR(1023:867)
+\# X server:			RealVNC Ltd (VNC nograph server)
+\# Depth of Visual (Root):	16 (16)
+\# Number of Planes Used:	16
+\# X version:		11.0 (vendor release 3370)
+\# X resource pool:	base 0x800000, mask 0x3fffff (4194303), shift 0
+\# 			current id 0x0, current max 0x3ffffa (4194298)
+\# Max data seg size:	     unlimited
+\# Max process size:	     unlimited
+\# Initial sbrk value:	        335 MB
+\# Available memory:	     15,336 MB
+\# System memory:	     41,999 MB
+\# Maximum memory size:	     41,717 MB
+\# Max mem available:	     15,389 MB
+\# Initial memory used:	         53 MB
+\#        process size:	        698 MB
+\# Qt version:		4.7.2
+\# Window Manager:	other
+\# User Name:		1127110
+\o Working Directory:	lid10018974:/users/1127110/cad/cadence/gmake/ocean
+\# Process Id:		792719
+\o 
+\o COPYRIGHT © 1992-2013  CADENCE DESIGN SYSTEMS INC.  ALL RIGHTS RESERVED.
+\o           © 1992-2013  UNIX SYSTEMS Laboratories INC.,
+\o                          Reproduced with permission.
+\o 
+\o This Cadence Design Systems program and online documentation are
+\o proprietary/confidential information and may be disclosed/used only
+\o as authorized in a license agreement controlling such use and disclosure.
+\o 
+\o           RESTRICTED RIGHTS NOTICE (SHORT FORM)
+\o Use/reproduction/disclosure is subject to restriction
+\o set forth at FAR 1252.227-19 or its equivalent.
+\# Available memory:         15,334 MB at UTC 2019.03.12 15:29:01.385
+\# Memory report: Maximum memory size now 15,390 MB at UTC 2019.03.12 15:29:01.385
+\o Loading geView.cxt 
+\o Loading menuBuilder.cxt 
+\o Loading schView.cxt 
+\o Loading selectSv.cxt 
+\o Loading LVS.cxt 
+\o Loading layerProc.cxt 
+\o Loading pte2.cxt 
+\o Loading xlUI.cxt 
+\o Loading auCore.cxt 
+\o Loading dcm.cxt 
+\o Loading vhdl.cxt 
+\o Loading seismic.cxt 
+\o Loading ci.cxt 
+\o Loading ams.cxt 
+\o Virtuoso Framework License (111) was checked out successfully. Total checkout time was 0.45s.
+\p > 
+\i simulator( 'spectre )
+\o Loading oasis.cxt 
+\# Memory report: using         155 MB, process size 824 MB at UTC 2019.03.12 15:29:05.063
+\o Loading analog.cxt 
+\o Loading asimenv.cxt 
+\o Loading spectrei.cxt 
+\o Loading relXpert.cxt 
+\o Loading awv.cxt 
+\t spectre
+\p > 
+\i design(	 "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic/netlist/netlist")
+\t "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic/netlist/netlist"
+\p > 
+\i resultsDir( "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic" )
+\t "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic"
+\p > 
+\i modelFile( 
+\i     '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/allModels.scs" "tt")
+\i     '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/design.scs" "")
+\i     '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/wafer.scs" "")
+\i )
+\t (("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/allModels.scs" "tt") 
+\t     ("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/design.scs" "") 
+\t     ("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/wafer.scs" "")
+\t )
+\p > 
+\i analysis('tran ?stop "100n"  ?errpreset "conservative"  )
+\t "conservative"
+\p > 
+\i analysis('dc ?saveOppoint t  ?param "vctrl"  ?start "0.2"  
+\i 		?stop "1.0"  ?step "10"  )
+\t "10"
+\p > 
+\i desVar(	  "wireopt" 411	)
+\t "411"
+\p > 
+\i desVar(	  "vctrl" 1200m	)
+\t "1.2"
+\p > 
+\i envOption(
+\i 	'analysisOrder  list("dc" "tran" "pss" "pnoise") 
+\i )
+\t ("dc" "tran" "pss" "pnoise")
+\p > 
+\i option( ?categ 'turboOpts
+\i 	'uniMode  "APS" 
+\i )
+\o WARNING (ADE-7002): The Spectre run mode needs to be 'batch' when Spectre high-performance mode is enabled. Automatically
+\o             setting the run mode to 'batch'.
+\t "APS"
+\p > 
+\i saveOption( 'useprobes "yes" )
+\t "yes"
+\p > 
+\i saveOption( 'currents "all" )
+\t "all"
+\p > 
+\i saveOption( 'pwr "all" )
+\t "all"
+\p > 
+\i saveOption( 'save "all" )
+\t "all"
+\p > 
+\i temp( 27 ) 
+\t "27"
+\p > 
+\i run()
+\o ERROR (ADE-3023): Unable to locate spectre executable in the specified path. Ensure that
+\o         the executable is present in the path or to set the correct path, use
+\o         the setShellEnvVar() in Command Interpreter Window (CIW).
+\o Loading viva.cxt 
+\t "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic"
+\p > 
+\i period = (cross((v("/n3p" ?result "tran") - v("/n3n" ?result "tran")) 0 10 "rising" nil nil) - cross((v("/n3p" ?result "tran") - v("/n3n" ?result "tran")) 0 9 "rising" nil nil))
+\t 4.22848e-10
+\p > 
+\i exit()
+\o 
+\o Loading lce.cxt 
+\# Memory report: on exit            189 MB, process size 858 MB at UTC 2019.03.12 15:29:06.559
+\# Memory report: peak usage         189 MB, process size 858 MB

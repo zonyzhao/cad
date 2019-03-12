@@ -1,0 +1,36 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; load("basic.ocn")
+; sklint(?file "basic.ocn")
+;
+; Basic ocean script
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+simulator( 'spectre )
+design(	 "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic/netlist/netlist")
+resultsDir( "/users/1127110/simulation/tb_vcoRing4core/spectre/schematic" )
+modelFile( 
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/allModels.scs" "tt")
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/design.scs" "")
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/wafer.scs" "")
+)
+analysis('tran ?stop "100n"  ?errpreset "conservative"  )
+analysis('dc ?saveOppoint t  ?param "vctrl"  ?start "0.2"  
+		?stop "1.0"  ?step "10"  )
+desVar(	  "wireopt" 411	)
+desVar(	  "vctrl" 1200m	)
+envOption(
+	'analysisOrder  list("dc" "tran" "pss" "pnoise") 
+)
+option( ?categ 'turboOpts
+	'uniMode  "APS" 
+)
+saveOption( 'useprobes "yes" )
+saveOption( 'currents "all" )
+saveOption( 'pwr "all" )
+saveOption( 'save "all" )
+temp( 27 ) 
+run()
+period = (cross((v("/n3p" ?result "tran") - v("/n3n" ?result "tran")) 0 10 \
+"rising" nil nil) - cross((v("/n3p" ?result "tran") - v("/n3n" ?result "tran")) \
+0 9 "rising" nil nil))
+exit()
+

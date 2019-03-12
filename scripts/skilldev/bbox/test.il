@@ -9,14 +9,18 @@ classOf(bb)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get the bbox for a cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-lib = "pd0164"
-name = "pd0164_0p"
+#lib = "pd0164"
+#name = "pd0164_0p"
+#lib = "tr0046"
+#name = "tr46_7s"
+lib = "am0128"
+name = "am128_0p"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
 setRef(bb cv)
 getbb(bb)
-bb->bbx
+getDim(bb)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Get the bbox dimensions:
