@@ -18,7 +18,7 @@ defmethod( initializeInstance @after ((obj rectTran))
 ; Converts a rectTran to a boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( rtran2bbox (( rt rectTran ))
-  setBbx(rt list(getLl(rt) getUr(rt)))
+  setBbox(rt list(getLl(rt) getUr(rt)))
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Calculates the centroid of the rectTran
@@ -55,6 +55,18 @@ defmethod( center (( rt rectTran ))
       setCentroid(rt->transformation list(0.0 0.0))
     );if
   );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; bbox to upper right and lower lefet
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( bbox2urll (( rt rectTran ))
+  if(!null(rt->bbox) then
+    setLl(rt nth(0 rt->bbox))
+    setUr(rt nth(1 rt->bbox))
+    rt->bbox
+  else
+    nil
+  );then
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set Upper Right

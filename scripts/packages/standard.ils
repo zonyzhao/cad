@@ -1940,10 +1940,9 @@ defmethod( initializeInstance @after ((obj bbox))
 	   obj->bbox = nil
 	   obj->transformation = makeInstance( 'transformation2 )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clones the cellview object
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( cloneBbox (( bb bbox) arg )
   arg->ur     = bb->ur      
   arg->ll     = bb->ll      
@@ -1952,7 +1951,6 @@ defmethod( cloneBbox (( bb bbox) arg )
   arg->origin = bb->origin    
   arg->bbox   = bb->bbox   
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Populates Boundary Box Member with the contents of the
 ; reference cv's boundary box
@@ -1960,7 +1958,6 @@ defmethod( cloneBbox (( bb bbox) arg )
 defmethod( getbb (( bb bbox ))
 	setBbox(bb getRef(bb)~>bBox) 
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method sets the cv bBox based on the bbox member of this class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1968,7 +1965,8 @@ defmethod( setbb (( bb bbox ))
   let((bbox)
     bbox=list(getLl(bb) getUr(bb))
     setBbox(bb bbox)
-    getRef(bb)~>bBox = getBbox(bb)
+    dbComputeBBox(getRef(bb))
+    getRef(bb)~>bBox
   );let 
 );defMethod
 
@@ -2088,7 +2086,7 @@ defmethod( bb2vert (( bb bbox ))
 ;      minllx = apply( 'min llxList )
 ;      minlly = apply( 'min llyList )
 ;      minllx = apply( 'max urxList )
-;      minlly = apply( 'max uryList )
+;;      minlly = apply( 'max uryList )
 ;  );let
 ;);defMethod
 
@@ -2226,7 +2224,7 @@ defmethod( initializeInstance @after ((obj rectTran))
 ; Converts a rectTran to a boundary box
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( rtran2bbox (( rt rectTran ))
-  setBbx(rt list(getLl(rt) getUr(rt)))
+  setBbox(rt list(getLl(rt) getUr(rt)))
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Calculates the centroid of the rectTran
@@ -2263,6 +2261,18 @@ defmethod( center (( rt rectTran ))
       setCentroid(rt->transformation list(0.0 0.0))
     );if
   );let
+);defmethod
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; bbox to upper right and lower lefet
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+defmethod( bbox2urll (( rt rectTran ))
+  if(!null(rt->bbox) then
+    setLl(rt nth(0 rt->bbox))
+    setUr(rt nth(1 rt->bbox))
+    rt->bbox
+  else
+    nil
+  );then
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Set Upper Right
@@ -2524,12 +2534,13 @@ defmethod( validate (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  rectTrans.ils: container class for rectTran 
+; rectTrans.ils: Container class for a collection of rectTran objects.
+;                Also has a member which is the
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( rectTrans (cadObj)
+defclass( rectTrans (rectTran)
   (
     ( rtrans @reader getRtrans )
-    ( rtran @reader getRectTran )		  
+;    ( rtran @reader getRectTran )		  
   )
 );defclass
 ;#####################################################
@@ -2537,7 +2548,7 @@ defclass( rectTrans (cadObj)
 ;#####################################################
 defmethod( initializeInstance @after ((obj rectTrans)) 
   obj->rtrans = makeInstance( 'collection )
-  obj->rtran = makeInstance( 'rectTran )
+;  obj->rtran = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Add rectTran object to rectTrans collection
@@ -2554,26 +2565,31 @@ defmethod( rtsAdd ((rts rectTrans) arg)
 ; in the  geometry
 ;#####################################################
 defmethod( rtsUnion (( rts rectTrans ))
+  rts->ur = list(0.0 0.0)
+  rts->ll = list(0.0 0.0)
   foreach( rt getCollection(rts->rtrans)
     if(!null(rt->bbox) then
-      union(rts->rtran rt)
+       union(rts rt)
+;      union(rts->rtran rt)
     else
       println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
     );if
   );foreach 
-  if(!null(rts->rtran->bbox) then
-    calculateCentroid(rts->rtran)
+  rtran2bbox(rts)
+;  if(!null(rts->rtran->bbox) then
+   if(!null(rts->bbox) then
+    calculateCentroid(rts)
   );if
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Translates a rectran and rectrans
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( translate (( rts rectTrans ) arg)
-  foreach(rtrn getCollection(rts->rtrans)
-    translate(rtrn arg)
-  );foreach
-  translate(rts->rtran arg)
-);defmethod
+;defmethod( translate (( rts rectTrans ) arg)
+;  foreach(rtrn getCollection(rts->rtrans)
+;    translate(rtrn arg)
+;  );foreach
+;  translate(rts->rtran arg)
+;);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

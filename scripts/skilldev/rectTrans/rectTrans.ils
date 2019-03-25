@@ -1,10 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  rectTrans.ils: container class for rectTran 
+; rectTrans.ils: Container class for a collection of rectTran objects.
+;                Also has a member which is the
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defclass( rectTrans (cadObj)
+defclass( rectTrans (rectTran)
   (
     ( rtrans @reader getRtrans )
-    ( rtran @reader getRectTran )		  
+;    ( rtran @reader getRectTran )		  
   )
 );defclass
 ;#####################################################
@@ -12,7 +13,7 @@ defclass( rectTrans (cadObj)
 ;#####################################################
 defmethod( initializeInstance @after ((obj rectTrans)) 
   obj->rtrans = makeInstance( 'collection )
-  obj->rtran = makeInstance( 'rectTran )
+;  obj->rtran = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Add rectTran object to rectTrans collection
@@ -29,26 +30,31 @@ defmethod( rtsAdd ((rts rectTrans) arg)
 ; in the  geometry
 ;#####################################################
 defmethod( rtsUnion (( rts rectTrans ))
+  rts->ur = list(0.0 0.0)
+  rts->ll = list(0.0 0.0)
   foreach( rt getCollection(rts->rtrans)
     if(!null(rt->bbox) then
-      union(rts->rtran rt)
+       union(rts rt)
+;      union(rts->rtran rt)
     else
       println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
     );if
   );foreach 
-  if(!null(rts->rtran->bbox) then
-    calculateCentroid(rts->rtran)
+  rtran2bbox(rts)
+;  if(!null(rts->rtran->bbox) then
+   if(!null(rts->bbox) then
+    calculateCentroid(rts)
   );if
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Translates a rectran and rectrans
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( translate (( rts rectTrans ) arg)
-  foreach(rtrn getCollection(rts->rtrans)
-    translate(rtrn arg)
-  );foreach
-  translate(rts->rtran arg)
-);defmethod
+;defmethod( translate (( rts rectTrans ) arg)
+;  foreach(rtrn getCollection(rts->rtrans)
+;    translate(rtrn arg)
+;  );foreach
+;  translate(rts->rtran arg)
+;);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

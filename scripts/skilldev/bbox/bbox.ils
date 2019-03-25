@@ -173,7 +173,7 @@ defmethod( bb2vert (( bb bbox ))
 ;      minllx = apply( 'min llxList )
 ;      minlly = apply( 'min llyList )
 ;      minllx = apply( 'max urxList )
-;      minlly = apply( 'max uryList )
+;;      minlly = apply( 'max uryList )
 ;  );let
 ;);defMethod
 
