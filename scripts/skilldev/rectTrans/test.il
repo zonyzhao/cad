@@ -60,16 +60,17 @@ rtsUnion(rts)
 ; UT-2: Translate the union of the
 ;       three rtran objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-translate(rt2 list(25.0 25.0))
-getCentroid(rt2)
-getUr(rt2)
-getLl(rt2)
+translate(rts list(25.0 25.0))
+getCentroid(rts)
+getUr(rts)
+getLl(rts)
+getBbox(rts)
 
 name="rtranSTestTranslate"
 lib = "test"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
-setRef(rt cv)
-render(rt)
+setRef(rts cv)
+render(rts)
 dbSave(cv)
 dbClose(cv)
 
