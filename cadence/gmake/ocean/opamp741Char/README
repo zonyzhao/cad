@@ -1,0 +1,68 @@
+Description
+===========
+Contains several scripts to characterize an opamp for spectre
+
+Definition of the Files
+=======================
+
+README
+    This file.
+
+dc.ocn
+    This script runs dc analysis and uses calculator functions to determine:
+    - Operating range of large signal. 
+    - Offset voltage
+    - Input offset current 
+    - Input bias current
+    - Static power dissipation
+    - DC gain in common mode 
+    - DC gain in differential mode
+
+ac.ocn
+    This script runs ac analysis and uses calculator functions to determine:
+    - Bandwidth (BW)
+    - Gain bandwidth product (GBW)
+    - Phase margin (PM)
+    - Differential mode input resistance
+    - Common mode input resistance
+    - Differential gain and phase 
+    - Common gain and phase 
+    - CMRR
+
+tran.ocn
+    This script runs tran analysis and uses calculator functions to determine:
+    - Rise/fall time
+    - Slew rate
+    - Overshoot
+    - Settling time
+
+noise.ocn
+    This script runs noise analysis.
+
+rout.ocn
+    This script runs dc analysis to find out output resistance.
+
+ilimit.ocn
+    This script runs ac analysis to find out short circuit current limiting.
+
+opampTest.ocn
+    The ocean script which loads in all the above characterization scripts.
+
+
+Data
+======================
+
+Netlist file
+./design/netlist
+and
+./design/netlistHeader (empty file, required)
+./design/netlistFooter (empty file, required)
+
+The models. 
+./models/models.m
+
+The other include files.
+./models/definition.scs
+
+The results.
+./opampResults.out

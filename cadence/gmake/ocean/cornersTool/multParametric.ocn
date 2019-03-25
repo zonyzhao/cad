@@ -1,0 +1,23 @@
+;
+; Enable multiple model style
+;
+envSetVal( "spectre.envOpts" "includeStyle" 'boolean t)
+
+simulator( 'spectre )
+design( "foldedCascode/netlist/netlist" )
+analysis( 'ac ?start 1 ?stop 1G ?dec 30 )
+desVar( "idc" 20u 
+	"vss" -3 
+	"vdd" 3 
+	"vppsrr" 0 
+	"vnpssr" 0 
+	"cmrr" 0 
+	"acIn" 1 
+	"Cload" 200f 
+	)
+
+loadPcf( "./CORNERS/multipleParametric.pcf" )
+cornerRun()
+ 
+cornerMeas()
+

@@ -1,0 +1,41 @@
+
+Description
+===========
+Simple corners analysis.
+
+Definition of the Files
+=======================
+
+README
+    This file.
+
+Corner.ocn
+    This script runs the Corners analysis by simply switching the model paths.
+
+Data
+======================
+
+The design.  (The (raw) spectreS netlist.)
+./design/inv2.c  
+./design/inv2_schematic.s
+
+The models. 
+./nmos/max
+./nmos/typ
+./nmos/min
+./pmos/max
+./pmos/typ
+./pmos/min
+
+Additional Information
+=======================
+ 
+These tests all use 'simulator' net/inst names.
+The tests can also use 'schematic' names.  If the script is
+generated from Artist, schematic names will be used.
+If schematic names are used, then you MUST also have the
+Artist-generated amap directory in your design (neltist)
+directory.
+ 
+This test does not include /design/amap, because simulator names
+are used.

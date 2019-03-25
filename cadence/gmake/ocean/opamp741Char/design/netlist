@@ -1,0 +1,69 @@
+subckt opamp_g1 inm inp out 
+    v27 (0 net12) vsource  type=dc dc=15.0 
+    v6 (net30 0) vsource  type=dc dc=15.0 
+    c5 (net63 net42) capacitor c=30e-12 m=1.0  
+    r36 (net9 net12) resistor  isnoisy=yes r=5e3 m=1.0  
+    r33 (net11 net85) resistor  isnoisy=yes r=7.5e3 m=1.0  
+    r32 (net13 net12) resistor  isnoisy=yes r=Rpb(20e-6,4e-6) m=1.0  
+    r30 (out net86) resistor  isnoisy=yes r=50.0 m=1.0  
+    r26 (net17 net12) resistor  isnoisy=yes r=Rpb(20e-6,4e-6) m=1.0  
+    r21 (net11 net63) resistor  isnoisy=yes r=4.5e3 m=1.0  
+    r18 (net21 net12) resistor  isnoisy=yes r=50.0 m=1.0  
+    r16 (net23 net12) resistor  isnoisy=yes r=50e3 m=1.0  
+    r11 (net25 net59) resistor  isnoisy=yes r=39e3 m=1.0  
+    r9 (net27 net12) resistor  isnoisy=yes r=50e3 m=1.0  
+    r2 (net29 out) resistor  isnoisy=yes r=25.0 m=1.0  
+    q35 (net30 net54 net23)  npn  region=fwd m=1.0  
+    q34 (net85 net42 net27)  npn  region=fwd m=1.0  
+    q31 (net63 net29 out)  npn  region=fwd m=1.0  
+    q25 (net39 inp net80)  npn  region=fwd m=1.0  
+    q24 (net42 net21 net12)  npn  region=fwd m=1.0  
+    q23 (net30 net63 net29)  npn  region=fwd m=1.0  
+    q22 (net42 net23 net17)  npn  region=fwd m=1.0  
+    q17 (net85 net27 net21)  npn  region=fwd m=1.0  
+    q14 (net54 net23 net13)  npn  region=fwd m=1.0  
+    q10 (net57 net59 net9)  npn  region=fwd m=1.0  
+    q8 (net59 net59 net12)  npn  region=fwd m=1.0  
+    q7 (net63 net11 net85)  npn  region=fwd m=1.0  
+    q1 (net39 inm net83)  npn  region=fwd m=1.0  
+    q29 (net39 net39 net30)  pnp  region=fwd m=1.0  
+    q28 (net63 net25 net30)  pnp  region=fwd m=1.0  
+    q19 (net25 net25 net30)  pnp  region=fwd m=1.0  
+    q15 (net54 net57 net80)  pnp  region=fwd m=1.0  
+    q13 (net42 net57 net83)  pnp  region=fwd m=1.0  
+    q3 (net12 net85 net86)  pnp  region=fwd m=1.0  
+    q0 (net57 net39 net30)  pnp  region=fwd m=1.0  
+ends opamp_g1
+
+i1 (out6 0) isource  type=dc mag=1.0 m=1.0 
+r3 (out4 0) resistor  isnoisy=yes r=R2_load m=1.0  
+r0 (out5 0) resistor  isnoisy=yes r=R1_load m=1.0  
+r2 (out8 0) resistor  isnoisy=yes r=1e3 m=1.0  
+c0 (out5 0) capacitor c=C_load m=1.0  
+v0 (net35 0) vsource  type=pulse dc=0.0 mag=1.0 val0=vpulse_1 \
+	val1=vpulse_2 period=period delay=0.0 rise=rise_t fall=fall_t \
+	width=p_width 
+v1 (net40 0) vsource  type=pulse dc=0.0 mag=1.0 val0=vpulse_1 \
+	val1=vpulse_2 period=period delay=0.0 rise=rise_t fall=fall_t \
+	width=p_width 
+v9 (net67 net68) vsource  type=sine dc=0.0 mag=vsin_ac phase=0.0 \
+	sinedc=0.0 ampl=vsin_dc freq=vsin_f noisevec=[  0.0 0.0 ] 
+v7 (net33 net74) vsource  type=sine dc=0.0 mag=vsin_ac phase=0.0 \
+	sinedc=0.0 ampl=vsin_dc freq=vsin_f 
+v6 (net37 0) vsource  type=sine dc=0.0 mag=vsin_ac phase=0.0 sinedc=0.0 \
+	ampl=vsin_dc freq=vsin_f 
+xi51 (0 net67 out8) opamp_g1 
+xi42 (out5 net40 out5) opamp_g1 
+xi39 (out4 net35 out4) opamp_g1 
+xi36 (0 net33 out1) opamp_g1 
+xi45 (out6 0 out6) opamp_g1 
+xi32 (net37 net70 out2) opamp_g1 
+xi0 (net53 net57 out) opamp_g1 
+e1 (net53 net58 net55 0) vcvs gain=-500e-3  
+e0 (net57 net58 net55 0) vcvs gain=500e-3  
+v20 (net74 0) vsource  type=dc dc=vos xfmag=1.0 
+v19 (0 net68) vsource  type=dc dc=1.09e-3 xfmag=1.0 
+v10 (0 net64) vsource  type=dc dc=vos xfmag=1.0 
+vdm (net55 net64) vsource  type=dc dc=vin_dc mag=vin_ac xfmag=1.0 
+vcm (net58 0) vsource  type=dc dc=vcm_dc mag=vcm_ac 
+v21 (net70 net37) vsource  type=dc dc=vos xfmag=1.0 

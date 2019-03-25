@@ -1,0 +1,73 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; load("basic.ocn")
+; sklint(?file "basic.ocn")
+;
+; nfet parametric test ocean script
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+simulator( 'spectre )
+design(	 "/users/1127110/simulation/nfet/spectre/schematic/netlist/netlist")
+resultsDir( "/users/1127110/simulation/nfet/spectre/schematic" )
+modelFile( 
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/allModels.scs" "tt")
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/design.scs" "")
+    '("/scratch/IBM_PDK/bicmos8hp/relHP/Spectre/models/wafer.scs" "")
+)
+analysis('dc ?saveOppoint t  ?param "Vg"  ?start "0"  
+		?stop "1.2"  ?step "0.1"  )
+desVar(	  "wireopt" 411	)
+desVar(	  "Vd" 1.2	)
+desVar(	  "Vg" 0.6	)
+envOption(
+	'analysisOrder  list("dc") 
+)
+saveOption( 'currents "all" )
+saveOption( 'pwr "all" )
+saveOption( 'save "all" )
+temp( 27 ) 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Parametric Loops For Easily Displaying Plots within Cadence
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+paramAnalysis( "Vg" ?start 0 ?stop 1.2 ?step 0.1 )
+paramRun()
+
+gm = pv("T0" "gm" ?result "dcOpInfo")
+id = mag(i("/Vd/PLUS" ?result "dcOp" ?resultsDir "/users/1127110/simulation/nfet/spectre/schematic/psf"))
+vt = pv("T0" "vth" ?result "dcOpInfo")
+ro = (1.0 / pv("T0" "gds" ?result "dcOpInfo"))
+avo = (gm * ro)
+
+
+plot( vt ?expr '( "vt" ) )
+yLimit(list(0.0 1.2))
+addSubwindow()
+plot( gm ?expr '( "gm" ) )
+plot( Id ?expr '( "id" ) )
+addSubwindow()
+plot( ro ?expr '( "ro" ) )
+yLimit(list(0.0 5e5))
+addSubwindow()
+plot( avo ?expr '( "avo" ) )
+yLimit(list(0.0 50.0))
+newWindow()
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Parametric Loops For DataFile generation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+vgsMin = 0
+vgsMax = 12
+vgsInc = 0.1
+
+gmList = list()
+IdList = list()
+vtList = list()
+for(i vgsMin vgsMax
+  vgs = i*vgsInc
+  desVar("Vg" vgs)
+  run()
+  gmList = append(pv("T0" "gm" ?result "dcOpInfo") gmList)
+  IdList = append(mag(i("/Vd/PLUS" ?result "dcOp" ?resultsDir "/users/1127110/simulation/nfet/spectre/schematic/psf")) IdList)
+  vtList = append(pv("T0" "vth" ?result "dcOpInfo") vtList)
+);for
+

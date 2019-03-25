@@ -1,0 +1,24 @@
+simulator lang=spice
+
+* VTI Level=2 fastN/fastP model
+.model nmos nmos level=2 
++ vto=0.65 
++ tox=370e-10 
++ nsub=6.0e+15
++ xj=0.15U 
+*+ ld=0.20U 
++ ld=0.325U
++ u0=680 
++ ucrit=0.62e5 
++ uexp=0.125 
++ vmax=5.1e4
++ neff=4.0 
++ delta=1.4 
++ rsh=34 
++ cgso=1.80e-10 
++ cgdo=1.8e-10
++ cj=175U 
++ cjsw=460P 
++ mj=0.76 
++ mjsw=0.30 
++ pb=0.8

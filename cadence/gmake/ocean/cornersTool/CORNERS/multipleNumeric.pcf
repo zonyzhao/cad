@@ -1,0 +1,76 @@
+
+corAddProcess( "multipleNumeric" "./CORNERS" "multipleNumeric" )
+corAddProcessVar(    "multipleNumeric" "polyRho" )
+corSetProcessVarVal( "multipleNumeric" "polyRho" "50" )
+corAddProcessVar(    "multipleNumeric" "polyCap" )
+corSetProcessVarVal( "multipleNumeric" "polyCap" "1" )
+corAddGroupAndVariantChoices( "multipleNumeric" "pmos" '("slow" "typ" "fast") )
+corAddGroupAndVariantChoices( "multipleNumeric" "nmos" '("slow" "typ" "fast") )
+
+corAddCorner( "multipleNumeric" "slowslow" )
+corSetCornerGroupVariant( "multipleNumeric" "slowslow" "nmos" "slow" )
+corSetCornerGroupVariant( "multipleNumeric" "slowslow" "pmos" "slow" )
+corSetCornerNomTempVal( "multipleNumeric" "slowslow" 27 )
+corSetCornerRunTempVal( "multipleNumeric" "slowslow" 125 )
+corSetCornerVarVal( "multipleNumeric" "slowslow" "polyCap" "1.2" )
+corSetCornerVarVal( "multipleNumeric" "slowslow" "polyRho" "60" )
+
+corAddCorner( "multipleNumeric" "fastslow" )
+corSetCornerGroupVariant( "multipleNumeric" "fastslow" "nmos" "slow" )
+corSetCornerGroupVariant( "multipleNumeric" "fastslow" "pmos" "fast" )
+corSetCornerNomTempVal( "multipleNumeric" "fastslow" 27 )
+corSetCornerRunTempVal( "multipleNumeric" "fastslow" 125 )
+corSetCornerVarVal( "multipleNumeric" "fastslow" "polyCap" "1" )
+corSetCornerVarVal( "multipleNumeric" "fastslow" "polyRho" "40" )
+
+corAddCorner( "multipleNumeric" "typtyp" )
+corSetCornerGroupVariant( "multipleNumeric" "typtyp" "nmos" "typ" )
+corSetCornerGroupVariant( "multipleNumeric" "typtyp" "pmos" "typ" )
+corSetCornerNomTempVal( "multipleNumeric" "typtyp" 27 )
+corSetCornerRunTempVal( "multipleNumeric" "typtyp" 27 )
+corSetCornerVarVal( "multipleNumeric" "typtyp" "polyCap" "1.2" )
+corSetCornerVarVal( "multipleNumeric" "typtyp" "polyRho" "60" )
+
+corAddCorner( "multipleNumeric" "slowfast" )
+corSetCornerGroupVariant( "multipleNumeric" "slowfast" "nmos" "fast" )
+corSetCornerGroupVariant( "multipleNumeric" "slowfast" "pmos" "slow" )
+corSetCornerNomTempVal( "multipleNumeric" "slowfast" 27 )
+corSetCornerRunTempVal( "multipleNumeric" "slowfast" 125 )
+corSetCornerVarVal( "multipleNumeric" "slowfast" "polyCap" "1.2" )
+corSetCornerVarVal( "multipleNumeric" "slowfast" "polyRho" "60" )
+
+corAddCorner( "multipleNumeric" "fastfast" )
+corSetCornerGroupVariant( "multipleNumeric" "fastfast" "nmos" "fast" )
+corSetCornerGroupVariant( "multipleNumeric" "fastfast" "pmos" "fast" )
+corSetCornerNomTempVal( "multipleNumeric" "fastfast" 27 )
+corSetCornerRunTempVal( "multipleNumeric" "fastfast" -55 )
+corSetCornerVarVal( "multipleNumeric" "fastfast" "polyCap" "800m" )
+corSetCornerVarVal( "multipleNumeric" "fastfast" "polyRho" "40" )
+
+corAddMeas( "DCgain" )
+corSetMeasExpression( "DCgain" "ymax(db20(VF(\"vout\")))" )
+corSetMeasEnabled( "DCgain" t )
+corSetMeasGraphicalOn( "DCgain" t )
+corSetMeasTextualOn( "DCgain" nil )
+
+
+corAddMeas( "bandwidth" )
+corSetMeasExpression( "bandwidth" "bandwidth(VF(\"vout\") 3 \"low\")" )
+corSetMeasEnabled( "bandwidth" t )
+corSetMeasGraphicalOn( "bandwidth" t )
+corSetMeasTextualOn( "bandwidth" nil )
+
+
+corAddMeas( "gain" )
+corSetMeasExpression( "gain" "dB20(VF(\"vout\"))" )
+corSetMeasEnabled( "gain" t )
+corSetMeasGraphicalOn( "gain" t )
+corSetMeasTextualOn( "gain" nil )
+
+
+corAddMeas( "phase" )
+corSetMeasExpression( "phase" "phase(VF(\"vout\"))" )
+corSetMeasEnabled( "phase" t )
+corSetMeasGraphicalOn( "phase" t )
+corSetMeasTextualOn( "phase" nil )
+

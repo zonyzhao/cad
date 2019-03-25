@@ -1,0 +1,29 @@
+;rout1.ocn
+
+
+option('useprobes "yes" )
+keep( 'v "out6" )
+keep( 'alli )
+
+fprintf(fp "\n\nclosed loop Rout\n")
+
+; use short circuit current limitation (30mA) calculated from swing.ocn.
+
+analysis('dc ?oppoint ""  ?save "" ?dev "i1"  ?param "dc"  
+		?start "0"  ?stop "30m"  )
+
+run()
+selectResults("dc")
+
+Vout = v("out6")
+Iout = i("i1:sink")
+Rout_closed = mag(Vout/Iout)
+
+ocnPrint( ?output fp Rout_closed )
+
+;newWindow()
+;plot( Rout_closed)
+
+delete('analysis 'dc)
+
+; end of file

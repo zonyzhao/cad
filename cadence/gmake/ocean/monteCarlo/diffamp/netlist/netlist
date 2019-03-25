@@ -1,0 +1,11 @@
+
+// Library name: aExamples
+// Cell name: diffamp
+// View name: schematic
+J5 (_net4 0) isource dc=1m type=dc
+E4 (_net3 0) vsource dc=5 type=dc
+E1 (_net2 0) vsource dc=12 type=dc
+R1 (_net2 _net1) RPLR Rnom=4K WB=10
+R0 (_net2 _net0) RPLR Rnom=4K WB=5
+TNSA2 (_net1 _net3 _net4 0) TNSA WE=10 LE=10
+TNSA1 (_net0 _net3 _net4 0) TNSA WE=10 LE=10

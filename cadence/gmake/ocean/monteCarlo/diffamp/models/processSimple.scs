@@ -1,0 +1,61 @@
+simulator lang=spectre
+// Define process parameters, including mismatch effects
+parameters RSHSP=200 RSHPI=5k           // sheet resistance, pinched sheet res
++          SPDW=0 SNDW=0                // etching variation from ideal
++          XISN=1 XBFN=1 XRSP=1         // device "mismatch" parameters
++          XISNafac=100m XISNbfac=1m    // IS scaling factors for mismatch eqns
++          XBFNafac=100m XBFNbfac=1m    // BF    "       "     "     "       "
++          XRSPafac=100m XRSPbfac=1m    // RS    "       "     "     "       "
++          RSHSPnom=200 RSHPInom=5k     // sheet resistance nominal values
++          FRSHPI=RSHPI/RSHPInom        // ratio of PI sheet res to nominal
+
+// 	Define "simple" bipolar and resistor devices...
+// 	Define a "base" TNSA subckt i.e
+// 	Define a simple "TNSA" bipolar transistor subcircuit, with model 
+// 	card
+inline subckt TNSA_B (C B E S)
+  parameters MULT=1 IS=1e-15 BF=100
+  model modX bjt type=npn is=IS bf=BF   // a model card
+  TNSA_B (C B E S) modX m=MULT          // "inline" device instance
+ends TNSA_B
+
+// Define a "base" resistor
+// A simple "RPLR" resistor subcircuit
+inline subckt RPLR_B (A B)
+  parameters R MULT=1
+  RPLR_B (A B) resistor r=R m=MULT              // "inline" device
+ends RPLR_B
+
+// 	Define process/geometry dependent bipolar and resistor devices..
+// 	Define a "geometrical/process" TNSA subckt
+// 	Define BJT subcircuit, with process and geometry effects modeled
+// 	Bipolar model parameters IS and BF are functions of the
+//	effective emitter area/perimeter taking process factors 	
+//	(e.g 	non-ideal etching) into account
+
+inline subckt TNSA_PR (C B E S)
+  parameters WE LE MULT=1 dIS=0 dBF=0
++            WEA=WE+SNDW        // effective or "Actual" emitter width
++            LEA=LE+SNDW        // effective or "Actual" emitter length
++            AE=WEA*LEA         // effective emitter area
++            IS=1e-18*FRSHPI*AE*(1+(XISNafac/sqrt(AE)+XISNbfac)
++                             *(dIS/2+XISN-1)/sqrt(MULT))
++            BF=100*FRSHPI*(1+(XBFNafac/sqrt(AE)+XBFNbfac)
++                             *(dBF/2+XBFN-1)/sqrt(MULT))
+
+  TNSA_PR (C B E S) TNSA_B IS=IS BF=BF MULT=MULT        // "inline"
+ends TNSA_PR
+
+// Define a "geometrical/process" RPLR resistor subckt
+// Resistance is function of effective device geometry, taking
+// process factors (e.g non-ideal etching) into account
+inline subckt RPLR_PR (A B)
+  parameters Rnom WB MULT=1 dR=0
++            LB=Rnom*WB/RSHSPnom
++            AB=LB*(WB+SPDW)
+
+  RPLR_PR (A B) RPLR_B R=RSHSP*LB/(WB+SPDW)*(1+(XRSPafac/sqrt(AB)+XRSPbfac)
++                             *(dR/2+XRSP-1)/sqrt(MULT))
+
+ends RPLR_PR
+

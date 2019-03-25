@@ -1,0 +1,16 @@
+real PiRho() {
+    return 2500;
+}
+
+real PbRho() {
+    return 200;
+}
+
+real Rpb(real l, real w) {
+    return PbRho()*l/w;
+}
+
+real Rpi(real l,real w) {
+    return PiRho()*l/w;
+}
+

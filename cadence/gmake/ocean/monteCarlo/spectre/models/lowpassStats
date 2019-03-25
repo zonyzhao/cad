@@ -1,0 +1,19 @@
+simulator lang=spectre
+
+statistics {
+       process {
+               vary PiRho     dist=gauss std=250
+               vary PbRho     dist=gauss std=40
+               vary npnbeta   dist=gauss std=20
+               vary pnpbeta   dist=gauss std=20
+               vary rin1      dist=gauss std=10
+               vary cin       dist=gauss std=20p
+               vary rin2      dist=gauss std=100
+               vary cloop     dist=gauss std=16p
+               vary rout1     dist=gauss std=30
+               vary rout2     dist=gauss std=50
+       }
+       mismatch { 
+               vary stat dist=gauss std=.01
+       }
+}

@@ -1,0 +1,53 @@
+
+; ========================
+; Simple Corner's Script
+; ========================
+
+; General set-up
+simulator( 'spectreS )
+design("./design/inv2.c")
+analysis('tran ?stop 3e-6)
+desVar("a" 1)
+
+; typ corners
+path( "./nmos/typ" "./pmos/typ" )
+resultsDir( "./psf/typ" )
+run()
+selectResults( 'tran )
+plot(v("out") )
+
+; min corners
+path( "./nmos/min" "./pmos/min" )
+resultsDir( "./psf/min" )
+run()
+selectResults( 'tran )
+clearAll()
+plot(v("out") )
+
+; max corners
+path( "./nmos/max" "./pmos/max" )
+resultsDir( "./psf/max" )
+run()
+selectResults( 'tran )
+clearAll()
+plot(v("out") )
+
+; Plot all as a family
+; Note: We plan to have a 'nice' ocean command to do this
+; in the future.
+; Note: Also, if the above clearAll() commands are removed, each 
+; plot will overlay on the other, doing the same as below.
+
+; Note: graphicsOff()/graphicsOn() helps eliminates the redraw for each plot.
+;       When graphicsOn() is called, the completed plot appears.
+
+clearAll()
+graphicsOff()
+corners = list("typ" "min" "max")
+foreach( var  corners
+   openResults( sprintf( nil "./psf/%s" var ))
+   selectResults( 'tran )
+   plot(v("out"))
+)
+graphicsOn()
+

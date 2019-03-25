@@ -1,0 +1,16 @@
+// Provides the designer with "geometrical" device interface
+simulator lang=spectre
+// Call to the geometrical TNSA model
+inline subckt TNSA (C B E S)
+  parameters WE=1u LE=1u MULT=1 dIS=0 dBF=0
+  TNSA (C B E S) TNSA_PR WE=WE LE=LE \
+                 MULT=MULT dIS=dIS dBF=dBF      // call TNSA_PR
+ends TNSA
+
+// Call to the geometrical RPLR model
+inline subckt RPLR (A B)
+  parameters Rnom=1 WB=10u MULT=1 dR=0
+  RPLR (A B) RPLR_PR Rnom=Rnom WB=WB \
+             MULT=MULT dR=dR                    // call RPLR_PR
+ends RPLR
+

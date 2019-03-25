@@ -1,0 +1,20 @@
+
+set nvto=0.9
+set ntox=430e-10
+set nnsub=1.0e+16
+set nxj=0.15U
+set nld=0.075U
+set nu0=620
+set nucrit=0.62e5
+set nuexp=0.125
+set nvmax=5.1e4
+set nneff=4.0
+set ndelta=1.4
+set nrsh=38
+set ncgso=2.10e-10
+set ncgdo=2.10e-10
+set ncj=215U
+set ncjsw=540P
+set nmj=0.76
+set nmjsw=0.30
+set npb=0.8

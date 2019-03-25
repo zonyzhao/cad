@@ -1,0 +1,21 @@
+
+.model &1 pmos level=2 &
+vto=pvto &
+tox=ptox &
+nsub=pnsub &
+xj=pxj &
+ld=pld &
+u0=pu0 &
+ucrit=pucrit &
+uexp=puexp &
+vmax=pvmax &
+neff=pneff &
+delta=pdelta &
+rsh=prsh &
+cgso=pcgso &
+cgdo=pcgdo &
+cj=pcj &
+cjsw=pcjsw &
+mj=pmj &
+mjsw=pmjsw &
+pb=ppb

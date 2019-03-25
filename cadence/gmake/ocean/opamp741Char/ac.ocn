@@ -1,0 +1,62 @@
+;ac.ocn
+
+
+option('useprobes "yes" )
+keep( 'alli )
+
+fprintf(fp "\n\n Diff Mode...\n")
+
+analysis('ac ?start 1 ?stop 100M)
+
+run()
+
+; Differential mode gain, BW, GBW, UGBW, PM and input resistance
+
+selectResults("ac")
+Vind = v("net33") - v("net74")
+Iind = i("xi36.q25:b") - i("xi36.q1:b")
+Voutd = v("out1")
+Rind = Vind / Iind
+Rind_v = mag(value(Rind 'freq 1))
+Ad = Voutd / Vind 
+
+newWindow()
+plot( Rind db20(Ad) phase(Ad))
+displayMode("strip")
+ocnPrint(?output fp Rind db20(Ad) phase(Ad) )
+
+BW = bandwidth(Voutd ,3,"low")
+GBW = gainBwProd(Voutd)
+PM = phaseMargin(Voutd)
+
+; Common Mode gain and input resistance
+
+Vinc = v("net37")
+Iinc = i("xi32.q25:b") - i("xi32.q1:b")
+
+Voutc = v("out2")
+Rinc = Vinc / Iinc
+Rinc_v = mag(value(Rinc 'freq 1))
+Ac = Voutc / Vinc
+
+newWindow()
+ocnPrint( ?output fp Rinc db20(Ac) phase(Ac) )
+plot( Rinc db20(Ac) phase(Ac) )
+displayMode("strip")
+
+; Common mode rejection ratio 
+
+CMRR = Ad / Ac
+ocnPrint(?output fp dB20(CMRR) )
+plot(dB20(CMRR))
+
+fprintf(fp "\n\n")
+fprintf(fp " Bandwidth at -3db is %10.6f Hz\n" BW)
+fprintf(fp " Gain bandwidth product is %10.6f Hz\n" GBW)
+fprintf(fp " Phase Margin is %10.6f DEG\n" PM)
+fprintf(fp " Diff Mode Input resistance at low freq is: %10.6f ohms\n" Rind_v)
+fprintf(fp " Common Mode Input resistance at low freq is: %10.6f ohms\n" Rinc_v)
+
+delete('analysis 'ac)
+
+; end of file

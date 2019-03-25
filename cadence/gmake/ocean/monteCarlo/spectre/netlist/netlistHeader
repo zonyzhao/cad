@@ -1,0 +1,7 @@
+// Generated for: spectre
+// Generated on: Sep 30 16:38:48 1998
+// Design library name: Artist_Test
+// Design cell name: low_nat_stat
+// Design view name: schematic
+simulator lang=spectre
+global 0 vcc! vee!

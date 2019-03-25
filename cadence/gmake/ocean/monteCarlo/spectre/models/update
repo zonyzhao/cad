@@ -1,0 +1,3 @@
+simulator lang=spectre
+
+parameters PiRho=2500 PbRho=200 stat=1 npnbeta=145.5 pnpbeta=200 initstat=1

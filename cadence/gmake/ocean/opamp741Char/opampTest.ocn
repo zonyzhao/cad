@@ -1,0 +1,88 @@
+; opampTest
+
+simulator( 'spectre )
+design(	 "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/design/netlist")
+path( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/models" )
+
+;open output port for writing out resuts to a file
+fp=outfile("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/opampResults.out" "a" )
+
+; set up the definition files
+definitionFile( "definitions.scs" )
+
+; set up the model files
+modelFile( "models.m" )
+
+; initialize design variables
+; note: this can be done in one desVar command
+desVar(	  "vin_dc" 0 	)
+desVar(	  "vin_ac" 0 	)
+desVar(	  "vcm_dc" 0	)
+desVar(	  "vcm_ac" 0	)
+desVar(	  "vos" 0	)
+
+desVar(	  "vsin_ac" 0	)
+desVar(	  "vsin_dc" 0	)
+desVar(	  "vsin_f" 0	)
+
+desVar(   "vpulse_1" -10m  )
+desVar(   "vpulse_2" 10m )
+desVar(   "period" 100u  )
+desVar(   "p_width" 50u  )
+desVar(   "fall_t" 10n  )
+desVar(   "rise_t" 30n  )
+
+desVar(   "R1_load" 10k )
+desVar(   "R2_load" 0 )
+desVar(   "C_load" 10p )
+
+; set the temperature
+option(	'temp  "25" )
+
+; save all nets and currents
+save('all)
+
+; dc.ocn
+fprintf(fp "\n\n*********RESULTS FROM dc.ocn************\n\n")
+resultsDir( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/psf/dc" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/dc.ocn")
+
+; ac.ocn
+fprintf(fp "\n\n*********RESULTS FROM ac.ocn************\n\n")
+desVar(   "vos" -1.0981931m        )
+desVar(	  "vsin_ac" 100m	)
+desVar(	  "vsin_dc" 100m	)
+desVar(	  "vsin_f" 1	)
+resultsDir( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/psf/ac" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/ac.ocn")
+
+; tran.ocn
+fprintf(fp "\n\n*********RESULTS FROM tran.ocn************\n\n")
+resultsDir( "//users/1127110/cad/cadence/gmake/ocean/opamp741Charpsf/tran" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/tran.ocn")
+
+; ilimit.ocn
+fprintf(fp "\n\n*********RESULTS FROM ilimit.ocn************\n\n")
+resultsDir( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/psf/ilimit" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/ilimit.ocn")
+
+; rout.ocn
+fprintf(fp "\n\n*********RESULTS FROM rout.ocn************\n\n")
+desVar(   "vpulse_1" 5  )
+desVar(   "vpulse_2" -5  )
+desVar(   "period" 200u  )
+desVar(   "p_width" 100u  )
+desVar(   "rise_t" 1n )
+desVar(   "fall_t" 1n )
+resultsDir( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/psf/rout" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/rout.ocn")
+
+; noise.ocn
+fprintf(fp "\n\n*********RESULTS FROM noise.ocn************\n\n")
+resultsDir( "/users/1127110/cad/cadence/gmake/ocean/opamp741Char/psf/noise" )
+load("/users/1127110/cad/cadence/gmake/ocean/opamp741Char/noise.ocn")
+
+
+close(fp)
+
+;end of file

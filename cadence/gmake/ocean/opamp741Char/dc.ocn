@@ -1,0 +1,181 @@
+;dc.ocn
+
+; sweep temperature
+
+analysis('dc ?oppoint "rawfile"  ?save "allpub"  ?param "temp"  
+		?start "-50"  ?stop "100"  )
+
+run()
+selectResults('dc)
+
+; Input offset Current:
+
+Ios=i("e0:p")-i("e1:p")
+Ios_25=value(i("e0:p") 'temp 25) - value(i("e1:p") 'temp 25)
+
+; Input bias Current:
+
+Ibias=0.5*(i("e0:p")+i("e1:p"))
+Ibias_25=0.5*(value(i("e0:p") 'temp 25) + value(i("e1:p") 'temp 25))
+
+ocnPrint(?output fp Ibias Ios)
+
+plot(Ibias Ios)
+displayMode("strip")
+
+; set up the dc analysis
+
+analysis('dc ?oppoint "rawfile"  ?save "allpub"  ?dev "vdm"  
+		?param "dc"  ?start "-2.5m"  ?stop "30u"  )
+
+
+run()
+selectResults("dc")
+
+
+; create 2nd derivative to find limit of linear range
+; the x-points corresponding to the min and max y values of the 2nd
+; derivative are approximately the limits of the linear range
+
+fprintf(fp "calculate operating range...\n")
+
+; need to deriv twice to get DC operation range
+
+dx = deriv(deriv(v("out")))
+dx1 = clip(dx,-2.5m,-1.0m)
+dx2 = clip(dx,-1.0m,-200u)
+
+ocnPrint(?output fp v("out"))
+
+newWindow()
+plot(v("out"))
+plot(dx)
+displayMode("strip")
+
+vin_1 = xmax(dx1 1)
+
+; add negative sign for the min y value 
+
+vin_2 = xmax(-dx2 1)
+
+; find the corresponding y-value (output voltage)
+
+vout_1 = value(v("out") vin_1)
+vout_2 = value(v("out") vin_2)
+
+; slope of the transfer characteristic is the small signal DC gain
+
+vout_s = vout_2 - vout_1
+vin_s = vin_2 - vin_1
+dcgain = (vout_2 - vout_1) / (vin_2 - vin_1)
+
+; find the input voltage at which the output is 0v
+; Offset voltage:
+
+dcoffset = cross( v("out") 0 1 "either")
+
+fprintf(fp "Input voltage range: %10.6f-%10.6f=%10.6f volts\n" vin_1 vin_2 vin_s)
+fprintf(fp "Output voltage range: %10.6f-%10.6f=%10.6f volts\n" vout_1 vout_2 vout_s)
+fprintf(fp "DC gain: %10.4f V/V\n" dcgain)
+fprintf(fp "Input-referred DC offset voltage: %12.10f V\n" -dcoffset)
+
+
+fprintf(fp " Recalculate DC OP point...\n" )
+
+desVar(	 "vos" -dcoffset )
+
+fprintf(fp " Differetial Mode...\n" )
+
+analysis('dc ?oppoint "rawfile"  ?save "allpub"  ?dev "vdm"  
+		?param "dc"  ?start "-1.5m"  ?stop "1.5m"  )
+
+run()
+selectResults('dc)
+
+; Power Consumption:
+
+Pd = 15*(value(i("xi0.v6:p") 'dc 0) - value(i("xi0.v27:p") 'dc 0))
+
+; create 2nd derivative to find limit of linear range
+; the x-points corresponding to the min and max y values of the 2nd
+; derivative are approximately the limits of the linear range
+
+dmx1 = deriv(deriv(clip(v("out"),0,800u)))
+dmx2 = deriv(deriv(clip(v("out"),-1.5m,0)))
+
+vin_dm1 = xmax(dmx1)
+vin_dm2 = xmax(dmx2)
+vout_dm1 = value(v("out") vin_dm1)
+vout_dm2 = value(v("out") vin_dm2)
+
+vin_dmrange = vin_dm2 - vin_dm1
+vout_dmrange = vout_dm2 - vout_dm1
+
+ocnPrint(?output fp v("out"))
+
+plot(v("out"))
+plot(dmx1)
+plot(dmx2)
+
+fprintf(fp "\n Common Mode... \n")
+
+newWindow()
+
+desVar(	 "vos" -1.2m )
+
+analysis('dc ?oppoint "rawfile"  ?save "allpub"  ?dev "vcm"  
+		?param "dc"  ?start "-15"  ?stop "15"  )
+
+run()
+selectResults('dc)
+plot(v("out"))
+
+; need to derive only once to get DC operation range in common mode
+
+cmx = deriv(v("out"))
+cm1 = clip(cmx,-20,0)
+cm2 = clip(cmx,0,20)
+
+plot(cmx)
+displayMode("strip")
+
+; put negative sign for the min peak
+
+vin_cm1 = xmax(-cm1 1)
+vin_cm2 = xmax(-cm2 1)
+
+; find the corresponding y-value (output voltage)
+
+vout_cm1 = value(v("out") vin_cm1)
+vout_cm2 = value(v("out") vin_cm2)
+
+; slope of the transfer characteristic is the large signal DC gain
+
+vout_cmrange = vout_cm2 - vout_cm1
+vin_cmrange = vin_cm2 - vin_cm1
+
+cmgain = (vout_cm2 - vout_cm1) / (vin_cm2 - vin_cm1)
+
+fprintf(fp "\n\n RESULTS:\n")
+
+fprintf(fp " Input-referred DC offset voltage: %12.10f V\n" -dcoffset)
+fprintf(fp " Static power dissipation is %10.6f W\n" Pd)
+fprintf(fp " Input bias current at 25C is %15.14f A\n" Ibias_25)
+fprintf(fp " Input offset current at 25C is %15.14f A\n" Ios_25)
+
+fprintf(fp "\n Common mode results:\n")
+
+fprintf(fp " Common mode DC gain: %10.6f V/V\n" dcgain)
+fprintf(fp " Common mode Input voltage range is %10.6f V\n" vin_cmrange)
+fprintf(fp " Common mode Output voltage range is %10.6f V\n" vout_cmrange)
+
+fprintf(fp "\n Differential mode results:\n")
+
+fprintf(fp " Diff mode DC gain: %10.4f V/V\n" dcgain)
+fprintf(fp " Diff mode Input voltage range is %10.6f V\n" vin_dmrange)
+fprintf(fp " Diff mode Output voltage range is %10.6f V\n" vout_dmrange)
+
+
+delete('analysis 'dc)
+
+; end of file

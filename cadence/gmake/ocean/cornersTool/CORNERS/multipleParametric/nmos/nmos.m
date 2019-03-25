@@ -1,0 +1,21 @@
+
+.model &1 nmos level=2 &
+vto=nvto &
+tox=ntox &
+nsub=nnsub &
+xj=nxj &
+ld=nld &
+u0=nu0 &
+ucrit=nucrit &
+uexp=nuexp &
+vmax=nvmax &
+neff=nneff &
+delta=ndelta &
+rsh=nrsh &
+cgso=ncgso &
+cgdo=ncgdo &
+cj=ncj &
+cjsw=ncjsw &
+mj=nmj &
+mjsw=nmjsw &
+pb=npb

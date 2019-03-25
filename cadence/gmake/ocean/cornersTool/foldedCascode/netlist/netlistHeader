@@ -1,0 +1,7 @@
+// Generated for: spectre
+// Generated on: Sep 18 15:26:46 1998
+// Design library name: RF_lib
+// Design cell name: foldedCascode
+// Design view name: schematic
+simulator lang=spectre
+global 0 vdd! vss!

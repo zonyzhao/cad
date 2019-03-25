@@ -1,0 +1,15 @@
+library nmosLib
+
+section nom
+include "../nmos/typ/nmos.scs"
+endsection
+
+section fast
+include "../nmos/fast/nmos.scs"
+endsection
+
+section slow
+include "../nmos/slow/nmos.scs"
+endsection
+
+endlibrary

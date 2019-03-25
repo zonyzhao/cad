@@ -1,0 +1,151 @@
+// $Source: /cvsrep/group/artistLibs/src/models/models/spectre/rfModels.scs,v $
+// $Author: p4admin $
+// $Revision: #1 $
+// $Date: 2015/09/30 $
+// $State: Exp $
+
+simulator lang=spectre
+model NPNlower bjt type=npn is=73.6e-18 bf=121 nf=1 vaf=35 ikf=96e-3 \
+   ise=2543e-18 ne=1.9 br=6.76  nr=1  var=3.2 ikr=3.56e-3 \
+   isc=2543e-18 nc=1.9 \
+   rb=33.3 irb=240e-6 rbm=1.67 re=1.83 rc=12 \
+   xtb=0.5 eg=1.2 xti=3 cje=179e-15 vje=0.895 mje=0.41 \
+   tf=11e-12 xtf=15 vtf=1.5 itf=120e-3 ptf=10 \
+   cjc=120e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+   tr=5e-9 cjs=138e-15 vjs=0.65 mjs=0.33 fc=0.875  \
+   trb1=1.05e-3 trb2=4.4e-6 trc1=1e-3 trc2=3.1e-6 tre1=0 tre2=0 \
+   bvbe=3 bvbc=14 bvsub=14 kf=0.55e-10 af=1.8 iss=1e-16
+
+model NPNupper bjt type=npn is=24.5e-18 bf=121 nf=1 vaf=35 ikf=32e-3 \
+   ise=847e-18 ne=1.9 br=3.81  nr=1  var=3.2 ikr=2e-3 \
+   isc=847e-18 nc=1.9 \
+   rb=100 irb=80e-6 rbm=5 re=3.5 rc=25 \
+   xtb=0.5 eg=1.2 xti=3 cje=59.6e-15 vje=0.895 mje=0.41 \
+   tf=11e-12 xtf=15 vtf=1.5 itf=40e-3 ptf=10 \
+   cjc=45.8e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+   tr=5e-9 cjs=75.5e-15 vjs=0.65 mjs=0.33 fc=0.875  \
+   trb1=1.05e-3 trb2=4.4e-6 trc1=1e-3 trc2=3.1e-6 tre1=0 tre2=0 \
+   bvbe=3 bvbc=14 bvsub=14 kf=1.32e-10 af=1.8 iss=1e-16
+
+model cap101 capacitor cap=1e-6
+
+model nch mos0 type=n vto=1.0 kp=12e-6 lambda=0.02 
+
+model nmos2 mos3 type=n uo=+510 kp=54.37e-6 vto=+.8577e+0 nss=+0.0e+00 \
+nfs=+649e+9 tpg=+1.0e+0 tox=+25e-09 nsub=+7.922e+16 gamma=0 phi=.6 \
+vmax=+1.797e+05 rs=0 rd=0 rsh=+65.04 \
+xj=+43.49e-09 ld=+80.48e-09 delta=+3.415e-01 theta=+38.15E-03 \
+eta=+685e-03 kappa=+2.0e-17 pb=+876.6e-03 is=100e-18 js=+1.0e-04 \
+wd=+288.8e-09 cj=+556.4e-06 mj=+457.2e-03 cjsw=+309.5e-12 \
+mjsw=+294.1e-03 cgso=+0 cgdo=+0 cgbo=+0 cbd=0 cbs=0 xqc=0.5 fc=+5.0e-01
+
+model nmos301 mos3  type=n   \
+ vto=0.725  uo=585.0  tox=23.5n  nsub=3.27e+16 \
+ nfs=3.5e+11  vmax=1.6e+05  eta=0.012  kappa=0.13  theta=0.080 \
+ delta=2.62  xj=0.08u    rsh=533.0 \
+ ld=0.250u  cgdo=2.1e-10  cgso=2.1e-10  af=1.0  kf=2.5e-28 \
+ cj=4.4e-04  mj=0.370  cjsw=3.4e-10  mjsw=0.220  pb=1.100
+
+model npn bjt type=npn is=3.26E-16 va=60 bf=100 \
+br=6 nc=2 ikr=100m rc=1 vje=0.7 \
+cjc=1e-12 fc=0.5 cje=0.7e-12 \
+tr=200e-12 tf=25e-12 itf=0.03 vtf=7 xtf=2
+
+model pch mos0 type=p vto=2.0 kp=3.5e-6 lambda=0.01
+
+model pmos2 mos3 type=p vto=-0.7 kp=13e-6 gamma=0.5 cgso=2.4e-10 \
+cgdo=2.4e-10 cj=2.66e-4 mj=0.36 cjsw=1.81e-10 mjsw=0.36 js=1e-8 \
+tox=0.025u nsub=4e15 nfs=1e10 ld=0.1u uo=200 \
+vmax=5e4 
+
+model pmos301 mos3 type=p \
+ vto=-0.925  uo=200.0  tox=23.5n  nsub=2.53e+16 \
+ nfs=1.8e+12  vmax=2.9e+05  eta=0.047  kappa=7.00  theta=0.139 \
+ delta=0.89  xj=0.14u    rsh=1102.0 \
+ ld=0.225u  cgdo=2.9e-10  cgso=2.9e-10  af=1.0  kf=2.6e-29 \
+ cj=3.1e-04  mj=0.370  cjsw=2.6e-10  mjsw=0.170  pb=0.360
+
+model pnp bjt type=pnp is=3.28e-16 va=30 bf=35 \
+br=6 nc=2 ikr=100m rc=1 \
+cjc=1e-12 fc=0.5 cje=0.7e-12 \
+tr=200e-12 tf=65e-12 itf=0.03 vtf=7 xtf=2
+
+model tp1 bjt type=pnp is=1.2e-16 bf=80 nf=1 vaf=60 ikf=4e-5 ne=1.5 \
+br=80 nr=1 var=5 ikr=5e-5 isc=0 nc=1.5 rb=100 re=15 rc=30 \
+cje=30e-15 vje=.72 mje=.45 tf=5e-10 ptf=40 cjc=60e-15 vjc=.72 \
+mjc=.45 xcjc=.9 tr=5e-10 cjs=0 vjs=.99 mjs=.99 \
+eg=1.17 fc=.5
+
+model generic_pnp bjt type=pnp is=140e-15 bf=150 nf=1.073 vaf=125 \
+ikf=0.1 ise=965e-15 ne=1.74 br=4.12 nr=1.073 \
+var=500 isc=0 nc=1 rb=7 re=0.05 rc=0.8 \
+cje=29e-12 vje=1.0 mje=0.252 tf=636e-12 \
+xtf=22.59 vtf=2.96 itf=0.158 \
+cjc=16e-12 vjc=1.91 mjc=0.633 \
+xcjc=0.5 tr=43e-9 cjs=0 xtb=2.46 \
+eg=1.11 xti=3 kf=0 af=1 fc=0.5
+
+model NPNlowerM bjt type=npn is=73.6e-18 bf=121 nf=1 vaf=35 ikf=96e-3 \
+    ise=2543e-18 ne=1.9 br=0.16  nr=1  var=3.2 ikr=3.56e-3 \
+    isc=2543e-18 nc=1.9 \
+    rb=33.3 irb=240e-6 rbm=1.67 re=1.83 rc=12 \
+    xtb=0.5 eg=1.2 xti=3 cje=179e-15 vje=0.895 mje=0.41 \
+    xtf=15 vtf=1.5 itf=120e-3 \
+    cjc=120e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+    tr=5e-10 cjs=138e-15 vjs=0.65 mjs=0.33 fc=0.875  \
+    trb1=1.05e-3 trb2=4.4e-6 trc1=1e-3 trc2=3.1e-6 tre1=0 tre2=0 \
+    bvbe=5 bvbc=28 bvsub=28 kf=1.7E-12 af=1.8 iss=1e-16 \
+    imax=2000 imax1=2000 imelt=10000
+model NPNupperM bjt type=npn is=24.5e-18 bf=121 nf=1 vaf=35 ikf=32e-3 \
+    ise=847e-18 ne=1.9 br=3.81  nr=1  var=3.2 ikr=2e-3 \
+    isc=847e-18 nc=1.9 \
+    rb=100 irb=80e-6 rbm=5 re=3.5 rc=25 \
+    xtb=0.5 eg=1.2 xti=3 cje=59.6e-15 vje=0.895 mje=0.41 \
+    xtf=15 vtf=1.5 itf=40e-3 \
+    cjc=45.8e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+    tr=5e-9 cjs=75.5e-15 vjs=0.65 mjs=0.33 fc=0.875 \
+    trb1=1.05e-3 trb2=4.4e-6 trc1=1e-3 trc2=3.1e-6 tre1=0 tre2=0 \
+    bvbe=5 bvbc=28 bvsub=28 kf=3.32e-12 af=1.8 iss=1e-16 \
+    imax=2000 imax1=2000 imelt=10000
+model gen_pnp1 bjt type=pnp is=140e-15 bf=82 nf=1.073 vaf=312 \
+ikf=52e-3 ise=965E-15 ne=1.74 br=5.12 nr=1.073 \
+var=500 isc=0 nc=1 rb=7 re=0.1 rc=0.8 \
+cje=2.9E-12 vje=1.0 mje=0.252 tf=636E-12 \
+xtf=22.59 vtf=2.96 itf=0.158 \
+cjc=1.6E-12 vjc=1.91 mjc=0.633 \
+xcjc=0.5 tr=43E-9 cjs=3.6e-12 xtb=2.46 \
+eg=1.11 xti=3 kf=0 af=1 fc=0.5 \
+imax=2000 imax1=2000 imelt=10000
+
+model bne4x bjt type=npn is=24.5e-18 bf=121 nf=1 vaf=35 ikf=23e-3 \
+ise=847e-18 ne=1.9 br=3.81 nr=1 var=3.2 ikr=2e-3 \
+isc=847e-18 nc=1.9 \
+rb=100 irb=80e-6 rbm=5 re=3.5 rc=25 \
+xtb=0.5 eg=1.2 xti=3 cje=59.6e-15 vje=0.895 mje=0.41 \
+tf=11e-12 xtf=15 vtf=1.5 itf=40e-3 ptf=10 \
+cjc=45.8e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+tr=5e-9 cjs=75.5e-15 vjs=0.65 mjs=0.33 fc=0.875 
+
+model bng12x bjt type=npn is=76.3e-18 bf=121 nf=1 vaf=35 ikf=96e-3 \
+ise=2543e-18 ne=1.9 br=6.76 nr=1 var=3.2 ikr=3.56e-3 \
+isc=2543e-18 nc=1.9 \
+rb=33.3 irb=240e-6 rbm=1.67 re=1.83 rc=12 \
+xtb=0.5 eg=1.2 xti=3 cje=179e-15 vje=0.895 mje=0.41 \
+tf=11e-12 xtf=15 vtf=1.5 itf=120e-3 ptf=10 \
+cjc=120e-15 vjc=0.642 mjc=0.33 xcjc=0.3 \
+tr=5e-9 cjs=138e-15 vjs=0.65 mjs=0.33 fc=0.875 
+
+model gaasfet gaas vto=-2. beta=0.059 lambda=0 \
+b=0.3 alpha=2. rs=3.7 rd=2.37 rg=2.00 is=1e-9 n=1.5 imax=1. fc=0.5 \
+delta=0.2 cgs=.37e-12 cgd=0.06e-12
+
+model npnStd bjt type=npn bf=250 nf=0.998 vaf=25 ikf=2.98e-3 \
+ise=2.47032e-15 ne=2.036 br=9.0  nr=1.004  var=4.0 ikr=5e-4 \
+isc=1.8128e-15 nc=1.627 \
+rb=450 irb=1e-5 rbm=180 re=50 rc=170 \
+eg=1.134 cje=3.5e-15 vje=0.6 mje=0.2 \
+tf=3.6e-12 xtf=2.5 vtf=2.7 itf=1.4e-3 \
+cjc=2.3e-15 vjc=0.51 mjc=0.24 \
+tr=3.2e-9 cjs=3.5e-15 vjs=0.75 fc=0.93 \
+trb1=3e-3 trc1=5e-3 tre1=-2.6e-3 tre2=0 \
+bvbe=3 bvbc=12 bvsub=12 kf=1.32e-10 af=1.8 iss=0

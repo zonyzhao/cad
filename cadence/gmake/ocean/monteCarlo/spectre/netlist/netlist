@@ -1,0 +1,63 @@
+
+// Library name: Artist_Test
+// Cell name: opamp_nat_stat
+// View name: schematic
+subckt opamp_nat_stat _net3 _net2 OUT _net0 _net1
+    Q0 (net18 net56 _net0) pnp
+    Q3 (_net1 net62 net13) pnp
+    Q13 (net47 net18 net16) pnp
+    Q15 (net41 net18 net57) pnp
+    Q19 (net73 net73 _net0) pnp
+    Q28 (net93 net73 _net0) pnp
+    Q29 (net56 net56 _net0) pnp
+    Q1 (net56 _net2 net16) npn
+    Q7 (net93 net81 net62) npn
+    Q8 (net40 net40 _net1) npn
+    Q10 (net18 net40 net91) npn
+    Q14 (net41 net43 net51) npn
+    Q17 (net62 net71 net55) npn
+    Q22 (net47 net43 net53) npn
+    Q23 (_net0 net93 net61) npn
+    Q24 (net74 net55 _net1) npn
+    Q25 (net56 _net3 net57) npn
+    Q31 (net93 net61 OUT) npn
+    Q34 (net62 net74 net71) npn
+    Q35 (_net0 net41 net43) npn
+    R2 (net61 OUT) resistor r=25
+    R9 (net71 _net1) resistor r=Rpi(20u,1u)
+    R11 (net73 net40) resistor r=Rpi(16u,1u)
+    R58 (net47 net74) resistor r=Rpb(2u,2u)
+    R16 (net43 _net1) resistor r=Rpi(20u,1u)
+    R18 (net55 _net1) resistor r=50
+    R21 (net81 net93) resistor r=4.5K
+    R26 (net53 _net1) resistor r=Rpb(3.3u,1u)
+    R30 (OUT net13) resistor r=50
+    R32 (net51 _net1) resistor r=Rpb(3.3u,1u)
+    R33 (net81 net62) resistor r=7.5K
+    R36 (net91 _net1) resistor r=5K
+    C5 (net93 net74) capacitor c=30p
+ends opamp_nat_stat
+// End of subcircuit definition.
+
+// Library name: Artist_Test
+// Cell name: supply
+// View name: schematic
+subckt supply VCC VEE
+parameters suppVEE suppVCC
+    V1 (VEE 0) vsource dc=suppVEE type=dc
+    V0 (VCC 0) vsource dc=suppVCC type=dc
+ends supply
+// End of subcircuit definition.
+
+// Library name: Artist_Test
+// Cell name: low_nat_stat
+// View name: schematic
+I9 (net467 net27 OUT vcc! vee!) opamp_nat_stat
+I11 (vcc! vee!) supply suppVEE=-15 suppVCC=15
+V1 (IN 0) vsource mag=1 phase=0 type=sine sinedc=1 ampl=500m freq=100K
+C2 (net5 0) capacitor c=cin
+C1 (net5 OUT) capacitor c=cloop
+R4 (net5 net467) resistor r=rin2
+R3 (IN net5) resistor r=rin1
+R2 (net27 0) resistor r=rout2
+R1 (OUT net27) resistor r=rout1

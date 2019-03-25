@@ -1,0 +1,21 @@
+simulator lang=spectre
+parameters
++ pvto = -0.9
++ ptox = 430e-10
++ pnsub = 6.6e+15
++ pxj = 0.05u
++ pld = 0.075u
++ pu0 = 240
++ pucrit = 0.86e5
++ puexp = 0.29
++ pvmax = 3.0e4
++ pneff = 2.65
++ pdelta = 1.0
++ prsh = 110
++ pcgso = 2.05e-10
++ pcgdo = 2.05e-10
++ pcj = 275u
++ pcjsw = 400p
++ pmj = 0.535
++ pmjsw = 0.34
++ ppb = 0.8

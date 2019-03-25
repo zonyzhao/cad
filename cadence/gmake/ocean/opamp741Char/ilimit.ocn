@@ -1,0 +1,27 @@
+;ilimit.ocn
+
+option('useprobes "yes" )
+keep( 'alli )
+keep( 'v "out4")
+
+; Short circuit current limiting
+
+analysis('ac ?freq "10"  ?dev "v0"  ?param "dc"
+		?start "-13"  ?stop "14"  )
+run()
+results()
+selectResults('ac)
+
+I = i("r3:1")
+
+Iout = YMAX(mag(I))
+
+newWindow()
+ocnPrint( ?output fp I )
+plot(I)
+
+fprintf(fp "\n\nShort circuit current limiting is: %10.6f A\n" Iout)
+
+delete('analysis 'ac)
+
+; end of file

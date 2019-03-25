@@ -1,0 +1,17 @@
+simulator( 'spectre )
+design("./diffamp/netlist/netlist")
+resultsDir( "./diffamp")
+modelFile("../models/monteProcess.scs") 
+analysis('dc ?saveOppoint t  )
+temp( 27 ) 
+monteCarlo( ?numIters "100" ?startIter "1" 
+    ?analysisVariation "Process & Mismatch" ?sweptParam "None" 
+    ?sweptParamVals "27" ?saveData nil 
+    ?nomRun nil ?append nil)
+monteExpr( "n2" "VDC(\"_net2\")" )
+monteExpr( "n3" "VDC(\"_net3\")" )
+monteExpr( "v23" "(VDC(\"_net2\") - VDC(\"_net3\"))" )
+monteRun()
+monteResults()
+; Use the stats pulldown from AWD to look at results.
+exit()

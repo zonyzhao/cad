@@ -1,0 +1,20 @@
+;noise.ocn
+
+
+analysis('noise ?start "1"  ?stop "10M"  ?p "out8"  ?n 0
+		?iprobe "v9"  )
+
+run()
+
+selectResults("noise-noise")
+
+newWindow()
+
+plot(getData("out") )
+ocnPrint(?output fp getData("out"))
+
+noiseSummary('spot ?frequency 100 ?output fp)
+
+delete('analysis 'noise)
+
+; end of file

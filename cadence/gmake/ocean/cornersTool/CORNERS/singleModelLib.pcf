@@ -1,0 +1,72 @@
+
+corAddProcess("singleModelLib" "./CORNERS/singleModelLib" 'singleModelLib)
+
+corSetModelFile("singleModelLib" "singleModelLib.scs")
+
+corAddProcessVar("singleModelLib" "vdd")
+corAddProcessVar("singleModelLib" "vss")
+corAddDesignVar( "Cload" )
+
+corAddCorner( "singleModelLib" "slowslow" )
+corSetCornerNomTempVal( "singleModelLib" "slowslow" 27 )
+corSetCornerRunTempVal( "singleModelLib" "slowslow" 125 )
+corSetCornerVarVal( "singleModelLib" "slowslow" "Cload" "260f" )
+corSetCornerVarVal( "singleModelLib" "slowslow" "vss" "-2.7" )
+corSetCornerVarVal( "singleModelLib" "slowslow" "vdd" "2.7" )
+
+corAddCorner( "singleModelLib" "fastslow" )
+corSetCornerNomTempVal( "singleModelLib" "fastslow" "27" )
+corSetCornerRunTempVal( "singleModelLib" "fastslow" 27 )
+corSetCornerVarVal( "singleModelLib" "fastslow" "Cload" "200f" )
+corSetCornerVarVal( "singleModelLib" "fastslow" "vss" "-3" )
+corSetCornerVarVal( "singleModelLib" "fastslow" "vdd" "3" )
+
+corAddCorner( "singleModelLib" "typtyp" )
+corSetCornerNomTempVal( "singleModelLib" "typtyp" 27 )
+corSetCornerRunTempVal( "singleModelLib" "typtyp" 27 )
+corSetCornerVarVal( "singleModelLib" "typtyp" "Cload" "200f" )
+corSetCornerVarVal( "singleModelLib" "typtyp" "vss" "-3" )
+corSetCornerVarVal( "singleModelLib" "typtyp" "vdd" "3" )
+
+corAddCorner( "singleModelLib" "slowfast" )
+corSetCornerNomTempVal( "singleModelLib" "slowfast" "27" )
+corSetCornerRunTempVal( "singleModelLib" "slowfast" 27 )
+corSetCornerVarVal( "singleModelLib" "slowfast" "Cload" "200f" )
+corSetCornerVarVal( "singleModelLib" "slowfast" "vss" "-3" )
+corSetCornerVarVal( "singleModelLib" "slowfast" "vdd" "3" )
+
+corAddCorner( "singleModelLib" "fastfast" )
+corSetCornerNomTempVal( "singleModelLib" "fastfast" 27 )
+corSetCornerRunTempVal( "singleModelLib" "fastfast" -55 )
+corSetCornerVarVal( "singleModelLib" "fastfast" "Cload" "160f" )
+corSetCornerVarVal( "singleModelLib" "fastfast" "vss" "-3.3" )
+corSetCornerVarVal( "singleModelLib" "fastfast" "vdd" "3.3" )
+
+corAddMeas( "DCgain" )
+corSetMeasExpression( "DCgain" "ymax(db20(VF(\"vout\")))" )
+corSetMeasTarget( "DCgain" 60 )
+corSetMeasEnabled( "DCgain" t )
+corSetMeasGraphicalOn( "DCgain" t )
+corSetMeasTextualOn( "DCgain" nil )
+
+
+corAddMeas( "bandwidth" )
+corSetMeasExpression( "bandwidth" "bandwidth(VF(\"vout\") 3 \"low\")" )
+corSetMeasEnabled( "bandwidth" t )
+corSetMeasGraphicalOn( "bandwidth" t )
+corSetMeasTextualOn( "bandwidth" nil )
+
+
+corAddMeas( "gain" )
+corSetMeasExpression( "gain" "dB20(VF(\"vout\"))" )
+corSetMeasEnabled( "gain" t )
+corSetMeasGraphicalOn( "gain" t )
+corSetMeasTextualOn( "gain" nil )
+
+
+corAddMeas( "phase" )
+corSetMeasExpression( "phase" "phase(VF(\"vout\"))" )
+corSetMeasEnabled( "phase" t )
+corSetMeasGraphicalOn( "phase" t )
+corSetMeasTextualOn( "phase" nil )
+

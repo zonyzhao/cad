@@ -1,0 +1,5 @@
+simulator lang=spectre
+
+function Rpb(l,w)=(PbRho*l/w)*initstat
+function Rpi(l,w)=(PiRho*l/w)*initstat
+

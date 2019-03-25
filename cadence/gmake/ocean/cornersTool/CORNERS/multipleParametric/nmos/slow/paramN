@@ -1,0 +1,21 @@
+simulator lang=spectre
+parameters
++ nvto = 0.9
++ ntox = 430e-10
++ nnsub = 1.0e+16
++ nxj = 0.15u
++ nld = 0.075u
++ nu0 = 620
++ nucrit = 0.62e5
++ nuexp = 0.125
++ nvmax = 5.1e4
++ nneff = 4.0
++ ndelta = 1.4
++ nrsh = 38
++ ncgso = 2.10e-10
++ ncgdo = 2.10e-10
++ ncj = 215u
++ ncjsw = 540P
++ nmj = 0.76
++ nmjsw = 0.30
++ npb = 0.8

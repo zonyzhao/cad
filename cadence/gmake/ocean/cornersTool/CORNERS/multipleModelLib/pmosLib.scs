@@ -1,0 +1,15 @@
+library pmosLib
+
+section nom
+include "../pmos/typ/pmos.scs"
+endsection
+
+section fast
+include "../pmos/fast/pmos.scs"
+endsection
+
+section slow
+include "../pmos/slow/pmos.scs"
+endsection
+
+endlibrary

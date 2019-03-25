@@ -1,0 +1,24 @@
+simulator( 'spectre )
+design(	 "./foldedCascode/netlist/netlist")
+path( "." )
+modelFile( 
+    '("./CORNERS/singleModelLib/singleModelLib.scs" "typtyp")
+)
+analysis('ac ?start "1"  ?stop "1G"  )
+desVar(	  "idc" 20u	)
+desVar(	  "vss" -3	)
+desVar(	  "vdd" 3	)
+desVar(	  "vppsrr" 0	)
+desVar(	  "vnpssr" 0	)
+desVar(	  "cmrr" 0	)
+desVar(	  "acIn" 1	)
+desVar(	  "Cload" 200f	)
+option(	'sensfile  "" 
+)
+temp( 27 ) 
+
+loadPcf( "./CORNERS/singleModelLib.pcf" )
+cornerRun()
+ 
+cornerMeas()
+

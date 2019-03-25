@@ -20,7 +20,7 @@ filename = "basic.ocn"
 #########################################################################
 # Sample Script Directory
 #########################################################################
-sdir = "/net/nfs-n501/ANFS01/apps/cadence/IC617/tools.lnx86/dfII/samples/artist/OCEAN/"
+sdir = "/users/1127110/cad/cadence/gmake/ocean/"
 #########################################################################
 # Object Names
 #########################################################################
@@ -35,3 +35,7 @@ lint:
 .phony: ui
 ui:
 	ocean -replay $(sdir)/helpful/helpfulUI.ocn 
+
+.phony: opamp
+opamp:
+	ocean -replay $(sdir)/opamp741Char/opampTest.ocn 

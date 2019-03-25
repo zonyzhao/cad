@@ -1,0 +1,18 @@
+simulator lang=spectre
+include "processSimple.scs"
+include "process.scs"
+statistics {
+    process {
+       vary RSHSP dist=gauss std=5
+       vary RSHPI dist=lnorm std=0.15
+       vary SPDW dist=gauss std=0.25
+       vary SNDW dist=gauss std=0.25
+    }
+    correlate param=[RSHSP RSHPI] cc=0.6
+    mismatch {
+       vary XISN dist=gauss std=1
+       vary XBFN dist=gauss std=1
+       vary XRSP dist=gauss std=1
+    }
+}
+

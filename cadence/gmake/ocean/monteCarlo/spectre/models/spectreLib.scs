@@ -1,0 +1,70 @@
+library spectreLib.scs
+
+section=statistics
+
+simulator lang=spectre
+inline subckt npnstat (C B E)
+
+parameters beta=100 brvbe=.6 stat=1
+model mynpn bjt type=npn is=5.771e-17 bf=beta*stat nf=0.9895 vaf=201.6
++ ikf=0.01573 ise=8.976e-18 ne=1.179 br=3.204 nr=0.9944 
++ var=27.03 ikr=0.0003047 isc=1.505e-13 nc=1.912 rb=8.706
++ irb=0.001509 rbm=5.833 re=111.8 rc=54.97 xtb=1.5 eg=1.11
++ xti=3 cje=1.983e-12 vje=0.4818 mje=0.2486 tf=0.33e-9
++ xtf=4.359 itf=0.01753 ptf=176.2 cjc=1.749e-12 vjc=0.5989
++ mjc=0.3349 xcjc=0.5 tr=400e-9 cjs=1e-12 vjs=0.75
++ mjs=0.33  fc=0.5 bvbe=brvbe bvce=1
+
+npnstat (C B E) mynpn
+ends npnstat
+
+model npn bjt type=npn is=5.771e-17 bf=npnbeta*stat nf=0.9895 vaf=201.6
++ ikf=0.01573 ise=8.976e-18 ne=1.179 br=3.204 nr=0.9944 
++ var=27.03 ikr=0.0003047 isc=1.505e-13 nc=1.912 rb=8.706
++ irb=0.001509 rbm=5.833 re=111.8 rc=54.97 xtb=1.5 eg=1.11
++ xti=3 cje=1.983e-12 vje=0.4818 mje=0.2486 tf=0.33e-9
++ xtf=4.359 itf=0.01753 ptf=176.2 cjc=1.749e-12 vjc=0.5989
++ mjc=0.3349 xcjc=0.5 tr=400e-9 cjs=1e-12 vjs=0.75
++ mjs=0.33  fc=0.5 bvbe=.6 bvce=1
+
+model pnp bjt type=pnp 
++is=1.2e-16 bf=pnpbeta*stat nf=1.00 vaf=26.00 
++ikf=70e-06 ise=1.1e-15 ne=2.00 br=13 
++nr=1.00 var=10.00 ikr=100e-06 isc=7.0e-15 
++nc=2.50 rb=100  
++re=15 rc=150 cje=33e-15 vje=740e-03 
++mje=330e-03 tf=2.50e-09 xtf=1.00 
++itf=2.00e-03 ptf=5.0 cjc=130e-15 vjc=690e-03 
++mjc=440.00e-03 xcjc=500.00e-03 tr=5.00e-09 cjs=200e-15 
++vjs=590e-03 mjs=440.00e-03 xtb=780e-03 eg=1.200 
++xti=1.80 kf=1.60e-15 af=1.00 fc=850.00e-03
+
+endsection
+
+section=normal
+
+simulator lang=spectre
+
+model npn bjt type=npn is=5.771e-17 bf=145.8 nf=0.9895 vaf=201.6
++ ikf=0.01573 ise=8.976e-18 ne=1.179 br=3.204 nr=0.9944 
++ var=27.03 ikr=0.0003047 isc=1.505e-13 nc=1.912 rb=8.706
++ irb=0.001509 rbm=5.833 re=111.8 rc=54.97 xtb=1.5 eg=1.11
++ xti=3 cje=1.983e-12 vje=0.4818 mje=0.2486 tf=0.33e-9
++ xtf=4.359 itf=0.01753 ptf=176.2 cjc=1.749e-12 vjc=0.5989
++ mjc=0.3349 xcjc=0.5 tr=400e-9 cjs=1e-12 vjs=0.75
++ mjs=0.33  fc=0.5
+
+model pnp bjt type=pnp 
++is=1.2e-16 bf=200 nf=1.00 vaf=26.00 
++ikf=70e-06 ise=1.1e-15 ne=2.00 br=13 
++nr=1.00 var=10.00 ikr=100e-06 isc=7.0e-15 
++nc=2.50 rb=100  
++re=15 rc=150 cje=33e-15 vje=740e-03 
++mje=330e-03 tf=2.50e-09 xtf=1.00 
++itf=2.00e-03 ptf=5.0 cjc=130e-15 vjc=690e-03 
++mjc=440.00e-03 xcjc=500.00e-03 tr=5.00e-09 cjs=200e-15 
++vjs=590e-03 mjs=440.00e-03 xtb=780e-03 eg=1.200 
++xti=1.80 kf=1.60e-15 af=1.00 fc=850.00e-03
+
+endsection
+endlibrary

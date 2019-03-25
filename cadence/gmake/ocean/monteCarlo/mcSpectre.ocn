@@ -1,0 +1,25 @@
+simulator( 'spectre )
+design("./spectre/netlist/netlist")
+resultsDir( "./spectre" )
+path("./spectre/models" )
+modelFile( '("spectreLib.scs" "statistics"))
+definitionFile( "update" "init" "lowpassStats")
+analysis('ac ?start "1"  ?stop "100M"  )
+desVar(	  "rout2" 3K	)
+desVar(	  "rout1" 1K	)
+desVar(	  "rin2" 5K	)
+desVar(	  "rin1" 1K	)
+desVar(	  "cloop" .001u	)
+desVar(	  "cin" .017u	)
+temp( 27 ) 
+monteCarlo( ?numIters "3" ?startIter "1" 
+    ?analysisVariation "Process Only" ?sweptParam "None" 
+    ?sweptParamVals "27" ?saveData t 
+    ?nomRun nil ?append nil)
+monteExpr( "bw" "bandwidth(VF(\"OUT\") 3 \"low\")" )
+monteExpr( "phase" "value(phase(VF(\"OUT\")) 100000)" )
+monteExpr( "db20" "value(dB20(VF(\"OUT\")) 100000)" )
+monteRun()
+monteResults()
+; Use the stats pulldown from AWD to look at results.
+exit()

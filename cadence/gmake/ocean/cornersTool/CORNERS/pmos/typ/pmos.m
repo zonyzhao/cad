@@ -1,0 +1,22 @@
+* VTI-derived Level=2 nominal model
+
+.model &1 pmos level=2  &
+vto=-0.75 &
+tox=400e-10 &
+nsub=6e+15 &
+uo=255 &
+xj=0.05U &
+ld=0.20U &
+ucrit=0.86e+5 &
+uexp=0.29 &
+vmax=3.0e+4 &
+neff=2.65 &
+delta=1.0 &
+rsh=101 &
+cgso=1.90e-10 &
+cgdo=1.90e-10 &
+cj=250U &
+cjsw=350P &
+mj=0.535 &
+mjsw=0.34 &
+pb=0.8 

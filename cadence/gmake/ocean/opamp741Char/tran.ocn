@@ -1,0 +1,77 @@
+;tran.ocn
+
+option('useprobes "yes" )
+keep( 'alli )
+keep( 'v "net21" "out5")
+
+analysis('tran ?start 0 ?stop "300u"  )
+
+; rise time and fall time
+run()
+
+selectResults("tran")
+Vin = v("net35")
+Vout = v("out5")
+rtup = riseTime(VT("out5"),100u,t,150u,t,10,90)
+rtdwn = riseTime(VT("out5"),50u,t,100u,t,10,90)
+
+newWindow()
+plot( Vin Vout)
+ocnPrint( ?output fp Vin Vout )
+
+fprintf(fp "Rise time: %10.6f us\n" rtup*1e6)
+fprintf(fp "Fall time: %10.6f us\n" rtdwn*1e6)
+
+; settling time, overshooting
+
+desVar(   "C_load"  1000p )
+desVar(   "R1_load"   10k)
+
+run()
+selectResults("tran")
+Vout2 = v("out5")
+
+plot(Vout2)
+displayMode("strip")
+ocnPrint( ?output fp Vout2 )
+
+ovsh= overshoot(v("out5"),100u,t,150u,t)
+stime=settlingTime(v("out5"),100u,t,150u,t,5)
+
+fprintf(fp "\n\nOvershoot: %10.6f \n" ovsh)
+fprintf(fp "Settling time: %10.6f us\n" stime*1e6)
+
+; calculate slew rate under maximum output voltage swing
+
+;reset desVars
+
+desVar(   "vpulse_1" -13  )
+desVar(   "vpulse_2" 14  )
+desVar(   "period" 200u  )
+desVar(   "p_width" 100u  )
+desVar(   "fall_t" 1n  )
+desVar(   "rise_t" 1n  )
+
+run()
+
+selectResults("tran")
+Vin = v("net35")
+Vout = v("out5")
+srup = slewRate(VT("out5"),0,t,50u,t,0,100)
+srdwn = -slewRate(VT("out5"),80u,t,190u,t,0,100)
+
+newWindow()
+plot( Vin Vout )
+displayMode("strip")
+ocnPrint( ?output fp Vin Vout )
+
+fprintf(fp "\n\nRising slew rate: %1.6f V/us\n" srup/1e6)
+fprintf(fp "Falling slew rate: %10.6f V/us\n" srdwn/1e6)
+fprintf(fp "Rise time: %10.6f us\n" rtup*1e6)
+fprintf(fp "Fall time: %10.6f us\n" rtdwn*1e6)
+fprintf(fp "Overshoot: %10.6f \n" ovsh)
+fprintf(fp "Settling time: %10.6f us\n" stime*1e6)
+
+delete('analysis 'tran)
+
+; end of file

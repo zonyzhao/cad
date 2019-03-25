@@ -1,0 +1,22 @@
+* VTI Level=2 slowN model
+
+.model &1 nmos level=2  &
+vto=0.9 &
+tox=430e-10 &
+nsub=1.0e+16 &
+xj=0.15U &
+ld=0.075U &
+u0=620 &
+ucrit=0.62e5 &
+uexp=0.125 &
+vmax=5.1e4 &
+neff=4.0 &
+delta=1.4 &
+rsh=38 &
+cgso=2.10e-10 &
+cgdo=2.10e-10 &
+cj=215U &
+cjsw=540P &
+mj=0.76 &
+mjsw=0.30 &
+pb=0.8

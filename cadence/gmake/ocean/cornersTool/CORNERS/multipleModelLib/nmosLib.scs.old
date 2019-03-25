@@ -1,0 +1,132 @@
+library vti_2u
+
+section nom
+simulator lang=spice
+* VTI-derived Level=2 nominal model
+.model nmos nmos level=2 
++ vto = 0.775
++ tox = 400e-10
++ nsub = 8e+15
++ xj = 0.15U
++ ld = 0.20U
++ u0 = 650
++ ucrit = 0.62e+5
++ uexp = 0.125
++ vmax = 5.1e+4
++ neff = 4.0
++ delta = 1.4
++ rsh = 36
++ cgso = 1.95e-10
++ cgdo = 1.95e-10
++ cj = 195U
++ cjsw = 500P
++ mj = 0.76
++ mjsw = 0.30
++ pb = 0.8
+endsection
+
+section fast
+simulator lang=spice
+* VTI Level=2 fastN/fastP model
+.model nmos nmos level=2 
++ vto=0.65 
++ tox=370e-10 
++ nsub=6.0e+15
++ xj=0.15U 
+*+ ld=0.20U 
++ ld=0.325U
++ u0=680 
++ ucrit=0.62e5 
++ uexp=0.125 
++ vmax=5.1e4
++ neff=4.0 
++ delta=1.4 
++ rsh=34 
++ cgso=1.80e-10 
++ cgdo=1.8e-10
++ cj=175U 
++ cjsw=460P 
++ mj=0.76 
++ mjsw=0.30 
++ pb=0.8
+endsection
+
+section slow
+simulator lang=spice
+* VTI Level=2 slowN/slowP model
+.model nmos nmos level=2 
++ vto = 0.9
++ tox = 430e-10
++ nsub = 1.0e+16
++ xj = 0.15U
+*+ ld = 0.20U
++ ld = 0.075U
++ u0 = 620
++ ucrit = 0.62e5
++ uexp = 0.125
++ vmax = 5.1e4
++ neff = 4.0
++ delta = 1.4
++ rsh = 38
++ cgso = 2.10e-10
++ cgdo = 2.10e-10
++ cj = 215U
++ cjsw = 540P
++ mj = 0.76
++ mjsw = 0.30
++ pb = 0.8
+endsection
+
+section SNFP
+simulator lang=spice
+* VTI Level=2 slowN/fastP model
+.model nmos nmos level=2
++ vto = 0.9
++ tox = 430e-10
++ nsub = 1.0e+16
++ xj = 0.15U
+*+ ld = 0.20U
++ ld = 0.075U
++ u0 = 620
++ ucrit = 0.62e5
++ uexp = 0.125
++ vmax = 5.1e4
++ neff = 4.0
++ delta = 1.4
++ rsh = 38
++ cgso = 2.10e-10
++ cgdo = 2.10e-10
++ cj = 215U
++ cjsw = 540P
++ mj = 0.76
++ mjsw = 0.30
++ pb = 0.8
+endsection
+
+section FNSP
+simulator lang=spice
+* VTI Level=2 fastN/slowP model
+.model nmos nmos level=2 
++ vto=0.65 
++ tox=370e-10 
++ nsub=6.0e+15
++ xj=0.15U 
+*+ ld=0.20U 
++ ld=0.325U
++ u0=680 
++ ucrit=0.62e5 
++ uexp=0.125 
++ vmax=5.1e4
++ neff=4.0 
++ delta=1.4 
++ rsh=34 
++ cgso=1.80e-10 
++ cgdo=1.8e-10
++ cj=175U 
++ cjsw=460P 
++ mj=0.76 
++ mjsw=0.30 
++ pb=0.8
+endsection
+
+endlibrary

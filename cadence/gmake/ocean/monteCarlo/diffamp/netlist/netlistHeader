@@ -1,0 +1,7 @@
+// Generated for: spectre
+// Generated on: Sep 30 16:59:49 1998
+// Design library name: aExamples
+// Design cell name: diffamp
+// Design view name: schematic
+simulator lang=spectre
+global 0

@@ -1,0 +1,20 @@
+
+set pvto=-0.9
+set ptox=430e-10
+set pnsub=6.6e+15
+set pxj=0.05U
+set pld=0.075U
+set pu0=240
+set pucrit=0.86e5
+set puexp=0.29
+set pvmax=3.0e4
+set pneff=2.65
+set pdelta=1.0
+set prsh=110
+set pcgso=2.05e-10
+set pcgdo=2.05e-10
+set pcj=275U
+set pcjsw=400P
+set pmj=0.535
+set pmjsw=0.34
+set ppb=0.8
