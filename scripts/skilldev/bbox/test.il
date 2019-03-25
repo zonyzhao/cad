@@ -9,12 +9,16 @@ classOf(bb)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Get the bbox for a cv
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#lib = "pd0164"
-#name = "pd0164_0p"
-#lib = "tr0046"
-#name = "tr46_7s"
-lib = "am0128"
-name = "am128_0p"
+;lib = "pd0164"
+;name = "pd0164_0p"
+;lib = "tr0046"
+;name = "tr46_7s"
+;#################
+;lib = "am0128"
+;name = "am128_0p"
+; mems
+lib = "pd0164"
+name = "CHIP00"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )
@@ -88,7 +92,7 @@ bb2vert(bb)
 ;       to the upper right quadrant
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 lib = "pd0164"
-name = "pd0164_0p_urqshift"
+name = "pd0164_0p"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "r")
 bb = makeInstance( 'bbox )

@@ -27,10 +27,9 @@ defmethod( initializeInstance @after ((obj bbox))
 	   obj->bbox = nil
 	   obj->transformation = makeInstance( 'transformation2 )
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clones the cellview object
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( cloneBbox (( bb bbox) arg )
   arg->ur     = bb->ur      
   arg->ll     = bb->ll      
@@ -39,7 +38,6 @@ defmethod( cloneBbox (( bb bbox) arg )
   arg->origin = bb->origin    
   arg->bbox   = bb->bbox   
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method Populates Boundary Box Member with the contents of the
 ; reference cv's boundary box
@@ -47,7 +45,6 @@ defmethod( cloneBbox (( bb bbox) arg )
 defmethod( getbb (( bb bbox ))
 	setBbox(bb getRef(bb)~>bBox) 
 );defMethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This Method sets the cv bBox based on the bbox member of this class
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -55,7 +52,8 @@ defmethod( setbb (( bb bbox ))
   let((bbox)
     bbox=list(getLl(bb) getUr(bb))
     setBbox(bb bbox)
-    getRef(bb)~>bBox = getBbox(bb)
+    dbComputeBBox(getRef(bb))
+    getRef(bb)~>bBox
   );let 
 );defMethod
 

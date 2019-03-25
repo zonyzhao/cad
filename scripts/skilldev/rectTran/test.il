@@ -5,8 +5,6 @@ findClass( 'rectTran )
 rt = makeInstance( 'rectTran )
 classp( rt 'rectTran)
 classOf(rt)
-getUr(rt)
-getLl(rt)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Genterate a rectTran for
@@ -25,6 +23,8 @@ ur = v2
 rt = makeInstance( 'rectTran )
 setUr(rt ur)
 setLl(rt ll)
+getUr(rt)
+getLl(rt)
 ;;;;;;;;;;;;;;;;;;;;
 ; Ans: Centroid  = (5.0,5.0)
 ;;;;;;;;;;;;;;;;;;;;
@@ -35,9 +35,12 @@ lib = "test"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
 setRef(rt cv)
+getUr(rt)
+getLl(rt)
 rtran2bbox(rt)
 render(rt)
 dbSave(cv)
+setbb(rt)
 dbClose(cv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,6 +87,7 @@ rt = makeInstance( 'rectTran )
 setUr(rt ur)
 setLl(rt ll)
 calculateCentroid(rt)
+rtran2bbox(rt)
 translate(rt list(25.0 0.0))
 getCentroid(rt)
 getUr(rt)
@@ -114,6 +118,7 @@ rt = makeInstance( 'rectTran )
 setUr(rt ur)
 setLl(rt ll)
 calculateCentroid(rt)
+rtran2bbox(rt)
 rotate(rt 90.0)
 getCentroid(rt)
 getUr(rt)
@@ -132,13 +137,11 @@ dbClose(cv)
 ;       cv generated in UT-1, and 
 ;       convert the bbox to a rectran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-name="rtranRectTest"
+name="rtranTest"
 lib = "test"
-cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
+cv = dbOpenCellViewByType( lib name "layout" "maskLayout")
 rt = makeInstance( 'rectTran )
 setRef(rt cv)
 getbb(rt)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-6: Create a bbox from a rectTran
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+cv~>bBox
+dbClose(cv)
