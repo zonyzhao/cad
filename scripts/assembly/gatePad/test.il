@@ -2,28 +2,31 @@
 ; UT-0: Check for object Existence
 ;       and construction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-findClass( 'gateStem )
-gs = makeInstance( 'gateStem )
-classp( gs 'gateStem)
-classOf(gs)
-
+findClass( 'gatePad )
+gp = makeInstance( 'gatePad )
+classp( gp 'gatePad)
+classOf(gp)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate and render unit 
-;       gate stem
+;       gate pad
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-gs = makeInstance( 'gateStem )
-setWidth(gs 65.0)
-setLength(gs 0.25)
-setWidthTaper(gs 2.5)
-setLayer(gs "gateStem")
-generate(gs)
-;translate(gs list(8.75 0.0))
+gp = makeInstance( 'gatePad )
+setWidthInner(gp 100.0)
+setHeightInner(gp 25.0)
+setWidthOutter(gp 110.0)
+setHeightOutter(gp 35.0)
+setInnerLayer(gp "text")
+setInnerPurpose(gp "drawing")
+setOutterLayer(gp "text")
+setOutterPurpose(gp "drawing")
+generate(gp)
+;translate(gp list(8.75 0.0))
 lib = "test"
-name = "gateStemTest"
+name = "gatePadTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
-setRef(gs cv)
-render(gs)
-setRef(gs->rtrans cv)
-render(gs->rtrans)
+setRef(gp cv)
+render(gp)
+setRef(gp->rtrans cv)
+render(gp->rtrans)
 dbSave(cv)
 dbClose(cv)

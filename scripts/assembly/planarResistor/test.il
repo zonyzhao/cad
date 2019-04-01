@@ -6,10 +6,9 @@ findClass( 'planarResistor )
 pr = makeInstance( 'planarResistor )
 classp( pr 'planarResistor)
 classOf(pr)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Generate and render unit 
-;       gate stem
+; UT-1: Generate and render the planar
+;       resistor preview cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pr = makeInstance( 'planarResistor )
 setWidth(pr 1.0)
@@ -23,8 +22,8 @@ setBodyPurpose(pr "drawing")
 setContLayer(pr "electrode")
 setContPurpose(pr "drawing")
 generate(pr)
-lib = "D91"
-name = "resTest"
+lib = "test"
+name = "planarResTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(pr cv)
 render(pr)

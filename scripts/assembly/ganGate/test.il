@@ -16,7 +16,7 @@ superclassesOf(classOf(gg))
 gg = makeInstance( 'ganGate )
 setWidth(gg 100.0)
 setLength(gg 0.25)
-lib = "pd0164"
+lib = "test"
 name = "ganGatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gg cv)

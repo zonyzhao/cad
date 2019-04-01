@@ -38,7 +38,7 @@ name = "gatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gt cv)
 drawGate(gt)
-setRef(gt->rtrans->rtran cv)
+setRef(gt->rtrans cv)
 ; FIXME: Rendering of the geom bbox is broken ...
 ;render(gt->rtrans->rtran)
 cv~>bBox
@@ -52,13 +52,13 @@ dbClose(cv)
 ;       supermaster PCELL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pcDefinePCell(
-  list( ddGetObj("test") "gateTest" "layout")
+  list( ddGetObj("test") "gatePcellTest" "layout")
   (
     ( width "float" 50.0 )
     ( length "float" 0.25 )
   )
   let( (pcell)
-    pcell = makeInstance( 'pcgate )
+    pcell = makeInstance( 'gate )
     setRef(pcell pcCellView)
     setPcellParams(pcell pcCellView)
     draw(pcell)

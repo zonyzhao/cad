@@ -11,9 +11,6 @@ defclass( ganGate (assembly)
     ( ref @reader getRef @writer setRef )
     ( rtrans )
     ( coreBBox @initarg coreBBox )lib = "pd0164"
-name = "ganFetPreview"
-view = "layout"
-type = "maskLayout"
   ) 				  
 );defclass
 ;#####################################################
@@ -51,10 +48,8 @@ defmethod( generate (( gt ganGate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     addAssembly(gt gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
+    rtsAdd(gt->rtrans gt->stem->rtrans) 
+    rtsAdd(gt->rtrans gt->stem->rtrans)
     rtsUnion(gt->rtrans)
   );let
 );defmethod

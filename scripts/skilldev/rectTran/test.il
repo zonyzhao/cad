@@ -145,3 +145,59 @@ setRef(rt cv)
 getbb(rt)
 cv~>bBox
 dbClose(cv)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-5: Create a rectTran from 
+;       vertices and translate it
+;       (bbox needs to be defined)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 100x200 Square
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+r = makeInstance( 'rectangle )
+setWidth(r 100)
+setHeight(r 200)
+generate(r)
+getVertices(r)
+tran = makeInstance( 'transform2 )
+setVertices(tran getVertices(r))
+setCentroid(tran getCentroid(r))
+cloneRectTran(tran)
+setLayer(urTran "text")
+setPurpose(urTran "drawing")
+delx = 100.0
+dely = 100.0
+translate(urTran list(delx dely))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-6: Create a rectTran from 
+;       a transform using the
+;       cloneRectTran() helper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 100x200 Square
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+body = makeInstance( 'rectangle )
+setWidth(body 50.0)
+setHeight(body 10.0)
+generate(body)
+; transform
+bTran = makeInstance( 'transform2 )
+setVertices(bTran getVertices(body))
+setCentroid(bTran getCentroid(body))
+cloneRectTran(bTran)
+setLayer(bTran "grid")
+setPurpose(bTran "drawing")
+rt = bTran->rtran
+rt->bbox
+rt->ur
+rt->ll
+; FIXME: ?? are not being populated at cloneRectTran()
+;??
+rt->width
+:??
+rt->height
+;??
+rt->origin
+;??
+rt->centroid
+;??
+rt->vertices

@@ -943,12 +943,15 @@ defmethod( add ((col collection) arg)
      col->cType = classOf(arg)
      col->n = col->n + 1
    else
-     if(classp(arg col->cType) then
+     ; FIXME: disabled this check. Needs to be smart enough to handle
+     ;        inheritance (capsule inherits from geometry, but you
+     ;        can't add a pure geometry)
+     ;if(classp(arg col->cType) then
        addTail(col->list arg)
        col->n = col->n + 1
-     else
-       printf("ERROR(collection): Input Class, %L, not compatible with collection contents\n" classOf(arg))
-     );if
+     ;else
+     ;  printf("ERROR(collection): Input Class, %L, not compatible with collection contents\n" classOf(arg))
+     ;);if
    );if
    col->n
 );defmethod
@@ -1915,30 +1918,31 @@ defmethod( vertexCount (( poly polygon2 ))
 ;;;;;;;;;;;;;;;;  bbox.ils: Boundary Box Class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( bbox (cadObj)
-	  (
-		( ur @reader getUr @writer setUr )
-		( ll @reader getLl @writer setLl )
-		( width @reader getWidth @writer setWidth )
-		( height @reader getHeight @writer setHeight )		
-		( bbox @reader getBbox @writer setBbox)
-		( origin @reader getOrigin @writer setOrigin)
-		( centroid @reader getCentroid @writer setCentroid)
-		( vertices @reader getVertices @writer setVertices)
-		( transformation @reader getTrans)			  
-	  )
-) ; defClass
-
+  (
+    ( ur @reader getUr @writer setUr )
+    ( ll @reader getLl @writer setLl )
+    ( width @reader getWidth @writer setWidth )
+    ( height @reader getHeight @writer setHeight )		
+    ( bbox @reader getBbox @writer setBbox)
+    ( origin @reader getOrigin @writer setOrigin)
+    ( centroid @reader getCentroid @writer setCentroid)
+    ( vertices @reader getVertices @writer setVertices)
+    ( transformation @reader getTrans)			  
+  )
+);defClass
 ;#####################################################
 ; Constructor method
 ;#####################################################
 defmethod( initializeInstance @after ((obj bbox)) 
-	   obj->ur = nil
-	   obj->ll = nil
-	   obj->width = nil
-	   obj->height = nil
-	   obj->origin = nil
-	   obj->bbox = nil
-	   obj->transformation = makeInstance( 'transformation2 )
+  obj->ur = nil
+  obj->ll = nil
+  obj->width = nil
+  obj->height = nil
+  obj->bbox = nil
+  obj->origin = nil
+  obj->centroid = nil
+  obj->vertices = '()
+  obj->transformation = makeInstance( 'transformation2 )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clones the cellview object
@@ -2327,6 +2331,7 @@ defmethod( clone (( rt rectTran ) arg)
     setUr(rt getUr(arg))
     setLl(rt getLl(arg))
     setCentroid(rt getCentroid(arg))
+    rtran2bbox(rt)
   else
     println("ERROR(rectTran): recTran object argument required")
   );
@@ -2548,6 +2553,9 @@ defclass( rectTrans (rectTran)
 ;#####################################################
 defmethod( initializeInstance @after ((obj rectTrans)) 
   obj->rtrans = makeInstance( 'collection )
+;  obj->rtrans->rts->ur = list(0.0 0.0)
+;  obj->rtrans->rts->ll = list(0.0 0.0)
+;  obj->rtrans->rts->bbox = list(list(0.0 0.0) list(0.0 0.0))
 ;  obj->rtran = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
@@ -2567,15 +2575,18 @@ defmethod( rtsAdd ((rts rectTrans) arg)
 defmethod( rtsUnion (( rts rectTrans ))
   rts->ur = list(0.0 0.0)
   rts->ll = list(0.0 0.0)
+  rtran2bbox(rts)
   foreach( rt getCollection(rts->rtrans)
+    rtran2bbox(rt)
     if(!null(rt->bbox) then
-       union(rts rt)
+      union(rts rt)     
+      rtran2bbox(rts)
 ;      union(rts->rtran rt)
     else
       println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
     );if
   );foreach 
-  rtran2bbox(rts)
+  ;rtran2bbox(rts)
 ;  if(!null(rts->rtran->bbox) then
    if(!null(rts->bbox) then
     calculateCentroid(rts)
@@ -2861,22 +2872,22 @@ defmethod( getThetaToCentroid (( tr2 transformation2 ))
 ;                of polygon transforms.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( geometry ()
-	  (
-		( transforms )	
-		( centroid )
-		( rtran @reader getRectTran )
-		( ref @reader getRef @writer setRef )		  
-	  )
+  (
+    ( transforms )	
+    ( centroid )
+    ( rtrans @reader getRectTran )
+    ( ref @reader getRef @writer setRef )		  
+  )
 ) ; defClass
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj geometry)) 
-	   obj->transforms = makeInstance( 'collection )
-	   obj->centroid = makeInstance( 'point2 )
-	   obj->rtran = makeInstance( 'rectTran )
-	   obj->ref = nil
+  obj->transforms = makeInstance( 'collection )
+  obj->centroid = makeInstance( 'point2 )
+  obj->rtrans = makeInstance( 'rectTrans )
+  obj->ref = nil
 );defmethod
 
 ;#####################################################
@@ -2884,11 +2895,11 @@ defmethod( initializeInstance @after ((obj geometry))
 ; in the  geometry
 ;#####################################################
 defmethod( rectTranUnion (( geom geometry ))
-  zero(geom->rtran)
+  zero(geom->rtrans)
   foreach( trans getCollection(geom->transforms)
-    union(geom->rtran getRectTran(trans))
+    union(geom->rtrans getRectTran(trans))
   ) 
-  calculateCentroid(geom->rtran)
+  calculateCentroid(geom->rtrans)
 );defmethod
 
 ;#####################################################
@@ -3019,7 +3030,7 @@ defclass( assembly ()
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
 	     ( rtrans )
-	     ( rtran  )
+	     ( rtran )
 	  )				  
 );defclass
 ;#####################################################
@@ -3033,10 +3044,10 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->rtran  = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
-; Gets a list of layer objects in the assembly
+; Gets the rectran of the assembly
 ;#####################################################
 defmethod( getRectTran (( ass assembly ))
-  getRectTran(ass->rtrans)
+  getRectTran(ass->rtran)
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly
@@ -9264,38 +9275,36 @@ defmethod( generate (( cap capsule ))
 ;               with the inner gate pad capsule     
 ;######################################################
 defclass( gatePad (assembly)
-   (
-	  ( widthInner @reader getWidthInner @writer setWidthInner )
-	  ( heightInner @reader getHeightInner @writer setHeightInner )
-	  ( widthOutter @reader getWidthOutter @writer setWidthOutter )
-	  ( heightOutter @reader getHeightOutter @writer setHeightOutter )
-	  ( innerLayer @reader getInnerLayer @writer setInnerLayer )
-	  ( innerPurpose @reader getInnerPurpose @writer setInnerPurpose )
-	  ( outterLayer @reader getOutterLayer @writer setOutterLayer )
-	  ( outterPurpose @reader getOutterPurpose @writer setOutterPurpose )
-	  ( bsegLayer @reader getBsegLayer @writer setBsegLayer )
-	  ( bsegPurpose @reader getBsegPurpose @writer setBsegPurpose )
-	  ( centroid @reader getCentroid @writer setCentroid )
-   )				  
+  (
+    ( widthInner @reader getWidthInner @writer setWidthInner )
+    ( heightInner @reader getHeightInner @writer setHeightInner )
+    ( widthOutter @reader getWidthOutter @writer setWidthOutter )
+    ( heightOutter @reader getHeightOutter @writer setHeightOutter )
+    ( innerLayer @reader getInnerLayer @writer setInnerLayer )
+    ( innerPurpose @reader getInnerPurpose @writer setInnerPurpose )
+    ( outterLayer @reader getOutterLayer @writer setOutterLayer )
+    ( outterPurpose @reader getOutterPurpose @writer setOutterPurpose )
+    ( bsegLayer @reader getBsegLayer @writer setBsegLayer )
+    ( bsegPurpose @reader getBsegPurpose @writer setBsegPurpose )
+    ( centroid @reader getCentroid @writer setCentroid )
+  )				  
 );defclass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj gatePad)) 
-	   obj->widthInner   = 1.0
-	   obj->heightInner  = 1.0
- 	   obj->widthOutter  = 1.0
-	   obj->heightOutter = 1.1
-	   obj->innerLayer = "text"
-	   obj->outterLayer = "text"
-	   obj->innerPurpose = "drawing"
-	   obj->outterPurpose = "drawing"
-	   obj->bsegLayer = "text"
-	   obj->bsegPurpose = "drawing"
-	   obj->centroid = makeInstance( 'point2 )
+  obj->widthInner    = 1.0
+  obj->heightInner   = 1.0
+  obj->widthOutter   = 1.1
+  obj->heightOutter  = 1.1
+  obj->innerLayer    = "text"
+  obj->outterLayer   = "text"
+  obj->innerPurpose  = "drawing"
+  obj->outterPurpose = "drawing"
+  obj->bsegLayer     = "text"
+  obj->bsegPurpose   = "drawing"
+  obj->centroid      = makeInstance( 'point2 )
 );defmethod
-
 ;######################################################
 ; Generates the assembly
 ;######################################################
@@ -9307,7 +9316,7 @@ defmethod( generate (( gp gatePad ))
   setLayer(capOutter getOutterLayer(gp))
   setPurpose(capOutter getOutterPurpose(gp))
   addGeometry(gp capOutter)
-  rtsAdd(gp->rtrans getRectTran(capOutter))
+  rtsAdd(gp->rtrans capOutter->rtrans)
 ;
   capInner = makeInstance('capsule)
   setWidth(capInner gp->widthInner)
@@ -9316,7 +9325,7 @@ defmethod( generate (( gp gatePad ))
   setLayer(capInner getInnerLayer(gp))
   setPurpose(capInner getInnerPurpose(gp))
   addGeometry(gp capInner)
-  rtsAdd(gp->rtrans getRectTran(capInner))
+  rtsAdd(gp->rtrans capInner->rtrans)
 ;
   bseg = makeInstance('rectangle)
   setWidth(bseg 2*gp->widthOutter)
@@ -9332,10 +9341,9 @@ defmethod( generate (( gp gatePad ))
   addTransform(bsegGeom bsegTran)
   rectTranUnion(bsegGeom)
   addGeometry(gp bsegGeom)
-  rtsAdd(gp->rtrans getRectTran(bsegGeom))
+  rtsAdd(gp->rtrans bsegGeom->rtrans)
   rtsUnion(gp->rtrans)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;######################################################
@@ -9380,7 +9388,7 @@ defmethod( generate (( gs gateStem ))
   setLayer(taper getLayer(gs))
   setPurpose(taper getPurpose(gs))
   addGeometry(gs taper)
-  rtsAdd(gs->rtrans getRectTran(taper))
+  rtsAdd(gs->rtrans taper->rtrans)
   ; Gate stem
   rect = makeInstance('rectangle)
   setWidth(rect getWidth(gs))
@@ -9396,7 +9404,7 @@ defmethod( generate (( gs gateStem ))
   addTransform(rectGeom rectTran )
   rectTranUnion(rectGeom)
   addGeometry(gs rectGeom)
-  rtsAdd(gs->rtrans getRectTran(rectGeom))
+  rtsAdd(gs->rtrans rectGeom->rtrans)
   rtsUnion(gs->rtrans)
   translate(gs list(8.75 0.0))
 );defmethod
@@ -9515,7 +9523,7 @@ defmethod( generate (( res planarResistor ))
     addTransform(geomGroup bTran)
     addTransform(geomGroup pConTran)
     addTransform(geomGroup nConTran )
-    rectTranUnion(geomGroup)
+    rtsUnion(geomGroup->rtrans)
     addGeometry(res geomGroup)
     rtsAdd(res->rtrans getRectTran(geomGroup))
     rtsUnion(res->rtrans)
@@ -11288,8 +11296,7 @@ defmethod( generate (( gf ganFet ))
     setLength(fb sdLength)
     setSpacing(fb sdSpacing)
     generate(fb)
-    rtran = getRectTran(fb->rtrans)
-    rtsAdd(gf->rtrans rtran)
+    rtsAdd(gf->rtrans fb->rtrans)
     addComponent(gf fb)
     ytran = sdLength/2.0+sdSpacing-getLength(gf)-gdSpacing
     gtran = sdLength + sdSpacing
@@ -11302,7 +11309,7 @@ defmethod( generate (( gf ganFet ))
        setLength(gate gateLength)
        generate(gate)
        translate(gate list(xtran ytran))
-       rtran = getRectTran(gate->rtrans)
+       rtran = gate->rtrans->tran
        rtsAdd(gf->rtrans rtran)
        addComponent(gf gate)
        ytran = ytran + gtran
@@ -11576,17 +11583,15 @@ defclass( gate (PcellParam)
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj gate)) 
-	   obj->stem = makeInstance( 'gateStem )
-	   obj->pad = makeInstance( 'gatePad )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->stem = makeInstance( 'gateStem )
+  obj->pad = makeInstance( 'gatePad )
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
 );defmethod
-
 ;######################################################
 ; Draws the gate
 ;######################################################
@@ -11611,12 +11616,10 @@ defmethod( drawGate (( gt gate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     render(gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
+    rtsAdd(gt->rtrans gt->stem->rtrans) 
+    rtsAdd(gt->rtrans gt->pad->rtrans)
     rtsUnion(gt->rtrans)
-    setSlotValue(gt 'coreBBox list( gt->rtrans->rtran->ll gt->rtrans->rtran->ur))
+    setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
     ;callNextMethod()
   );let
 );defmethod
@@ -11631,7 +11634,7 @@ defmethod( getCoreBBox ((gt gate))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  list.il: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;  res.ils: Planar resistor PCELL code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( res (PcellParam)
 	  (
@@ -11644,23 +11647,22 @@ defclass( res (PcellParam)
 		( coreBBox @initarg coreBBox )	  
 	  )
 ) ; defClass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj res)) 
-	   obj->plRes = makeInstance( 'planarResistor )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->plRes = makeInstance( 'planarResistor )
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device res))
-  let( (wid len pr resRectTran )
+  let( ( wid len pr resRectTran )
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
+   println("Drawing Resistor")
    wid = getParamValue(device 'wid)
    len = getParamValue(device 'len)
    setWidth(device->plRes wid)
@@ -11680,9 +11682,7 @@ defmethod( draw ((device res))
    setRef(device->plRes getRef(device))
    generate(device->plRes)
    render(device->plRes)
-   resRectTran = getRectTran(device->plRes)
-   rtsAdd(device->rtrans resRectTran)
-   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
    callNextMethod()
   );let
 );defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11741,34 +11741,35 @@ defmethod( draw ((device outlineChip))
 ;;;;;;;;;;;;;;;;         edge width 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( memsChipFrame (PcellParam)
-	  (
-		( width @initform defineParam("float" 1000.0))	
-		( length @initform defineParam("float" 1000.0))
-                ( spm @initform defineParam("boolean" "FALSE"))
-		(  pm @initform defineParam("boolean" "FALSE"))
-		( ol0 )
-		( ol1 )
-		( ol2 )
-		( ol3 )
-		( ol4 )
-		( centroid )
-		( ref @reader getRef @writer setRef )
-		( rtrans )
-		( coreBBox @initarg coreBBox )			  
-	  )
+  (
+    ( width @initform defineParam("float" 1000.0))	
+    ( length @initform defineParam("float" 1000.0))
+    ( spm @initform defineParam("boolean" "FALSE"))
+    ( pm @initform defineParam("boolean" "FALSE"))
+    ( ol0 )
+    ( ol1 )
+    ( ol2 )
+    ( ol3 )
+    ( ol4 ) 
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( rtran )
+    ( coreBBox @initarg coreBBox )			  
+  )
 );defClass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj memsChipFrame)) 
-	   obj->ol0 = makeInstance( 'outline )
-	   obj->ol1 = makeInstance( 'outline )
-	   obj->ol2 = makeInstance( 'cframe2 )
-	   obj->ol3 = makeInstance( 'cframe )
-	   obj->ol4 = makeInstance( 'cframe2 )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->ol0 = makeInstance( 'outline )
+  obj->ol1 = makeInstance( 'outline )
+  obj->ol2 = makeInstance( 'cframe2 )
+  obj->ol3 = makeInstance( 'cframe )
+  obj->ol4 = makeInstance( 'cframe2 )
+  obj->centroid = makeInstance( 'point2 )
+  obj->rtrans = makeInstance( 'rectTrans )
+  obj->rtrans = makeInstance( 'rectTran )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
@@ -11879,14 +11880,13 @@ defmethod( draw ((device memsChipFrame))
    render(device->ol3)
    render(device->ol4)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Generate a RectTran - Only need the outter oultine
+   ; Generate a RectTran - Only need the outter outline
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ol0RectTran = getRectTran(device->ol0)
-   rtsAdd(device->rtrans ol0RectTran)
+   ;rtsAdd(device->rtrans device->ol0->rtran)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Set the CV boundary box
+   ; Set the CV boundary box - again outter outline is largest so use its bbox
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Call the next draw in the 
    ; case of multiple inheritance

@@ -44,7 +44,7 @@ superclassesOf(classOf(gf))
 ;       supermaster
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 gf = makeInstance( 'ganFet )
-lib = "pd0164"
+lib = "test"
 name = "ganFetPreview"
 view = "layout"
 type = "maskLayout"

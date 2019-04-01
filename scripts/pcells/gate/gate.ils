@@ -14,17 +14,15 @@ defclass( gate (PcellParam)
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj gate)) 
-	   obj->stem = makeInstance( 'gateStem )
-	   obj->pad = makeInstance( 'gatePad )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->stem = makeInstance( 'gateStem )
+  obj->pad = makeInstance( 'gatePad )
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
 );defmethod
-
 ;######################################################
 ; Draws the gate
 ;######################################################
@@ -49,12 +47,10 @@ defmethod( drawGate (( gt gate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     render(gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
+    rtsAdd(gt->rtrans gt->stem->rtrans) 
+    rtsAdd(gt->rtrans gt->pad->rtrans)
     rtsUnion(gt->rtrans)
-    setSlotValue(gt 'coreBBox list( gt->rtrans->rtran->ll gt->rtrans->rtran->ur))
+    setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
     ;callNextMethod()
   );let
 );defmethod

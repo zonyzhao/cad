@@ -2,30 +2,31 @@
 ;;;;;;;;;;;;;;;;  bbox.ils: Boundary Box Class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( bbox (cadObj)
-	  (
-		( ur @reader getUr @writer setUr )
-		( ll @reader getLl @writer setLl )
-		( width @reader getWidth @writer setWidth )
-		( height @reader getHeight @writer setHeight )		
-		( bbox @reader getBbox @writer setBbox)
-		( origin @reader getOrigin @writer setOrigin)
-		( centroid @reader getCentroid @writer setCentroid)
-		( vertices @reader getVertices @writer setVertices)
-		( transformation @reader getTrans)			  
-	  )
-) ; defClass
-
+  (
+    ( ur @reader getUr @writer setUr )
+    ( ll @reader getLl @writer setLl )
+    ( width @reader getWidth @writer setWidth )
+    ( height @reader getHeight @writer setHeight )		
+    ( bbox @reader getBbox @writer setBbox)
+    ( origin @reader getOrigin @writer setOrigin)
+    ( centroid @reader getCentroid @writer setCentroid)
+    ( vertices @reader getVertices @writer setVertices)
+    ( transformation @reader getTrans)			  
+  )
+);defClass
 ;#####################################################
 ; Constructor method
 ;#####################################################
 defmethod( initializeInstance @after ((obj bbox)) 
-	   obj->ur = nil
-	   obj->ll = nil
-	   obj->width = nil
-	   obj->height = nil
-	   obj->origin = nil
-	   obj->bbox = nil
-	   obj->transformation = makeInstance( 'transformation2 )
+  obj->ur = nil
+  obj->ll = nil
+  obj->width = nil
+  obj->height = nil
+  obj->bbox = nil
+  obj->origin = nil
+  obj->centroid = nil
+  obj->vertices = '()
+  obj->transformation = makeInstance( 'transformation2 )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Clones the cellview object

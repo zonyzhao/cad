@@ -123,12 +123,15 @@ defmethod( add ((col collection) arg)
      col->cType = classOf(arg)
      col->n = col->n + 1
    else
-     if(classp(arg col->cType) then
+     ; FIXME: disabled this check. Needs to be smart enough to handle
+     ;        inheritance (capsule inherits from geometry, but you
+     ;        can't add a pure geometry)
+     ;if(classp(arg col->cType) then
        addTail(col->list arg)
        col->n = col->n + 1
-     else
-       printf("ERROR(collection): Input Class, %L, not compatible with collection contents\n" classOf(arg))
-     );if
+     ;else
+     ;  printf("ERROR(collection): Input Class, %L, not compatible with collection contents\n" classOf(arg))
+     ;);if
    );if
    col->n
 );defmethod

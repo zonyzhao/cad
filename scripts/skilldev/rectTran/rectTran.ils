@@ -121,6 +121,7 @@ defmethod( clone (( rt rectTran ) arg)
     setUr(rt getUr(arg))
     setLl(rt getLl(arg))
     setCentroid(rt getCentroid(arg))
+    rtran2bbox(rt)
   else
     println("ERROR(rectTran): recTran object argument required")
   );

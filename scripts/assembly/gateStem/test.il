@@ -15,7 +15,7 @@ gs = makeInstance( 'gateStem )
 setWidth(gs 65.0)
 setLength(gs 0.25)
 setWidthTaper(gs 2.5)
-setLayer(gs "gateStem")
+setLayer(gs "text")
 generate(gs)
 ;translate(gs list(8.75 0.0))
 lib = "test"

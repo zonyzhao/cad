@@ -6,34 +6,35 @@
 ;;;;;;;;;;;;;;;;         edge width 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( memsChipFrame (PcellParam)
-	  (
-		( width @initform defineParam("float" 1000.0))	
-		( length @initform defineParam("float" 1000.0))
-                ( spm @initform defineParam("boolean" "FALSE"))
-		(  pm @initform defineParam("boolean" "FALSE"))
-		( ol0 )
-		( ol1 )
-		( ol2 )
-		( ol3 )
-		( ol4 )
-		( centroid )
-		( ref @reader getRef @writer setRef )
-		( rtrans )
-		( coreBBox @initarg coreBBox )			  
-	  )
+  (
+    ( width @initform defineParam("float" 1000.0))	
+    ( length @initform defineParam("float" 1000.0))
+    ( spm @initform defineParam("boolean" "FALSE"))
+    ( pm @initform defineParam("boolean" "FALSE"))
+    ( ol0 )
+    ( ol1 )
+    ( ol2 )
+    ( ol3 )
+    ( ol4 ) 
+    ( centroid )
+    ( ref @reader getRef @writer setRef )
+    ( rtrans )
+    ( rtran )
+    ( coreBBox @initarg coreBBox )			  
+  )
 );defClass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj memsChipFrame)) 
-	   obj->ol0 = makeInstance( 'outline )
-	   obj->ol1 = makeInstance( 'outline )
-	   obj->ol2 = makeInstance( 'cframe2 )
-	   obj->ol3 = makeInstance( 'cframe )
-	   obj->ol4 = makeInstance( 'cframe2 )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->ol0 = makeInstance( 'outline )
+  obj->ol1 = makeInstance( 'outline )
+  obj->ol2 = makeInstance( 'cframe2 )
+  obj->ol3 = makeInstance( 'cframe )
+  obj->ol4 = makeInstance( 'cframe2 )
+  obj->centroid = makeInstance( 'point2 )
+  obj->rtrans = makeInstance( 'rectTrans )
+  obj->rtrans = makeInstance( 'rectTran )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
@@ -144,14 +145,13 @@ defmethod( draw ((device memsChipFrame))
    render(device->ol3)
    render(device->ol4)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Generate a RectTran - Only need the outter oultine
+   ; Generate a RectTran - Only need the outter outline
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ol0RectTran = getRectTran(device->ol0)
-   rtsAdd(device->rtrans ol0RectTran)
+   ;rtsAdd(device->rtrans device->ol0->rtran)
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ; Set the CV boundary box
+   ; Set the CV boundary box - again outter outline is largest so use its bbox
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Call the next draw in the 
    ; case of multiple inheritance

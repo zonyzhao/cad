@@ -7,7 +7,7 @@ defclass( assembly ()
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
 	     ( rtrans )
-	     ( rtran  )
+	     ( rtran )
 	  )				  
 );defclass
 ;#####################################################
@@ -21,10 +21,10 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->rtran  = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
-; Gets a list of layer objects in the assembly
+; Gets the rectran of the assembly
 ;#####################################################
 defmethod( getRectTran (( ass assembly ))
-  getRectTran(ass->rtrans)
+  getRectTran(ass->rtran)
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly

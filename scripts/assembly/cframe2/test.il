@@ -19,7 +19,7 @@ setPlate(cf 't)
 setLayer(cf "GRID")
 setPurpose(cf "drawing")
 generate(cf)
-lib = "reticle"
+lib = "test"
 name = "cframe2Test"
 view = "layout"
 cv = dbOpenCellViewByType( lib name view "maskLayout" "w")
@@ -28,6 +28,8 @@ render(cf)
 dbSave(cv)
 dbClose(cv)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Experimental code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Take a peek at the scribe line markers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

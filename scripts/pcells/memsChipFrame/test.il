@@ -10,14 +10,17 @@ classOf(ol)
 ; UT-1: Test parameter mapping
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;open new dummy reference cell - don't save
-lib = "reticle"
+lib = "test"
 name = "dummy"
 view = "layout"
 mview = "maskLayout"
 cv = dbOpenCellViewByType( lib name view mview "w")
 pcell = makeInstance('memsChipFrame)
 setRef(pcell cv)
-debugPcellParams(pcell pcCellView cv)
+draw(pcell)
+;debugPcellParams(pcell pcCellView cv)
+dbSave(cv)
+dbClose(cv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Test parameter mapping
 ;       Generate PCELL definition

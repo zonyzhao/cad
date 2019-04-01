@@ -1,3 +1,4 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; pcRes.il 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  PCELL generation code
@@ -18,51 +19,51 @@ pcDefinePCell(
 	( len  "float" 15)
   )
   let((pcell cvid cdfid)
-	pcell = makeInstance('res)
+	pcell = makeInstance( 'res )
 	setRef(pcell pcCellView)
 	setPcellParams(pcell pcCellView)	
 	draw(pcell)
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Create the CDF
 	; If CDF exists - delete it
-	if( cvid = ddGetObj("D91" "res") then
-	  if( cdfid = cdfGetBaseCellCDF(cvid) then
-            cdfDeleteCDF(cdfid)
-          );if
-	);if
+;	if( cvid = ddGetObj("D91" "res") then
+;	  if( cdfid = cdfGetBaseCellCDF(cvid) then
+;            cdfDeleteCDF(cdfid)
+;          );if
+;	);if
 	; Create base cell CDF
-	cdfid = cdfCreateBaseCellCDF(cvid)
+;	cdfid = cdfCreateBaseCellCDF(cvid)
 	; Create the parameters
-	cdfCreateParam(cdfid
-                           ?name "wid"
-			   ?prompt "wid"
-			   ?defValue 5.0	
-			   ?type "float"
-			   ?display "t"
-        );cdfCreateParameter
-	cdfCreateParam(cdfid
-                           ?name "len"
-			   ?prompt "len"
-			   ?defValue 15.0	
-			   ?type "float"
-			   ?display "t"
-        );cdfCreateParameter
-	cdfCreateParam(cdfid
-                           ?name "width"
-			   ?prompt "width"
-			   ?defValue "5.0"	
-			   ?type "string"
-			   ?display "t"
-			   ?callback "cdfgData->wid=atof(cdfgData->width)"
-        );cdfCreateParameter
-	cdfCreateParam(cdfid
-                           ?name "length"
-			   ?prompt "length"
-			   ?defValue "15.0"	
-			   ?type "string"
-			   ?display "t"
-			   ?callback "cdfgData->len=atof(cdfgData->length)"
-        );cdfCreateParameter
-	cdfSaveCDF(cdfid)
+;	cdfCreateParam(cdfid
+;                           ?name "wid"
+;			   ?prompt "wid"
+;			   ?defValue 5.0	
+;			   ?type "float"
+;			   ?display "t"
+;        );cdfCreateParameter
+;	cdfCreateParam(cdfid
+;                           ?name "len"
+;			   ?prompt "len"
+;			   ?defValue 15.0	
+;			   ?type "float"
+;			   ?display "t"
+;        );cdfCreateParameter
+;	cdfCreateParam(cdfid
+;                           ?name "width"
+;			   ?prompt "width"
+;			   ?defValue "5.0"	
+;			   ?type "string"
+;			   ?display "t"
+;			   ?callback "cdfgData->wid=atof(cdfgData->width)"
+;        );cdfCreateParameter
+;	cdfCreateParam(cdfid
+;                           ?name "length"
+;			   ?prompt "length"
+;			   ?defValue "15.0"	
+;			   ?type "string"
+;			   ?display "t"
+;			   ?callback "cdfgData->len=atof(cdfgData->length)"
+;        );cdfCreateParameter
+;	cdfSaveCDF(cdfid)
   );let
 );pcDefinePcell

@@ -45,8 +45,7 @@ defmethod( generate (( gf ganFet ))
     setLength(fb sdLength)
     setSpacing(fb sdSpacing)
     generate(fb)
-    rtran = getRectTran(fb->rtrans)
-    rtsAdd(gf->rtrans rtran)
+    rtsAdd(gf->rtrans fb->rtrans)
     addComponent(gf fb)
     ytran = sdLength/2.0+sdSpacing-getLength(gf)-gdSpacing
     gtran = sdLength + sdSpacing
@@ -59,7 +58,7 @@ defmethod( generate (( gf ganFet ))
        setLength(gate gateLength)
        generate(gate)
        translate(gate list(xtran ytran))
-       rtran = getRectTran(gate->rtrans)
+       rtran = gate->rtrans->tran
        rtsAdd(gf->rtrans rtran)
        addComponent(gf gate)
        ytran = ytran + gtran

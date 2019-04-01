@@ -18,7 +18,7 @@ setOverlap(ol 4.0)
 setLayer(ol "GRID")
 setPurpose(ol "drawing")
 generate(ol)
-lib = "reticle"
+lib = "test"
 name = "outlineTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(ol cv)

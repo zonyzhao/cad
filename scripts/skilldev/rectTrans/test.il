@@ -50,14 +50,14 @@ rtsAdd(rts rt1)
 rtsAdd(rts rt2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Take the union of the three rtran object in
+; UT-2: Take the union of the three rtran object in
 ;       the collection
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rtsUnion(rts)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-2: Translate the union of the
+; UT-3: Translate the union of the
 ;       three rtran objects
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 translate(rts list(25.0 25.0))
@@ -74,3 +74,49 @@ render(rts)
 dbSave(cv)
 dbClose(cv)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UT-3: Build up a two polygons to a
+;       pair of transforms to a geometry
+;       group form their union and 
+;       then render the geometry and 
+;       the rectTran (bbox) in a cellview 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+body = makeInstance( 'rectangle )
+setWidth(body 50.0)
+setHeight(body 10.0)
+generate(body)
+;
+cont = makeInstance( 'rectangle )
+setWidth(cont 10.0)
+setHeight(cont 10.0)
+generate(cont)
+;
+bTran = makeInstance( 'transform2 )
+setVertices(bTran getVertices(body))
+setCentroid(bTran getCentroid(body))
+cloneRectTran(bTran)
+setLayer(bTran "text")
+setPurpose(bTran "drawing")
+;
+pConTran = makeInstance( 'transform2 )
+setVertices(pConTran getVertices(cont))
+setCentroid(pConTran getCentroid(cont))
+cloneRectTran(pConTran)
+setLayer(pConTran "text")
+setPurpose(pConTran "drawing")
+;
+translate(pConTran list(25.0 0))
+;
+geomGroup = makeInstance('geometry)
+addTransform(geomGroup bTran)
+addTransform(geomGroup pConTran)
+rectTranUnion(geomGroup)
+;
+ass = makeInstance( 'assembly )
+addGeometry(ass geomGroup)
+rtsAdd(ass->rtrans getRectTran(geomGroup))
+rtsUnion(ass->rtrans)
+; debug ...
+rt = nth(0 getCollection(ass->rtrans->rtrans))
+rtran2bbox(rt)
+union(ass->rtrans rt)

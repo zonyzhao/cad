@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;  list.il: Some extensions to skill list functionality 
+;;;;;;;;;;;;;;;;  res.ils: Planar resistor PCELL code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( res (PcellParam)
 	  (
@@ -12,23 +12,22 @@ defclass( res (PcellParam)
 		( coreBBox @initarg coreBBox )	  
 	  )
 ) ; defClass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
 defmethod( initializeInstance @after ((obj res)) 
-	   obj->plRes = makeInstance( 'planarResistor )
-	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+  obj->plRes = makeInstance( 'planarResistor )
+  obj->centroid = makeInstance('point2)
+  obj->rtrans = makeInstance('rectTrans)
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( draw ((device res))
-  let( (wid len pr resRectTran )
+  let( ( wid len pr resRectTran )
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
+   println("Drawing Resistor")
    wid = getParamValue(device 'wid)
    len = getParamValue(device 'len)
    setWidth(device->plRes wid)
@@ -48,9 +47,7 @@ defmethod( draw ((device res))
    setRef(device->plRes getRef(device))
    generate(device->plRes)
    render(device->plRes)
-   resRectTran = getRectTran(device->plRes)
-   rtsAdd(device->rtrans resRectTran)
-   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
    callNextMethod()
   );let
 );defmethod

@@ -3,22 +3,22 @@
 ;                of polygon transforms.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( geometry ()
-	  (
-		( transforms )	
-		( centroid )
-		( rtran @reader getRectTran )
-		( ref @reader getRef @writer setRef )		  
-	  )
+  (
+    ( transforms )	
+    ( centroid )
+    ( rtrans @reader getRectTran )
+    ( ref @reader getRef @writer setRef )		  
+  )
 ) ; defClass
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defmethod( initializeInstance @after ((obj geometry)) 
-	   obj->transforms = makeInstance( 'collection )
-	   obj->centroid = makeInstance( 'point2 )
-	   obj->rtran = makeInstance( 'rectTran )
-	   obj->ref = nil
+  obj->transforms = makeInstance( 'collection )
+  obj->centroid = makeInstance( 'point2 )
+  obj->rtrans = makeInstance( 'rectTrans )
+  obj->ref = nil
 );defmethod
 
 ;#####################################################
@@ -26,11 +26,11 @@ defmethod( initializeInstance @after ((obj geometry))
 ; in the  geometry
 ;#####################################################
 defmethod( rectTranUnion (( geom geometry ))
-  zero(geom->rtran)
+  zero(geom->rtrans)
   foreach( trans getCollection(geom->transforms)
-    union(geom->rtran getRectTran(trans))
+    union(geom->rtrans getRectTran(trans))
   ) 
-  calculateCentroid(geom->rtran)
+  calculateCentroid(geom->rtrans)
 );defmethod
 
 ;#####################################################
