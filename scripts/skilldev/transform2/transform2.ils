@@ -2,26 +2,24 @@
 ;;;;;;;;;;;;;;;;  transform2: Generic Point Class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( transform2 (cadObj)
-	  (
-	    ( polygon )
-	    ( vertices @reader getVertices @writer setVertexCollection)
-	    ( area )
-	    ( transformation )
-	    ( rtran @reader getRectTran)
-	  )				  
-) ; defclass
-
+  (
+    ( polygon )
+    ( vertices @reader getVertices @writer setVertexCollection)
+    ( area )
+    ( transformation )
+    ;( rtrans @reader getRectTran)
+  )				  
+);defclass
 ;#####################################################
 ; Constructor method
 ;#####################################################
 defmethod( initializeInstance @after ((obj transform2))
-	   obj->polygon = makeInstance( 'polygon2 ) 
-	   obj->vertices = makeInstance( 'points2 )
-	   obj->area=nil
-	   obj->transformation = makeInstance( 'transformation2 )
-	   obj->rtran = makeInstance( 'rectTran )
+  obj->polygon = makeInstance( 'polygon2 ) 
+  obj->vertices = makeInstance( 'points2 )
+  obj->area=nil
+  obj->transformation = makeInstance( 'transformation2 )
+;  obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
-
 ;#####################################################
 ; sets up the polygon "component" of the transform2 object 
 ;#####################################################
@@ -49,7 +47,7 @@ defmethod( resetVertices (( tran transform2 ))
 defmethod( setVertices (( tran transform2 ) arg)
   let( (p2)
     setVertices(tran->polygon arg)
-    setRectTran(tran->polygon)
+    ;setRectTran(tran->polygon)
     resetPoints(tran->vertices)
     foreach(vert arg
       p2 = makeInstance( 'point2 )
@@ -59,7 +57,7 @@ defmethod( setVertices (( tran transform2 ) arg)
     setCentroid(tran->transformation getCoord(tran->polygon->centroid))
     setScale(tran->transformation 1.0)
     setTheta(tran->transformation 0.0)
-    cloneRectTran(tran)
+    ;cloneRectTran(tran)
     t
   );let
 );defmethod
@@ -69,10 +67,9 @@ defmethod( setVertices (( tran transform2 ) arg)
 ; recTran. Use this to "reset" the recTran when 
 ; transform2's transformation is reset.
 ;#####################################################
-defmethod( cloneRectTran (( tran transform2 ))
-  clone(tran->rtran getRectTran(tran->polygon))
-);defmethod
-
+;defmethod( cloneRectTran (( tran transform2 ))
+;  clone(tran->rtrans getRectTran(tran->polygon))
+;);defmethod
 ;###############################################################################
 ; render the transform
 ;###############################################################################
@@ -112,7 +109,7 @@ defmethod( translate (( tran transform2 ) arg)
       translate(tran->vertices arg)
       centroid = getCentroid(tran->transformation)
       setCentroid(tran->transformation list(xCoord(centroid)+xCoord(arg) yCoord(centroid)+yCoord(arg)))
-      translate(tran->rtran arg)
+      ;translate(tran->rtrans arg)
     else
       println("ERROR(transform2): list argument required")
     );if
@@ -132,27 +129,23 @@ defmethod( scale (( tran transform2 ) arg)
 ; This method translates the position of each transform
 ; vertex by the point value argument "list(x y)" 
 ;#####################################################
-defmethod( isCentered (( tran transform2 ))
-  isCentered(tran->rtran)	   
-);defmethod
-
-
+;defmethod( isCentered (( tran transform2 ))
+;  isCentered(tran->rtrans)	   
+;);defmethod
 ;#####################################################
 ; This method centers the transform based upon its
 ; rectTran center
 ;#####################################################
-defmethod( center (( tran transform2 ))
-  let( (rtcent)
-    if( !isCentered(tran->rtran) then
-      rtcent = getCentroid(tran->rtran)
-      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
-    else
-      t
-    );if
-  );let	   
-);defmethod
-
-
+;defmethod( center (( tran transform2 ))
+;  let( (rtcent)
+;    if( !isCentered(tran->rtrans) then
+;      rtcent = getCentroid(tran->rtrans)
+;      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
+;    else
+;      t
+;    );if
+;  );let	   
+;);defmethod
 ;###############################################################################
 ; Note A: A local rotation requires that the transforms centroid be translated
 ;         to origin. Global rotations do not need the tranlation to origin

@@ -18,8 +18,8 @@ defclass( memsChipFrame (PcellParam)
     ( ol4 ) 
     ( centroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
-    ( rtran )
+    ;( rtrans )
+    ;( rtran )
     ( coreBBox @initarg coreBBox )			  
   )
 );defClass
@@ -33,8 +33,8 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
   obj->ol3 = makeInstance( 'cframe )
   obj->ol4 = makeInstance( 'cframe2 )
   obj->centroid = makeInstance( 'point2 )
-  obj->rtrans = makeInstance( 'rectTrans )
-  obj->rtrans = makeInstance( 'rectTran )
+  ;obj->rtrans = makeInstance( 'rectTrans )
+  ;obj->rtrans = makeInstance( 'rectTran )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
@@ -151,7 +151,7 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Set the CV boundary box - again outter outline is largest so use its bbox
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
+   ;setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Call the next draw in the 
    ; case of multiple inheritance

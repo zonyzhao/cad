@@ -27,7 +27,7 @@ defmethod( generate (( tri triangle ))
 	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
 	   setVertices(tri vertices)
 	   setCentroid(tri list(0.0 0.0))
-	   setRectTran(tri)
+	   ;setRectTran(tri)
 	   getCentroid(tri)
   );let
 );defmethod

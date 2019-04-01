@@ -539,6 +539,9 @@ procedure( getSecCells()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( weedSecCells()
   let( (cellLen cellName endOfCell junkCells newPriCells alignCells offsetX offsetY)
      	junkSecCells = nil
@@ -592,6 +595,9 @@ procedure( weedSecCells()
 	)
 ) ;let & procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwWeedPriCells()
 let( (cellLen cellName endOfCell junkCells newPriCells alignCells)
 
@@ -656,6 +662,9 @@ alignCells = nil
 )) ;let & procedure
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwWeedOatCells()
   let( (cellLen cellName endOfCell junkCells newOatCells)
 
@@ -682,6 +691,9 @@ procedure( kwWeedOatCells()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetQtrCenData()
   let( (tempX tempY)
     tempX = phopl->xStepPri
@@ -697,6 +709,9 @@ procedure( kwGetQtrCenData()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecQtrCenData()
   let( (tempX tempY)
     tempX = phopl->xStepSec
@@ -712,6 +727,9 @@ procedure( getSecQtrCenData()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetOatCells()
   tmpOatCell = nil
   phopl->oatCells = nil
@@ -1119,7 +1137,9 @@ procedure( evaluateSecDFASkeys()
       cellInfo = list(car(cell) cadr(cell) letterCode)
       tmpDfas = cons(cellInfo tmpDfas)
     )
-/*******  Code to weed out unreference dfas stuff  ****/
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  Code to weed out unreference dfas stuff 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     foreach( i tmpDfas
       if( caddr(i) then
 	finalDfasList= cons(i finalDfasList)	
@@ -1245,7 +1265,9 @@ procedure( kwEvaluateDFASkeys()
       cellInfo = list(car(cell) cadr(cell) letterCode)
       tmpDfas = cons(cellInfo tmpDfas)
     )
-/*******  Code to weed out unreference dfas stuff  ****/
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  Code to weed out unreference dfas stuff  
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     foreach( i tmpDfas
       if( caddr(i) then
 	finalDfasList= cons(i finalDfasList)	
@@ -1354,7 +1376,7 @@ procedure( kwPrintData()
     if( phopl->eBeam=="Leica" then
       fprintf(phopl->port "\n")
       fprintf(phopl->port "****************************************************************************\n")
-      fprintf(phopl->port "******                       Leica Marks                              ******\n")
+      fprintf(phopl->port "******                  Primary Leica Marks                           ******\n")
       fprintf(phopl->port "****************************************************************************\n")
       fprintf(phopl->port "\n")
 
@@ -1563,27 +1585,27 @@ procedure( printSecData()
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwComputeDisFromCenter(dfasX dfasY)
-let( (NEcenX NEcenY XdfCNE YdfCNE NWcenX NWcenY XdfCNW YdfCNW
-      SWcenX SWcenY XdfCSW YdfCSW SEcenX SEcenY XdfCSE YdfCSE)
-NEcenX = caar(phopl->NEcenter)
-NEcenY = cadar(phopl->NEcenter)
-XdfCNE = dfasX - NEcenX
-YdfCNE = dfasY - NEcenY
-NWcenX = caar(phopl->NWcenter)
-NWcenY = cadar(phopl->NWcenter) 
-XdfCNW = dfasX - NWcenX
-YdfCNW = dfasY - NWcenY
-SWcenX = caar(phopl->SWcenter)
-SWcenY = cadar(phopl->SWcenter)
-XdfCSW = dfasX - SWcenX
-YdfCSW = dfasY - SWcenY
-SEcenX = caar(phopl->SEcenter)
-SEcenY = cadar(phopl->SEcenter)
-XdfCSE = dfasX - SEcenX
-YdfCSE = dfasY - SEcenY
-list(`(,XdfCNE ,YdfCNE) `(,XdfCNW ,YdfCNW) `(,XdfCSW ,YdfCSW) `(,XdfCSE ,YdfCSE))
-))
-
+  let( (NEcenX NEcenY XdfCNE YdfCNE NWcenX NWcenY XdfCNW YdfCNW
+        SWcenX SWcenY XdfCSW YdfCSW SEcenX SEcenY XdfCSE YdfCSE)
+    NEcenX = caar(phopl->NEcenter)
+    NEcenY = cadar(phopl->NEcenter)
+    XdfCNE = dfasX - NEcenX
+    YdfCNE = dfasY - NEcenY
+    NWcenX = caar(phopl->NWcenter)
+    NWcenY = cadar(phopl->NWcenter) 
+    XdfCNW = dfasX - NWcenX
+    YdfCNW = dfasY - NWcenY
+    SWcenX = caar(phopl->SWcenter)
+    SWcenY = cadar(phopl->SWcenter)
+    XdfCSW = dfasX - SWcenX
+    YdfCSW = dfasY - SWcenY
+    SEcenX = caar(phopl->SEcenter)
+    SEcenY = cadar(phopl->SEcenter)
+    XdfCSE = dfasX - SEcenX
+    YdfCSE = dfasY - SEcenY
+    list(`(,XdfCNE ,YdfCNE) `(,XdfCNW ,YdfCNW) `(,XdfCSW ,YdfCSW) `(,XdfCSE ,YdfCSE))
+  );let
+);procedure
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
@@ -1711,52 +1733,52 @@ fprintf(phopl->port "\n")
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( printSecQtrInfo()
-let( (nfo) 
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
+  let( (nfo) 
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
 
-fprintf(phopl->port "SEC DATA Based On Quarter Reticles\n")
-fprintf(phopl->port "\n")
-fprintf(phopl->port "SEC 1/4 reticle size %8.2f %8.2f \n", phopl->xStepSec/2 phopl->yStepSec/2)
-fprintf(phopl->port "SEC 1/4 reticle OVERsized to %8.2f %8.2f \n", phopl->xStepSec/2+1 phopl->yStepSec/2+1)
-fprintf(phopl->port "\n")
+    fprintf(phopl->port "SEC DATA Based On Quarter Reticles\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "SEC 1/4 reticle size %8.2f %8.2f \n", phopl->xStepSec/2 phopl->yStepSec/2)
+    fprintf(phopl->port "SEC 1/4 reticle OVERsized to %8.2f %8.2f \n", phopl->xStepSec/2+1 phopl->yStepSec/2+1)
+    fprintf(phopl->port "\n")
 
-fprintf(phopl->port "SEC Center of NE Reticle %22L\n", car(phopl->NEcenterSec))
-fprintf(phopl->port "SEC Center of NW Reticle %22L\n", car(phopl->NWcenterSec))
-fprintf(phopl->port "SEC Center of SW Reticle %22L\n", car(phopl->SWcenterSec))
-fprintf(phopl->port "SEC Center of SE Reticle %22L\n", car(phopl->SEcenterSec))
-fprintf(phopl->port "\n")
-
-
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
-
-foreach(i phopl->dfasQtrSec
-dis2 = caddr(i)
-fprintf(phopl->port "SEC %-40s DFAS Reference %-12s  Quadrant %-10s\n",car(i) cadr(i) car(cadddr(i)))
-fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
-fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
-fprintf(phopl->port "\n")
-)
+    fprintf(phopl->port "SEC Center of NE Reticle %22L\n", car(phopl->NEcenterSec))
+    fprintf(phopl->port "SEC Center of NW Reticle %22L\n", car(phopl->NWcenterSec))
+    fprintf(phopl->port "SEC Center of SW Reticle %22L\n", car(phopl->SWcenterSec))
+    fprintf(phopl->port "SEC Center of SE Reticle %22L\n", car(phopl->SEcenterSec))
+    fprintf(phopl->port "\n")
 
 
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
 
-foreach(i phopl->gmarkQtrSec
-dis2 = caddr(i)
-fprintf(phopl->port "SEC %-40s Quadrant %-10s\n", car(i) car(cadddr(i)))
-fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
-fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
-fprintf(phopl->port "\n")
-)
+    foreach(i phopl->dfasQtrSec
+      dis2 = caddr(i)
+      fprintf(phopl->port "SEC %-40s DFAS Reference %-12s  Quadrant %-10s\n",car(i) cadr(i) car(cadddr(i)))
+      fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+      fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+      fprintf(phopl->port "\n")
+    );foreach
 
-))
+
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+
+    foreach(i phopl->gmarkQtrSec
+      dis2 = caddr(i)
+      fprintf(phopl->port "SEC %-40s Quadrant %-10s\n", car(i) car(cadddr(i)))
+      fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+      fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+      fprintf(phopl->port "\n")
+    );foreach
+  );let
+);procedure
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
@@ -2001,7 +2023,6 @@ procedure(write_deck(cv path gate)
     runDRC(cv path)
     dbSave(cv)
     deleteFile(path)
-
-  )
-)
+  );let 
+);procedure
 

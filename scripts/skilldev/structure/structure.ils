@@ -5,15 +5,15 @@
 defclass( structure (cadObj)
   (
     ( components @reader getComponents @writer setComponents )
-    ( rtrans )				  
+    ;( rtrans )				  
   )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( initializeInstance @after ((obj structure)) 
-	   obj->components = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans ) 
+  obj->components = makeInstance( 'collection )
+  ;obj->rtrans = makeInstance( 'rectTrans ) 
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Adds an component to a structure

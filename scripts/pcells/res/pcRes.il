@@ -13,16 +13,16 @@
 ;       3.) Need contact end length and enclosures as
 ;           defined in the TF
 pcDefinePCell(
-  list(ddGetObj("D91") "res" "layout")
+  list(ddGetObj("D91") "resistor" "layout")
   (
-	( wid  "float" 5)
-	( len  "float" 15)
+	( wid  "float" 5.0)
+	( len  "float" 15.0)
   )
   let((pcell cvid cdfid)
 	pcell = makeInstance( 'res )
 	setRef(pcell pcCellView)
 	setPcellParams(pcell pcCellView)	
-	draw(pcell)
+	drawRes(pcell)
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Create the CDF
 	; If CDF exists - delete it

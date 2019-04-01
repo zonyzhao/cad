@@ -7,7 +7,7 @@ gp = makeInstance( 'gatePad )
 classp( gp 'gatePad)
 classOf(gp)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UT-1: Generate and render unit 
+; UT-1: Generate and render unit `
 ;       gate pad
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 gp = makeInstance( 'gatePad )
@@ -25,8 +25,10 @@ lib = "test"
 name = "gatePadTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gp cv)
+;Render gate pad
 render(gp)
-setRef(gp->rtrans cv)
-render(gp->rtrans)
+;Render gate pad bbox
+;setRef(gp->rtrans cv)
+;render(gp->rtrans)
 dbSave(cv)
 dbClose(cv)

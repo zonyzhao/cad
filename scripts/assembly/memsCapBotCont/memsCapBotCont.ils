@@ -55,7 +55,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(bot))
     setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran "electrode")
     setPurpose(bTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,7 +64,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     brTran = makeInstance( 'transform2 )
     setVertices(brTran getVertices(botCon))
     setCentroid(brTran getCentroid(botCon))
-    cloneRectTran(brTran)
+    ;cloneRectTran(brTran)
     setLayer(brTran "electrode")
     setPurpose(brTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -73,7 +73,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(dstp))
     setCentroid(dTran getCentroid(dstp))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran "dielectric")
     setPurpose(dTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -82,7 +82,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(thk))
     setCentroid(tTran getCentroid(thk))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran "thick")
     setPurpose(tTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -100,13 +100,13 @@ defmethod( generate (( mbc memsCapBotCont ))
     addTransform(geomGroup brTran)
     addTransform(geomGroup dTran )
     addTransform(geomGroup tTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Complete this assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(mbc geomGroup)
-    rtsAdd(mbc->rtrans getRectTran(geomGroup))
-    rtsUnion(mbc->rtrans)
+    ;rtsAdd(mbc->rtrans getRectTran(geomGroup))
+    ;rtsUnion(mbc->rtrans)
   );let
 );defmethod
 ;######################################################

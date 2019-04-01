@@ -6,7 +6,7 @@ defclass( geometry ()
   (
     ( transforms )	
     ( centroid )
-    ( rtrans @reader getRectTran )
+    ;( rtrans @reader getRectTran )
     ( ref @reader getRef @writer setRef )		  
   )
 ) ; defClass
@@ -17,7 +17,7 @@ defclass( geometry ()
 defmethod( initializeInstance @after ((obj geometry)) 
   obj->transforms = makeInstance( 'collection )
   obj->centroid = makeInstance( 'point2 )
-  obj->rtrans = makeInstance( 'rectTrans )
+  ;obj->rtrans = makeInstance( 'rectTrans )
   obj->ref = nil
 );defmethod
 
@@ -25,13 +25,13 @@ defmethod( initializeInstance @after ((obj geometry))
 ; Generate the rectTran union of all the transforms
 ; in the  geometry
 ;#####################################################
-defmethod( rectTranUnion (( geom geometry ))
-  zero(geom->rtrans)
-  foreach( trans getCollection(geom->transforms)
-    union(geom->rtrans getRectTran(trans))
-  ) 
-  calculateCentroid(geom->rtrans)
-);defmethod
+;defmethod( rectTranUnion (( geom geometry ))
+;  zero(geom->rtrans)
+;  foreach( trans getCollection(geom->transforms)
+;    union(geom->rtrans getRectTran(trans))
+;  ) 
+;  calculateCentroid(geom->rtrans)
+;);defmethod
 
 ;#####################################################
 ; Sets the centroid of the geometry
@@ -86,26 +86,26 @@ defmethod( addTransform (( geom geometry ) arg)
 ; Center the geometry based upon the geometry's 
 ; rectTran centroid
 ;#####################################################
-defmethod( isCentered (( geom geometry ))
-  isCentered(geom->rtran)
-);defmethod
+;defmethod( isCentered (( geom geometry ))
+;  isCentered(geom->rtrans)
+;);defmethod
 
 ;#####################################################
 ; Center the geometry based upon the geometry's 
 ; rectTran centroid
 ;#####################################################
-defmethod( center (( geom geometry ))
-  let( (tval)
-    if( !isCentered(geom) then
-      tval = list( -xCoord(getCentroid(geom->rtran)) -yCoord(getCentroid(geom->rtran)))
-      setCentroid(geom list(0.0 0.0))
-      translate(geom->rtran tval)
-      translate(geom tval)
-    else
-      t
-    );if
-  );let  
-);defmethod
+;defmethod( center (( geom geometry ))
+;  let( (tval)
+;    if( !isCentered(geom) then
+;      tval = list( -xCoord(getCentroid(geom->rtrans)) -yCoord(getCentroid(geom->rtrans)))
+;      setCentroid(geom list(0.0 0.0))
+;      translate(geom->rtrans tval)
+;      translate(geom tval)
+;    else
+;      t
+;    );if
+;  );let  
+;);defmethod
 
 ;#####################################################
 ; translate the geometry
@@ -124,7 +124,7 @@ defmethod( rotate (( geom geometry ) arg)
     foreach(tran getCollection(geom->transforms)
       rotate(tran arg)
     );foreach
-    rotate(geom->rtran arg)
+    ;rotate(geom->rtrans arg)
   );let
 );defmethod
 

@@ -5,7 +5,6 @@ findClass( 'assembly )
 ass = makeInstance( 'assembly )
 classp( ass 'assembly)
 classOf(ass)
-
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Making a capsule assembly
 ;       on layer "sd" adding it to 
@@ -13,7 +12,7 @@ classOf(ass)
 ;       stackup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cap = makeInstance( 'capsule )
-setLength(cap 50.0)
+setHeight(cap 50.0)
 setWidth(cap 25.0)
 setLayer(cap "sd")
 setPurpose(cap "drawing")
@@ -32,7 +31,6 @@ setRef(stack cvRef)
 renderStack(stack)
 dbSave(cvRef)
 dbClose(cvRef)
-
 :;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Making a trirect assembly 
 ;       on layer "mesa" adding it 
@@ -40,7 +38,7 @@ dbClose(cvRef)
 ;       the stackup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 tr = makeInstance( 'trirect )
-setLength(tr 50.0)
+setHeight(tr 50.0)
 setWidth(tr 10.0)
 setLayer(tr "mesa")
 setPurpose(tr "drawing")

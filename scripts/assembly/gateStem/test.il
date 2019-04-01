@@ -6,7 +6,6 @@ findClass( 'gateStem )
 gs = makeInstance( 'gateStem )
 classp( gs 'gateStem)
 classOf(gs)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate and render unit 
 ;       gate stem
@@ -22,7 +21,9 @@ lib = "test"
 name = "gateStemTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gs cv)
+; Render the gate stem
 render(gs)
+; Render the gate stem bbox
 setRef(gs->rtrans cv)
 render(gs->rtrans)
 dbSave(cv)

@@ -6,23 +6,21 @@ findClass( 'rectangle )
 rec = makeInstance( 'rectangle )
 classp( rec 'rectangle)
 classOf(rec)
-rec->width
-rec->length
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Generate Default Rectangle 
 ;       Vertices 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rec = makeInstance( 'rectangle )
-genRect(rec)
+generate(rec)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-2: Generate Rectangle 
 ;       Vertices using different
 ;       width and length
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rec = makeInstance( 'rectangle )
-setWid(rec 5.0)
-setLen(rec 5.0)
-genRect(rec)
+setWidth(rec 5.0)
+setHeight(rec 5.0)
+generate(rec)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-3: Generate Rectangle, 
@@ -30,11 +28,11 @@ genRect(rec)
 ;       and render it in a cell view
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rec = makeInstance( 'rectangle )
-setWid(rec 5.0)
-setLen(rec 10.0)
-genRect(rec)
+setWidth(rec 5.0)
+setHeight(rec 10.0)
+generate(rec)
 shp = makeInstance( 'shape )
-setVertices(shp genRect(rec))
+setVertices(shp getVertices(rec))
 lib = "test"
 name = "rectangle"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")

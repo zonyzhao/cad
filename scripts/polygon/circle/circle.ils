@@ -301,8 +301,8 @@ defmethod( generate (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -337,8 +337,8 @@ defmethod( generateHalfCircle (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -373,8 +373,8 @@ defmethod( generateQuarterCircle (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -410,8 +410,8 @@ defmethod( generateQuarterCircleInv (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 

@@ -8,9 +8,9 @@
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
-defgeneric( diff (obj arg)
-  error( "Clone is a subclass responsibility\n")
-);defgeneric
+;defgeneric( cdiff (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cadObj ()
@@ -61,7 +61,7 @@ defmethod( serializeCadObj (( cobj cadObj))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Diff ojbect
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( diff (( cobj cadObj) (arg cadObj) )
+defmethod( cdiff (( cobj cadObj) (arg cadObj) )
   let((rlist)
     rlist='()
     if(cobj->oid == arg->oid then
@@ -1408,7 +1408,7 @@ defclass( polygon2 (cadObj)
     ( area )
     ( centroid )
     ( scale )
-    ( rtran @reader getRectTran )
+    ;( rtrans @reader getRectTran )
     ( points )			  	
   )
 );defClass
@@ -1420,40 +1420,40 @@ defmethod( initializeInstance @after ((obj polygon2))
 	   obj->area = nil
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->scale = 1.0
-	   obj->rtran = makeInstance( 'rectTran )
+	   ;obj->rtrans = makeInstance( 'rectTrans )
 	   obj->points = makeInstance( 'points2 )
 );defmethod
 ;####################################################
 ; Checks to make sure that the centroid of the
 ; rectTran is at the origin
 ;####################################################
-defmethod( isCentered (( poly polygon2 ))
-  let( (c)
-    c = getCentroid(poly->rtran)
-    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
-      t
-    else
-      nil
-    )	 
-  );let	   
-);defmethod
+;defmethod( isCentered (( poly polygon2 ))
+;  let( (c)
+;    c = getCentroid(poly->rtrans)
+;    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
+;      t
+;    else
+;      nil
+;    )	 
+;  );let	   
+;)defmethod
 ;####################################################
 ; Centers the polygon's rectTran at the origin
 ; if not already centered
 ;####################################################
-defmethod( center (( poly polygon2 ))
-  let( (c)
-    if( !isCentered(poly) then
-       c = getCentroid(poly->rtran)
-       translate(poly list(-xCoord(c) -yCoord(c)))
-       setCentroid(poly->rtran list(0.0 0.0))
-       setCentroid(poly list(0.0 0.0))
-       getCentroid(poly->rtran)
-    else
-      t
-    );if
-  );let	 	   
-);defmethod
+;defmethod( center (( poly polygon2 ))
+;  let( (c)
+;    if( !isCentered(poly) then
+;       c = getCentroid(poly->rtrans)
+;       translate(poly list(-xCoord(c) -yCoord(c)))
+;       setCentroid(poly->rtrans list(0.0 0.0))
+;       setCentroid(poly list(0.0 0.0))
+;       getCentroid(poly->rtrans)
+;    else
+;      t
+;    );if
+;  );let	 	   
+;);defmethod
 ;####################################################
 ; Sets the polygon vertices and calculates the
 ; area and centroid of the polygon
@@ -1679,11 +1679,11 @@ defmethod( miny (( poly polygon2 ))
 ; Set the rectangular transformation rectTran of the
 ; polygon
 ;#####################################################
-defmethod( setRectTran (( poly polygon2 ))
-  setUr(poly->rtran list(maxx(poly) maxy(poly)))
-  setLl(poly->rtran list(minx(poly) miny(poly)))
-  calculateCentroid(poly->rtran)
-);defmethod
+;defmethod( setRectTran (( poly polygon2 ))
+;  setUr(poly->rtrans list(maxx(poly) maxy(poly)))
+;  setLl(poly->rtrans list(minx(poly) miny(poly)))
+;  calculateCentroid(poly->rtrans)
+;);defmethod
 ;#####################################################
 ; FIXME: this should be in transform2 class
 ; This method "spins" the polygon vertices in a 
@@ -2395,8 +2395,8 @@ defmethod( rotate (( rt rectTran ) arg )
         setVertices(poly getVertices(rt))
         rotate(poly arg)
         setRectTran(poly)
-        setUr(rt getUr(poly->rtran))
-        setLl(rt getLl(poly->rtran))
+        setUr(rt getUr(poly->rtrans))
+        setLl(rt getLl(poly->rtrans))
       else
         println("ERROR(rectran): bbox not defined. No rotation performed!")
     );if	
@@ -2544,8 +2544,7 @@ defmethod( validate (( rt rectTran ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTrans (rectTran)
   (
-    ( rtrans @reader getRtrans )
-;    ( rtran @reader getRectTran )		  
+    ( rtrans @reader getRtrans )		  
   )
 );defclass
 ;#####################################################
@@ -2553,10 +2552,6 @@ defclass( rectTrans (rectTran)
 ;#####################################################
 defmethod( initializeInstance @after ((obj rectTrans)) 
   obj->rtrans = makeInstance( 'collection )
-;  obj->rtrans->rts->ur = list(0.0 0.0)
-;  obj->rtrans->rts->ll = list(0.0 0.0)
-;  obj->rtrans->rts->bbox = list(list(0.0 0.0) list(0.0 0.0))
-;  obj->rtran = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Add rectTran object to rectTrans collection
@@ -2581,13 +2576,10 @@ defmethod( rtsUnion (( rts rectTrans ))
     if(!null(rt->bbox) then
       union(rts rt)     
       rtran2bbox(rts)
-;      union(rts->rtran rt)
     else
       println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
     );if
   );foreach 
-  ;rtran2bbox(rts)
-;  if(!null(rts->rtran->bbox) then
    if(!null(rts->bbox) then
     calculateCentroid(rts)
   );if
@@ -2599,7 +2591,7 @@ defmethod( rtsUnion (( rts rectTrans ))
 ;  foreach(rtrn getCollection(rts->rtrans)
 ;    translate(rtrn arg)
 ;  );foreach
-;  translate(rts->rtran arg)
+;  translate(rts->rtrans arg)
 ;);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2607,26 +2599,24 @@ defmethod( rtsUnion (( rts rectTrans ))
 ;;;;;;;;;;;;;;;;  transform2: Generic Point Class 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( transform2 (cadObj)
-	  (
-	    ( polygon )
-	    ( vertices @reader getVertices @writer setVertexCollection)
-	    ( area )
-	    ( transformation )
-	    ( rtran @reader getRectTran)
-	  )				  
-) ; defclass
-
+  (
+    ( polygon )
+    ( vertices @reader getVertices @writer setVertexCollection)
+    ( area )
+    ( transformation )
+    ;( rtrans @reader getRectTran)
+  )				  
+);defclass
 ;#####################################################
 ; Constructor method
 ;#####################################################
 defmethod( initializeInstance @after ((obj transform2))
-	   obj->polygon = makeInstance( 'polygon2 ) 
-	   obj->vertices = makeInstance( 'points2 )
-	   obj->area=nil
-	   obj->transformation = makeInstance( 'transformation2 )
-	   obj->rtran = makeInstance( 'rectTran )
+  obj->polygon = makeInstance( 'polygon2 ) 
+  obj->vertices = makeInstance( 'points2 )
+  obj->area=nil
+  obj->transformation = makeInstance( 'transformation2 )
+;  obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
-
 ;#####################################################
 ; sets up the polygon "component" of the transform2 object 
 ;#####################################################
@@ -2654,7 +2644,7 @@ defmethod( resetVertices (( tran transform2 ))
 defmethod( setVertices (( tran transform2 ) arg)
   let( (p2)
     setVertices(tran->polygon arg)
-    setRectTran(tran->polygon)
+    ;setRectTran(tran->polygon)
     resetPoints(tran->vertices)
     foreach(vert arg
       p2 = makeInstance( 'point2 )
@@ -2664,7 +2654,7 @@ defmethod( setVertices (( tran transform2 ) arg)
     setCentroid(tran->transformation getCoord(tran->polygon->centroid))
     setScale(tran->transformation 1.0)
     setTheta(tran->transformation 0.0)
-    cloneRectTran(tran)
+    ;cloneRectTran(tran)
     t
   );let
 );defmethod
@@ -2674,10 +2664,9 @@ defmethod( setVertices (( tran transform2 ) arg)
 ; recTran. Use this to "reset" the recTran when 
 ; transform2's transformation is reset.
 ;#####################################################
-defmethod( cloneRectTran (( tran transform2 ))
-  clone(tran->rtran getRectTran(tran->polygon))
-);defmethod
-
+;defmethod( cloneRectTran (( tran transform2 ))
+;  clone(tran->rtrans getRectTran(tran->polygon))
+;);defmethod
 ;###############################################################################
 ; render the transform
 ;###############################################################################
@@ -2717,7 +2706,7 @@ defmethod( translate (( tran transform2 ) arg)
       translate(tran->vertices arg)
       centroid = getCentroid(tran->transformation)
       setCentroid(tran->transformation list(xCoord(centroid)+xCoord(arg) yCoord(centroid)+yCoord(arg)))
-      translate(tran->rtran arg)
+      ;translate(tran->rtrans arg)
     else
       println("ERROR(transform2): list argument required")
     );if
@@ -2737,27 +2726,23 @@ defmethod( scale (( tran transform2 ) arg)
 ; This method translates the position of each transform
 ; vertex by the point value argument "list(x y)" 
 ;#####################################################
-defmethod( isCentered (( tran transform2 ))
-  isCentered(tran->rtran)	   
-);defmethod
-
-
+;defmethod( isCentered (( tran transform2 ))
+;  isCentered(tran->rtrans)	   
+;);defmethod
 ;#####################################################
 ; This method centers the transform based upon its
 ; rectTran center
 ;#####################################################
-defmethod( center (( tran transform2 ))
-  let( (rtcent)
-    if( !isCentered(tran->rtran) then
-      rtcent = getCentroid(tran->rtran)
-      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
-    else
-      t
-    );if
-  );let	   
-);defmethod
-
-
+;defmethod( center (( tran transform2 ))
+;  let( (rtcent)
+;    if( !isCentered(tran->rtrans) then
+;      rtcent = getCentroid(tran->rtrans)
+;      translate(tran list( -xCoord(rtcent) -yCoord(rtcent)))
+;    else
+;      t
+;    );if
+;  );let	   
+;);defmethod
 ;###############################################################################
 ; Note A: A local rotation requires that the transforms centroid be translated
 ;         to origin. Global rotations do not need the tranlation to origin
@@ -2875,7 +2860,7 @@ defclass( geometry ()
   (
     ( transforms )	
     ( centroid )
-    ( rtrans @reader getRectTran )
+    ;( rtrans @reader getRectTran )
     ( ref @reader getRef @writer setRef )		  
   )
 ) ; defClass
@@ -2886,7 +2871,7 @@ defclass( geometry ()
 defmethod( initializeInstance @after ((obj geometry)) 
   obj->transforms = makeInstance( 'collection )
   obj->centroid = makeInstance( 'point2 )
-  obj->rtrans = makeInstance( 'rectTrans )
+  ;obj->rtrans = makeInstance( 'rectTrans )
   obj->ref = nil
 );defmethod
 
@@ -2894,13 +2879,13 @@ defmethod( initializeInstance @after ((obj geometry))
 ; Generate the rectTran union of all the transforms
 ; in the  geometry
 ;#####################################################
-defmethod( rectTranUnion (( geom geometry ))
-  zero(geom->rtrans)
-  foreach( trans getCollection(geom->transforms)
-    union(geom->rtrans getRectTran(trans))
-  ) 
-  calculateCentroid(geom->rtrans)
-);defmethod
+;defmethod( rectTranUnion (( geom geometry ))
+;  zero(geom->rtrans)
+;  foreach( trans getCollection(geom->transforms)
+;    union(geom->rtrans getRectTran(trans))
+;  ) 
+;  calculateCentroid(geom->rtrans)
+;);defmethod
 
 ;#####################################################
 ; Sets the centroid of the geometry
@@ -2955,26 +2940,26 @@ defmethod( addTransform (( geom geometry ) arg)
 ; Center the geometry based upon the geometry's 
 ; rectTran centroid
 ;#####################################################
-defmethod( isCentered (( geom geometry ))
-  isCentered(geom->rtran)
-);defmethod
+;defmethod( isCentered (( geom geometry ))
+;  isCentered(geom->rtrans)
+;);defmethod
 
 ;#####################################################
 ; Center the geometry based upon the geometry's 
 ; rectTran centroid
 ;#####################################################
-defmethod( center (( geom geometry ))
-  let( (tval)
-    if( !isCentered(geom) then
-      tval = list( -xCoord(getCentroid(geom->rtran)) -yCoord(getCentroid(geom->rtran)))
-      setCentroid(geom list(0.0 0.0))
-      translate(geom->rtran tval)
-      translate(geom tval)
-    else
-      t
-    );if
-  );let  
-);defmethod
+;defmethod( center (( geom geometry ))
+;  let( (tval)
+;    if( !isCentered(geom) then
+;      tval = list( -xCoord(getCentroid(geom->rtrans)) -yCoord(getCentroid(geom->rtrans)))
+;      setCentroid(geom list(0.0 0.0))
+;      translate(geom->rtrans tval)
+;      translate(geom tval)
+;    else
+;      t
+;    );if
+;  );let  
+;);defmethod
 
 ;#####################################################
 ; translate the geometry
@@ -2993,7 +2978,7 @@ defmethod( rotate (( geom geometry ) arg)
     foreach(tran getCollection(geom->transforms)
       rotate(tran arg)
     );foreach
-    rotate(geom->rtran arg)
+    ;rotate(geom->rtrans arg)
   );let
 );defmethod
 
@@ -3029,8 +3014,7 @@ defclass( assembly ()
 	     ( geometries @reader getGeometryCollection )
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
-	     ( rtrans )
-	     ( rtran )
+	     ;( rtrans @reader getRectTran)
 	  )				  
 );defclass
 ;#####################################################
@@ -3040,14 +3024,7 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->geometries = makeInstance( 'collection )
 	   obj->ref = nil
 	   obj->layers = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans )
-	   obj->rtran  = makeInstance( 'rectTran )
-);defmethod
-;#####################################################
-; Gets the rectran of the assembly
-;#####################################################
-defmethod( getRectTran (( ass assembly ))
-  getRectTran(ass->rtran)
+	   ;obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly
@@ -3130,7 +3107,7 @@ defmethod( translate (( ass assembly ) arg )
         translate(geom arg)
       );foreach
       println("INFO:(assembly): rectran translated")
-      translate(ass->rtrans arg)
+      ;translate(ass->rtrans arg)
     );if
   else
     println("ERROR(assembly): requires a list argument")   
@@ -3143,7 +3120,7 @@ defmethod( rotate (( ass assembly ) arg )
   foreach( geom getCollection(ass->geometries)
       rotate(geom arg)
     );foreach
-    rotate(ass->rtran arg)
+    ;rotate(ass->rtrans arg)
 );defmethod
 ;#####################################################
 ; Renders the layer stackup consisting of the layer
@@ -3187,15 +3164,15 @@ defmethod( render (( ass assembly ))
 defclass( component (cadObj)
   (
     ( assemblies @reader getAssemblies @writer setAssemblies)
-    ( rtrans )				  
+    ;( rtrans )				  
   )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
 defmethod( initializeInstance @after ((obj component)) 
-	   obj->assemblies = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans ) 
+  obj->assemblies = makeInstance( 'collection )
+  ;obj->rtrans = makeInstance( 'rectTrans ) 
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Adds an assembly to a component
@@ -3242,15 +3219,15 @@ defmethod( render (( comp component ))
 defclass( structure (cadObj)
   (
     ( components @reader getComponents @writer setComponents )
-    ( rtrans )				  
+    ;( rtrans )				  
   )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 defmethod( initializeInstance @after ((obj structure)) 
-	   obj->components = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans ) 
+  obj->components = makeInstance( 'collection )
+  ;obj->rtrans = makeInstance( 'rectTrans ) 
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Adds an component to a structure
@@ -8456,20 +8433,19 @@ defmethod( Update (( obj twoPointsLine ))
 ;# rectangle.ils: Rectangle class
 ;######################################################
 defclass( rectangle (polygon2)
-	  (
-		( width @reader getWidth @writer setWidth )
-		( height @reader getHeight @writer setHeight )
-	  )				  
-) ; defclass
+  (
+    ( width @reader getWidth @writer setWidth )
+    ( height @reader getHeight @writer setHeight )
+  )				  
+);defclass
 
 ;######################################################
 ;# Constructor
 ;######################################################
 defmethod( initializeInstance @after ((obj rectangle)) 
-	   obj->width  = 1.0
-           obj->height = 1.0
+  obj->width  = 1.0
+  obj->height = 1.0
 );defmethod
-
 ;######################################################
 ;######################################################
 defmethod( generate (( rect rectangle ))
@@ -8488,11 +8464,10 @@ defmethod( generate (( rect rectangle ))
 	   vertice = reverse(vertices)
 	   setVertices(rect reverse(vertices))
 	   setCentroid(rect list(0.0 0.0))
-	   setRectTran(rect)
+	   ;setRectTran(rect)
 	   getCentroid(rect)
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method chamfers the upper right and left corners
 ; of the rectangle
@@ -8544,7 +8519,6 @@ defmethod( chamfer (( rect rectangle ) arg)
     );if
   );let
 );defmethod
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method tapers the rigtht side of the rectangle
 ; using chamferUr and chamferLr above.
@@ -8555,9 +8529,6 @@ defmethod( chamfer (( rect rectangle ) arg)
 defmethod( taperLeft (( rect rectangle ) )
   nil
 );defmethod
-
-
-
 ;######################################################
 ;######################################################
 ;######################################################
@@ -8590,7 +8561,7 @@ defmethod( generate (( tri triangle ))
 	   vertices = cons(list(-tri->base/2 -tri->height/2) vertices)
 	   setVertices(tri vertices)
 	   setCentroid(tri list(0.0 0.0))
-	   setRectTran(tri)
+	   ;setRectTran(tri)
 	   getCentroid(tri)
   );let
 );defmethod
@@ -8901,8 +8872,8 @@ defmethod( generate (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -8937,8 +8908,8 @@ defmethod( generateHalfCircle (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -8973,8 +8944,8 @@ defmethod( generateQuarterCircle (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -9010,8 +8981,8 @@ defmethod( generateQuarterCircleInv (( cir circle ))
 		; Need to add starting point for algorithms that rely upon
  		; vertice perimeter completion (start vertex = end vertex)
 		setCentroid(cir list(0.0 0.0))
-		setRectTran(cir)
-		calculateCentroid(cir->rtran)
+		;setRectTran(cir)
+		;calculateCentroid(cir->rtrans)
 	   );let
 ) ; defMethod
 
@@ -9180,16 +9151,16 @@ defmethod( generate (( tr trirect ))
     bodyTran = makeInstance( 'transform2 )
     setVertices(bodyTran getVertices(body))
     setCentroid(bodyTran getCentroid(body))
-    cloneRectTran(bodyTran)
+    ;cloneRectTran(bodyTran)
     headTran = makeInstance( 'transform2 )
     setVertices(headTran getVertices(head))
     setCentroid(headTran getCentroid(head))
-    cloneRectTran(headTran)
+    ;cloneRectTran(headTran)
     rotate(headTran 270.0)
     translate(headTran list((tr->width+tr->height)/2.0 0.0)) 
     addTransform(tr bodyTran)
     addTransform(tr headTran)
-    rectTranUnion(tr) 	   
+    ;rectTranUnion(tr) 	   
   );let	   
 );defmethod
 ;######################################################
@@ -9231,29 +9202,29 @@ defmethod( generate (( cap capsule ))
     bodyTran = makeInstance( 'transform2 )
     setVertices(bodyTran getVertices(body))
     setCentroid(bodyTran getCentroid(body))
-    cloneRectTran(bodyTran)
+    ;cloneRectTran(bodyTran)
     ; Right Cap Polygon   
     capR = makeInstance( 'circle )
     setGrid(capR 0.025)
     setRadius(capR cap->height/2.0)
     generateHalfCircle(capR)
-    center(capR)
+    ;center(capR)
     ; Rigth Cap Transform
     capRTran = makeInstance( 'transform2 )
     setVertices(capRTran getVertices(capR))
     setCentroid(capRTran getCentroid(capR))
-    cloneRectTran(capRTran)
+    ;cloneRectTran(capRTran)
     ; Left Cap Polygon
     capL = makeInstance( 'circle )
     setGrid(capL 0.025)
     setRadius(capL cap->height/2.0)
     generateHalfCircle(capL)
-    center(capL)
+    ;center(capL)
     ; Left Cap Transform
     capLTran = makeInstance( 'transform2 )
     setVertices(capLTran getVertices(capL))
     setCentroid(capLTran getCentroid(capL))
-    cloneRectTran(capLTran)
+    ;cloneRectTran(capLTran)
     ; Translations and Rotation of Transforms
     rotate(capLTran 180.0)
     translate(capRTran list((cap->width+cap->height/2.0)/2.0 0.0))
@@ -9262,7 +9233,7 @@ defmethod( generate (( cap capsule ))
     addTransform(cap bodyTran)
     addTransform(cap capLTran)
     addTransform(cap capRTran) 
-    rectTranUnion(cap)
+    ;rectTranUnion(cap)
   );let	   
 );defmethod
 
@@ -9316,7 +9287,7 @@ defmethod( generate (( gp gatePad ))
   setLayer(capOutter getOutterLayer(gp))
   setPurpose(capOutter getOutterPurpose(gp))
   addGeometry(gp capOutter)
-  rtsAdd(gp->rtrans capOutter->rtrans)
+  ;rtsAdd(gp->rtrans capOutter->rtrans)
 ;
   capInner = makeInstance('capsule)
   setWidth(capInner gp->widthInner)
@@ -9325,7 +9296,7 @@ defmethod( generate (( gp gatePad ))
   setLayer(capInner getInnerLayer(gp))
   setPurpose(capInner getInnerPurpose(gp))
   addGeometry(gp capInner)
-  rtsAdd(gp->rtrans capInner->rtrans)
+  ;rtsAdd(gp->rtrans capInner->rtrans)
 ;
   bseg = makeInstance('rectangle)
   setWidth(bseg 2*gp->widthOutter)
@@ -9334,15 +9305,15 @@ defmethod( generate (( gp gatePad ))
   bsegTran = makeInstance( 'transform2 )
   setVertices(bsegTran getVertices(bseg))
   setCentroid(bsegTran getCentroid(bseg))
-  cloneRectTran(bsegTran)
+  ;cloneRectTran(bsegTran)
   setLayer(bsegTran getBsegLayer(gp))
   setPurpose(bsegTran getBsegPurpose(gp))
   bsegGeom = makeInstance( 'geometry )
   addTransform(bsegGeom bsegTran)
-  rectTranUnion(bsegGeom)
+  ;rectTranUnion(bsegGeom)
   addGeometry(gp bsegGeom)
-  rtsAdd(gp->rtrans bsegGeom->rtrans)
-  rtsUnion(gp->rtrans)
+  ;rtsAdd(gp->rtrans bsegGeom->rtrans)
+  ;rtsUnion(gp->rtrans)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9362,7 +9333,6 @@ defclass( gateStem (assembly)
 	  ( purpose @reader getPurpose @writer setPurpose )
    )				  
 );defclass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
@@ -9374,7 +9344,6 @@ defmethod( initializeInstance @after ((obj gateStem))
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 );defmethod
-
 ;######################################################
 ; Generates the geometry
 ;######################################################
@@ -9388,24 +9357,24 @@ defmethod( generate (( gs gateStem ))
   setLayer(taper getLayer(gs))
   setPurpose(taper getPurpose(gs))
   addGeometry(gs taper)
-  rtsAdd(gs->rtrans taper->rtrans)
+  ;rtsAdd(gs->rtrans taper->rtrans)
   ; Gate stem
   rect = makeInstance('rectangle)
   setWidth(rect getWidth(gs))
   setHeight(rect getLength(gs))
   generate(rect)
-  rectTran = makeInstance('transform2)
-  addPolygon(rectTran rect)
-  cloneRectTran(rectTran)
-  setLayer(rectTran getLayer(gs))
-  setPurpose(rectTran getPurpose(gs))
-  translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
-  rectGeom = makeInstance('geometry)
-  addTransform(rectGeom rectTran )
-  rectTranUnion(rectGeom)
-  addGeometry(gs rectGeom)
-  rtsAdd(gs->rtrans rectGeom->rtrans)
-  rtsUnion(gs->rtrans)
+  ;rectTran = makeInstance('transform2)
+  ;addPolygon(rectTran rect)
+  ;cloneRectTran(rectTran)
+  ;setLayer(rectTran getLayer(gs))
+  ;setPurpose(rectTran getPurpose(gs))
+  ;translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
+  ;rectGeom = makeInstance('geometry)
+  ;addTransform(rectGeom rectTran )
+  ;rectTranUnion(rectGeom)
+  ;addGeometry(gs rectGeom)
+  ;rtsAdd(gs->rtrans rectGeom->rtrans)
+  ;rtsUnion(gs->rtrans)
   translate(gs list(8.75 0.0))
 );defmethod
 
@@ -9490,7 +9459,7 @@ defmethod( generate (( res planarResistor ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(body))
     setCentroid(bTran getCentroid(body))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran getBodyLayer(res))
     setPurpose(bTran getBodyPurpose(res))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9499,7 +9468,7 @@ defmethod( generate (( res planarResistor ))
     pConTran = makeInstance( 'transform2 )
     setVertices(pConTran getVertices(cont))
     setCentroid(pConTran getCentroid(cont))
-    cloneRectTran(pConTran)
+    ;cloneRectTran(pConTran)
     setLayer(pConTran getContLayer(res))
     setPurpose(pConTran getContPurpose(res))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9508,7 +9477,7 @@ defmethod( generate (( res planarResistor ))
     nConTran = makeInstance( 'transform2 )
     setVertices(nConTran getVertices(cont))
     setCentroid(nConTran getCentroid(cont))
-    cloneRectTran(nConTran)
+    ;cloneRectTran(nConTran)
     setLayer(nConTran getContLayer(res))
     setPurpose(nConTran getContPurpose(res))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9523,10 +9492,10 @@ defmethod( generate (( res planarResistor ))
     addTransform(geomGroup bTran)
     addTransform(geomGroup pConTran)
     addTransform(geomGroup nConTran )
-    rtsUnion(geomGroup->rtrans)
+    ;rtsUnion(geomGroup->rtrans)
     addGeometry(res geomGroup)
-    rtsAdd(res->rtrans getRectTran(geomGroup))
-    rtsUnion(res->rtrans)
+    ;rtsAdd(res->rtrans getRectTran(geomGroup))
+    ;rtsUnion(res->rtrans)
 
   ; This is the target cellview add pins and
   ; nets to ...
@@ -9652,7 +9621,7 @@ defmethod( generate (( cap planarCap ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(diel))
     setCentroid(dTran getCentroid(diel))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran getLayerDiel(cap))
     setPurpose(dTran getPurposeDiel(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9661,7 +9630,7 @@ defmethod( generate (( cap planarCap ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(bot))
     setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran getLayerBot(cap))
     setPurpose(bTran getPurposeBot(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9670,7 +9639,7 @@ defmethod( generate (( cap planarCap ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(top))
     setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran getLayerTop(cap))
     setPurpose(tTran getPurposeTop(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9680,13 +9649,13 @@ defmethod( generate (( cap planarCap ))
     addTransform(geomGroup dTran)
     addTransform(geomGroup bTran)
     addTransform(geomGroup tTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; This Assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(cap geomGroup)
-    rtsAdd(cap->rtrans getRectTran(geomGroup))
-    rtsUnion(cap->rtrans)
+    ;rtsAdd(cap->rtrans getRectTran(geomGroup))
+    ;rtsUnion(cap->rtrans)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; FIXME: Defer Pins and Nets until
     ;        CDF flow is established 
@@ -9793,7 +9762,7 @@ defmethod( generate (( ol outline ))
     f0Tran = makeInstance( 'transform2 )
     setVertices(f0Tran getVertices(frm0))
     setCentroid(f0Tran getCentroid(frm0))
-    cloneRectTran(f0Tran)
+    ;cloneRectTran(f0Tran)
     setLayer(f0Tran getLayer(ol))
     setPurpose(f0Tran getPurpose(ol))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9809,7 +9778,7 @@ defmethod( generate (( ol outline ))
     urTran = makeInstance( 'transform2 )
     setVertices(urTran getVertices(am))
     setCentroid(urTran getCentroid(am))
-    cloneRectTran(urTran)
+    ;cloneRectTran(urTran)
     setLayer(urTran getLayer(ol))
     setPurpose(urTran getPurpose(ol))
     delx = (wido-mwid)/2.0
@@ -9821,7 +9790,7 @@ defmethod( generate (( ol outline ))
     ulTran = makeInstance( 'transform2 )
     setVertices(ulTran getVertices(am))
     setCentroid(ulTran getCentroid(am))
-    cloneRectTran(ulTran)
+    ;cloneRectTran(ulTran)
     setLayer(ulTran getLayer(ol))
     setPurpose(ulTran getPurpose(ol))
     delx = -(wido-mwid)/2.0
@@ -9833,7 +9802,7 @@ defmethod( generate (( ol outline ))
     lrTran = makeInstance( 'transform2 )
     setVertices(lrTran getVertices(am))
     setCentroid(lrTran getCentroid(am))
-    cloneRectTran(lrTran)
+    ;cloneRectTran(lrTran)
     setLayer(lrTran getLayer(ol))
     setPurpose(lrTran getPurpose(ol))
     delx = (wido-mwid)/2.0
@@ -9845,7 +9814,7 @@ defmethod( generate (( ol outline ))
     llTran = makeInstance( 'transform2 )
     setVertices(llTran getVertices(am))
     setCentroid(llTran getCentroid(am))
-    cloneRectTran(llTran)
+    ;cloneRectTran(llTran)
     setLayer(llTran getLayer(ol))
     setPurpose(llTran getPurpose(ol))
     delx = -(wido-mwid)/2.0
@@ -9861,7 +9830,7 @@ defmethod( generate (( ol outline ))
     addTransform(geomGroup lrTran)
     addTransform(geomGroup llTran)
     addGeometry(ol geomGroup)
-    rtsAdd(ol->rtrans getRectTran(geomGroup))
+    ;rtsAdd(ol->rtrans getRectTran(geomGroup))
     ;FIXME: bug in the this union!
     ; probably don't have a check to see if the markers
     ; are fully enclosed in the frame. Not checking that
@@ -9929,7 +9898,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(bot))
     setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran "electrode")
     setPurpose(bTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9938,7 +9907,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     brTran = makeInstance( 'transform2 )
     setVertices(brTran getVertices(botCon))
     setCentroid(brTran getCentroid(botCon))
-    cloneRectTran(brTran)
+    ;cloneRectTran(brTran)
     setLayer(brTran "electrode")
     setPurpose(brTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9947,7 +9916,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(dstp))
     setCentroid(dTran getCentroid(dstp))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran "dielectric")
     setPurpose(dTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9956,7 +9925,7 @@ defmethod( generate (( mbc memsCapBotCont ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(thk))
     setCentroid(tTran getCentroid(thk))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran "thick")
     setPurpose(tTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -9974,13 +9943,13 @@ defmethod( generate (( mbc memsCapBotCont ))
     addTransform(geomGroup brTran)
     addTransform(geomGroup dTran )
     addTransform(geomGroup tTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Complete this assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(mbc geomGroup)
-    rtsAdd(mbc->rtrans getRectTran(geomGroup))
-    rtsUnion(mbc->rtrans)
+    ;rtsAdd(mbc->rtrans getRectTran(geomGroup))
+    ;rtsUnion(mbc->rtrans)
   );let
 );defmethod
 ;######################################################
@@ -10047,7 +10016,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(top))
     setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran "membrane")
     setPurpose(tTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10056,7 +10025,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     ttTran = makeInstance( 'transform2 )
     setVertices(ttTran getVertices(topTab))
     setCentroid(ttTran getCentroid(topTab))
-    cloneRectTran(ttTran)
+    ;cloneRectTran(ttTran)
     setLayer(ttTran "membrane")
     setPurpose(ttTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10065,7 +10034,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     thkTran = makeInstance( 'transform2 )
     setVertices(thkTran getVertices(thk))
     setCentroid(thkTran getCentroid(thk))
-    cloneRectTran(thkTran)
+    ;cloneRectTran(thkTran)
     setLayer(thkTran "thick")
     setPurpose(thkTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10074,7 +10043,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(diel))
     setCentroid(dTran getCentroid(diel))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran "spacer_via")
     setPurpose(dTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10092,13 +10061,13 @@ defmethod( generate (( mtc memsCapTopCont ))
     addTransform(geomGroup ttTran)
     addTransform(geomGroup thkTran )
     addTransform(geomGroup dTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Complete this assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(mtc geomGroup)
-    rtsAdd(mtc->rtrans getRectTran(geomGroup))
-    rtsUnion(mtc->rtrans)
+    ;rtsAdd(mtc->rtrans getRectTran(geomGroup))
+    ;rtsUnion(mtc->rtrans)
   );let
 );defmethod
 ;######################################################
@@ -10260,7 +10229,7 @@ defmethod( generate (( cfr cframe ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(bot))
     setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran getLayer(cfr))
     setPurpose(bTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10269,7 +10238,7 @@ defmethod( generate (( cfr cframe ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(top))
     setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran getLayer(cfr))
     setPurpose(tTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10278,7 +10247,7 @@ defmethod( generate (( cfr cframe ))
     lTran = makeInstance( 'transform2 )
     setVertices(lTran getVertices(left))
     setCentroid(lTran getCentroid(left))
-    cloneRectTran(lTran)
+    ;cloneRectTran(lTran)
     setLayer(lTran getLayer(cfr))
     setPurpose(lTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10287,7 +10256,7 @@ defmethod( generate (( cfr cframe ))
     rTran = makeInstance( 'transform2 )
     setVertices(rTran getVertices(right))
     setCentroid(rTran getCentroid(right))
-    cloneRectTran(rTran)
+    ;cloneRectTran(rTran)
     setLayer(rTran getLayer(cfr))
     setPurpose(rTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10296,7 +10265,7 @@ defmethod( generate (( cfr cframe ))
     uroTran = makeInstance( 'transform2 )
     setVertices(uroTran getVertices(uro))
     setCentroid(uroTran getCentroid(uro))
-    cloneRectTran(uroTran)
+    ;cloneRectTran(uroTran)
     setLayer(uroTran getLayer(cfr))
     setPurpose(uroTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10305,7 +10274,7 @@ defmethod( generate (( cfr cframe ))
     uloTran = makeInstance( 'transform2 )
     setVertices(uloTran getVertices(ulo))
     setCentroid(uloTran getCentroid(ulo))
-    cloneRectTran(uloTran)
+    ;cloneRectTran(uloTran)
     setLayer(uloTran getLayer(cfr))
     setPurpose(uloTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10314,7 +10283,7 @@ defmethod( generate (( cfr cframe ))
     lroTran = makeInstance( 'transform2 )
     setVertices(lroTran getVertices(lro))
     setCentroid(lroTran getCentroid(lro))
-    cloneRectTran(lroTran)
+    ;cloneRectTran(lroTran)
     setLayer(lroTran getLayer(cfr))
     setPurpose(lroTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10323,7 +10292,7 @@ defmethod( generate (( cfr cframe ))
     lloTran = makeInstance( 'transform2 )
     setVertices(lloTran getVertices(llo))
     setCentroid(lloTran getCentroid(llo))
-    cloneRectTran(lloTran)
+    ;cloneRectTran(lloTran)
     setLayer(lloTran getLayer(cfr))
     setPurpose(lloTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10332,7 +10301,7 @@ defmethod( generate (( cfr cframe ))
     uriTran = makeInstance( 'transform2 )
     setVertices(uriTran getVertices(uri))
     setCentroid(uriTran getCentroid(uri))
-    cloneRectTran(uriTran)
+    ;cloneRectTran(uriTran)
     setLayer(uriTran getLayer(cfr))
     setPurpose(uriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10341,7 +10310,7 @@ defmethod( generate (( cfr cframe ))
     uliTran = makeInstance( 'transform2 )
     setVertices(uliTran getVertices(uli))
     setCentroid(uliTran getCentroid(uli))
-    cloneRectTran(uliTran)
+    ;cloneRectTran(uliTran)
     setLayer(uliTran getLayer(cfr))
     setPurpose(uliTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10350,7 +10319,7 @@ defmethod( generate (( cfr cframe ))
     lriTran = makeInstance( 'transform2 )
     setVertices(lriTran getVertices(lri))
     setCentroid(lriTran getCentroid(lri))
-    cloneRectTran(lriTran)
+    ;cloneRectTran(lriTran)
     setLayer(lriTran getLayer(cfr))
     setPurpose(lriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10359,7 +10328,7 @@ defmethod( generate (( cfr cframe ))
     lliTran = makeInstance( 'transform2 )
     setVertices(lliTran getVertices(lli))
     setCentroid(lliTran getCentroid(lli))
-    cloneRectTran(lliTran)
+    ;cloneRectTran(lliTran)
     setLayer(lliTran getLayer(cfr))
     setPurpose(lliTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
@@ -10403,7 +10372,7 @@ defmethod( generate (( cfr cframe ))
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(cfr geomGroup)
-    rtsAdd(cfr->rtrans getRectTran(geomGroup))
+    ;rtsAdd(cfr->rtrans getRectTran(geomGroup))
     ;rtsUnion(cfr->rtrans)
   );let
 );defmethod
@@ -10612,7 +10581,7 @@ defmethod( generate (( cfr cframe2 ))
     pTran = makeInstance( 'transform2 )
     setVertices(pTran getVertices(plt))
     setCentroid(pTran getCentroid(plt))
-    cloneRectTran(pTran)
+    ;cloneRectTran(pTran)
     setLayer(pTran getLayer(cfr))
     setPurpose(pTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10621,7 +10590,7 @@ defmethod( generate (( cfr cframe2 ))
     ibTran = makeInstance( 'transform2 )
     setVertices(ibTran getVertices(ibot))
     setCentroid(ibTran getCentroid(ibot))
-    cloneRectTran(ibTran)
+    ;cloneRectTran(ibTran)
     setLayer(ibTran getLayer(cfr))
     setPurpose(ibTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10630,7 +10599,7 @@ defmethod( generate (( cfr cframe2 ))
     itTran = makeInstance( 'transform2 )
     setVertices(itTran getVertices(itop))
     setCentroid(itTran getCentroid(itop))
-    cloneRectTran(itTran)
+    ;cloneRectTran(itTran)
     setLayer(itTran getLayer(cfr))
     setPurpose(itTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10639,7 +10608,7 @@ defmethod( generate (( cfr cframe2 ))
     ilTran = makeInstance( 'transform2 )
     setVertices(ilTran getVertices(ileft))
     setCentroid(ilTran getCentroid(ileft))
-    cloneRectTran(ilTran)
+    ;cloneRectTran(ilTran)
     setLayer(ilTran getLayer(cfr))
     setPurpose(ilTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10648,7 +10617,7 @@ defmethod( generate (( cfr cframe2 ))
     irTran = makeInstance( 'transform2 )
     setVertices(irTran getVertices(iright))
     setCentroid(irTran getCentroid(iright))
-    cloneRectTran(irTran)
+    ;cloneRectTran(irTran)
     setLayer(irTran getLayer(cfr))
     setPurpose(irTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10657,7 +10626,7 @@ defmethod( generate (( cfr cframe2 ))
     obTran = makeInstance( 'transform2 )
     setVertices(obTran getVertices(obot))
     setCentroid(obTran getCentroid(obot))
-    cloneRectTran(obTran)
+    ;cloneRectTran(obTran)
     setLayer(obTran getLayer(cfr))
     setPurpose(obTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10666,7 +10635,7 @@ defmethod( generate (( cfr cframe2 ))
     otTran = makeInstance( 'transform2 )
     setVertices(otTran getVertices(otop))
     setCentroid(otTran getCentroid(otop))
-    cloneRectTran(otTran)
+    ;cloneRectTran(otTran)
     setLayer(otTran getLayer(cfr))
     setPurpose(otTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10675,7 +10644,7 @@ defmethod( generate (( cfr cframe2 ))
     olTran = makeInstance( 'transform2 )
     setVertices(olTran getVertices(oleft))
     setCentroid(olTran getCentroid(oleft))
-    cloneRectTran(olTran)
+    ;cloneRectTran(olTran)
     setLayer(olTran getLayer(cfr))
     setPurpose(olTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10684,7 +10653,7 @@ defmethod( generate (( cfr cframe2 ))
     orTran = makeInstance( 'transform2 )
     setVertices(orTran getVertices(oright))
     setCentroid(orTran getCentroid(oright))
-    cloneRectTran(orTran)
+    ;cloneRectTran(orTran)
     setLayer(orTran getLayer(cfr))
     setPurpose(orTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10693,7 +10662,7 @@ defmethod( generate (( cfr cframe2 ))
     uroTran = makeInstance( 'transform2 )
     setVertices(uroTran getVertices(uro))
     setCentroid(uroTran getCentroid(uro))
-    cloneRectTran(uroTran)
+    ;cloneRectTran(uroTran)
     setLayer(uroTran getLayer(cfr))
     setPurpose(uroTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10702,7 +10671,7 @@ defmethod( generate (( cfr cframe2 ))
     uloTran = makeInstance( 'transform2 )
     setVertices(uloTran getVertices(ulo))
     setCentroid(uloTran getCentroid(ulo))
-    cloneRectTran(uloTran)
+    ;cloneRectTran(uloTran)
     setLayer(uloTran getLayer(cfr))
     setPurpose(uloTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10711,7 +10680,7 @@ defmethod( generate (( cfr cframe2 ))
     lroTran = makeInstance( 'transform2 )
     setVertices(lroTran getVertices(lro))
     setCentroid(lroTran getCentroid(lro))
-    cloneRectTran(lroTran)
+    ;cloneRectTran(lroTran)
     setLayer(lroTran getLayer(cfr))
     setPurpose(lroTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10720,7 +10689,7 @@ defmethod( generate (( cfr cframe2 ))
     lloTran = makeInstance( 'transform2 )
     setVertices(lloTran getVertices(llo))
     setCentroid(lloTran getCentroid(llo))
-    cloneRectTran(lloTran)
+    ;cloneRectTran(lloTran)
     setLayer(lloTran getLayer(cfr))
     setPurpose(lloTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10729,7 +10698,7 @@ defmethod( generate (( cfr cframe2 ))
     uriTran = makeInstance( 'transform2 )
     setVertices(uriTran getVertices(uri))
     setCentroid(uriTran getCentroid(uri))
-    cloneRectTran(uriTran)
+    ;cloneRectTran(uriTran)
     setLayer(uriTran getLayer(cfr))
     setPurpose(uriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10738,7 +10707,7 @@ defmethod( generate (( cfr cframe2 ))
     uliTran = makeInstance( 'transform2 )
     setVertices(uliTran getVertices(uli))
     setCentroid(uliTran getCentroid(uli))
-    cloneRectTran(uliTran)
+    ;cloneRectTran(uliTran)
     setLayer(uliTran getLayer(cfr))
     setPurpose(uliTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10747,7 +10716,7 @@ defmethod( generate (( cfr cframe2 ))
     lriTran = makeInstance( 'transform2 )
     setVertices(lriTran getVertices(lri))
     setCentroid(lriTran getCentroid(lri))
-    cloneRectTran(lriTran)
+    ;cloneRectTran(lriTran)
     setLayer(lriTran getLayer(cfr))
     setPurpose(lriTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -10756,7 +10725,7 @@ defmethod( generate (( cfr cframe2 ))
     lliTran = makeInstance( 'transform2 )
     setVertices(lliTran getVertices(lli))
     setCentroid(lliTran getCentroid(lli))
-    cloneRectTran(lliTran)
+    ;cloneRectTran(lliTran)
     setLayer(lliTran getLayer(cfr))
     setPurpose(lliTran getPurpose(cfr))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
@@ -10812,7 +10781,7 @@ defmethod( generate (( cfr cframe2 ))
     ; this assembly
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(cfr geomGroup)
-    rtsAdd(cfr->rtrans getRectTran(geomGroup))
+    ;rtsAdd(cfr->rtrans getRectTran(geomGroup))
     ;rtsUnion(cfr->rtrans)
   );let
 );defmethod
@@ -11579,7 +11548,7 @@ defclass( gate (PcellParam)
     ( pad )
     ( centroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
+    ;( rtrans )
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
@@ -11589,14 +11558,14 @@ defclass( gate (PcellParam)
 defmethod( initializeInstance @after ((obj gate)) 
   obj->stem = makeInstance( 'gateStem )
   obj->pad = makeInstance( 'gatePad )
-  obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+  obj->centroid = makeInstance( 'point2 )
+  ;obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
 ;######################################################
 ; Draws the gate
 ;######################################################
 defmethod( drawGate (( gt gate ))
-  let( (width length stemRectTran padRectTran)
+  let( (width length )
     width = getParamValue(gt 'width)
     length = getParamValue(gt 'length)
     setWidthInner(gt->pad 13.5)
@@ -11616,10 +11585,10 @@ defmethod( drawGate (( gt gate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     render(gt->stem)
-    rtsAdd(gt->rtrans gt->stem->rtrans) 
-    rtsAdd(gt->rtrans gt->pad->rtrans)
-    rtsUnion(gt->rtrans)
-    setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
+    ;rtsAdd(gt->rtrans gt->stem->rtrans) 
+    ;rtsAdd(gt->rtrans gt->pad->rtrans)
+    ;rtsUnion(gt->rtrans)
+    ;setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
     ;callNextMethod()
   );let
 );defmethod
@@ -11643,7 +11612,7 @@ defclass( res (PcellParam)
 		( plRes )
 		( centroid )
 		( ref @reader getRef @writer setRef )
-		( rtrans )
+;		( rtrans )
 		( coreBBox @initarg coreBBox )	  
 	  )
 ) ; defClass
@@ -11653,12 +11622,12 @@ defclass( res (PcellParam)
 defmethod( initializeInstance @after ((obj res)) 
   obj->plRes = makeInstance( 'planarResistor )
   obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+;  obj->rtrans = makeInstance('rectTrans)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( draw ((device res))
+defmethod( drawRes ((device res))
   let( ( wid len pr resRectTran )
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
@@ -11682,8 +11651,9 @@ defmethod( draw ((device res))
    setRef(device->plRes getRef(device))
    generate(device->plRes)
    render(device->plRes)
-   setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
-   callNextMethod()
+   ;setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
+   ;No multiple inheritance
+   ;callNextMethod()
   );let
 );defmethod;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;  outlineChip.ils: Chip outline Pcell Skill++ code 
@@ -11753,8 +11723,8 @@ defclass( memsChipFrame (PcellParam)
     ( ol4 ) 
     ( centroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
-    ( rtran )
+    ;( rtrans )
+    ;( rtran )
     ( coreBBox @initarg coreBBox )			  
   )
 );defClass
@@ -11768,8 +11738,8 @@ defmethod( initializeInstance @after ((obj memsChipFrame))
   obj->ol3 = makeInstance( 'cframe )
   obj->ol4 = makeInstance( 'cframe2 )
   obj->centroid = makeInstance( 'point2 )
-  obj->rtrans = makeInstance( 'rectTrans )
-  obj->rtrans = makeInstance( 'rectTran )
+  ;obj->rtrans = makeInstance( 'rectTrans )
+  ;obj->rtrans = makeInstance( 'rectTran )
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
@@ -11886,7 +11856,7 @@ defmethod( draw ((device memsChipFrame))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Set the CV boundary box - again outter outline is largest so use its bbox
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
+   ;setSlotValue(device 'coreBBox list( getLl(device->ol0->rtran) getUr(device->ol0->rtran)))
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ; Call the next draw in the 
    ; case of multiple inheritance
@@ -11958,7 +11928,7 @@ defclass( cap (PcellParam)
 		( plTpc )
 		( centroid )
 		( ref @reader getRef @writer setRef )
-		( rtrans )
+		;( rtrans )
 		( coreBBox @initarg coreBBox )	  
 	  )
 );defClass
@@ -11971,7 +11941,7 @@ defmethod( initializeInstance @after ((obj cap))
 	   obj->plBpc = makeInstance( 'memsCapBotCont )
 	   obj->plTpc = makeInstance( 'memsCapTopCont )
 	   obj->centroid = makeInstance('point2)
-	   obj->rtrans = makeInstance('rectTrans)
+	   ;obj->rtrans = makeInstance('rectTrans)
 );defmethod
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12027,14 +11997,14 @@ defmethod( draw ((device cap))
    render(device->plCap)
    render(device->plTpc)
    render(device->plBpc)
-   capRectTran = getRectTran(device->plCap)
-   topRectTran = getRectTran(device->plTpc)
-   botRectTran = getRectTran(device->plBpc)
-   rtsAdd(device->rtrans capRectTran)
-   rtsAdd(device->rtrans topRectTran)
-   rtsAdd(device->rtrans botRectTran)
-   rtsUnion(device->rtrans)
-   setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
+   ;capRectTran = getRectTran(device->plCap)
+   ;topRectTran = getRectTran(device->plTpc)
+   ;botRectTran = getRectTran(device->plBpc)
+   ;rtsAdd(device->rtrans capRectTran)
+   ;rtsAdd(device->rtrans topRectTran)
+   ;rtsAdd(device->rtrans botRectTran)
+   ;rtsUnion(device->rtrans)
+   ;setSlotValue(device 'coreBBox list( getLowerLeft(device->rtrans->rtran) getUpperRight(device->rtrans->rtran)))
    callNextMethod()
   );let
 );defmethod;######################################################

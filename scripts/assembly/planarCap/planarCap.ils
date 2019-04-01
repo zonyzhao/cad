@@ -68,7 +68,7 @@ defmethod( generate (( cap planarCap ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(diel))
     setCentroid(dTran getCentroid(diel))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran getLayerDiel(cap))
     setPurpose(dTran getPurposeDiel(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -77,7 +77,7 @@ defmethod( generate (( cap planarCap ))
     bTran = makeInstance( 'transform2 )
     setVertices(bTran getVertices(bot))
     setCentroid(bTran getCentroid(bot))
-    cloneRectTran(bTran)
+    ;cloneRectTran(bTran)
     setLayer(bTran getLayerBot(cap))
     setPurpose(bTran getPurposeBot(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,7 +86,7 @@ defmethod( generate (( cap planarCap ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(top))
     setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran getLayerTop(cap))
     setPurpose(tTran getPurposeTop(cap))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,13 +96,13 @@ defmethod( generate (( cap planarCap ))
     addTransform(geomGroup dTran)
     addTransform(geomGroup bTran)
     addTransform(geomGroup tTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; This Assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(cap geomGroup)
-    rtsAdd(cap->rtrans getRectTran(geomGroup))
-    rtsUnion(cap->rtrans)
+    ;rtsAdd(cap->rtrans getRectTran(geomGroup))
+    ;rtsUnion(cap->rtrans)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; FIXME: Defer Pins and Nets until
     ;        CDF flow is established 

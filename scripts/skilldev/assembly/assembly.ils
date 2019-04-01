@@ -6,8 +6,7 @@ defclass( assembly ()
 	     ( geometries @reader getGeometryCollection )
 	     ( layers @reader getLayerCollection )
 	     ( ref @reader getRef @writer setRef )
-	     ( rtrans )
-	     ( rtran )
+	     ;( rtrans @reader getRectTran)
 	  )				  
 );defclass
 ;#####################################################
@@ -17,14 +16,7 @@ defmethod( initializeInstance @after ((obj assembly))
 	   obj->geometries = makeInstance( 'collection )
 	   obj->ref = nil
 	   obj->layers = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans )
-	   obj->rtran  = makeInstance( 'rectTran )
-);defmethod
-;#####################################################
-; Gets the rectran of the assembly
-;#####################################################
-defmethod( getRectTran (( ass assembly ))
-  getRectTran(ass->rtran)
+	   ;obj->rtrans = makeInstance( 'rectTrans )
 );defmethod
 ;#####################################################
 ; Gets a list of layer objects in the assembly
@@ -107,7 +99,7 @@ defmethod( translate (( ass assembly ) arg )
         translate(geom arg)
       );foreach
       println("INFO:(assembly): rectran translated")
-      translate(ass->rtrans arg)
+      ;translate(ass->rtrans arg)
     );if
   else
     println("ERROR(assembly): requires a list argument")   
@@ -120,7 +112,7 @@ defmethod( rotate (( ass assembly ) arg )
   foreach( geom getCollection(ass->geometries)
       rotate(geom arg)
     );foreach
-    rotate(ass->rtran arg)
+    ;rotate(ass->rtrans arg)
 );defmethod
 ;#####################################################
 ; Renders the layer stackup consisting of the layer

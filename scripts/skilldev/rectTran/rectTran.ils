@@ -185,8 +185,8 @@ defmethod( rotate (( rt rectTran ) arg )
         setVertices(poly getVertices(rt))
         rotate(poly arg)
         setRectTran(poly)
-        setUr(rt getUr(poly->rtran))
-        setLl(rt getLl(poly->rtran))
+        setUr(rt getUr(poly->rtrans))
+        setLl(rt getLl(poly->rtrans))
       else
         println("ERROR(rectran): bbox not defined. No rotation performed!")
     );if	

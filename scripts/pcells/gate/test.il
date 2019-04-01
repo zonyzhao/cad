@@ -15,7 +15,6 @@ classp( gp 'gatePad)
 classOf(gp)
 className(findClass( 'gatePad ))
 superclassesOf(classOf(gp))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Check for object Existence
 ;       and construction
@@ -26,7 +25,6 @@ classp( gt 'gate)
 classOf(gt)
 className(findClass( 'gate ))
 superclassesOf(classOf(gt))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-1: Preview the gate layout
 ;       prior to commiting to PCELL
@@ -37,10 +35,11 @@ lib = "pd0164"
 name = "gatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gt cv)
+;Render the a fixed default parameter gate preview
 drawGate(gt)
+;Render the bbox in the same cellview
 setRef(gt->rtrans cv)
-; FIXME: Rendering of the geom bbox is broken ...
-;render(gt->rtrans->rtran)
+render(gt->rtrans)
 cv~>bBox
 gt->coreBBox
 dbSave(cv)
@@ -52,7 +51,7 @@ dbClose(cv)
 ;       supermaster PCELL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pcDefinePCell(
-  list( ddGetObj("test") "gatePcellTest" "layout")
+  list( ddGetObj("D91") "gate" "layout")
   (
     ( width "float" 50.0 )
     ( length "float" 0.25 )

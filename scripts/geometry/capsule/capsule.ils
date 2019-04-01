@@ -35,29 +35,29 @@ defmethod( generate (( cap capsule ))
     bodyTran = makeInstance( 'transform2 )
     setVertices(bodyTran getVertices(body))
     setCentroid(bodyTran getCentroid(body))
-    cloneRectTran(bodyTran)
+    ;cloneRectTran(bodyTran)
     ; Right Cap Polygon   
     capR = makeInstance( 'circle )
     setGrid(capR 0.025)
     setRadius(capR cap->height/2.0)
     generateHalfCircle(capR)
-    center(capR)
+    ;center(capR)
     ; Rigth Cap Transform
     capRTran = makeInstance( 'transform2 )
     setVertices(capRTran getVertices(capR))
     setCentroid(capRTran getCentroid(capR))
-    cloneRectTran(capRTran)
+    ;cloneRectTran(capRTran)
     ; Left Cap Polygon
     capL = makeInstance( 'circle )
     setGrid(capL 0.025)
     setRadius(capL cap->height/2.0)
     generateHalfCircle(capL)
-    center(capL)
+    ;center(capL)
     ; Left Cap Transform
     capLTran = makeInstance( 'transform2 )
     setVertices(capLTran getVertices(capL))
     setCentroid(capLTran getCentroid(capL))
-    cloneRectTran(capLTran)
+    ;cloneRectTran(capLTran)
     ; Translations and Rotation of Transforms
     rotate(capLTran 180.0)
     translate(capRTran list((cap->width+cap->height/2.0)/2.0 0.0))
@@ -66,7 +66,7 @@ defmethod( generate (( cap capsule ))
     addTransform(cap bodyTran)
     addTransform(cap capLTran)
     addTransform(cap capRTran) 
-    rectTranUnion(cap)
+    ;rectTranUnion(cap)
   );let	   
 );defmethod
 

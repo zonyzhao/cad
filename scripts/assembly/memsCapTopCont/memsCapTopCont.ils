@@ -58,7 +58,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     tTran = makeInstance( 'transform2 )
     setVertices(tTran getVertices(top))
     setCentroid(tTran getCentroid(top))
-    cloneRectTran(tTran)
+    ;cloneRectTran(tTran)
     setLayer(tTran "membrane")
     setPurpose(tTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,7 +67,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     ttTran = makeInstance( 'transform2 )
     setVertices(ttTran getVertices(topTab))
     setCentroid(ttTran getCentroid(topTab))
-    cloneRectTran(ttTran)
+    ;cloneRectTran(ttTran)
     setLayer(ttTran "membrane")
     setPurpose(ttTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,7 +76,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     thkTran = makeInstance( 'transform2 )
     setVertices(thkTran getVertices(thk))
     setCentroid(thkTran getCentroid(thk))
-    cloneRectTran(thkTran)
+    ;cloneRectTran(thkTran)
     setLayer(thkTran "thick")
     setPurpose(thkTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -85,7 +85,7 @@ defmethod( generate (( mtc memsCapTopCont ))
     dTran = makeInstance( 'transform2 )
     setVertices(dTran getVertices(diel))
     setCentroid(dTran getCentroid(diel))
-    cloneRectTran(dTran)
+    ;cloneRectTran(dTran)
     setLayer(dTran "spacer_via")
     setPurpose(dTran "drawing")
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -103,13 +103,13 @@ defmethod( generate (( mtc memsCapTopCont ))
     addTransform(geomGroup ttTran)
     addTransform(geomGroup thkTran )
     addTransform(geomGroup dTran )
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Complete this assembly 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     addGeometry(mtc geomGroup)
-    rtsAdd(mtc->rtrans getRectTran(geomGroup))
-    rtsUnion(mtc->rtrans)
+    ;rtsAdd(mtc->rtrans getRectTran(geomGroup))
+    ;rtsUnion(mtc->rtrans)
   );let
 );defmethod
 ;######################################################

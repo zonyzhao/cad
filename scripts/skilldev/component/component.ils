@@ -5,15 +5,15 @@
 defclass( component (cadObj)
   (
     ( assemblies @reader getAssemblies @writer setAssemblies)
-    ( rtrans )				  
+    ;( rtrans )				  
   )
 );defClass
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Constructor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
 defmethod( initializeInstance @after ((obj component)) 
-	   obj->assemblies = makeInstance( 'collection )
-	   obj->rtrans = makeInstance( 'rectTrans ) 
+  obj->assemblies = makeInstance( 'collection )
+  ;obj->rtrans = makeInstance( 'rectTrans ) 
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Adds an assembly to a component

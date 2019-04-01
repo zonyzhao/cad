@@ -8,7 +8,7 @@ defclass( res (PcellParam)
 		( plRes )
 		( centroid )
 		( ref @reader getRef @writer setRef )
-		( rtrans )
+;		( rtrans )
 		( coreBBox @initarg coreBBox )	  
 	  )
 ) ; defClass
@@ -18,12 +18,12 @@ defclass( res (PcellParam)
 defmethod( initializeInstance @after ((obj res)) 
   obj->plRes = makeInstance( 'planarResistor )
   obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+;  obj->rtrans = makeInstance('rectTrans)
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This method draws the shapes of the mesa resistor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( draw ((device res))
+defmethod( drawRes ((device res))
   let( ( wid len pr resRectTran )
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; Formal Parameters
@@ -47,7 +47,8 @@ defmethod( draw ((device res))
    setRef(device->plRes getRef(device))
    generate(device->plRes)
    render(device->plRes)
-   setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
-   callNextMethod()
+   ;setSlotValue(device 'coreBBox device->plRes->rtrans->bbox)
+   ;No multiple inheritance
+   ;callNextMethod()
   );let
 );defmethod

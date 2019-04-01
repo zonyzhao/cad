@@ -4,8 +4,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( rectTrans (rectTran)
   (
-    ( rtrans @reader getRtrans )
-;    ( rtran @reader getRectTran )		  
+    ( rtrans @reader getRtrans )		  
   )
 );defclass
 ;#####################################################
@@ -13,10 +12,6 @@ defclass( rectTrans (rectTran)
 ;#####################################################
 defmethod( initializeInstance @after ((obj rectTrans)) 
   obj->rtrans = makeInstance( 'collection )
-;  obj->rtrans->rts->ur = list(0.0 0.0)
-;  obj->rtrans->rts->ll = list(0.0 0.0)
-;  obj->rtrans->rts->bbox = list(list(0.0 0.0) list(0.0 0.0))
-;  obj->rtran = makeInstance( 'rectTran )
 );defmethod
 ;#####################################################
 ; Add rectTran object to rectTrans collection
@@ -41,13 +36,10 @@ defmethod( rtsUnion (( rts rectTrans ))
     if(!null(rt->bbox) then
       union(rts rt)     
       rtran2bbox(rts)
-;      union(rts->rtran rt)
     else
       println("ERROR(rectTrans): rectTran bbox not valid - Union failed!")
     );if
   );foreach 
-  ;rtran2bbox(rts)
-;  if(!null(rts->rtran->bbox) then
    if(!null(rts->bbox) then
     calculateCentroid(rts)
   );if
@@ -59,7 +51,7 @@ defmethod( rtsUnion (( rts rectTrans ))
 ;  foreach(rtrn getCollection(rts->rtrans)
 ;    translate(rtrn arg)
 ;  );foreach
-;  translate(rts->rtran arg)
+;  translate(rts->rtrans arg)
 ;);defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

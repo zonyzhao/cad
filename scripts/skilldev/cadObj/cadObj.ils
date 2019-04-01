@@ -8,9 +8,9 @@
 ;defgeneric( clone (obj arg)
 ;  error( "Clone is a subclass responsibility\n")
 ;);defgeneric
-defgeneric( diff (obj arg)
-  error( "Clone is a subclass responsibility\n")
-);defgeneric
+;defgeneric( cdiff (obj arg)
+;  error( "Clone is a subclass responsibility\n")
+;);defgeneric
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( cadObj ()
@@ -61,7 +61,7 @@ defmethod( serializeCadObj (( cobj cadObj))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Diff ojbect
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-defmethod( diff (( cobj cadObj) (arg cadObj) )
+defmethod( cdiff (( cobj cadObj) (arg cadObj) )
   let((rlist)
     rlist='()
     if(cobj->oid == arg->oid then

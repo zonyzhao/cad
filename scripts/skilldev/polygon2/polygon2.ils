@@ -8,7 +8,7 @@ defclass( polygon2 (cadObj)
     ( area )
     ( centroid )
     ( scale )
-    ( rtran @reader getRectTran )
+    ;( rtrans @reader getRectTran )
     ( points )			  	
   )
 );defClass
@@ -20,40 +20,40 @@ defmethod( initializeInstance @after ((obj polygon2))
 	   obj->area = nil
 	   obj->centroid = makeInstance( 'point2 )
 	   obj->scale = 1.0
-	   obj->rtran = makeInstance( 'rectTran )
+	   ;obj->rtrans = makeInstance( 'rectTrans )
 	   obj->points = makeInstance( 'points2 )
 );defmethod
 ;####################################################
 ; Checks to make sure that the centroid of the
 ; rectTran is at the origin
 ;####################################################
-defmethod( isCentered (( poly polygon2 ))
-  let( (c)
-    c = getCentroid(poly->rtran)
-    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
-      t
-    else
-      nil
-    )	 
-  );let	   
-);defmethod
+;defmethod( isCentered (( poly polygon2 ))
+;  let( (c)
+;    c = getCentroid(poly->rtrans)
+;    if( xCoord(c) < 0.000001 && yCoord(c) < 0.000001 then
+;      t
+;    else
+;      nil
+;    )	 
+;  );let	   
+;)defmethod
 ;####################################################
 ; Centers the polygon's rectTran at the origin
 ; if not already centered
 ;####################################################
-defmethod( center (( poly polygon2 ))
-  let( (c)
-    if( !isCentered(poly) then
-       c = getCentroid(poly->rtran)
-       translate(poly list(-xCoord(c) -yCoord(c)))
-       setCentroid(poly->rtran list(0.0 0.0))
-       setCentroid(poly list(0.0 0.0))
-       getCentroid(poly->rtran)
-    else
-      t
-    );if
-  );let	 	   
-);defmethod
+;defmethod( center (( poly polygon2 ))
+;  let( (c)
+;    if( !isCentered(poly) then
+;       c = getCentroid(poly->rtrans)
+;       translate(poly list(-xCoord(c) -yCoord(c)))
+;       setCentroid(poly->rtrans list(0.0 0.0))
+;       setCentroid(poly list(0.0 0.0))
+;       getCentroid(poly->rtrans)
+;    else
+;      t
+;    );if
+;  );let	 	   
+;);defmethod
 ;####################################################
 ; Sets the polygon vertices and calculates the
 ; area and centroid of the polygon
@@ -279,11 +279,11 @@ defmethod( miny (( poly polygon2 ))
 ; Set the rectangular transformation rectTran of the
 ; polygon
 ;#####################################################
-defmethod( setRectTran (( poly polygon2 ))
-  setUr(poly->rtran list(maxx(poly) maxy(poly)))
-  setLl(poly->rtran list(minx(poly) miny(poly)))
-  calculateCentroid(poly->rtran)
-);defmethod
+;defmethod( setRectTran (( poly polygon2 ))
+;  setUr(poly->rtrans list(maxx(poly) maxy(poly)))
+;  setLl(poly->rtrans list(minx(poly) miny(poly)))
+;  calculateCentroid(poly->rtrans)
+;);defmethod
 ;#####################################################
 ; FIXME: this should be in transform2 class
 ; This method "spins" the polygon vertices in a 

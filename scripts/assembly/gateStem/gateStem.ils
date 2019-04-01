@@ -14,7 +14,6 @@ defclass( gateStem (assembly)
 	  ( purpose @reader getPurpose @writer setPurpose )
    )				  
 );defclass
-
 ;#####################################################
 ; This method initializes the class
 ;#####################################################
@@ -26,7 +25,6 @@ defmethod( initializeInstance @after ((obj gateStem))
 	   obj->layer = "text"
 	   obj->purpose = "drawing"
 );defmethod
-
 ;######################################################
 ; Generates the geometry
 ;######################################################
@@ -40,24 +38,24 @@ defmethod( generate (( gs gateStem ))
   setLayer(taper getLayer(gs))
   setPurpose(taper getPurpose(gs))
   addGeometry(gs taper)
-  rtsAdd(gs->rtrans taper->rtrans)
+  ;rtsAdd(gs->rtrans taper->rtrans)
   ; Gate stem
   rect = makeInstance('rectangle)
   setWidth(rect getWidth(gs))
   setHeight(rect getLength(gs))
   generate(rect)
-  rectTran = makeInstance('transform2)
-  addPolygon(rectTran rect)
-  cloneRectTran(rectTran)
-  setLayer(rectTran getLayer(gs))
-  setPurpose(rectTran getPurpose(gs))
-  translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
-  rectGeom = makeInstance('geometry)
-  addTransform(rectGeom rectTran )
-  rectTranUnion(rectGeom)
-  addGeometry(gs rectGeom)
-  rtsAdd(gs->rtrans rectGeom->rtrans)
-  rtsUnion(gs->rtrans)
+  ;rectTran = makeInstance('transform2)
+  ;addPolygon(rectTran rect)
+  ;cloneRectTran(rectTran)
+  ;setLayer(rectTran getLayer(gs))
+  ;setPurpose(rectTran getPurpose(gs))
+  ;translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
+  ;rectGeom = makeInstance('geometry)
+  ;addTransform(rectGeom rectTran )
+  ;rectTranUnion(rectGeom)
+  ;addGeometry(gs rectGeom)
+  ;rtsAdd(gs->rtrans rectGeom->rtrans)
+  ;rtsUnion(gs->rtrans)
   translate(gs list(8.75 0.0))
 );defmethod
 
