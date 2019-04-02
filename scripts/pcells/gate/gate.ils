@@ -51,6 +51,7 @@ defmethod( drawGate (( gt gate ))
     ;rtsAdd(gt->rtrans gt->pad->rtrans)
     ;rtsUnion(gt->rtrans)
     ;setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
+    ; no multiple inheritance
     ;callNextMethod()
   );let
 );defmethod

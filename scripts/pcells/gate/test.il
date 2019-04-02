@@ -31,17 +31,18 @@ superclassesOf(classOf(gt))
 ;       supermaster
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 gt = makeInstance( 'gate )
-lib = "pd0164"
+lib = "test"
 name = "gatePreview"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(gt cv)
 ;Render the a fixed default parameter gate preview
 drawGate(gt)
+;FIXME: bbox disabled
 ;Render the bbox in the same cellview
-setRef(gt->rtrans cv)
-render(gt->rtrans)
-cv~>bBox
-gt->coreBBox
+;setRef(gt->rtrans cv)
+;render(gt->rtrans)
+;cv~>bBox
+;gt->coreBBox
 dbSave(cv)
 dbClose(cv)
 

@@ -2853,7 +2853,7 @@ defmethod( getThetaToCentroid (( tr2 transformation2 ))
 ;######################################################
 ;######################################################
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  geometry.ils: container class which holds a group
+;  geometry.ils: base container class which holds a group
 ;                of polygon transforms.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 defclass( geometry ()
@@ -9280,37 +9280,41 @@ defmethod( initializeInstance @after ((obj gatePad))
 ; Generates the assembly
 ;######################################################
 defmethod( generate (( gp gatePad ))
+  ; outter capsule geometry
   capOutter = makeInstance('capsule)
   setWidth(capOutter gp->widthOutter)
   setHeight(capOutter gp->heightOutter)
   generate(capOutter)
   setLayer(capOutter getOutterLayer(gp))
   setPurpose(capOutter getOutterPurpose(gp))
-  addGeometry(gp capOutter)
   ;rtsAdd(gp->rtrans capOutter->rtrans)
-;
+  ; inner capsule geometery
   capInner = makeInstance('capsule)
   setWidth(capInner gp->widthInner)
   setHeight(capInner gp->heightInner)
   generate(capInner)
   setLayer(capInner getInnerLayer(gp))
   setPurpose(capInner getInnerPurpose(gp))
-  addGeometry(gp capInner)
   ;rtsAdd(gp->rtrans capInner->rtrans)
-;
+  ; body segment polygon
   bseg = makeInstance('rectangle)
   setWidth(bseg 2*gp->widthOutter)
   setHeight(bseg 2*gp->heightOutter)
   generate(bseg)
+  ; body segment transform
   bsegTran = makeInstance( 'transform2 )
   setVertices(bsegTran getVertices(bseg))
   setCentroid(bsegTran getCentroid(bseg))
   ;cloneRectTran(bsegTran)
   setLayer(bsegTran getBsegLayer(gp))
   setPurpose(bsegTran getBsegPurpose(gp))
+  ; body segement geometry
   bsegGeom = makeInstance( 'geometry )
   addTransform(bsegGeom bsegTran)
   ;rectTranUnion(bsegGeom)
+  ; add geometries to assembly
+  addGeometry(gp capInner)
+  addGeometry(gp capOutter)
   addGeometry(gp bsegGeom)
   ;rtsAdd(gp->rtrans bsegGeom->rtrans)
   ;rtsUnion(gp->rtrans)
@@ -9363,16 +9367,16 @@ defmethod( generate (( gs gateStem ))
   setWidth(rect getWidth(gs))
   setHeight(rect getLength(gs))
   generate(rect)
-  ;rectTran = makeInstance('transform2)
-  ;addPolygon(rectTran rect)
+  rectTran = makeInstance('transform2)
+  addPolygon(rectTran rect)
   ;cloneRectTran(rectTran)
-  ;setLayer(rectTran getLayer(gs))
-  ;setPurpose(rectTran getPurpose(gs))
-  ;translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
-  ;rectGeom = makeInstance('geometry)
-  ;addTransform(rectGeom rectTran )
+  setLayer(rectTran getLayer(gs))
+  setPurpose(rectTran getPurpose(gs))
+  translate(rectTran list(0.5*(getWidth(gs)+getWidthTaper(gs))+2*getLength(gs) 0.0))
+  rectGeom = makeInstance('geometry)
+  addTransform(rectGeom rectTran )
   ;rectTranUnion(rectGeom)
-  ;addGeometry(gs rectGeom)
+  addGeometry(gs rectGeom)
   ;rtsAdd(gs->rtrans rectGeom->rtrans)
   ;rtsUnion(gs->rtrans)
   translate(gs list(8.75 0.0))
@@ -11589,6 +11593,7 @@ defmethod( drawGate (( gt gate ))
     ;rtsAdd(gt->rtrans gt->pad->rtrans)
     ;rtsUnion(gt->rtrans)
     ;setSlotValue(gt 'coreBBox list( gt->rtrans->ll gt->rtrans->ur))
+    ; no multiple inheritance
     ;callNextMethod()
   );let
 );defmethod

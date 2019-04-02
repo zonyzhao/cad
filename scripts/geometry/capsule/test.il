@@ -15,14 +15,15 @@ getHeight(cap)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cap = makeInstance( 'capsule )
 generate(cap)
-setLayer(cap "sd")
+setLayer(cap "text")
 lib = "test"
 name = "capsuleTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cap cv)
 render(cap)
-setRef(cap->rtran cv)
-render(cap->rtran)
+; FIXME: bbox disabled
+;setRef(cap->rtran cv)
+;render(cap->rtran)
 dbSave(cv)
 dbClose(cv)
 
@@ -34,7 +35,7 @@ cap = makeInstance( 'capsule )
 setHeight(cap 50.0)
 setWidth(cap 25.0)
 generate(cap)
-setLayer(cap "sd")
+setLayer(cap "text")
 setPurpose(cap "drawing")
 name="capsuleTest2"
 lib="test"

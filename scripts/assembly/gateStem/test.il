@@ -24,7 +24,8 @@ setRef(gs cv)
 ; Render the gate stem
 render(gs)
 ; Render the gate stem bbox
-setRef(gs->rtrans cv)
-render(gs->rtrans)
+; FIXME: bbox's are disabled
+;setRef(gs->rtrans cv)
+;render(gs->rtrans)
 dbSave(cv)
 dbClose(cv)

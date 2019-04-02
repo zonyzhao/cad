@@ -28,6 +28,7 @@ setRef(gp cv)
 ;Render gate pad
 render(gp)
 ;Render gate pad bbox
+;FIXME: bbox rtran disabled
 ;setRef(gp->rtrans cv)
 ;render(gp->rtrans)
 dbSave(cv)
