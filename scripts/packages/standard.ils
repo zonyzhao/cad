@@ -10863,7 +10863,7 @@ defmethod( generate (( array sdArray ))
        tran = makeInstance( 'transform2 )
        setVertices(tran getVertices(array->refRect))
        setCentroid(tran getCentroid(array->refRect))
-       cloneRectTran(tran)
+       ;cloneRectTran(tran)
        setLayer(tran getLayer(array))
        setPurpose(tran getPurpose(array))
        translate(tran list(0.0 i*r2r))
@@ -10876,16 +10876,16 @@ defmethod( generate (( array sdArray ))
        tran = makeInstance( 'transform2 )
        setVertices(tran getVertices(array->refRect))
        setCentroid(tran getCentroid(array->refRect))
-       cloneRectTran(tran)
+       ;cloneRectTran(tran)
        setLayer(tran "electrode")
        setPurpose(tran getPurpose(array))
        translate(tran list(0.0 i*r2r+do))
        addTransform(geomGroup tran)
     );for
-    rectTranUnion(geomGroup)
+    ;rectTranUnion(geomGroup)
     addGeometry(array geomGroup)
-    rtsAdd(array->rtrans getRectTran(geomGroup))
-    rtsUnion(array->rtrans)
+    ;rtsAdd(array->rtrans getRectTran(geomGroup))
+    ;rtsUnion(array->rtrans)
   );let
 );defmethod
 ;######################################################
@@ -11043,7 +11043,7 @@ defclass( ganGate (component)
     ( pad )
     ( centroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
+    ;( rtrans )
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
@@ -11056,7 +11056,7 @@ defmethod( initializeInstance @after ((obj ganGate))
   obj->stem = makeInstance( 'gateStem )
   obj->pad = makeInstance( 'gatePad )
   obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+  ;obj->rtrans = makeInstance('rectTrans)
 );defmethod
 ;######################################################
 ; Draws the gate
@@ -11082,11 +11082,11 @@ defmethod( generate (( gt ganGate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     addAssembly(gt gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
-    rtsUnion(gt->rtrans)
+    ;stemRectTran = getRectTran(gt->stem)
+    ;padRectTran = getRectTran(gt->pad)
+    ;rtsAdd(gt->rtrans stemRectTran) 
+    ;rtsAdd(gt->rtrans padRectTran)
+    ;rtsUnion(gt->rtrans)
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11115,7 +11115,7 @@ defmethod( initializeInstance @after ((obj fetBody))
   obj->length   = 50.0
   obj->spacing  = 50.0
   obj->centroid = makeInstance('point2)
-  obj->rtrans   = makeInstance('rectTrans)
+  ;obj->rtrans   = makeInstance('rectTrans)
 );defmethod
 ;######################################################
 ; Draws the gate
@@ -11130,9 +11130,9 @@ defmethod( generate (( fb fetBody ))
     setLength(sd length)
     setSpacing(sd getSpacing(fb))
     generate(sd)
-    rectTran = getRectTran(sd->rtrans)
-    rtsAdd(fb->rtrans rectTran) 
-    rtsUnion(fb->rtrans)
+    ;rectTran = getRectTran(sd->rtrans)
+    ;rtsAdd(fb->rtrans rectTran) 
+    ;rtsUnion(fb->rtrans)
     addAssembly(fb sd)
   );let
 );defmethod
@@ -11229,7 +11229,7 @@ defclass( ganFet (structure)
     ( length @reader getLength @writer setLength )
     ( centroid @reader getCentroid @writer setCentroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
+    ;( rtrans )
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
@@ -11241,7 +11241,7 @@ defmethod( initializeInstance @after ((obj ganFet))
   obj->width = 100.0
   obj->length = 0.2
   obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+  ;obj->rtrans = makeInstance('rectTrans)
 );defmethod
 ;######################################################
 ; Draws the gate
@@ -11265,7 +11265,7 @@ defmethod( generate (( gf ganFet ))
     setLength(fb sdLength)
     setSpacing(fb sdSpacing)
     generate(fb)
-    rtsAdd(gf->rtrans fb->rtrans)
+    ;rtsAdd(gf->rtrans fb->rtrans)
     addComponent(gf fb)
     ytran = sdLength/2.0+sdSpacing-getLength(gf)-gdSpacing
     gtran = sdLength + sdSpacing
@@ -11278,8 +11278,8 @@ defmethod( generate (( gf ganFet ))
        setLength(gate gateLength)
        generate(gate)
        translate(gate list(xtran ytran))
-       rtran = gate->rtrans->tran
-       rtsAdd(gf->rtrans rtran)
+       ;rtran = gate->rtrans->tran
+       ;rtsAdd(gf->rtrans rtran)
        addComponent(gf gate)
        ytran = ytran + gtran
     );for
@@ -11292,7 +11292,7 @@ defmethod( generate (( gf ganFet ))
       generate(aba)
       addComponent(gf aba)
     );if
-    rtsUnion(gf->rtrans)
+    ;rtsUnion(gf->rtrans)
     ; No multiple inheritance
     ;callNextMethod()
   );let
@@ -12048,7 +12048,7 @@ defmethod( drawFet (( gfpc ganFetPc ))
     setLength(gf length)
     generate(gf)
     render(gf)
-    setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
+    ;setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
     ; No multiple inheritance
     ;callNextMethod()
   );let

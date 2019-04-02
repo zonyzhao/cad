@@ -10,7 +10,7 @@ defclass( ganGate (component)
     ( pad )
     ( centroid )
     ( ref @reader getRef @writer setRef )
-    ( rtrans )
+    ;( rtrans )
     ( coreBBox @initarg coreBBox )
   ) 				  
 );defclass
@@ -23,7 +23,7 @@ defmethod( initializeInstance @after ((obj ganGate))
   obj->stem = makeInstance( 'gateStem )
   obj->pad = makeInstance( 'gatePad )
   obj->centroid = makeInstance('point2)
-  obj->rtrans = makeInstance('rectTrans)
+  ;obj->rtrans = makeInstance('rectTrans)
 );defmethod
 ;######################################################
 ; Draws the gate
@@ -49,11 +49,11 @@ defmethod( generate (( gt ganGate ))
     setRef(gt->stem getRef(gt))
     generate(gt->stem)
     addAssembly(gt gt->stem)
-    stemRectTran = getRectTran(gt->stem)
-    padRectTran = getRectTran(gt->pad)
-    rtsAdd(gt->rtrans stemRectTran) 
-    rtsAdd(gt->rtrans padRectTran)
-    rtsUnion(gt->rtrans)
+    ;stemRectTran = getRectTran(gt->stem)
+    ;padRectTran = getRectTran(gt->pad)
+    ;rtsAdd(gt->rtrans stemRectTran) 
+    ;rtsAdd(gt->rtrans padRectTran)
+    ;rtsUnion(gt->rtrans)
   );let
 );defmethod
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

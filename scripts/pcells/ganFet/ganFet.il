@@ -6,15 +6,15 @@
 ;  supermaster Pcell Cellview
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 pcDefinePCell(
-  list( ddGetObj("D91") "ganFet" "layout")
+  list( ddGetObj("D91") "ganFetPc" "layout")
   (
     (     m  "int"      1 )
     (  width "float" 50.0 )
   )
   let( (pcell)
-    pcell = makeInstance( 'ganFetPc )
+    pcell = makeInstance( 'ganFet )
     setRef(pcell pcCellView)
     setPcellParams(pcell pcCellView)
-    drawFet(pcell)
+    generate(pcell)
   );let
 );pcDefinePCell

@@ -39,7 +39,7 @@ defmethod( drawFet (( gfpc ganFetPc ))
     setLength(gf length)
     generate(gf)
     render(gf)
-    setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
+    ;setSlotValue(gfpc 'coreBBox list( gf->rtrans->rtran->ll gf->rtrans->rtran->ur))
     ; No multiple inheritance
     ;callNextMethod()
   );let

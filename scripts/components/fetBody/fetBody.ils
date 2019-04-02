@@ -22,7 +22,7 @@ defmethod( initializeInstance @after ((obj fetBody))
   obj->length   = 50.0
   obj->spacing  = 50.0
   obj->centroid = makeInstance('point2)
-  obj->rtrans   = makeInstance('rectTrans)
+  ;obj->rtrans   = makeInstance('rectTrans)
 );defmethod
 ;######################################################
 ; Draws the gate
@@ -37,9 +37,9 @@ defmethod( generate (( fb fetBody ))
     setLength(sd length)
     setSpacing(sd getSpacing(fb))
     generate(sd)
-    rectTran = getRectTran(sd->rtrans)
-    rtsAdd(fb->rtrans rectTran) 
-    rtsUnion(fb->rtrans)
+    ;rectTran = getRectTran(sd->rtrans)
+    ;rtsAdd(fb->rtrans rectTran) 
+    ;rtsUnion(fb->rtrans)
     addAssembly(fb sd)
   );let
 );defmethod
