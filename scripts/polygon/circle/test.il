@@ -17,14 +17,16 @@ cir->grid
 ;       and test its rectTran
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 cir = makeInstance( 'circle )
-cir->radius=100
+cir->radius=10
 cir->grid=0.1
+setLayer(cir "text")
+setPurpose(cir "drawing")
 generate(cir)
 getOrigin(cir)
-getCentroid(cir->rtran)
-getUpperRight(cir->rtran)
-getLowerLeft(cir->rtran)
-isCentered(cir->rtran)
+;getCentroid(cir->rtran)
+;getUpperRight(cir->rtran)
+;getLowerLeft(cir->rtran)
+;isCentered(cir->rtran)
 ; Raw Vertex List
 vertices = cir->vertices
 
@@ -46,13 +48,13 @@ foreach( vert vertices
 	  i=i+1
 );foreach
 
-lib="reticle"
+lib="test"
 name="circleTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(cir cv)
 render(cir)
-setRef(cir->rtran cv)
-render(cir->rtran)
+;setRef(cir->rtran cv)
+;render(cir->rtran)
 dbSave(cv)
 dbClose(cv)
 

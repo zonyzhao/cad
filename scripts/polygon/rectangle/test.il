@@ -31,17 +31,21 @@ rec = makeInstance( 'rectangle )
 setWidth(rec 5.0)
 setHeight(rec 10.0)
 generate(rec)
+recTran = makeInstance( 'transform2 )
+addPolygon(recTran rec)
+recGeom = makeInstance( 'geometry )
+addTransform(recGeom recTran)
 shp = makeInstance( 'shape )
-setVertices(shp getVertices(rec))
+addGeometry(shp recGeom)
 lib = "test"
 name = "rectangle"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
-setCvRef(shp cv)
-setLayer(shp "mesa")
+setRef(shp cv)
+setLayer(shp "text")
 setPurpose(shp "drawing")
 render(shp)
-dbSave(shp->cvRef)
-dbClose(shp->cvRef)
+dbSave(cv)
+dbClose(cv)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; UT-4: Generate a mesa resistor device

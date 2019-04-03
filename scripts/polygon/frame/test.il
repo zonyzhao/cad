@@ -11,7 +11,7 @@ classOf(fr)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 fr = makeInstance( 'frame )
 getVertices(fr)
-lib="D91"
+lib="test"
 name="frameTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(fr cv)
@@ -28,11 +28,12 @@ setHgto(fr 10.0)
 setHgti(fr 8.0)
 generate(fr)
 getVertices(fr)
-lib="D91"
+lib="test"
 name="frameTest"
 cv = dbOpenCellViewByType( lib name "layout" "maskLayout" "w")
 setRef(fr cv)
 render(fr)
+;dbCreatePolygon(cv list("text" "drawing") fr->vertices)
 dbSave(cv)
 dbClose(cv)
 

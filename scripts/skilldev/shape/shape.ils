@@ -53,12 +53,12 @@ defmethod( addGeometry (( shp shape ) arg)
 defmethod( render (( shp shape ))
   if( !null(shp->geometries->list) then
     foreach( geom shp->geometries->list->elems
-      foreach( polygon geom->polygons->list->elems
+      foreach( tran geom->transforms->list->elems
         printf("INFO(shape): Rendering Shape Polygon\n")
         dbCreatePolygon(getRef(shp)
 	     	        list(shp->layer shp->purpose)
-		        polygon->vertices
-		        );dbCreatePolygon
+		        trans->vertices
+	);dbCreatePolygon
       );foreach
     );foreach
   else
