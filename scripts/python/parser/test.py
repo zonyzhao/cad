@@ -31,7 +31,6 @@ parse.setLines(read.getLines())
 parse.setBegString("WARNING")
 parse.setEndString("\.")
 parse.parse()
-
 ###################################################
 # UT-2
 ###################################################
@@ -53,7 +52,6 @@ write.setName("warn.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
-
 ###################################################
 # UT-3
 ###################################################
@@ -75,7 +73,6 @@ write.setName("warn.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
-
 ###################################################
 # UT-4
 ###################################################
@@ -97,7 +94,6 @@ write.setName("err.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
-
 ###################################################
 # UT-5
 ###################################################
@@ -119,7 +115,6 @@ write.setName("err.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
-
 ###################################################
 # UT-6
 ###################################################
@@ -141,7 +136,6 @@ write.setName("err.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
-
 ###################################################
 # UT-7
 ###################################################
@@ -173,7 +167,6 @@ write.setName("common_wrn.log")
 write.setPath("./")
 write.setLines(wrnparse.getpLines())
 write.write()
-
 ###################################################
 # UT-8: Process a list of logfiles
 ###################################################
@@ -225,7 +218,6 @@ for logFile in logFileList:
     write.setName(wrnFileName)
     write.setLines(wrnparse.getpLines())
     write.write()
-
 ###################################################
 # UT-9: ASML ERROR progression parsing
 ###################################################
@@ -335,7 +327,6 @@ write.setName("ASML_092717_CDBOA401.log")
 write.setPath("./")
 write.setLines(errparse.getpLines())
 write.write()
-
 ###################################################
 # UT-10 Parse a complete Snapshot run
 ###################################################
@@ -367,8 +358,118 @@ write.setName("cdb2oa_c_wrn.log")
 write.setPath("./")
 write.setLines(wrnparse.getpLines())
 write.write()
+###################################################
+# UT-10 Parse the primary Leica portion of 
+#       a Photo Info file
+###################################################
+import reader
+import parse
+import writer
+read = reader.reader()
+read.setName("pa0756.photo")
+read.setPath("./testTargets/")
+read.read()
+leicaParse = parse.parser()
+leicaParse.setLines(read.getLines())
+leicaParse.setBegString("Primary Leica Marks")
+leicaParse.setEndString("Scan")
+leicaParse.parse()
+leicaParse.getbOccur()
+write = writer.writer()
+write.setName("leica.parse")
+write.setPath("./")
+write.setLines(leicaParse.getpLines())
+write.write()
+; Parse out primary lines
+import re
+text = leicaParse.getpLines()
+pLines=[]
+begRexp = re.compile("PRI")
+urRexp = re.compile("UR")
+lrRexp = re.compile("LR")
+llRexp = re.compile("LL")
+ulRexp = re.compile("UL")
+mloRexp = re.compile("Main_LO")
+loRexp = re.compile("LO")
+sdaRexp = re.compile("SDA")
+southRexp = re.compile("South")
+northRexp = re.compile("North")
+i=0
+while i < len(text):
+    if begRexp.search(text[i]) != None:
+        pLines.append(text[i].strip("\n"))
+        print text[i]
+    i=i+1
 
+numLines = len(pLines)
 
+mLoUlCoord = []
+mLoUrCoord = []
+mLoLlCoord = []
+mLoLrCoord = []
+
+if numLines > 6:
+    # MIM
+    i = 0
+    for line in pLines:
+        if mloRexp.search(line) != None:
+            if northRexp.search(line) != None:
+                if ulRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    mLoUlCoord.append(float(xs))
+                    mLoUlCoord.append(float(ys))
+                    print str(i) + ".) Main L0 North UL COORD: (" + xs + "," + ys + ")"  
+                if urRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    mLoUrCoord.append(float(xs))
+                    mLoUrCoord.append(float(ys))
+                    print str(i) + ".) Main L0 North UR COORD: (" + xs + "," + ys + ")"                               
+            if southRexp.search(line) != None:
+                if llRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    mLoLlCoord.append(float(xs))
+                    mLoLlCoord.append(float(ys))
+                    print str(i) + ".) Main LO South LL COORD: (" + xs + "," + ys + ")"
+                if lrRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    mLoLrCoord.append(float(xs))
+                    mLoLrCoord.append(float(ys))
+                    print str(i) + ".) Main LO South LR COORD: (" + xs + "," + ys + ")"
+            i=i+1
+    mLoLlLrYDiff = mLoLlCoord[1] - mLoLrCoord[1]
+    mLoUlUrYDiff = mLoUlCoord[1] - mLoUrCoord[1]
+    mLoUlLlYDiff = mLoUlCoord[0] - mLoLlCoord[0]
+    mLoUrLrYDiff = mLoUrCoord[0] - mLoLrCoord[0]
+    print("################################################")
+    print(" LIECA POST PROCESSED REPORT")
+    print("################################################")
+    print("Main_L0_LL_LR_Y_DIFF = " +  str(mLoLlLrYDiff))
+    print("Main_L0_LL_LR_Y_DIFF = " +  str(mLoUlUrYDiff))
+    print("Main_L0_UL_LL_X_DIFF = " +  str(mLoUlLlYDiff))
+    print("Main_L0_UR_LR_X_DIFF = " +  str(mLoUrLrYDiff))
+    mLoCdcX = mLoLrCoord[0] - mLoLlCoord[0] 
+    mLoCdcY = mLoUlCoord[1] - mLoLlCoord[1]
+    print("Main L0 CDC_X = " +  str(mLoCdcX))
+    print("Main L0 CDC_Y = " +  str(mLoCdcY))
+else:
+    # SIM
+    pass
 
 ###############################################
 # Experimental Code
