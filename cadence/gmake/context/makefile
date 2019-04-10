@@ -1,5 +1,5 @@
 ##########################################################################
-# Makefile runs cdbToOa converter from the command line
+# Makefile runs technology environment context changer
 #########################################################################
 # The following environmental variables need to be set in order to 
 # run cadence command line tools (ex. ivVerify) in the Raytheon enviroment
@@ -98,8 +98,8 @@ xynMod:
 	echo "INCLUDE " $(localDesDir)/cds.lib >> $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
 
-.phony: defaultTech
-defaultTech:
+.phony: defaultTechRevA
+defaultTechRevA:
 	touch $(localCadDir)/cds.lib
 	rm $(localCadDir)/cds.lib
 	touch $(localCadDir)/cds.lib
