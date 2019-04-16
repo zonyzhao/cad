@@ -1,5 +1,5 @@
 ##########################################################################
-# Makefile runs cdbToOa converter from the command line
+# Makefile runs technology environment context changer
 #########################################################################
 # The following environmental variables need to be set in order to 
 # run cadence command line tools (ex. ivVerify) in the Raytheon enviroment
