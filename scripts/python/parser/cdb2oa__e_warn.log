@@ -1,0 +1,1798 @@
+WARNING (CDBOA-630): Redefining library "RRFC_2metal" in the OpenAccess cds.lib
+WARNING (CDBOA-630): Redefining library <name> in the OpenAccess cds.lib file
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+D82/d82_1_finger_wband_control_A/layout in cellview
+D82/d82_1_fet_4n_17_22_Control_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+D82/d82_1_finger_wband_A/layout in cellview
+D82/d82_1_fet_mult_17_22_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+D82/d82_1_finger_wband_eng_A/layout in cellview
+D82/d82_1_fet_mult_17_22_eng_A/layout may not be correct.
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/D83/d83_1_fet_shunt_switch_A_old/d83_1_fet_shunt_switch_A_2/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-506): Library "D83" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-633): Instance "I16" of parameterized cell master
+D83/d83_1_finger_A/layout in cellview
+D83/d83_1_crossbridge_gateTop_A/layout may not be correct.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-633): Instance "I60" of parameterized cell master
+D90/d90_1_LeicaCell_1_A/layout in cellview
+D90/gan_1_Leica_A/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I60" of parameterized cell master
+D90/d90_1_LeicaCell_1_A/layout in cellview
+D90/gan_1_Leica_A/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-506): Library "PLL_46" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance "I14" of parameterized cell master
+POL_46/p46_2_guts_4696A_C/layout in cellview
+POL_46/p46_Split_Coupons/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4696A_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4696A_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4697_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4697_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4698_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4698_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4696_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4696_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_A_leica/layout may not be correct.
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_A_leica/layout may not be correct.
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_B/layout in cellview
+POL_46/p46_1_guts_4699_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_96_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_96_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_97_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_97_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_98_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_98_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_99_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I2" of parameterized cell master
+POL_46/p46_1_coupon_footprint_A/layout in cellview
+POL_46/p46_1_guts_99_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_5x75_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x100sog_B/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x10_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x200_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x50sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x200sog_B/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_4x50_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x25_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_4x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x100sog_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_4x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x130_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x150_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x50_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_1x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_25x75_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x25sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x75_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_2x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_2x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_15x75_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x125_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x200sog_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_1x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_4x50sw_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x100_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x150_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_10x50_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_20x75_TA_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_12x300sog_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_4x25_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x200sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x125sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x150sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_46/p46_1_model_12x300sog_B/p46_1_model_8x100sw_2#2e5K_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-506): Library "PML_46" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-506): Library "PLL_51" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-633): Instance "I17" of parameterized cell master
+PLL_51/p51_2_fet_1x_DF_B/layout in cellview
+PLL_51/Example_Fet_1x/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I9" of parameterized cell master
+PLL_51/p51_2_fet_1x_DF_B/layout in cellview
+PLL_51/Example_Fet_1x/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+PLL_51/p51_2_fet_1x_DF_A/layout in cellview
+PLL_51/P51_2_FETS/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I17" of parameterized cell master
+PLL_51/p51_2_fet_1x_DF_A/layout in cellview
+PLL_51/P51_2_FETS/layout may not be correct. The data type
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_51/p51_1_gridCutOut4_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_51/p51_2_sq_viaSquare_40_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_51/p51_2_sq_viaSquare_100_40_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/lvs/p51_2_lvs_chip_5155A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/lvs/p51_2_lvs_chip_5155A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/lvs/p51_2_lvs_chip_5155A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/LVS/schematic/map
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/LVS/layout/map
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/p51_2_coup_10pf_TA_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/p51_2_coup_10pf_TA_2000_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/p51_2_sg_chip_5198C/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/P51_2_SplitGrid_Overhead/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_51/p51_2_guts_5156A_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVS/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVS/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVS/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVSs/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVSs/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PML_51/lvs/PD117_LVSs/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library "PLL_60" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-633): Instance "I12" of parameterized cell master
+PLL_60/p60_2_fet_mult_B/layout in cellview
+PLL_60/p60_2_sq_pieces/layout may not be correct. The data
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_fetV_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_fetM_straps_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_fet_mult_F/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_via40_100_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_fetV_C/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_fetM_straps_C/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_fet_mult_G/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_60/p60_2_prim_via40_lt_100_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_60/release/LVS/p60_2_lvs_chip_X6007A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_60/release/LVS/p60_2_lvs_chip_X6006A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6098_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6097_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6097_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6097_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6096_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6096_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6096_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_87_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_87_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_87_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6001A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6001A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6001A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6002A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6002A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_X6002A_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6099G_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6099G_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6099G_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6098D_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6097D_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6097D_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6097D_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6096E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6096E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6096E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6088E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6088E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6088E_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6001B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6001B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6001B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6002B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6002B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_X6002B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6088_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6088_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_ASML_guts_6088_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6096B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6096B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6096B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6097_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6097_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6097_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6098_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_98_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_E/layout in cellview
+POL_60/p60_1_guts_6087_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_6088_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6088_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6096_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6097_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6098_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6098_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_C/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_E/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_E/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_E/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_F/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_F/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_6099_F/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_B/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_87_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_87_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_87_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_D/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_D/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_D/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_E/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_E/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_87_E/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_88_A/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_88_A/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_88_A/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_99_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_99_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_60/p60_1_coupon_footprint_B/layout in cellview
+POL_60/p60_1_guts_99_C/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6001A_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6001A_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6001A_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6002A_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6002A_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_60/p60_1_coupon_footprint_C/layout in cellview
+POL_60/p60_1_guts_X6002A_A/layout may not be correct. The
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-633): Instance "I113" of parameterized cell master
+PML_60/p60_2_model_8n_16g2g_meander_A/layout in cellview
+PML_60/2/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-506): Library "PLL_70" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_Gate_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_All/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p46_1_AB_bias_verniers_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_SD_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_TM_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_NE_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_NE1_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_Ta_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_CB_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_ME_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_AB_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_TGT_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_70/p70_1_Verniers_AB_A/p51_1_Verniers_TP_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library "PLL_80" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_relFet_2x250
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_relFet_2x2x250
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_metrofet
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_All_Overhead
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_chip_61_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80/release/LVS/p80_1_lvs_2x100_splitFet
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-633): Instance "I6" of parameterized cell master
+PLL_80/p80A_1_fet_mult_exp_B/layout in cellview
+POL_80/p80_1_RelFet_10x125_30_EXP_B/layout may not be
+correct. The data type of parameter "mesa" on the instance
+WARNING (CDBOA-633): Instance "I127" of parameterized cell master
+POL_80/p80_1_2x250_E/layout in cellview POL_80/6/layout may
+not be correct. The data type of parameter "NewSCFP_H" on
+WARNING (CDBOA-633): Instance "I127" of parameterized cell master
+POL_80/p80_1_2x250_E/layout in cellview POL_80/6/layout may
+not be correct. The data type of parameter "NewSCFP_Canopy"
+WARNING (CDBOA-633): Instance "I274" of parameterized cell master
+POL_80/p80_1_metroFET_H/layout in cellview
+POL_80/ALL_Coupons/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I93" of parameterized cell master
+POL_80/p80_1_2x250_F/layout in cellview
+POL_80/ALL_Coupons/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I6" of parameterized cell master
+PLL_80/p80A_1_fet_mult_exp_B/layout in cellview
+POL_80/p80_1_RelFet_10x125_30_EXP_A/layout may not be
+correct. The data type of parameter "mesa" on the instance
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80A/p80A_2_guts_SCFP_8094B_D/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_T3_fet_mult_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_diode_ls_C/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_viasGT275_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_strapsAB1a_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_st2_LT172_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_st2_GT194_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_st2_GT172_A/layout.
+WARNING (CDBOA-633): Instance "I34" of parameterized cell master
+PLL_80B_Eng/p80B_1_2mil_base_viaFetStrap3_A/layout in
+cellview
+PLL_80B_Eng/p80B_1_2mil_base_straps_2_10g2g_B/layout may
+not be correct. The data type of parameter "met2Pass" on
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/pa692_0p_1st_Stage/layout.
+WARNING (CDBOA-633): Instance "I109" of parameterized cell master
+PLL_80B_Eng/p87_1_digFet_even_eng_A/layout in cellview
+PLL_80B_Eng/T3_NEW_FETS/layout may not be correct. The data
+WARNING (CDBOA-633): Instance "I5" of parameterized cell master
+PLL_80B_Eng/p80B_1_T3_fing_mult_sg_A/layout in cellview
+PLL_80B_Eng/p80B_1_prim_T3_sw_fet_O_A/layout may not be
+correct. The data type of parameter "Sq_gateEnd_ShiftDown"
+WARNING (CDBOA-633): Instance "I5" of parameterized cell master
+PLL_80B_Eng/p80B_1_T3_fing_mult_sg_A/layout in cellview
+PLL_80B_Eng/p80B_1_prim_T3_sw_fet_O_A/layout may not be
+correct. The data type of parameter "Sq_gateEnd_ShiftUp" on
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_T3_opt_fet_mult_mod_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p80B_1_base_t3_stackedFet_8x100_A/layout.
+WARNING (CDBOA-633): Instance "I34" of parameterized cell master
+PLL_80B_Eng/p80B_1_2mil_base_viaFetStrap3_A/layout in
+cellview
+PLL_80B_Eng/p80B_1_2mil_base_straps_2_10g2g_A/layout may
+not be correct. The data type of parameter "met2Pass" on
+WARNING (CDBOA-633): Instance "I34" of parameterized cell master
+PLL_80B_Eng/p80B_1_2mil_base_viaFetStrap3_A/layout in
+cellview PLL_80B_Eng/p80B_1_2mil_base_straps_2_A/layout may
+not be correct. The data type of parameter "met2Pass" on
+WARNING (CDBOA-633): Instance "I34" of parameterized cell master
+PLL_80B_Eng/p80B_1_2mil_base_viaFetStrap3_A/layout in
+cellview PLL_80B_Eng/p80B_1_2mil_base_straps_2tg2g_A/layout
+may not be correct. The data type of parameter "met2Pass"
+WARNING (CDBOA-633): Instance "I34" of parameterized cell master
+PLL_80B_Eng/p80B_1_2mil_base_viaFetStrap3_A/layout in
+cellview PLL_80B_Eng/p80B_1_2mil_base_straps_2tg2g_B/layout
+may not be correct. The data type of parameter "met2Pass"
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p80B_1_prim_T3_sod_sourceB_B/layout.
+WARNING (CDBOA-633): Instance "I21" of parameterized cell master
+PLL_80B_Eng/p80B_1_prim_T3_finger_B/layout in cellview
+PLL_80B_Eng/p80B_1_prim_T3_fet_mult_base_B/layout may not
+be correct. The data type of parameter "gatePad" on the
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+PLL_80B_Eng/p80B_1_finger_DG_HEMT_eng_A/layout in cellview
+PLL_80B_Eng/p80B_1_DG_HEMT_fet_mult_A/layout may not be
+correct. The data type of parameter "AB" on the instance is
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+PLL_80B_Eng/p80B_1_finger_DG_HEMT_eng_B/layout in cellview
+PLL_80B_Eng/p80B_1_DG_HEMT_fet_mult_B/layout may not be
+correct. The data type of parameter "AB" on the instance is
+WARNING (CDBOA-633): Instance "I124" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_2x_eng_A/layout in cellview
+PLL_80B_Eng/p80B_1_Ring_HEMT_10x125_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I38" of parameterized cell master
+PLL_80B_Eng/p80B_1_base_viaFetStrap3_eng_A/layout in
+cellview PLL_80B_Eng/p80B_1_base_straps_3_eng_A/layout may
+not be correct. The data type of parameter "met2Pass" on
+WARNING (CDBOA-633): Instance "I44" of parameterized cell master
+PLL_80B_Eng/p80B_1_base_viaFetStrap3_eng_A/layout in
+cellview PLL_80B_Eng/p80B_1_base_straps_3_eng_A/layout may
+not be correct. The data type of parameter "met2Pass" on
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p80B_1_bondpad_1sb_A/layout.
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_C/layout in cellview
+PLL_80B_Eng/p80B_1_model_6n_30_30_2straps_A/layout may not
+be correct. The data type of parameter "glass" on the
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_C/layout in cellview
+PLL_80B_Eng/p80B_1_model_6n_30_30_2straps_exp_A/layout may
+not be correct. The data type of parameter "glass" on the
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_optGate_B/layout in
+cellview
+PLL_80B_Eng/p80B_1_model_8n_30_30_2straps_exp_optGate_A/layout
+may not be correct. The data type of parameter "glass" on
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_optGate_C/layout in
+cellview
+PLL_80B_Eng/p80B_1_model_8n_30_30_2straps_exp_optGate_B/layout
+may not be correct. The data type of parameter "glass" on
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+PLL_80B_Eng/p80B_1_base_t3_stackedFet_12x100_m_A/layout in
+cellview
+PLL_80B_Eng/p80B_1_stackedFet_12x100_H_7_m_A/layout may not
+be correct. The data type of parameter "Connect_BCB_Grid"
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_T3_finger_Rev153_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_viaExtT_1sb_h7_A/layout.
+WARNING (CDBOA-633): Instance "I14" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_finger_sg_A/layout in cellview
+PLL_80B_Eng/p87_1_prim_t3_swM_odd_A/layout may not be
+correct. The data type of parameter "Label" on the instance
+WARNING (CDBOA-633): Instance "I14" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_finger_sg_A/layout in cellview
+PLL_80B_Eng/p87_1_prim_t3_swM_even_A/layout may not be
+correct. The data type of parameter "Label" on the instance
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_base_fet_mult_mod_B/layout.
+WARNING (CDBOA-633): Instance "I10" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_finger_sg_A/layout in cellview
+PLL_80B_Eng/p87_1_fet_meander_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I15" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_finger_sg_A/layout in cellview
+PLL_80B_Eng/p87_1_fet_meander_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_fet_mult_straps_C0_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_fet_sogSas_A/layout.
+WARNING (CDBOA-633): Instance "I62" of parameterized cell master
+PLL_80B_Eng/p87_1_prim_P80B_T3_finger_A/layout in cellview
+PLL_80B_Eng/p87_1_prim_T3_MP_fet_mult_A/layout may not be
+correct. The data type of parameter "gatePad" on the
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_T3_fet_3_straps_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_T3_viaExt_1sb_m_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B_Eng/p87_1_prim_fing_ab_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-506): Library "PLL_80B" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_viaSquare_40_cap_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_fet_3_straps_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_prim_sourceR_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_base_fet_mult_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_rayLogo_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_diode_ls_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_diode_ls_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_80B/p80B_1_viaSquare_40_cap_gt_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_B/layout in cellview
+PML_80B/p80B_1_model_12n_40_40_2straps_A/layout may not be
+correct. The data type of parameter "glass" on the instance
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_B/layout in cellview
+PML_80B/p80B_1_model_6n_30_30_2straps_A/layout may not be
+correct. The data type of parameter "glass" on the instance
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_C/layout in cellview
+PML_80B/p80B_1_model_20n_30_30_2straps_A/layout may not be
+correct. The data type of parameter "glass" on the instance
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_C/layout in cellview
+PML_80B/p80B_1_model_6n_30_30_2straps_B/layout may not be
+correct. The data type of parameter "glass" on the instance
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_B/layout in cellview
+PML_80B/p80B_1_model_6n_30_30_2straps_exp_A/layout may not
+be correct. The data type of parameter "glass" on the
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p80B_1_fet_mult_split_exp_C/layout in cellview
+PML_80B/p80B_1_model_6n_30_30_2straps_exp_B/layout may not
+be correct. The data type of parameter "glass" on the
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X3pf_2000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X10pf_1000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X10pf_2000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X3pf_1000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X10pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X3pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/lvs/p80B_1_lvs_coup_X1p5pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X1p5pf_1000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X3pf_2000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X10pf_1000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X10pf_2000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X3pf_1000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X10pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X3pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X1p5pf_3000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/release/LVS/p80B_1_lvs_coup_X1p5pf_2000a_TA_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8054A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8054A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8054A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_chip_8091B/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_chip_8091B/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_chip_8091B/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8055A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8055A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_lvs_chip_X8055A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_B/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_B/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/lvs/LVS_p80B_1_dfets_8084_B/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_via_iso_B/layout.
+WARNING (CDBOA-633): Instance "I49" of parameterized cell master
+POL_80B/p80B_1_coupon_footprint_C/layout in cellview
+POL_80B/p80B_1_guts_8087D_B/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I131" of parameterized cell master
+POL_80B/p80B_1_coupon_footprint_C/layout in cellview
+POL_80B/p80B_1_guts_8099D_D/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_2mil_metroFET_B/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/ALL_2mil_Overhead_Pieces/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_metroFET_I/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_fet_8092D_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_fet_X8053_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_crossbridge_cb_5_20_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_ILCR_cb_gt_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/LVS_p80B_1_lvs_chip_X8054A/schematic.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/LVS_p80B_1_lvs_chip_X8055A/schematic.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_chip_8092A/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_2mil_metroFET_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_Caps_2000_Nitride_1sb_2c_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_SD_GT_2_p75_pMesa_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_ILCR_cb_tmp_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_ILCR_m2_tmp_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_RelFet_10x125_T3_H7_B/layout.
+WARNING (CDBOA-633): Instance "I145" of parameterized cell master
+POL_80B/p80B_1_prim_t3_RelFet_8x125_A/layout in cellview
+POL_80B/p80B_1_RelFet_8x125_T3_H7_A/layout may not be
+correct. The data type of parameter "sdSpacing" on the
+WARNING (CDBOA-633): Instance "I145" of parameterized cell master
+POL_80B/p80B_1_prim_t3_RelFet_8x125_A/layout in cellview
+POL_80B/p80B_1_RelFet_8x125_T3_H7_A/layout may not be
+correct. The data type of parameter "gateStem2Source" on
+WARNING (CDBOA-633): Instance "I145" of parameterized cell master
+POL_80B/p80B_1_prim_t3_RelFet_8x125_A/layout in cellview
+POL_80B/p80B_1_RelFet_8x125_T3_H7_A/layout may not be
+correct. The data type of parameter "gateLength" on the
+WARNING (CDBOA-633): Instance "I49" of parameterized cell master
+POL_80B/p80B_1_coupon_footprint_SCFP_C/layout in cellview
+POL_80B/p80B_1_SCFP_guts_8087D_B/layout may not be correct.
+WARNING (CDBOA-633): Instance "I131" of parameterized cell master
+POL_80B/p80B_1_coupon_footprint_SCFP_C/layout in cellview
+POL_80B/p80B_1_SCFP_guts_8099D_D/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_TLM_6p35Ta_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_TLM_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_coup_SCFP_H_Variants_mod_B/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_metroFET_G/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_metroFET_H/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_metroFET_H/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A/layout in cellview
+POL_80B/p80B_1_metroFET_H_Fixed/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A_mod_sw/layout in cellview
+POL_80B/p80B_1_metroFET_H_mod_sw/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_80B/p80B_1_metro_fet_mult_A_mod_sw/layout in cellview
+POL_80B/p80B_1_metroFET_H_mod_sw/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_80B/p80B_1_shell_chip_sg_8000A_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/lvs/schematic/map
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/lvs/p81_1_lvs_chip_74/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/lvs/p81_1_lvs_chip_74/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/lvs/p81_1_lvs_chip_74/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/lvs/layout/map
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-506): Library "P81_eng" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/p81_1_guts_8196E_A/layout.
+WARNING (CDBOA-633): Instance "I454" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p60_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I454" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p60_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I454" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p60_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I454" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p60_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I453" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p78_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I453" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p78_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I453" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p78_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-633): Instance "I453" of parameterized cell master
+P81_eng/p81_1_model_CapOnVia_p78_A/layout in cellview
+P81_eng/ALL_Models/layout may not be correct. The data type
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P81_eng/p81_1_chip_8197B/layout.
+WARNING (CDBOA-633): Instance "I5" of parameterized cell master
+P81_eng/p81_1_guts_X8132A_A/layout in cellview
+P81_eng/p81_1_chip_X8132A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P81_eng/p81_1_guts_8197C_A/layout in cellview
+P81_eng/p81_1_chip_8197A/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_81/p81_1_4mil_viaFetSquare_in_A/layout.
+WARNING (CDBOA-633): Instance "I0" of parameterized cell master
+PLL_81/p81_1_2mil_viaBPConnect_B/layout in cellview
+PLL_81/p81_1_2mil_bondpad_wVia_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_81/p81_1_prim_fm_strapsLT125_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_81/p81_1_prim_fm_strapsLT125_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_81/p81_1_prim_fm_strapsLT125_C/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/release/lvs/p81_1_lvs_2mil_fet_99_A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/release/lvs/p81_1_lvs_4mil_fet_99_B
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_chip_8174B_LVS/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_chip_8174B_LVS/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_chip_8174B_LVS/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_4mil_RelFet_LVS/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_4mil_RelFet_LVS/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/lvs/p81_1_4mil_RelFet_LVS/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p81_1_metro_fet_mult_P80B_A/layout in cellview
+POL_81/p81_1_metroFET_P80B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p81_1_metro_fet_mult_P80B_A/layout in cellview
+POL_81/p81_1_metroFET_P80B_A/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/P81_1_2mil_Coupons/layout.
+WARNING (CDBOA-633): Instance "I37" of parameterized cell master
+PLL_81/p81_1_2mil_viaBPConnect_A/layout in cellview
+POL_81/p81_1_relFet_2mil_pads_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_res_relfet_micro_A/layout.
+WARNING (CDBOA-633): Instance "I37" of parameterized cell master
+PLL_81/p81_1_2mil_viaBPConnect_A/layout in cellview
+POL_81/p81_1_relFet_2mil_pads_B/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_chip_8101A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_guts_chip_8103A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_chip_8103A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_4mil_RelFet_10x125_30_G/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_prim_ideoB_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_ideo_mult_base_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_prim_ideoFet_XFxGW_A/layout.
+WARNING (CDBOA-633): Instance "I97" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I96" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I95" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I84" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I76" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I68" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I9" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I5" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I69" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I77" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I85" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-633): Instance "I24" of parameterized cell master
+POL_81/p81_1_prim_ideoFet_XFxGW_A/layout in cellview
+POL_81/IdeoFets/layout may not be correct. The data type of
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p80B_1_metro_fet_mult_P81_Fets_A/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p80B_1_metro_fet_mult_P81_Fets_A/layout in cellview
+POL_81/p80B_1_metroFET_P81_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p80B_1_metro_fet_mult_P81_Fets_A/layout in cellview
+POL_81/p80B_1_metroFET_P81_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p80B_1_metro_fet_mult_P81_Fets_T3_A/layout in
+cellview POL_81/p80B_1_metroFET_P81_T3_A/layout may not be
+correct. The data type of parameter "SCFP_H" on the
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p80B_1_metro_fet_mult_P81_Fets_T3_A/layout in
+cellview POL_81/p80B_1_metroFET_P81_T3_A/layout may not be
+correct. The data type of parameter "SCFP" on the instance
+WARNING (CDBOA-633): Instance "I37" of parameterized cell master
+PLL_81/p81_1_4mil_viaBPConnect_A/layout in cellview
+POL_81/p81_1_relFet_4mil_pads_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_shell_chip_8105A_Two_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_chip_8174B_LVS/schematic.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_81/p81_1_guts_8197A_C/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p81_1_metro_fet_mult_m_P80B_A/layout in cellview
+POL_81/p81_1_metroFET_mod_P80B_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_81/p81_1_metro_fet_mult_m_P80B_A/layout in cellview
+POL_81/p81_1_metroFET_mod_P80B_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/lvs/p82_1_lvs_fet_99_G/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/lvs/p82_1_lvs_fet_99_G/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/lvs/p82_1_lvs_fet_99_G/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-506): Library "P82_eng" has its own technology library and has
+another technology library "RRFC_2metal" attached. The
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_E/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/p82_1_fet_2x_adj_A/layout.
+WARNING (CDBOA-633): Instance "I28" of parameterized cell master
+P82_eng/p82_1_rfLaunch_241_A/layout in cellview
+P82_eng/Example2mil_Models/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I28" of parameterized cell master
+P82_eng/p82_1_rfLaunch_241_A/layout in cellview
+P82_eng/Example2mil_Models/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I13" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_split_B/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_D/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_Control_C/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I5" of parameterized cell master
+P82_eng/p82_1_guts_8295B_A/layout in cellview
+P82_eng/p82_1_chip_8295A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_finger_tlm_C/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/Example4mil_PCELLS/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/p82_1_fet_4x_base_A/layout.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_exp_D/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Cont_Exp_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_Control_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_Control_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I13" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_mult_split_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_C/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_D/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_finger_tlm_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_finger_tlm_B/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/p82_1_guts_X8226A_A/layout.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_eng_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_eng_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_1_2sd_4n_17_22_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Cont_EXP_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Cont_Exp_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Cont_Exp_NewNeedsWork/layout may
+not be correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_eng_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_eng_E/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_4n_17_22_Control_raid_E/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I80" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_6n_17_22_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_Xn_17_22_noVia_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_exp_sm_4n_17_22_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_modeling_17_22_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_B/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_C/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_Control_New_A/layout may not
+be correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_exp_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_exp_A_orig/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_exp_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_exp_C/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_17_22_new_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_isv_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_isv_Control_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_mult_isv_Control_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_isv_exp_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I1" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_mult_isv_exp_A_orig/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I15" of parameterized cell master
+P82_eng/p82_1_finger_A/layout in cellview
+P82_eng/p82_1_fet_series_switch_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I15" of parameterized cell master
+P82_eng/p82_1_finger_B/layout in cellview
+P82_eng/p82_1_fet_series_switch_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/P82_eng/p82_1_gridLaser_27_A/layout.
+WARNING (CDBOA-633): Instance "I58" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_prim_fet_4n_Xgw_17_22_A/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-633): Instance "I13" of parameterized cell master
+P82_eng/p82_1_finger_C/layout in cellview
+P82_eng/p82_1_raid_fet_mult_split_B/layout may not be
+correct. The data type of parameter "gateEnd" on the
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-506): Library <name> has its own technology library and has
+another technology library <name> attached. The library's
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_85/lvs/P85_X05_SogRels_LVS/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_85/lvs/P85_X05_SogRels_LVS/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_85/lvs/P85_X05_SogRels_LVS/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_85/p85_1_metro_fet_mult_P80B_A/layout in cellview
+POL_85/p85_1_metroFET_P80B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_85/p85_1_metro_fet_mult_P80B_A/layout in cellview
+POL_85/p85_1_metroFET_P80B_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_RelFet_10x30_X05_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_RelFet_10x30_X05_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_RelFet_10x30_X07_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_RelFet_10x30_X07_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_relFet_10x30_X05_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_relFet_10x30_X05_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_relFet_10x30_X07_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I19" of parameterized cell master
+POL_80B/p80B_1_RelFet_10x30_HV_B/layout in cellview
+POL_85/p85_1_relFet_10x30_X07_A/layout may not be correct.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/release/lvs/p87_1_lvs_chip_8705A
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/p87_1_lvs_T3_model_csfet_split_XF_sg2g_dg2g_A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/p87_1_lvs_T3_model_csfet_split_XF_sg2g_dg2g_A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/p87_1_lvs_T3_model_csfet_split_XF_sg2g_dg2g_A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/LVS_p87_1_lvs_chip_X8055A/schematic
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/LVS_p87_1_lvs_chip_X8055A/raw
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-406): Directory
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/lvs/LVS_p87_1_lvs_chip_X8055A/layout
+is in a cellview. The directory and its contents will be
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_label_anyLayer_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_T3_model_csfet_split_XF_sg2g_dg2g_B/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_label_leGate_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_coupPads19_26_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_label_d_iv_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_D_label_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_label_g_iv_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_G_label_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet8084D_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet_2X100_splitD_A/layout.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_87/p87_1_coup_T3_finger_B/layout in cellview
+POL_87/p87_1_coup_Xbridge_gate_B/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet99D_A/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_A/layout in cellview
+POL_87/P80B_1_metroFet_T3_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_A/layout in cellview
+POL_87/P80B_1_metroFet_T3_A/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_chip_X8754A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_guts_X8755A_A/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_B/layout in cellview
+POL_87/P80B_1_metroFet_justP87_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_B/layout in cellview
+POL_87/P80B_1_metroFet_justP87_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_metroFET_H_SCFP_7_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_coup_4point_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_Coup_4point_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_BCB_fet_mult_split_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_chip_shell_8725A_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_res_rel_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_C1_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_C4_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_C7_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_H1_A/layout.
+WARNING (CDBOA-633): Instance "I170" of parameterized cell master
+ASML/gan_1_ReticleLabels_P87_P80B_A/layout in cellview
+POL_87/TitleIII_Overhead/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I165" of parameterized cell master
+ASML/gan_1_ReticleLabels_P87_P80B_A/layout in cellview
+POL_87/TitleIII_Overhead/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p80B_1_prim_gateTab_B/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_A/layout in cellview
+POL_87/p80B_1_metroFET_A/layout may not be correct. The
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p80B_1_metro_fet_mult_A/layout in cellview
+POL_87/p80B_1_metroFET_A/layout may not be correct. The
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_fetViaB_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_fetViaT_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_P80Bref_RelFet_10x125_30_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_RelFet_H4_10x125_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_RelFet_H8_10x125_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_rel_T3_fet_sog_s_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_RelFet_Sog_10x125_30_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_rel_T3_fet_sog_s_Rev153_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_T3_RelFet_ENG_10x125_30_m_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_T3_model_cgfet_XF_sg2g_dg2g_A/layout.
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_fet_mult_split_3_Model_Rev153_A/layout
+in cellview
+POL_87/p87_1_prim_T3_model_csfet_XF_Split3_Rev153_A/layout
+may not be correct. The data type of parameter "NoSCFP" on
+WARNING (CDBOA-633): Instance "I125" of parameterized cell master
+PLL_80B_Eng/p87_1_T3_fet_mult_split_3_Model_A/layout in
+cellview
+POL_87/p87_1_prim_T3_model_csfet_XF_Split3_sg2g_dg2g_A/layout
+may not be correct. The data type of parameter "NoSCFP" on
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_T3_model_csfet_XF_sg2g_dg2g_D/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_launch_via_A/layout.
+WARNING (CDBOA-633): Instance "I11" of parameterized cell master
+POL_87/p87_1_coup_T3_finger_153_A/layout in cellview
+POL_87/p87_1_coup_Xbridge_gate_153_A/layout may not be
+correct. The data type of parameter "GatePadFeeds" on the
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet99C_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet_2X100_splitC_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_fet_4point_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_guts_chip_8706A_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_H0_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideoFet_12x200_STD_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_ideo_mult_base_mod_A/layout.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p87_1_prim_metro_fet_P80Bref_A/layout in cellview
+POL_87/p87_1_metroFET_P80Bref_A/layout may not be correct.
+WARNING (CDBOA-633): Instance "I3" of parameterized cell master
+POL_87/p87_1_prim_metro_fet_P80Bref_A/layout in cellview
+POL_87/p87_1_metroFET_P80Bref_A/layout may not be correct.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_RelFet_Sog_10x125_30_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_ideoFet_mod_XFxGW_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/POL_87/p87_1_prim_ideo_A/layout.
+WARNING (CDBOA-301): Ignoring edit lock on <path>/<file>.
+WARNING (CDBOA-406): Directory <path>/<name> is in a cellview. The directory
+WARNING (CDBOA-633): Instance <name> of parameterized cell master <path>/<name>
+in cellview <path>/<name> may not be correct. The data type

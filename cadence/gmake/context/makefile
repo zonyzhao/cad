@@ -25,7 +25,8 @@ localIbmDesDir = $(HOME)/"/deslibs_oa_ibm/"
 localCadDir = $(HOME)/"/cad_layout_61/"
 cadenceDefault = "/net/nfs-n501/ANFS01/apps/cadence/IC616/share/cdssetup/"
 avTech = "/apps/assura/ASSURA616_04.14.101/tools/assura/etc/avtech/avTech"
-defaultOaTechDir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa"
+rev = "e"
+defaultOaTechDir = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa_"$(rev)
 #########################################################################
 # Individual Designs
 #########################################################################
@@ -98,6 +99,9 @@ xynMod:
 	echo "INCLUDE " $(localDesDir)/cds.lib >> $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
 
+##########################################################################
+# Tech Lib Revision set using "rev" variable
+##########################################################################
 .phony: defaultTech
 defaultTech:
 	touch $(localCadDir)/cds.lib
@@ -112,15 +116,6 @@ defaultTech:
 	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
 	echo "INCLUDE " $(defaultOaTechDir)/cds.lib >> $(localCadDir)/cds.lib
 	echo "INCLUDE " $(localDesDir)/cds.lib >> $(localCadDir)/cds.lib
-	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
-
-.phony: defaultTechRevD
-defaultTechRevD:
-	touch $(localCadDir)/cds.lib
-	rm $(localCadDir)/cds.lib
-	touch $(localCadDir)/cds.lib
-	echo "INCLUDE " $(cadenceDefault)/cds.lib > $(localCadDir)/cds.lib
-#	echo "INCLUDE " $(defaultOaTechDir)/cds.lib >> $(localCadDir)/cds.lib
 	echo "DEFINE avTech " $(avTech) >> $(localCadDir)/cds.lib
 
 .phony: divaDRC

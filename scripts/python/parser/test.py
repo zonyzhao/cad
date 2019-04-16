@@ -80,20 +80,20 @@ write.write()
 # UT-4
 ###################################################
 import reader
-import parser
+import parse
 import writer
 read = reader.reader()
-read.setName("cdb2oa_092617.log")
-read.setPath("/users/1127110/project/gmake/oaConversion/trunk/")
+read.setName("cdb2oa__e.log")
+read.setPath("/users/1127110/cad/scripts/python/parser/testTargets/cdb2oa_e/")
 read.read()
-parse = parser.parser()
+parse = parse.parser()
 parse.setLines(read.getLines())
 parse.setBegString("ERROR")
 parse.setEndString("\.")
 parse.parse()
 parse.getbOccur()
 write = writer.writer()
-write.setName("err.log")
+write.setName("cdb2oa__e_err.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()
@@ -102,20 +102,20 @@ write.write()
 # UT-5
 ###################################################
 import reader
-import parser
+import parse
 import writer
 read = reader.reader()
-read.setName("cdb2oa_092717.log")
-read.setPath("./testTargets")
+read.setName("cdb2oa__e.log")
+read.setPath("/users/1127110/cad/scripts/python/parser/testTargets/cdb2oa_e/")
 read.read()
-parse = parser.parser()
+parse = parse.parser()
 parse.setLines(read.getLines())
 parse.setBegString("WARNING")
 parse.setEndString("\.")
 parse.parse()
 parse.getbOccur()
 write = writer.writer()
-write.setName("err.log")
+write.setName("cdb2oa__e_warn.log")
 write.setPath("./")
 write.setLines(parse.getpLines())
 write.write()

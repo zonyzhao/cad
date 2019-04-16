@@ -136,3 +136,19 @@ attachTechFile(tf "RRFC_2metal")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 5.1 Skill Version
+procedure( techBridgeAttach( libName bridgeName)
+  let((libRef bridgRef attachName )
+    libRef = ddGetObj(libName)
+    bridgeRef = ddGetObj(bridgeName)
+    attachName = techGetTechLibName(libRef)
+    printf("INFO: %s library is currently attached to %s library\n n" libName attachName)
+    techUnattachTechFile(libRef)
+    techBindTechFile(libRef bridgeName "tech.db" t)
+    attachName = techGetTechLibName(libRef)
+    printf("INFO: %s library is now attached to %s library\n" libName attachName)
+  );
+);procedure
+
+techBridgeAttach( "ASML" "RRFC_2metal")
+techBridgeAttach( "ganLib" "RRFC_2metal")
+techBridgeAttach( "XYnumbers" "RRFC_2metal")

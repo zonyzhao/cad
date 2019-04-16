@@ -1,0 +1,1099 @@
+ERROR   (CDBOA-405):
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/RRFC_2metal/techfile.cds
+ERROR   (CDBOA-126): cdb2oail error: "exec of
+'/apps/cadence/IC616/tools/dfII/bin/cdb2oail' failed with
+signal 11."
+ERROR   (CDBOA126): cdb2oail error
+
+Generated once. cdb2oa calls another executable cdb2oail
+ERROR   (CDBOA-405): <path>/<name> does not have read permission.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+D90/p80B_1_model_50ohm_Load_B/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_label_ohms_A/layouts either does not
+exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+P80B_eng/p80b_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+D90/d90_1_model_trl_wave_A/layout because it is magnified
+and the instance master
+P80B_eng/p80b_1_label_ohms_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview D90/d90_1_model_trl_wave_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview D90/d90_1_model_trl_wave_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_D_label_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+POL_46/p46_1_TFet_99_B/layout because it is magnified and
+the instance master CommonOverhead/co_1_D_label_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_D_label_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+POL_46/p46_1_TFet_99_A/layout because it is magnified and
+the instance master CommonOverhead/co_1_D_label_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_D_label_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+POL_46/p46_1_TFet_99_C/layout because it is magnified and
+the instance master CommonOverhead/co_1_D_label_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_81_Ext3/p81_1_rayLogo_A/layout in edit mode. Check that
+ERROR   (CDBOA-616): Cannot translate instance "I4" in cellview
+PLL_51/RaytheonProprietary/layout because it is magnified
+and the instance master PLL_81_Ext3/p81_1_rayLogo_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_G_label_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I4" in cellview
+POL_60/p60_1_metroFET_D/layout because it is magnified and
+the instance master CommonOverhead/co_1_G_label_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_D_label_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I3" in cellview
+POL_60/p60_1_metroFET_D/layout because it is magnified and
+the instance master CommonOverhead/co_1_D_label_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_B/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80A_Eng/p80A_2_fet_diode_eng_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_6p35phmsSq_A/layout in edit mode.
+ERROR   (CDBOA-616): Cannot translate instance "I15" in cellview
+POL_80A/p80A_2_TLM_6p35Ta_B/layout because it is magnified
+and the instance master
+CommonOverhead/co_1_label_6p35phmsSq_A/layouts either does
+not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I151" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I145" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I132" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I48" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I3" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I5" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I143" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I54" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I130" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I144" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I55" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I131" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I57" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I56" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I49" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I78" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I88" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I58" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I64" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I50" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I53" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I52" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I51" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I61" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I59" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I98" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I97" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I86" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I73" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I80" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I62" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I68" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I94" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I103" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I102" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I105" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I104" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I76" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I60" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I63" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I85" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I107" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I106" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I108" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I109" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I93" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I66" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I111" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I110" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I112" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I67" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I74" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I113" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I114" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I65" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I115" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I69" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I116" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I117" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I83" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I77" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I118" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I119" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I82" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I75" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I120" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I121" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I79" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I81" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I122" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I87" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I123" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I84" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I124" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I96" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I125" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I126" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I127" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I95" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I99" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I100" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I128" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I92" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I129" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I91" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I101" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I90" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I14" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I89" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I72" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I12" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I13" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I71" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I70" in cellview
+PLL_80B_Eng/1_P85_FETs/layout because it is magnified and
+the instance master POL_85/p85_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file PLL_80B/p80B_1_fetLogo_A/layout
+in edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p87_1_fet_1x_B/layout because it is magnified
+and the instance master PLL_80B/p80B_1_fetLogo_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B_Eng/p87_1_fet_1x_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B_Eng/p87_1_fet_1x_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_strapsAB_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_strapsAB1a_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_strapsAB1_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_strapsAB3_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_strapAB_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I7" in cellview
+PLL_80B_Eng/p87_1_base_fet_mult_B/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I233" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I0" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I101" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I90" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I71" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I70" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I57" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I89" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I72" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I91" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I92" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I100" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I99" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I95" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I96" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I84" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I87" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I81" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I79" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I75" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I82" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I77" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I83" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I69" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I65" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I74" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I67" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I66" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I93" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I85" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I63" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I60" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I76" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I73" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I86" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I97" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I98" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I80" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I62" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I61" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I64" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I88" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I78" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I58" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I56" in cellview
+PLL_80B_Eng/1_P87_FETs/layout because it is magnified and
+the instance master POL_87/p87_1_label_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/1_PD0182/layout because it is magnified and the
+instance master POL_87/p87_1_label_A/layouts either does
+not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I0" in cellview
+PLL_80B_Eng/1_PD0182/layout because it is magnified and the
+instance master POL_87/p87_1_label_A/layouts either does
+not exist or is read-only.
+ERROR   (CDBOA-616): Cannot translate instance "I57" in cellview
+PLL_80B_Eng/1_PD0182/layout because it is magnified and the
+instance master POL_87/p87_1_label_A/layouts either does
+not exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_B/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file PLL_80B/p80B_1_fetLogo_A/layout
+in edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_C/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_fetLogo_A/layouts either does not exist or
+is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_C/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_C/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_C/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_dg_A/layout because it is magnified
+and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B_Eng/p80B_1_fet_dg_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B_Eng/p80B_1_fet_dg_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B_Eng/p80B_1_fet_dg_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file PLL_80B/p80B_1_fetLogo_A/layout
+in edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_B/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_fetLogo_A/layouts either does not exist or
+is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_eng_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_mod_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_mod_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_mod_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_mod_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_odd_smFt_A/layout because it
+is magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_odd_smFt_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file PLL_80B/p80B_1_fetLogo_A/layout
+in edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_C/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_fetLogo_A/layouts either does not exist or
+is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_C/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_exp_A/layout because it
+is magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview
+PLL_80B_Eng/p80B_1_fet_diode_smFt_exp_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+POL_87/p87_1_rayLogo_text_A/layout in edit mode. Check that
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/p87_1_prim_T3_strap_drain_A/layout because it
+is magnified and the instance master
+POL_87/p87_1_rayLogo_text_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I7" in cellview
+PLL_80B_Eng/p87_1_base_fet_mult_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I7" in cellview
+PLL_80B_Eng/p87_1_base_fet_mult_H7_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+PLL_80B/p80B_1_rayLogo_fet_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I1" in cellview
+PLL_80B_Eng/z_p87_1_prim_strapAB_A/layout because it is
+magnified and the instance master
+PLL_80B/p80B_1_rayLogo_fet_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I1" for cellview
+PLL_80B_Eng/z_p87_1_prim_strapAB_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_80B/p80B_1_fet_diode_smFt_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_80B/p80B_1_fet_diode_smFt_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80B_1_model_50ohm_Load_B/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_label_ohms_A/layouts either does not
+exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+P80B_eng/p80b_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80B_1_model_trl_wave_B/layout because it is
+magnified and the instance master
+P80B_eng/p80b_1_label_ohms_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview PML_80B/p80B_1_model_trl_wave_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview PML_80B/p80B_1_model_trl_wave_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+P80B_eng/p80b_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80B_1_model_trl_wave_A/layout because it is
+magnified and the instance master
+P80B_eng/p80b_1_label_ohms_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview PML_80B/p80B_1_model_trl_wave_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I16" for cellview PML_80B/p80B_1_model_trl_wave_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_fetLogo_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PML_80B/p80B_1_fet_diode_eng_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_fetLogo_A/layouts either does not exist
+or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PML_80B/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PML_80B/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PML_80B/p80B_1_fet_diode_eng_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80B_1_model_50ohm_Load_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_label_ohms_A/layouts either does not
+exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80b_1_model_50ohm_Load_A/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_label_ohms_A/layouts either does not
+exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file
+CommonOverhead/co_1_label_ohms_A/layout in edit mode. Check
+ERROR   (CDBOA-616): Cannot translate instance "I16" in cellview
+PML_80B/p80b_1_model_50ohm_Load_E/layout because it is
+magnified and the instance master
+CommonOverhead/co_1_label_ohms_A/layouts either does not
+exist or is read-only.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_87/p87_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I5" in cellview
+POL_80B/p80B_1_coup_fet_sog_d_A/layout because it is
+magnified and the instance master
+POL_87/p87_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I5" for cellview POL_80B/p80B_1_coup_fet_sog_d_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I5" for cellview POL_80B/p80B_1_coup_fet_sog_d_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I5" for cellview POL_80B/p80B_1_coup_fet_sog_d_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I5" for cellview POL_80B/p80B_1_coup_fet_sog_d_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I5" for cellview POL_80B/p80B_1_coup_fet_sog_d_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
+ERROR   (CDBOA-402):
+/scratch/oaConversion/oaConversion/techlibs/cdbLibs_e/PLL_81/p81_1_2mil_fet_mult_split_B/layout/master.tag
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_A/layout because it is magnified and
+the instance master POL_81/p81_1_fetLogo_A/layouts either
+does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_mod_A/layout because it is magnified
+and the instance master POL_81/p81_1_fetLogo_A/layouts
+either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_mod_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_odd_smFt_A/layout because it is
+magnified and the instance master
+POL_81/p81_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_odd_smFt_A/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_odd_smFt_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_odd_smFt_B/layout because it is
+magnified and the instance master
+POL_81/p81_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_odd_smFt_B/layout.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_odd_smFt_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_smFt_A/layout because it is
+magnified and the instance master
+POL_81/p81_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_smFt_A/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_smFt_B/layout because it is
+magnified and the instance master
+POL_81/p81_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_smFt_B/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file POL_81/p81_1_fetLogo_A/layout in
+edit mode. Check that the file exists and that you have
+ERROR   (CDBOA-616): Cannot translate instance "I2" in cellview
+PLL_81/p81_1_fet_diode_smFt_C/layout because it is
+magnified and the instance master
+POL_81/p81_1_fetLogo_A/layouts either does not exist or is
+read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+"I2" for cellview PLL_81/p81_1_fet_diode_smFt_C/layout.
+ERROR   (CDBOA-401): Cannot open OpenAccess file <path>/<name> in <mode> mode.
+ERROR   (CDBOA-402): <path>/master.tag is empty or contains invalid data.
+ERROR   (CDBOA-616): Cannot translate instance <name> in cellview <path>/<name>
+because it is magnified and the instance master
+<lib>/<cell>/<view> either does not exist or is read-only.
+ERROR   (CDBOA-619): Failed to find equivalent OpenAccess group member: instance
+<name> for cellview <path>/<name>.
