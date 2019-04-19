@@ -1,0 +1,240 @@
+Design:  ts0499 
+Primary:  ts499_0p 
+Dropin:  ts499_0s 
+Process Type:  P80B 
+Step and Repeat:  16635.00 16805.00 
+****************************************************************************
+******                        Global Marks                            ******
+****************************************************************************
+Global Mark1:     ASML_PM_L0_A                            1360.00    2580.00
+Global Mark2:     ASML_PM_SD_L0_C                          150.00    2980.00
+Global Mark3:     ASML_SPM_L0_Y_AH32_A                    -343.00     693.50
+Global Mark4:     ASML_SPM_L0_X_AH32_A                     273.50      75.50
+Global Mark5:     ASML_SPM_L0_X_AH53_A                    3101.50    4914.50
+Global Mark6:     ASML_SPM_L0_Y_AH53_A                    3718.00    4296.50
+****************************************************************************
+******                        DFAS Keys                               ******
+****************************************************************************
+ 
+       Code      CellName                                      X        Y
+
+****************************************************************************
+******                      Other Cells                               ******
+****************************************************************************
+PRI              gan_1_bloat_SD_A                           -220.00  1780.00 
+PRI              p80B_1_viaTest_B                           1360.00  3710.00 
+PRI              p80B_1_via_iso_B                            -70.00  1390.00 
+PRI              gan_1_resolution_F                         5850.00  3450.00 
+PRI              gan_1_viaAlignment_SD_E                    -230.00  4220.00 
+PRI              gan_1_numAlign_ME_L_F                        90.00  3700.00 
+PRI              gan_1_numAlign_ME_R_F                       710.00  3700.00 
+PRI              gan_1_AlGaN_testStructure_B                2785.28  3480.81 
+PRI              gan_1_AlGaN_testStructure_B               -7820.00  -540.00 
+PRI              gan_1_cv_C                                 2294.50  3480.00 
+PRI              gan_1_cv_C                                -3970.00  -450.00 
+PRI              gan_1_LeicaCells_exp_A                     3364.50  3630.00 
+PRI              gan_1_LeicaCells_exp_A                    -8170.00  -540.00 
+PRI              p80B_1_2x250_E                             3940.00  3690.00 
+PRI              p80B_1_base_2x100_fins2_A                  7280.00   320.00 
+PRI              p80B_1_base_2x100_fins2_A                  7760.00   320.00 
+PRI              p80B_1_base_2x100_fins2_A                  6800.00   320.00 
+PRI              p80B_1_metroFET_I                          5220.00   630.00 
+PRI              p80B_1_metroFET_I                           340.00  -850.00 
+PRI              gan_1_LeicaVerniers_T3_A                    -90.00  -390.00 
+PRI              gan_1_LeicaVerniers_T3_A                   7600.00  3510.00 
+PRI              gan_1_LeicaVerniers_T3_A                  -6430.00 -2950.00 
+PRI              gan_1_mesaIsoOff_3gap_A                    1000.00  4670.00 
+PRI              gan_1_mesaIsoOff_5gap_A                    1000.00  4500.00 
+PRI              gan_1_DC_TestAlign_V_C                     3906.25  1829.59 
+PRI              gan_1_ReticleLabels_P87_A                  5030.00  3270.00 
+PRI              gan_1_LeicaCells_EXP_A                     4020.00  3410.00 
+PRI              gan_1_LeicaMarker_offOn_Mesa_A             4250.00  3000.00 
+PRI              gan_1_LeicaMarker_offOn_Mesa_A             4250.00  2700.00 
+
+Oat Cells only show up if they are different from the Primary 
+
+
+****************************************************************************
+******                       Leica Marks                              ******
+****************************************************************************
+
+
+Scan Window Size    No. Intersections
+----------------    -----------------
+323.00             661
+324.00             662
+325.00             685
+281.00             689
+305.00             766
+282.00             767
+303.00             772
+269.00             775
+288.00             787
+294.00             801
+
+****************************************************************************
+****** Box In Box Structures      Inside->Outside (Center of both)    ******
+****************************************************************************
+                 gan_1_BNB_Center_gs_gt_T3_A                 -50.00   830.00 
+                 gan_1_BNB_Center_gs_gt_T3_P25_A               0.00   830.00 
+                 gan_1_BNB_Center_gs_scfp_T3_A               -50.00   880.00 
+                 gan_1_BNB_Center_gs_scfp_T3_P25_A             0.00   880.00 
+                 gan_1_BNB_Center_gt_scfp_T3_A               -50.00   930.00 
+                 gan_1_BNB_Center_gt_scfp_T3_P25_A             0.00   930.00 
+                 gan_1_BNB_Center_l0_ab_A                     50.00   880.00 
+                 gan_1_BNB_Center_l0_capDiel2_A               50.00   680.00 
+                 gan_1_BNB_Center_l0_cb_A                      0.00   580.00 
+                 gan_1_BNB_Center_l0_free_A                  -50.00  1120.00 
+                 gan_1_BNB_Center_l0_free_A                   50.00  1120.00 
+                 gan_1_BNB_Center_l0_free_A                    0.00  1120.00 
+                 gan_1_BNB_Center_l0_gl_A                     50.00   980.00 
+                 gan_1_BNB_Center_l0_gs_T3_A                 -50.00   730.00 
+                 gan_1_BNB_Center_l0_gs_T3_P25_A               0.00   730.00 
+                 gan_1_BNB_Center_l0_gt_T3_A                 -50.00   780.00 
+                 gan_1_BNB_Center_l0_gt_T3_P25_A               0.00   780.00 
+                 gan_1_BNB_Center_l0_m2_A                     50.00   830.00 
+                 gan_1_BNB_Center_l0_me_A                    -50.00   580.00 
+                 gan_1_BNB_Center_l0_ne1_A                   -50.00   680.00 
+                 gan_1_BNB_Center_l0_ne_A                     50.00   630.00 
+                 gan_1_BNB_Center_l0_scfp_A                   50.00   780.00 
+                 gan_1_BNB_Center_l0_selDiel_A                50.00   730.00 
+                 gan_1_BNB_Center_l0_ta_A                     -0.50   680.00 
+                 gan_1_BNB_Center_l0_tap_A                     0.00   630.00 
+                 gan_1_BNB_Center_l0_th_A                     50.00   930.00 
+                 gan_1_BNB_Center_l0_thinTa_A                 50.00   580.00 
+                 gan_1_BNB_Center_sd_gs_T3_A                 -50.00   980.00 
+                 gan_1_BNB_Center_sd_gs_T3_P80B_A              0.00   980.00 
+                 gan_1_BNB_Center_sd_l0_A                    -50.00   630.00 
+                 gan_1_BNB_LL_gs_gt_T3_A                   -8269.50 -6905.00 
+                 gan_1_BNB_LL_gs_gt_T3_P25_A               -8269.50 -6855.00 
+                 gan_1_BNB_LL_gt_scfp_T3_A                 -8269.50 -6805.00 
+                 gan_1_BNB_LL_gt_scfp_T3_P25_A             -8269.50 -6755.00 
+                 gan_1_BNB_LL_l0_gs_T3_A                   -8269.50 -6705.00 
+                 gan_1_BNB_LL_l0_gs_T3_P25_A                8269.50  6655.00 
+                 gan_1_BNB_LL_l0_gt_T3_A                   -8269.50 -6605.00 
+                 gan_1_BNB_LL_l0_gt_T3_P25_A               -8269.50 -6555.00 
+                 gan_1_BNB_LL_l0_scfp_A                    -6769.50 -8351.00 
+                 gan_1_BNB_LL_me_gs_T3_A                   -6719.50 -8351.00 
+                 gan_1_BNB_LL_me_gs_T3_P25_A               -6669.50 -8351.00 
+                 gan_1_BNB_LL_me_gt_T3_A                   -6619.50 -8351.00 
+                 gan_1_BNB_LL_me_gt_T3_P25_A               -6569.50 -8351.00 
+                 gan_1_BNB_LL_me_l0_A                      -6819.50 -8351.00 
+                 gan_1_BNB_LL_sd_l0_A                      -6519.50 -8351.00 
+                 gan_1_BNB_LR_gs_gt_T3_A                    8269.50 -6905.00 
+                 gan_1_BNB_LR_gs_gt_T3_P25_A                8269.50 -6855.00 
+                 gan_1_BNB_LR_gt_scfp_T3_A                  8269.50 -6805.00 
+                 gan_1_BNB_LR_gt_scfp_T3_P25_A              8269.50 -6755.00 
+                 gan_1_BNB_LR_l0_gs_T3_A                    8269.50 -6705.00 
+                 gan_1_BNB_LR_l0_gs_T3_P25_A               -8269.50 -6655.00 
+                 gan_1_BNB_LR_l0_gs_T3_P25_A                8269.50 -6655.00 
+                 gan_1_BNB_LR_l0_gt_T3_A                    8269.50 -6605.00 
+                 gan_1_BNB_LR_l0_gt_T3_P25_A                8269.50 -6555.00 
+                 gan_1_BNB_LR_l0_scfp_A                     6769.50 -8351.00 
+                 gan_1_BNB_LR_me_gs_T3_A                    6569.50 -8351.00 
+                 gan_1_BNB_LR_me_gs_T3_P25_A                6619.50 -8351.00 
+                 gan_1_BNB_LR_me_gt_T3_A                    6669.50 -8351.00 
+                 gan_1_BNB_LR_me_gt_T3_P25_A                6719.50 -8351.00 
+                 gan_1_BNB_LR_me_l0_A                       6819.50 -8351.00 
+                 gan_1_BNB_LR_sd_l0_A                       6519.50 -8351.00 
+                 gan_1_BNB_UL_gs_gt_T3_A                   -8269.50  6905.00 
+                 gan_1_BNB_UL_gs_gt_T3_P25_A               -8269.50  6855.00 
+                 gan_1_BNB_UL_gt_scfp_T3_P25_A             -8269.50  6755.00 
+                 gan_1_BNB_UL_gt_scfp_T3_P25_A             -8269.50  6805.00 
+                 gan_1_BNB_UL_l0_gs_T3_A                   -8269.50  6705.00 
+                 gan_1_BNB_UL_l0_gs_T3_P25_A               -8269.50  6655.00 
+                 gan_1_BNB_UL_l0_gt_T3_A                   -8269.50  6605.00 
+                 gan_1_BNB_UL_l0_gt_T3_P25_A               -8269.50  6555.00 
+                 gan_1_BNB_UL_l0_me_A                      -6819.50  8351.00 
+                 gan_1_BNB_UL_l0_scfp_A                    -6769.50  8351.00 
+                 gan_1_BNB_UL_me_gs_T3_P25_A               -6669.50  8351.00 
+                 gan_1_BNB_UL_me_gt_T3_A                   -6619.50  8351.00 
+                 gan_1_BNB_UL_me_gt_T3_P25_A               -6569.50  8351.00 
+                 gan_1_BNB_UL_sd_l0_A                      -6519.50  8351.00 
+                 gan_1_BNB_UR_gs_gt_T3_A                    8269.50  6905.00 
+                 gan_1_BNB_UR_gs_gt_T3_P25_A                8269.50  6855.00 
+                 gan_1_BNB_UR_gt_scfp_T3_A                  8269.50  6805.00 
+                 gan_1_BNB_UR_gt_scfp_T3_P25_A              8269.50  6755.00 
+                 gan_1_BNB_UR_l0_gs_T3_A                    8269.50  6705.00 
+                 gan_1_BNB_UR_l0_gt_T3_A                    8269.50  6605.00 
+                 gan_1_BNB_UR_l0_gt_T3_P25_A                8269.50  6555.00 
+                 gan_1_BNB_UR_l0_me_A                       6819.50  8351.00 
+                 gan_1_BNB_UR_l0_scfp_A                     6769.50  8351.00 
+                 gan_1_BNB_UR_me_gs_T3_A                   -6719.50  8351.00 
+                 gan_1_BNB_UR_me_gs_T3_A                    6569.50  8351.00 
+                 gan_1_BNB_UR_me_gs_T3_P25_A                6619.50  8351.00 
+                 gan_1_BNB_UR_me_gt_T3_A                    6669.50  8351.00 
+                 gan_1_BNB_UR_me_gt_T3_P25_A                6719.50  8351.00 
+                 gan_1_BNB_UR_sd_l0_A                       6519.50  8351.00 
+
+****************************************************************************************************
+****** Metro FETS         Lower Left Corner when R0 or Upper Right when R180      Orientation ******
+****************************************************************************************************
+                 p80B_1_metroFET_I                          5220.00   630.00      R0
+                 p80B_1_metroFET_I                           340.00  -850.00      R0
+                 p87_1_T3_metroFET_p15_2p5_H_B              4810.00   630.00      R0
+                 p87_1_T3_metroFET_p15_2p5_H_B               -80.00  -850.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            6450.00   630.00      R0
+                 p87_1_T3_metroFET_sw_p15_1p2sd_A           6450.00   630.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            4880.00  -850.00      R0
+                 p87_1_T3_metroFET_sw_p15_1p2sd_A           4880.00  -850.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            6030.00   630.00      R0
+                 p87_1_T3_metroFET_sw_p15_2sd_A             6030.00   630.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            4460.00  -850.00      R0
+                 p87_1_T3_metroFET_sw_p15_2sd_A             4460.00  -850.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            5600.00   630.00      R0
+                 p87_1_T3_metroFET_sw_p15_2p5sd_A           5600.00   630.00      R0
+                 p87_1_prim_T3_metroFET_sw_p15_A            4030.00  -850.00      R0
+                 p87_1_T3_metroFET_sw_p15_2p5sd_A           4030.00  -850.00      R0
+
+
+
+DATA Based On Quarter Reticles
+
+1/4 reticle size  8317.50  8402.50 
+1/4 reticle OVERsized to  8318.50  8403.50 
+
+Center of NE Reticle (4158.75 4201.25)
+Center of NW Reticle (-4158.75 4201.25)
+Center of SW Reticle (-4158.75 -4201.25)
+Center of SE Reticle (4158.75 -4201.25)
+
+
+
+
+
+ASML_SPM_L0_Y_AH53_A                     Quadrant NE        
+Distance From Center of NE Reticle (-440.75 95.25)
+Distance From Center of NW Reticle (7876.75 95.25)
+Distance From Center of SW Reticle (7876.75 8497.75)
+Distance From Center of SE Reticle (-440.75 8497.75)
+
+ASML_SPM_L0_X_AH53_A                     Quadrant NE        
+Distance From Center of NE Reticle (-1057.25 713.25)
+Distance From Center of NW Reticle (7260.25 713.25)
+Distance From Center of SW Reticle (7260.25 9115.75)
+Distance From Center of SE Reticle (-1057.25 9115.75)
+
+ASML_SPM_L0_X_AH32_A                     Quadrant NE        
+Distance From Center of NE Reticle (-3885.25 -4125.75)
+Distance From Center of NW Reticle (4432.25 -4125.75)
+Distance From Center of SW Reticle (4432.25 4276.75)
+Distance From Center of SE Reticle (-3885.25 4276.75)
+
+ASML_SPM_L0_Y_AH32_A                     Quadrant NW        
+Distance From Center of NE Reticle (-4501.75 -3507.75)
+Distance From Center of NW Reticle (3815.75 -3507.75)
+Distance From Center of SW Reticle (3815.75 4894.75)
+Distance From Center of SE Reticle (-4501.75 4894.75)
+
+ASML_PM_SD_L0_C                          Quadrant NE        
+Distance From Center of NE Reticle (-4008.75 -1221.25)
+Distance From Center of NW Reticle (4308.75 -1221.25)
+Distance From Center of SW Reticle (4308.75 7181.25)
+Distance From Center of SE Reticle (-4008.75 7181.25)
+
+ASML_PM_L0_A                             Quadrant NE        
+Distance From Center of NE Reticle (-2798.75 -1621.25)
+Distance From Center of NW Reticle (5518.75 -1621.25)
+Distance From Center of SW Reticle (5518.75 6781.25)
+Distance From Center of SE Reticle (-2798.75 6781.25)
+

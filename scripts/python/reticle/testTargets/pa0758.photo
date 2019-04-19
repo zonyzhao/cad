@@ -1,0 +1,143 @@
+Design:  pa0758 
+Primary:  pa758_0p 
+Dropin:  pa758_0s 
+Process Type:  P81 
+Step and Repeat:  16320.00  8350.00 
+****************************************************************************
+******                        Global Marks                            ******
+****************************************************************************
+****************************************************************************
+******                        DFAS Keys                               ******
+****************************************************************************
+ 
+       Code      CellName                                      X        Y
+
+****************************************************************************
+******                      Other Cells                               ******
+****************************************************************************
+
+Oat Cells only show up if they are different from the Primary 
+
+Oat              p81_1_4mil_viaTest_C                       6280.00  2070.00 
+Oat              p81_1_4mil_via_iso_A                       5100.00  3760.00 
+Oat              p81_1_2x250_D                              6270.00  2880.00 
+Oat              p81_1_metroFET_P80B_A                      4350.00  1380.00 
+Oat              p81_1_4mil_metroFET_E                      4350.00   550.00 
+
+****************************************************************************
+******               Primary Leica Marks                              ******
+****************************************************************************
+
+PRI              gan_1_LeicaMark_North_UL_1_Main_L0_A      -8087.00  4092.00 
+PRI              gan_1_LeicaMark_North_UL_2_SD_A           -7909.00  4092.00 
+PRI              gan_1_LeicaMark_North_UL_3_LO_A           -8087.00  3924.00 
+PRI              gan_1_LeicaMark_North_UR_1_Main_L0_A       7899.00  4092.00 
+PRI              gan_1_LeicaMark_North_UR_2_SD_A            8077.00  4092.00 
+PRI              gan_1_LeicaMark_North_UR_3_LO_A            8077.00  3924.00 
+PRI              gan_1_LeicaMark_South_LL_1_Main_L0_A      -8087.00 -4102.00 
+PRI              gan_1_LeicaMark_South_LL_2_SD_A           -7909.00 -4102.00 
+PRI              gan_1_LeicaMark_South_LL_3_LO_A           -8087.00 -3934.00 
+PRI              gan_1_LeicaMark_South_LL_4_Spare_L0_A     -7717.00 -4102.00 
+PRI              gan_1_LeicaMark_South_LR_1_Main_L0_A       7899.00 -4102.00 
+PRI              gan_1_LeicaMark_South_LR_2_SD_A            8077.00 -4102.00 
+PRI              gan_1_LeicaMark_South_LR_3_LO_A            8077.00 -3934.00 
+
+Scan Window Size    No. Intersections
+----------------    -----------------
+324.00             0
+323.00             0
+317.00             0
+316.00             0
+315.00             0
+314.00             0
+292.00             0
+291.00             0
+286.00             0
+255.00             0
+
+****************************************************************************
+****** Box In Box Structures      Inside->Outside (Center of both)    ******
+****************************************************************************
+                 gan_1_BNB_Center_gs_gt_sqC_A                -22.00     0.00 
+                 gan_1_BNB_Center_gs_scfp_sqC_A              -22.00   100.00 
+                 gan_1_BNB_Center_gt_scfp_sqC_A              -22.00    50.00 
+                 gan_1_BNB_Center_l0_ab_sq_A                  22.00   150.00 
+                 gan_1_BNB_Center_l0_cb_sq_A                 -22.00   150.00 
+                 gan_1_BNB_Center_l0_free_sq_A                22.00   250.00 
+                 gan_1_BNB_Center_l0_gs_sqC_A                -22.00  -100.00 
+                 gan_1_BNB_Center_l0_gt_sq_A                 -22.00   -50.00 
+                 gan_1_BNB_Center_l0_hvCap_sq_A              -22.00   250.00 
+                 gan_1_BNB_Center_l0_m2_sqC_A                 22.00   100.00 
+                 gan_1_BNB_Center_l0_scfp_sqC_A               22.00     0.00 
+                 gan_1_BNB_Center_l0_selDiel_sq_A             22.00    50.00 
+                 gan_1_BNB_Center_l0_sputNit_sq_A             22.00  -150.00 
+                 gan_1_BNB_Center_l0_taProt_sq_A              22.00  -100.00 
+                 gan_1_BNB_Center_l0_ta_sq_A                  22.00   -50.00 
+                 gan_1_BNB_Center_l0_th_sq_A                  22.00   200.00 
+                 gan_1_BNB_Center_l0_thinTa_sq_A             -22.00   200.00 
+                 gan_1_BNB_Center_sd_l0_sqC_A                -22.00  -150.00 
+                 gan_1_BNB_LL_gs_gt_A                      -6512.00 -4127.00 
+                 gan_1_BNB_LL_gt_scfp_A                    -8112.00 -2427.00 
+                 gan_1_BNB_LL_l0_gs_A                      -8112.00 -2627.00 
+                 gan_1_BNB_LL_l0_gt_A                      -8112.00 -2527.00 
+                 gan_1_BNB_LL_l0_gt_A                      -6462.00 -4127.00 
+                 gan_1_BNB_LL_l0_me_A                      -8112.00 -2677.00 
+                 gan_1_BNB_LL_l0_scfp_A                    -6412.00 -4127.00 
+                 gan_1_BNB_LL_me_gs_A                      -6562.00 -4127.00 
+                 gan_1_BNB_LL_me_sd_A                      -6662.00 -4127.00 
+                 gan_1_BNB_LL_sd_gs_A                      -8112.00 -2577.00 
+                 gan_1_BNB_LL_sd_gt_A                      -8112.00 -2477.00 
+                 gan_1_BNB_LL_sd_l0_A                      -6612.00 -4127.00 
+                 gan_1_BNB_LR_gs_gt_A                       6512.00 -4127.00 
+                 gan_1_BNB_LR_gt_scfp_A                     8112.00 -2427.00 
+                 gan_1_BNB_LR_l0_gs_A                       8112.00 -2627.00 
+                 gan_1_BNB_LR_l0_gt_A                       8112.00 -2527.00 
+                 gan_1_BNB_LR_l0_me_A                       8112.00 -2677.00 
+                 gan_1_BNB_LR_l0_scfp_A                     6412.00 -4127.00 
+                 gan_1_BNB_LR_me_gs_A                       6562.00 -4127.00 
+                 gan_1_BNB_LR_me_gt_A                       6462.00 -4127.00 
+                 gan_1_BNB_LR_me_sd_A                       6662.00 -4127.00 
+                 gan_1_BNB_LR_sd_gs_A                       8112.00 -2577.00 
+                 gan_1_BNB_LR_sd_gt_A                       8112.00 -2477.00 
+                 gan_1_BNB_LR_sd_l0_A                       6612.00 -4127.00 
+                 gan_1_BNB_UL_gs_gt_A                      -6512.00  4127.00 
+                 gan_1_BNB_UL_l0_gt_A                      -6462.00  4127.00 
+                 gan_1_BNB_UL_l0_scfp_A                    -6412.00  4127.00 
+                 gan_1_BNB_UL_me_gs_A                      -6562.00  4127.00 
+                 gan_1_BNB_UL_me_sd_A                      -6662.00  4127.00 
+                 gan_1_BNB_UL_sd_l0_A                      -6612.00  4127.00 
+                 gan_1_BNB_UR_gs_gt_A                       6512.00  4127.00 
+                 gan_1_BNB_UR_gt_scfp_A                    -8112.00  2427.00 
+                 gan_1_BNB_UR_gt_scfp_A                     8112.00  2427.00 
+                 gan_1_BNB_UR_l0_gs_A                      -8112.00  2627.00 
+                 gan_1_BNB_UR_l0_gs_A                       8112.00  2627.00 
+                 gan_1_BNB_UR_l0_gt_A                      -8112.00  2527.00 
+                 gan_1_BNB_UR_l0_gt_A                       8112.00  2527.00 
+                 gan_1_BNB_UR_l0_me_A                      -8112.00  2677.00 
+                 gan_1_BNB_UR_l0_me_A                       8112.00  2677.00 
+                 gan_1_BNB_UR_l0_scfp_A                     6412.00  4127.00 
+                 gan_1_BNB_UR_me_gs_A                       6562.00  4127.00 
+                 gan_1_BNB_UR_me_gt_A                       6462.00  4127.00 
+                 gan_1_BNB_UR_me_sd_A                       6662.00  4127.00 
+                 gan_1_BNB_UR_sd_gs_A                      -8112.00  2577.00 
+                 gan_1_BNB_UR_sd_gs_A                       8112.00  2577.00 
+                 gan_1_BNB_UR_sd_gt_A                      -8112.00  2477.00 
+                 gan_1_BNB_UR_sd_gt_A                       8112.00  2477.00 
+                 gan_1_BNB_UR_sd_l0_A                       6612.00  4127.00 
+
+
+
+DATA Based On Quarter Reticles
+
+1/4 reticle size  8160.00  4175.00 
+1/4 reticle OVERsized to  8161.00  4176.00 
+
+Center of NE Reticle (4080.0 2087.5)
+Center of NW Reticle (-4080.0 2087.5)
+Center of SW Reticle (-4080.0 -2087.5)
+Center of SE Reticle (4080.0 -2087.5)
+
+
+
+
+

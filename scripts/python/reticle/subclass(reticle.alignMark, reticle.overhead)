@@ -1,0 +1,25 @@
+Help on class alignMark in module reticle:
+
+class aalliiggnnMMaarrkk(overhead)
+ |  Method resolution order:
+ |      alignMark
+ |      overhead
+ |      __builtin__.object
+ |  
+ |  Methods defined here:
+ |  
+ |  ____iinniitt____(self)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from overhead:
+ |  
+ |  ggeettPPooss(self)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from overhead:
+ |  
+ |  ____ddiicctt____
+ |      dictionary for instance variables (if defined)
+ |  
+ |  ____wweeaakkrreeff____
+ |      list of weak references to the object (if defined)

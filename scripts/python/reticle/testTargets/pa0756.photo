@@ -1,0 +1,81 @@
+Design:  pa0756 
+Primary:  pa756_0p 
+Dropin:  pa756_0s 
+Process Type:  P81 
+Step and Repeat:  15200.00  6520.00 
+****************************************************************************
+******                        Global Marks                            ******
+****************************************************************************
+****************************************************************************
+******                        DFAS Keys                               ******
+****************************************************************************
+ 
+       Code      CellName                                      X        Y
+
+****************************************************************************
+******                      Other Cells                               ******
+****************************************************************************
+
+Oat Cells only show up if they are different from the Primary 
+
+Oat              p81_1_4mil_RelFet_10x125_30_G              7330.00  2700.00 
+Oat              p81_1_4mil_RelFet_10x125_30_G               150.00 -2800.00 
+Oat              p81_1_4mil_RelFet_10x125_30_G              6450.00  2700.00 
+Oat              p81_1_4mil_RelFet_10x125_30_G              1050.00 -2800.00 
+Oat              p81_1_4mil_via_iso_A                       1300.00   790.00 
+Oat              p81_1_4mil_viaTest_C                       1300.00  1510.00 
+Oat              p81_1_4mil_metroFET_E                      5952.00  -710.00 
+Oat              p81_1_metroFET_P80B_A                      6640.00  -710.00 
+Oat              p81_1_2x250_D                               280.00   130.00 
+
+****************************************************************************
+******               Primary Leica Marks                              ******
+****************************************************************************
+
+PRI		gan_1_LiecaMark_North_UL_1_Main_LO_A	-7527.0 3177.0
+PRI		gan_1_LiecaMark_North_UL_2_SDA_A 	-7349.0 3177.0
+PRI		gan_1_LiecaMark_North_UL_3_LO_A 	-7527.0 3009.0
+PRI		gan_1_LiecaMark_North_UR_1_Main_LO_A	 7339.0 3177.0
+PRI		gan_1_LiecaMark_North_UR_2_SDA_A 	 7517.0 3177.0
+PRI		gan_1_LiecaMark_North_UR_3_LO_A 	 7517.0 3009.0
+PRI		gan_1_LiecaMark_South_LL_1_Main_LO_A	-7527.0 -3187.0
+PRI		gan_1_LiecaMark_South_LL_2_SDA_A 	-7349.0 -3019.0
+PRI		gan_1_LiecaMark_South_LL_3_LO_A 	-7527.0 -3187.0
+PRI		gan_1_LiecaMark_South_LR_1_Main_LO_A	 7339.0 -3187.0
+PRI		gan_1_LiecaMark_South_LR_2_SDA_A 	 7517.0 -3187.0
+PRI		gan_1_LiecaMark_South_LR_3_LO_A 	 7517.0 -3019.0
+
+Scan Window Size    No. Intersections
+----------------    -----------------
+325.00             0
+324.00             0
+323.00             0
+322.00             0
+321.00             0
+320.00             0
+319.00             0
+318.00             0
+317.00             0
+316.00             0
+
+****************************************************************************
+****** Box In Box Structures      Inside->Outside (Center of both)    ******
+****************************************************************************
+                 gan_1_Leica_Markers_mim_E                     0.00     0.00 
+
+
+
+DATA Based On Quarter Reticles
+
+1/4 reticle size  7600.00  3260.00 
+1/4 reticle OVERsized to  7601.00  3261.00 
+
+Center of NE Reticle (3800.0 1630.0)
+Center of NW Reticle (-3800.0 1630.0)
+Center of SW Reticle (-3800.0 -1630.0)
+Center of SE Reticle (3800.0 -1630.0)
+
+
+
+
+
