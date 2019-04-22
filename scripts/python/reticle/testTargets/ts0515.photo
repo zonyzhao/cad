@@ -1,0 +1,194 @@
+Design:  ts0515 
+Primary:  ts515_0p 
+Dropin:  ts515_0s 
+Process Type:  P82 
+Step and Repeat:  19800.00 16400.00 
+****************************************************************************
+******                        Global Marks                            ******
+****************************************************************************
+Global Mark1:     ASML_PM_L0_A                            2370.00   -3170.00
+Global Mark2:     ASML_PM_SD_L0_C                         1120.00   -3570.00
+Global Mark3:     ASML_SPM_L0_Y_AH53_Cross_A              3250.50    -666.00
+Global Mark4:     ASML_SPM_L0_X_AH32_Cross_A               666.00   -4052.00
+Global Mark5:     ASML_SPM_L0_Y_AH32_Cross_A                49.50   -3434.00
+Global Mark6:     ASML_SPM_L0_X_AH53_Cross_A              2634.00     -48.00
+****************************************************************************
+******                        DFAS Keys                               ******
+****************************************************************************
+ 
+       Code      CellName                                      X        Y
+
+****************************************************************************
+******                      Other Cells                               ******
+****************************************************************************
+PRI              gan_1_LeicaVerniers_C                      9430.00  7490.00 
+PRI              gan_1_LeicaVerniers_C                       150.00  -400.00 
+PRI              gan_1_LeicaVerniers_C                     -7980.00 -8050.00 
+PRI              gan_1_numAlign_ME_L_F                      3750.00 -2950.00 
+PRI              gan_1_numAlign_ME_R_F                      4450.00 -2950.00 
+PRI              gan_1_AlGaN_testStructure_B                9350.00  5380.00 
+PRI              gan_1_AlGaN_testStructure_B                2700.00 -2250.00 
+PRI              gan_1_cv_C                                 9350.00  6050.00 
+PRI              gan_1_cv_C                                 2000.00 -2220.00 
+PRI              gan_1_LeicaCells_exp_A                     1380.00 -2050.00 
+PRI              gan_1_bloat_SD_A                            700.00 -1750.00 
+PRI              gan_1_resolution_G                         5850.00 -2650.00 
+PRI              gan_1_viaAlignment_SD_I                     250.00 -2950.00 
+
+Oat Cells only show up if they are different from the Primary 
+
+
+****************************************************************************
+******                       Leica Marks                              ******
+****************************************************************************
+
+
+Scan Window Size    No. Intersections
+----------------    -----------------
+303.00             1445
+323.00             1453
+321.00             1466
+325.00             1500
+318.00             1534
+313.00             1550
+312.00             1560
+317.00             1572
+316.00             1574
+307.00             1575
+
+****************************************************************************
+****** Box In Box Structures      Inside->Outside (Center of both)    ******
+****************************************************************************
+                 gan_1_BNB_Center_gs_gt_B                    350.00  -720.00 
+                 gan_1_BNB_Center_gs_scfp_A                  350.00  -770.00 
+                 gan_1_BNB_Center_gt_scfp_A                  350.00  -620.00 
+                 gan_1_BNB_Center_l0_ab_A                    450.00  -720.00 
+                 gan_1_BNB_Center_l0_capDiel1_A              400.00  -620.00 
+                 gan_1_BNB_Center_l0_capDiel2_A              450.00  -920.00 
+                 gan_1_BNB_Center_l0_cb_A                    400.00  -870.00 
+                 gan_1_BNB_Center_l0_free_A                  450.00  -480.00 
+                 gan_1_BNB_Center_l0_free_A                  400.00  -480.00 
+                 gan_1_BNB_Center_l0_free_A                  350.00  -480.00 
+                 gan_1_BNB_Center_l0_gl_A                    450.00  -620.00 
+                 gan_1_BNB_Center_l0_gs_A                    350.00  -820.00 
+                 gan_1_BNB_Center_l0_gt_A                    350.00  -670.00 
+                 gan_1_BNB_Center_l0_m2_A                    450.00  -770.00 
+                 gan_1_BNB_Center_l0_me_A                    350.00  -920.00 
+                 gan_1_BNB_Center_l0_ne1_A                   400.00  -920.00 
+                 gan_1_BNB_Center_l0_ne_A                    400.00  -670.00 
+                 gan_1_BNB_Center_l0_scfp_A                  450.00  -820.00 
+                 gan_1_BNB_Center_l0_selDiel_A               450.00  -870.00 
+                 gan_1_BNB_Center_l0_ta_A                    400.00  -770.00 
+                 gan_1_BNB_Center_l0_tap_A                   400.00  -820.00 
+                 gan_1_BNB_Center_l0_th_A                    450.00  -670.00 
+                 gan_1_BNB_Center_l0_thinTa_A                400.00  -720.00 
+                 gan_1_BNB_Center_sd_l0_A                    350.00  -870.00 
+                 gan_1_BNB_Dale_gs_gt_A                    -9876.00 -7792.00 
+                 gan_1_BNB_Dale_gs_gt_A                    -9876.00  7792.00 
+                 gan_1_BNB_Dale_gs_gt_A                    -9876.00 -7892.00 
+                 gan_1_BNB_Dale_gs_gt_A                    -9876.00  7892.00 
+                 gan_1_BNB_Dale_l0_gs_A                    -9876.00  7942.00 
+                 gan_1_BNB_Dale_l0_gs_A                    -9876.00  7842.00 
+                 gan_1_BNB_Dale_l0_gs_A                    -9876.00 -7942.00 
+                 gan_1_BNB_Dale_l0_gs_A                    -9876.00 -7842.00 
+                 gan_1_BNB_LL_gs_gt_A                      -9852.00 -6702.50 
+                 gan_1_BNB_LL_gt_scfp_A                    -9852.00 -6652.50 
+                 gan_1_BNB_LL_l0_gs_A                      -9852.00 -6602.50 
+                 gan_1_BNB_LL_l0_gt_A                      -9852.00 -6552.50 
+                 gan_1_BNB_LL_l0_scfp_A                    -8352.00 -8152.00 
+                 gan_1_BNB_LL_me_gs_A                      -8302.00 -8152.00 
+                 gan_1_BNB_LL_me_gt_A                      -8252.00 -8152.00 
+                 gan_1_BNB_LL_me_l0_A                      -8402.00 -8152.00 
+                 gan_1_BNB_LL_sd_l0_A                      -8202.00 -8152.00 
+                 gan_1_BNB_LR_gs_gt_A                       9852.00 -6702.50 
+                 gan_1_BNB_LR_gt_scfp_A                     9852.00 -6652.50 
+                 gan_1_BNB_LR_l0_gs_A                       9852.00 -6602.50 
+                 gan_1_BNB_LR_l0_gt_A                       9852.00 -6552.50 
+                 gan_1_BNB_LR_l0_scfp_A                     8352.00 -8152.00 
+                 gan_1_BNB_LR_me_gs_A                       8302.00 -8152.00 
+                 gan_1_BNB_LR_me_gt_A                       8252.00 -8152.00 
+                 gan_1_BNB_LR_me_l0_A                       8402.00 -8152.00 
+                 gan_1_BNB_LR_sd_l0_A                       8202.00 -8152.00 
+                 gan_1_BNB_UL_gs_gt_A                      -9852.00  6702.50 
+                 gan_1_BNB_UL_gt_scfp_A                    -9852.00  6652.50 
+                 gan_1_BNB_UL_l0_gs_A                      -9852.00  6602.50 
+                 gan_1_BNB_UL_l0_gt_A                      -9852.00  6552.50 
+                 gan_1_BNB_UL_l0_me_A                      -8402.00  8148.50 
+                 gan_1_BNB_UL_l0_scfp_A                    -8352.00  8148.50 
+                 gan_1_BNB_UL_me_gs_A                      -8302.00  8148.50 
+                 gan_1_BNB_UL_me_gt_A                      -8252.00  8148.50 
+                 gan_1_BNB_UL_sd_l0_A                      -8202.00  8148.50 
+                 gan_1_BNB_UR_gs_gt_A                       9852.00  6702.50 
+                 gan_1_BNB_UR_gt_scfp_A                     9852.00  6652.50 
+                 gan_1_BNB_UR_l0_gs_A                       9852.00  6602.50 
+                 gan_1_BNB_UR_l0_gt_A                       9852.00  6552.50 
+                 gan_1_BNB_UR_l0_me_A                       8402.00  8148.50 
+                 gan_1_BNB_UR_l0_scfp_A                     8352.00  8148.50 
+                 gan_1_BNB_UR_me_gs_A                       8302.00  8148.50 
+                 gan_1_BNB_UR_me_gt_A                       8252.00  8148.50 
+                 gan_1_BNB_UR_sd_l0_A                       8202.00  8148.50 
+
+****************************************************************************************************
+****** Metro FETS         Reference point is top finger at the mesa               Orientation ******
+****************************************************************************************************
+                 p80B_1_prim_metroFET_P82_A                 6980.00  4698.00      R0
+                 p80B_1_4mil_MetroFet_Ref_A                 6980.00  4698.00      R0
+                 p82_1_4mil_metroFET_std_1p2_A              7948.00  4698.00      R0
+                 p82_1_4mil_metroFET_eng_2p0_A              7448.00  4698.00      R0
+                 p80B_1_prim_metroFET_P82_A                 3586.00 -2100.00      R0
+                 p80B_1_4mil_MetroFet_Ref_A                 3586.00 -2100.00      R0
+                 p82_1_4mil_metroFET_std_1p2_A              4538.00 -2100.00      R0
+                 p82_1_4mil_metroFET_eng_2p0_A              4065.00 -2100.00      R0
+
+
+
+DATA Based On Quarter Reticles
+
+1/4 reticle size  9900.00  8200.00 
+1/4 reticle OVERsized to  9901.00  8201.00 
+
+Center of NE Reticle (4950.0 4100.0)
+Center of NW Reticle (-4950.0 4100.0)
+Center of SW Reticle (-4950.0 -4100.0)
+Center of SE Reticle (4950.0 -4100.0)
+
+
+
+
+
+ASML_SPM_L0_X_AH53_Cross_A               Quadrant SE        
+Distance From Center of NE Reticle (-2316.0 -4148.0)
+Distance From Center of NW Reticle (7584.0 -4148.0)
+Distance From Center of SW Reticle (7584.0 4052.0)
+Distance From Center of SE Reticle (-2316.0 4052.0)
+
+ASML_SPM_L0_Y_AH32_Cross_A               Quadrant SE        
+Distance From Center of NE Reticle (-4900.5 -7534.0)
+Distance From Center of NW Reticle (4999.5 -7534.0)
+Distance From Center of SW Reticle (4999.5 666.0)
+Distance From Center of SE Reticle (-4900.5 666.0)
+
+ASML_SPM_L0_X_AH32_Cross_A               Quadrant SE        
+Distance From Center of NE Reticle (-4284.0 -8152.0)
+Distance From Center of NW Reticle (5616.0 -8152.0)
+Distance From Center of SW Reticle (5616.0 48.0)
+Distance From Center of SE Reticle (-4284.0 48.0)
+
+ASML_SPM_L0_Y_AH53_Cross_A               Quadrant SE        
+Distance From Center of NE Reticle (-1699.5 -4766.0)
+Distance From Center of NW Reticle (8200.5 -4766.0)
+Distance From Center of SW Reticle (8200.5 3434.0)
+Distance From Center of SE Reticle (-1699.5 3434.0)
+
+ASML_PM_SD_L0_C                          Quadrant SE        
+Distance From Center of NE Reticle (-3830.0 -7670.0)
+Distance From Center of NW Reticle (6070.0 -7670.0)
+Distance From Center of SW Reticle (6070.0 530.0)
+Distance From Center of SE Reticle (-3830.0 530.0)
+
+ASML_PM_L0_A                             Quadrant SE        
+Distance From Center of NE Reticle (-2580.0 -7270.0)
+Distance From Center of NW Reticle (7320.0 -7270.0)
+Distance From Center of SW Reticle (7320.0 930.0)
+Distance From Center of SE Reticle (-2580.0 930.0)
+

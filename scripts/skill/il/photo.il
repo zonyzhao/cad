@@ -1,31 +1,17 @@
-/*
-
-New version of photoInfo created to gather the data for both the new and
-old naming conventions.  The data being written can be analyzed without
-creating a file by turning off the print options, the querying the data
-via the phopl propery list available through the CIW.
-
-Initial Release   4/07/04  Ken Wilson
-
-5/15/04  Updated to include quarter reticle data
-
-*/
-
-
-
-; sets a property list for future data
-; access by phopl->design
-
-
-
-;unless( and( boundp( 'phopl) listp( phopl))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; phofo.il: FIXME: name should be same as main procedure photoInfo()
+;
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 phopl = '( nil
   design  	"" 
   primary	""
   dropin	""
   procTypes	("P46F" "P46H" "P51E" "P51F" "P51G" 
                  "P60D" "P60H" "P60J" "P60K" "P70A"
-		 "P80A" "P80B" "P81" "P82" "D83" "P85")
+		 "P80A" "P80B" "P81" "P82" "D83" "P85"
+                 "D91")
   process 	"P46H"
   winId		nil
   cv		nil
@@ -86,39 +72,85 @@ phopl = '( nil
 )
 ;		)
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Main Procedure Call
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(photoInfo()
   tmpCellData = nil
   allCellData = nil
   
+  ; Set UI form data based on currently open cv window
   kwSetFormData()
+  ; Creates the UI
   kwCreateForm()
+  ; A set of callbacks that copies variables from
+  ; the photoForm variables inot the phopl variables??
   kwTriggerCBs()
+  ; Helper procedure that sets the pholp->release and
+  ; and phopl->libPath variables
   kwCreateRelDirIfNec()
+  ; Maps old and new naming conventions into a 
+  ; common naming convention
   kwNamingConvention()
+  ; Sorts the cells of the primary and finds all alignment marks
   kwGetPriCellsB()
+  ; Generates a list of cells in "dropin" (This is different than secondary!?!) 
+  ; - no explicit alignment mark checks in the "dropin"
   kwGetOatCells()
+  ; Scans throough Each Primary Cell and looks for cell names
+  ; with "GM", "global_mar", "ASML_PM", and "ASML_SPM"
+  ; "Weeds" these cells out of the primary cell list
   kwGetGlobalMarks()
+  ; Scans throough Each Primary Cell and looks for cell names
+  ; with "dfas", "isi"
+  ; "Weeds" these cells out of the primary cell list
   kwGetDFASkeys()
+  ; For each DFAS key detected:
+  ;  puts the DFAS key into a bin based upon its name
   kwEvaluateDFASkeys()
+  ; Scans through the list of remaining primary cells for "boxnbox" cell name
+  ; and removes them from the primary cell list and adds them to the 
+  ; phopl->BnB list
   kwGetBoxnBox()
+  ; 1.) Scans through the list of remaining primary cells for "MetroFet" and
+  ; "metroFET"  cell
+  ; 2.) add a list of the MetroFet name, position and oriention
+  ; 3.) add the list in step 2.) to the phopl->Metro list
+  ; 4.) Call getMetroFET() recursively to process the rest of the
+  ;     heirarchy (depth-first-recursive search of heirarchy)
   getMetroFET(phopl->cv)
+  ; Based upon some crazy naming conventions weed out "junkCells" 
+  ; and aligment cells from the primary cell list
+  ; Add these weeded cells to the following lists:
+  ; phopl->junkCells
+  ; phopl->alignCells
   kwWeedPriCells()
+  ; Weed the "OatCells" with "boxnbox" and "rners" in their name
+  ; Add these cells to the  phopl->junkCellsOat list
   kwWeedOatCells()
 
   if(phopl->multi then
+    ; NOTE: Multi-Image mask just means you have a secondary!?!
+    ; Repeat of getPriCells() on secondary
     getSecCells()
+    ; Repeat of getGlobalMarks() on secondary
     getSecGlobalMarks()
+    ; Repeat of getDFASkeys() on secondary
     getSecDFASkeys()
+    ; Repeat of evaluateDFASkeys() on secondary
     evaluateSecDFASkeys()
+    ; Repeat of getBoxnBox() on secondary
     getSecBoxnBox()
     ;################################################################################
+    ; New version of getMetroFET() using the generic heirarchy search procedure
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     GLOBAL_INST = list()
     cv = dbOpenCellViewByType(phopl->design phopl->dropin "layout" "maskLayout" "a")
     name = "MetroFet"
     getAllInstances(cv name)
     phopl->MetroSec = GLOBAL_INST
     ;################################################################################
+    ; Repeat kwWeedPriCells() on secondary
     weedSecCells()
   );if
   
@@ -145,6 +177,9 @@ procedure(photoInfo()
 
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwCreateForm()
   prog((design retName primaryName dropinName ebeamOpt)
 
@@ -239,6 +274,9 @@ procedure( multiCB()
   phopl->multi = photoForm->multiVal->value
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Sets the UI form data based on the currently open cellview window
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwSetFormData()
   let( (win cv)
     win=hiGetCurrentWindow()
@@ -363,9 +401,10 @@ procedure( kwNamingConvention()
 	("P80A"	'("mmcP80" "p80"))
 	("P80B"	'("mmcP80" "p80"))
 	("P81"	'("mmcP81" "p81"))
-	("P82"	'("mmcP81" "p82"))
+	("P82"	'("mmcP82" "p82"))
 	("P85"	'("mmcP85" "p85"))
-	("D83"	'("mmcP81" "d83"))
+	("D83"	'("mmcD83" "d83"))
+	("D91"	'("mmcD91" "d91"))
       )
 
       phopl->oldStyle = car(nameStyle)
@@ -389,6 +428,30 @@ if(((strncmp(cell~>cellName phopl->oldStyle 5 ) == 0) ||
 		phopl->priCells= cons(tmpPriCell phopl->priCells)
 )))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Items within the primary that are being detected
+; 1.) "Box in Box" alignment marks (BnB)
+; 2.) "Global" marks
+; 3.) "Leica" ebeam marks
+; 4.) "Metro" FET structures
+; 
+; cell names substrings that are being searched for using
+; a combination regular expressions and string compares 
+; 1.) "gaas_1"
+; 2.) "gan_1"
+; 3.) "ASML"
+; 4.) "_Leica_"
+; 5.) "boxnbox", "_Leica_" : kwEvaluateBnB(cell) - evaluate "box in box" alignment marks
+; 6.) "_grid_", "_L0_", "_grid_gaAs" : kwEvaluateGM(cell) evaluate "global" alignment marks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; phopl->priCells holds a list of all primary reticle cells which has the above named
+;                 cells filtered out. Those cells are processed separately by: 
+;                 kwEvaluateBnB(cell) and kwEvaluateGM(cell)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; kwEvaluateBnB(cell) adds all the valid BnB marks ("BNB") to the phopl->BnB list
+;                     and adds all the valid Leica marks (phopl->Lmarks) to the 
+;                     phopl->Lmarks lists
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetPriCellsB()
   let( (cellLength endOfCell tmpPriCell)
     tmpPriCell = nil
@@ -400,22 +463,18 @@ procedure( kwGetPriCellsB()
     foreach( cell phopl->cv~>instances
       cellLength = strlen(cell~>cellName)
       endOfCell = substring(cell~>cellName cellLength-6 cellLength)
-
+      ; turns of regular expression meta character interpretation
       rexMagic(t)
-      ; mfp - added ASML to Global marks update in kwGetGlobalMarks() also
       ;printf("%s %L\n" cell~>cellName cell~>xy)
-
       if(((strncmp(cell~>cellName phopl->oldStyle 5 ) == 0) ||
-	  (strncmp(cell~>cellName phopl->newStyle 3 ) == 0) ||
-	  rexMatchp("gaas_1" cell~>cellName) ||
-	  rexMatchp("gan_1" cell~>cellName) ||
-	  rexMatchp("ASML" cell~>cellName) ||
-	  rexMatchp("_Leica_" cell~>cellName)) then
-
+        (strncmp(cell~>cellName phopl->newStyle 3 ) == 0) ||
+	rexMatchp("gaas_1" cell~>cellName) ||
+	rexMatchp("gan_1" cell~>cellName) ||
+	rexMatchp("ASML" cell~>cellName) ||
+	rexMatchp("_Leica_" cell~>cellName)) then
 	if(((strncmp(substring(cell~>cellName 7 7) "boxnbox" 7) == 0) ||
-	    (strcmp(endOfCell "boxnbox") == 0) || rexMatchp("_Leica_" cell~>cellName)) then
-
-	  kwEvaluateBnB(cell)
+	  (strcmp(endOfCell "boxnbox") == 0) || rexMatchp("_Leica_" cell~>cellName)) then
+          kwEvaluateBnB(cell)
 	else
 	  if( (rexMatchp("_grid_" cell~>cellName) && rexMatchp("_L0_" cell~>cellName)) || rexMatchp("_grid_gaAs" cell~>cellName) then
 	    kwEvaluateGM(cell)
@@ -425,13 +484,16 @@ procedure( kwGetPriCellsB()
 	    orient  =   cell~>orient
 	    tmpPriCell = list(name xy orient)
 	    phopl->priCells= cons(tmpPriCell phopl->priCells)
-	  )
-	)
-      )
-    )
-  )
-)
+	  ):if
+	);if
+      );if
+    );foreach
+  );let
+);procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecCells()
   let( (cv cellLength endOfCell tmpPriCell)
     tmpPriCell = nil
@@ -477,6 +539,9 @@ procedure( getSecCells()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( weedSecCells()
   let( (cellLen cellName endOfCell junkCells newPriCells alignCells offsetX offsetY)
      	junkSecCells = nil
@@ -530,6 +595,9 @@ procedure( weedSecCells()
 	)
 ) ;let & procedure
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwWeedPriCells()
 let( (cellLen cellName endOfCell junkCells newPriCells alignCells)
 
@@ -594,6 +662,9 @@ alignCells = nil
 )) ;let & procedure
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwWeedOatCells()
   let( (cellLen cellName endOfCell junkCells newOatCells)
 
@@ -620,6 +691,9 @@ procedure( kwWeedOatCells()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetQtrCenData()
   let( (tempX tempY)
     tempX = phopl->xStepPri
@@ -635,6 +709,9 @@ procedure( kwGetQtrCenData()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecQtrCenData()
   let( (tempX tempY)
     tempX = phopl->xStepSec
@@ -650,6 +727,9 @@ procedure( getSecQtrCenData()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetOatCells()
   tmpOatCell = nil
   phopl->oatCells = nil
@@ -670,7 +750,10 @@ procedure( kwGetOatCells()
   )
   dbClose(phopl->oatCV)
 )
-;**************************************************************
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetGlobalMarks()
   let( (cellName cellLength endOfCell newPriCellList)
     newPriCellList = nil
@@ -680,14 +763,15 @@ procedure( kwGetGlobalMarks()
 	phopl->Gmarks = cons(cell phopl->Gmarks)
       else 
 	newPriCellList = cons(cell newPriCellList)
-      )
-
-    ) ;foreach
-
+      );if
+    );foreach
     phopl->priCells = newPriCellList
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecGlobalMarks()
   let( (cellName cellLength endOfCell newSecCellList)
     newSecCellList = nil
@@ -705,6 +789,9 @@ procedure( getSecGlobalMarks()
   )
 ) 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(getMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
   let( (InternalCellInfo)
     foreach(inst master~>instances
@@ -712,7 +799,7 @@ procedure(getMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPat
 	if( rexMatchp("MetroFet" inst~>cellName) || rexMatchp("metroFET" inst~>cellName) then
 	  InternalCellInfo = list(inst~>cellName  dbTransformPoint(inst~>xy transform) inst~>orient)
 	  phopl->Metro = cons(InternalCellInfo phopl->Metro)
-	)
+	);if
 	getMetroFET(
 	  inst~>master
 	  dbConcatTransform(inst~>transform transform)
@@ -724,6 +811,9 @@ procedure(getMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPat
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This is a generic recursive, breadth first search procedure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(getAllInstances(cv name @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
   let( (InternalCellInfo iname)
     iname = lowerCase(name)
@@ -742,6 +832,9 @@ procedure(getAllInstances(cv name @optional (transform list(0:0 "R0" 1)) (hierIn
   );let
 );proc
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(getSecMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInstPath "/"))
   let( (InternalCellInfo)
     foreach(inst phopl->inst
@@ -761,14 +854,13 @@ procedure(getSecMetroFET(master @optional (transform list(0:0 "R0" 1)) (hierInst
   )
 )
 
-
-;***************************************************************
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetBoxnBox()
   let( (   )
     ;phopl->boxnbox = nil
     newPriCellList = nil
-
     foreach( cell phopl->priCells
       if( rexMatchp("boxnbox" car(cell)) then 
 	phopl->BnB = cons(cell phopl->BnB)
@@ -780,6 +872,9 @@ procedure( kwGetBoxnBox()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecBoxnBox()
   let( ( newSecCellList  )
     phopl->BnBSec = nil
@@ -795,6 +890,9 @@ procedure( getSecBoxnBox()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(kwEvaluateBnB(cell)
   let((tmpCellName tmpCellOrigin tmpCellOrient tmpIntInsts tmpBnBList)
     tmpIntInst = nil
@@ -814,7 +912,6 @@ procedure(kwEvaluateBnB(cell)
       if(tmpIntInsts then
 	iniPosX = car(tmpCellOrigin)
 	iniPosY = cadr(tmpCellOrigin)
-
 	foreach(icell tmpIntInsts
 	  BnBName = icell~>cellName
 	  if( rexMatchp("BNB"  BnBName) || rexMatchp("boxnbox"  BnBName) then
@@ -828,7 +925,6 @@ procedure(kwEvaluateBnB(cell)
 	      AbsBnBX = iniPosX - relBnBY
 	      AbsBnBY = iniPosY + relBnBX 
 	    )
-
 	    AbsBnBLoc = list(AbsBnBX AbsBnBY)
 	    InternalCellInfo = list(BnBName AbsBnBLoc tmpCellOrient)
 	    phopl->BnB = cons(InternalCellInfo phopl->BnB)
@@ -853,6 +949,9 @@ procedure(kwEvaluateBnB(cell)
   )
 ) 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(kwEvaluateGM(cell)
   let((tmpCellName tmpCellOrigin tmpCellOrient tmpIntInsts tmpGMList)
     tmpIntInst = nil
@@ -884,6 +983,9 @@ procedure(kwEvaluateGM(cell)
   )
 ) 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetDFASkeys()
   let( (tmpPriCells)
     tmpPriCells = nil	
@@ -902,6 +1004,9 @@ procedure( kwGetDFASkeys()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecDFASkeys()
   let( (tmpSecCells)
     tmpSecCells = nil	
@@ -920,6 +1025,9 @@ procedure( getSecDFASkeys()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( evaluateSecDFASkeys()
   let( (cellInfo layer code tmpDfas finalDfasList letterCode)
     tmpDfas = nil
@@ -1029,7 +1137,9 @@ procedure( evaluateSecDFASkeys()
       cellInfo = list(car(cell) cadr(cell) letterCode)
       tmpDfas = cons(cellInfo tmpDfas)
     )
-/*******  Code to weed out unreference dfas stuff  ****/
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  Code to weed out unreference dfas stuff 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     foreach( i tmpDfas
       if( caddr(i) then
 	finalDfasList= cons(i finalDfasList)	
@@ -1043,6 +1153,9 @@ procedure( evaluateSecDFASkeys()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwEvaluateDFASkeys()
   let( (cellInfo layer code tmpDfas finalDfasList)
     tmpDfas = nil
@@ -1152,7 +1265,9 @@ procedure( kwEvaluateDFASkeys()
       cellInfo = list(car(cell) cadr(cell) letterCode)
       tmpDfas = cons(cellInfo tmpDfas)
     )
-/*******  Code to weed out unreference dfas stuff  ****/
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;  Code to weed out unreference dfas stuff  
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     foreach( i tmpDfas
       if( caddr(i) then
 	finalDfasList= cons(i finalDfasList)	
@@ -1166,6 +1281,9 @@ procedure( kwEvaluateDFASkeys()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwPrintData()
   let( (tmpCellName tmpCOX tmpCOY tmpCellCoords gmCount cellX cellY cellOrient quadList newBnBList)
     gmCount = 1
@@ -1258,7 +1376,7 @@ procedure( kwPrintData()
     if( phopl->eBeam=="Leica" then
       fprintf(phopl->port "\n")
       fprintf(phopl->port "****************************************************************************\n")
-      fprintf(phopl->port "******                       Leica Marks                              ******\n")
+      fprintf(phopl->port "******                  Primary Leica Marks                           ******\n")
       fprintf(phopl->port "****************************************************************************\n")
       fprintf(phopl->port "\n")
 
@@ -1313,7 +1431,9 @@ procedure( kwPrintData()
   )
 ) 
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( printSecData()
   let( (tmpCellName tmpCOX tmpCOY tmpCellCoords gmCount cellX cellY cellOrient quadList newBnBList)
     gmCount = 1
@@ -1461,44 +1581,52 @@ procedure( printSecData()
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwComputeDisFromCenter(dfasX dfasY)
-let( (NEcenX NEcenY XdfCNE YdfCNE NWcenX NWcenY XdfCNW YdfCNW
-      SWcenX SWcenY XdfCSW YdfCSW SEcenX SEcenY XdfCSE YdfCSE)
-NEcenX = caar(phopl->NEcenter)
-NEcenY = cadar(phopl->NEcenter)
-XdfCNE = dfasX - NEcenX
-YdfCNE = dfasY - NEcenY
-NWcenX = caar(phopl->NWcenter)
-NWcenY = cadar(phopl->NWcenter) 
-XdfCNW = dfasX - NWcenX
-YdfCNW = dfasY - NWcenY
-SWcenX = caar(phopl->SWcenter)
-SWcenY = cadar(phopl->SWcenter)
-XdfCSW = dfasX - SWcenX
-YdfCSW = dfasY - SWcenY
-SEcenX = caar(phopl->SEcenter)
-SEcenY = cadar(phopl->SEcenter)
-XdfCSE = dfasX - SEcenX
-YdfCSE = dfasY - SEcenY
-list(`(,XdfCNE ,YdfCNE) `(,XdfCNW ,YdfCNW) `(,XdfCSW ,YdfCSW) `(,XdfCSE ,YdfCSE))
-))
+  let( (NEcenX NEcenY XdfCNE YdfCNE NWcenX NWcenY XdfCNW YdfCNW
+        SWcenX SWcenY XdfCSW YdfCSW SEcenX SEcenY XdfCSE YdfCSE)
+    NEcenX = caar(phopl->NEcenter)
+    NEcenY = cadar(phopl->NEcenter)
+    XdfCNE = dfasX - NEcenX
+    YdfCNE = dfasY - NEcenY
+    NWcenX = caar(phopl->NWcenter)
+    NWcenY = cadar(phopl->NWcenter) 
+    XdfCNW = dfasX - NWcenX
+    YdfCNW = dfasY - NWcenY
+    SWcenX = caar(phopl->SWcenter)
+    SWcenY = cadar(phopl->SWcenter)
+    XdfCSW = dfasX - SWcenX
+    YdfCSW = dfasY - SWcenY
+    SEcenX = caar(phopl->SEcenter)
+    SEcenY = cadar(phopl->SEcenter)
+    XdfCSE = dfasX - SEcenX
+    YdfCSE = dfasY - SEcenY
+    list(`(,XdfCNE ,YdfCNE) `(,XdfCNW ,YdfCNW) `(,XdfCSW ,YdfCSW) `(,XdfCSE ,YdfCSE))
+  );let
+);procedure
 
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(kwGetQuadrant(x y)
-let( ()
+  let( ()
+    if( ((x>0) && (y>0))
+    then quad = "NE")
+    if( ((x<0) && (y>0))
+    then quad = "NW")
+    if( ((x<0) && (y<0))
+    then quad = "SW")
+    if( ((x>0) && (y<0))
+    then quad = "SE")
+    list(quad)
+    );let
+);procedure
 
-if( ((x>0) && (y>0))
-then quad = "NE")
-if( ((x<0) && (y>0))
-then quad = "NW")
-if( ((x<0) && (y<0))
-then quad = "SW")
-if( ((x>0) && (y<0))
-then quad = "SE")
-list(quad)
-))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwGetQtrPrintData()
 let( (quadrant relX relY qtrDfasDataLocal)
 
@@ -1523,6 +1651,9 @@ phopl->gmarkQtr = cons(qtrGmarkDataLocal phopl->gmarkQtr)
 
 ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( getSecQtrPrintData()
 let( (quadrant relX relY qtrDfasDataLocal)
 
@@ -1547,6 +1678,9 @@ phopl->gmarkQtrSec = cons(qtrGmarkDataLocal phopl->gmarkQtrSec)
 
 ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( kwPrintQtrInfo()
 let( (nfo) 
 fprintf(phopl->port "\n")
@@ -1595,54 +1729,60 @@ fprintf(phopl->port "\n")
 
 ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( printSecQtrInfo()
-let( (nfo) 
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
+  let( (nfo) 
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
 
-fprintf(phopl->port "SEC DATA Based On Quarter Reticles\n")
-fprintf(phopl->port "\n")
-fprintf(phopl->port "SEC 1/4 reticle size %8.2f %8.2f \n", phopl->xStepSec/2 phopl->yStepSec/2)
-fprintf(phopl->port "SEC 1/4 reticle OVERsized to %8.2f %8.2f \n", phopl->xStepSec/2+1 phopl->yStepSec/2+1)
-fprintf(phopl->port "\n")
+    fprintf(phopl->port "SEC DATA Based On Quarter Reticles\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "SEC 1/4 reticle size %8.2f %8.2f \n", phopl->xStepSec/2 phopl->yStepSec/2)
+    fprintf(phopl->port "SEC 1/4 reticle OVERsized to %8.2f %8.2f \n", phopl->xStepSec/2+1 phopl->yStepSec/2+1)
+    fprintf(phopl->port "\n")
 
-fprintf(phopl->port "SEC Center of NE Reticle %22L\n", car(phopl->NEcenterSec))
-fprintf(phopl->port "SEC Center of NW Reticle %22L\n", car(phopl->NWcenterSec))
-fprintf(phopl->port "SEC Center of SW Reticle %22L\n", car(phopl->SWcenterSec))
-fprintf(phopl->port "SEC Center of SE Reticle %22L\n", car(phopl->SEcenterSec))
-fprintf(phopl->port "\n")
-
-
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
-
-foreach(i phopl->dfasQtrSec
-dis2 = caddr(i)
-fprintf(phopl->port "SEC %-40s DFAS Reference %-12s  Quadrant %-10s\n",car(i) cadr(i) car(cadddr(i)))
-fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
-fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
-fprintf(phopl->port "\n")
-)
+    fprintf(phopl->port "SEC Center of NE Reticle %22L\n", car(phopl->NEcenterSec))
+    fprintf(phopl->port "SEC Center of NW Reticle %22L\n", car(phopl->NWcenterSec))
+    fprintf(phopl->port "SEC Center of SW Reticle %22L\n", car(phopl->SWcenterSec))
+    fprintf(phopl->port "SEC Center of SE Reticle %22L\n", car(phopl->SEcenterSec))
+    fprintf(phopl->port "\n")
 
 
-fprintf(phopl->port "\n")
-fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
 
-foreach(i phopl->gmarkQtrSec
-dis2 = caddr(i)
-fprintf(phopl->port "SEC %-40s Quadrant %-10s\n", car(i) car(cadddr(i)))
-fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
-fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
-fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
-fprintf(phopl->port "\n")
-)
+    foreach(i phopl->dfasQtrSec
+      dis2 = caddr(i)
+      fprintf(phopl->port "SEC %-40s DFAS Reference %-12s  Quadrant %-10s\n",car(i) cadr(i) car(cadddr(i)))
+      fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+      fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+      fprintf(phopl->port "\n")
+    );foreach
 
-))
 
+    fprintf(phopl->port "\n")
+    fprintf(phopl->port "\n")
+
+    foreach(i phopl->gmarkQtrSec
+      dis2 = caddr(i)
+      fprintf(phopl->port "SEC %-40s Quadrant %-10s\n", car(i) car(cadddr(i)))
+      fprintf(phopl->port "SEC Distance From Center of NE Reticle %22L\n", car(dis2))
+      fprintf(phopl->port "SEC Distance From Center of NW Reticle %22L\n", cadr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SW Reticle %22L\n", caddr(dis2))
+      fprintf(phopl->port "SEC Distance From Center of SE Reticle %22L\n", cadddr(dis2))
+      fprintf(phopl->port "\n")
+    );foreach
+  );let
+);procedure
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( mpss(multi)
   let( ( mpss_cmd mpssfile forked output, multiCMD)
     if( (phopl->print) then 
@@ -1651,13 +1791,15 @@ procedure( mpss(multi)
        else
             multiCMD = "single"
       )
-      ;sprintf(mpss_cmd "/apps/scripts/python/buildMPSS.py %s %s" file multiCMD)
-      sprintf(mpss_cmd "/users/1127110/gitRepo/mpss/python/buildMPSS.py %s %s" file multiCMD)
+      buildMpssPythonFile = "/net/rfctest/vol/vol13/eng/lib/oaLibs/oaTest/oa3/cad/scripts/python/buildMPSS/buildMPSS.py"
+      sprintf(mpss_cmd "%s %s %s %s" buildMpssPythonFile phopl->release phopl->design multiCMD)
       forked = ipcBeginProcess( mpss_cmd "")
     
 ;     wait for it to start, then acknowledge:
       ipcWaitForProcess( forked )
       printf( "Building MPSS Report ... \n")
+      printf( "MPSS Build Command: %s \n" mpss_cmd)
+;      printf( "MPSS Python Location: %s \n" buildMpssFile)
       ipcWait(forked)
       output = ipcReadProcess(forked)
       printf("%s" output)
@@ -1684,6 +1826,9 @@ procedure( multi_sort( a b order)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( printQuad(n aList cellCode qList) 
   let( (cellName cellX cellY l)
 
@@ -1698,6 +1843,9 @@ procedure( printQuad(n aList cellCode qList)
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( get_ebeam_window(lib cell REPORT)
 
   let( (minX maxX minY maxY newcell ocv cv i layer shape llX urX llY urY path1 gateLayer max_win_size min_win_size)
@@ -1827,8 +1975,10 @@ procedure( get_ebeam_window(lib cell REPORT)
   ) t
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure( runDRC(cv rules_path)
-
   let( ()
     ivDRC(
       ?cell cv
@@ -1837,10 +1987,12 @@ procedure( runDRC(cv rules_path)
       ?rulesFromUnix t
       ?rulesFilePath rules_path
     )
-
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 procedure(write_deck(cv path gate)
   let( (RULES i)
     RULES = outfile(path)
@@ -1871,7 +2023,6 @@ procedure(write_deck(cv path gate)
     runDRC(cv path)
     dbSave(cv)
     deleteFile(path)
-
-  )
-)
+  );let 
+);procedure
 

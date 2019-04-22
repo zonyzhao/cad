@@ -38,13 +38,19 @@ class ebeamQuad:
         self.cdcx = 0.0
         self.cdcy = 0.0
     def chkValign(self):
-        chku = self.ul.pos.center.x - self.ur.pos.center.x
-        chkl = self.ll.pos.center.x - self.lr.pos.center.x
-        return chu+chkl
+        chkUpper = self.ul.pos.center.x - self.ll.pos.center.x
+        chkLower = self.ur.pos.center.x - self.lr.pos.center.x
+        return chkUpper+chkLower
     def chkHalign(self):
-        return self.ul.y - self.ur.y
-    def chkCdc(self):
-        pass
+        chkRight = self.ul.pos.center.y - self.ur.pos.center.y
+        chkLeft  = self.ll.pos.center.y - self.lr.pos.center.y
+        return chkRight+chkLeft
+    def chkCdcX(self):
+        chk = self.lr.pos.center.x - self.ll.pos.center.x
+        return chk
+    def chkCdcY(self):
+        chk = self.ul.pos.center.y - self.ll.pos.center.y
+        return chk
         
 class reticle:
     def __init__(self):

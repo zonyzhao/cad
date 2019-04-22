@@ -35,7 +35,7 @@ read.setPath("./testTargets/")
 read.read()
 leicaParse = parse.parser()
 leicaParse.setLines(read.getLines())
-leicaParse.setBegString("Primary Leica Marks")
+leicaParse.setBegString("Leica Marks")
 leicaParse.setEndString("Scan")
 leicaParse.parse()
 leicaParse.getbOccur()
@@ -52,9 +52,9 @@ urRexp = re.compile("UR")
 lrRexp = re.compile("LR")
 llRexp = re.compile("LL")
 ulRexp = re.compile("UL")
-mloRexp = re.compile("Main_LO")
-loRexp = re.compile("LO")
-sdaRexp = re.compile("SDA")
+mloRexp = re.compile("_Main_LO_")
+loRexp = re.compile("_LO_")
+sdaRexp = re.compile("_SDA_")
 southRexp = re.compile("South")
 northRexp = re.compile("North")
 i=0
@@ -70,6 +70,16 @@ mLoUlCoord = []
 mLoUrCoord = []
 mLoLlCoord = []
 mLoLrCoord = []
+
+loUlCoord = []
+loUrCoord = []
+loLlCoord = []
+loLrCoord = []
+
+sdaUlCoord = []
+sdaUrCoord = []
+sdaLlCoord = []
+sdaLrCoord = []
 
 if numLines > 6:
     # MIM
@@ -115,12 +125,52 @@ if numLines > 6:
                     mLoLrCoord.append(float(ys))
                     print str(i) + ".) Main LO South LR COORD: (" + xs + "," + ys + ")"
             i=i+1
+        elif loRexp.search(line) != None:
+            if northRexp.search(line) != None:
+                if ulRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    loUlCoord.append(float(xs))
+                    loUlCoord.append(float(ys))
+                    print str(i) + ".) L0 North UL COORD: (" + xs + "," + ys + ")"  
+                if urRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    loUrCoord.append(float(xs))
+                    loUrCoord.append(float(ys))
+                    print str(i) + ".) L0 North UR COORD: (" + xs + "," + ys + ")"                               
+            if southRexp.search(line) != None:
+                if llRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    loLlCoord.append(float(xs))
+                    loLlCoord.append(float(ys))
+                    print str(i) + ".) LO South LL COORD: (" + xs + "," + ys + ")"
+                if lrRexp.search(line) != None:
+                    ls = line.split("\t")
+                    coord = ls[3]
+                    coords = coord.split()
+                    xs = coords[0]
+                    ys = coords[1]
+                    loLrCoord.append(float(xs))
+                    loLrCoord.append(float(ys))
+                    print str(i) + ".) LO South LR COORD: (" + xs + "," + ys + ")"            
+            i=i+1
     mLoLlLrYDiff = mLoLlCoord[1] - mLoLrCoord[1]
     mLoUlUrYDiff = mLoUlCoord[1] - mLoUrCoord[1]
     mLoUlLlYDiff = mLoUlCoord[0] - mLoLlCoord[0]
     mLoUrLrYDiff = mLoUrCoord[0] - mLoLrCoord[0]
     print("################################################")
-    print(" LIECA POST PROCESSED REPORT")
+    print(" LIECA POST PROCESSED REPORT - Main LO")
     print("################################################")
     print("Main_L0_LL_LR_Y_DIFF = " +  str(mLoLlLrYDiff))
     print("Main_L0_LL_LR_Y_DIFF = " +  str(mLoUlUrYDiff))
@@ -130,7 +180,7 @@ if numLines > 6:
     mLoCdcY = mLoUlCoord[1] - mLoLlCoord[1]
     print("Main L0 CDC_X = " +  str(mLoCdcX))
     print("Main L0 CDC_Y = " +  str(mLoCdcY))
-    # Populate the ebeam Main L0 Quad
+    # Populate the ebeam Main L0 Quad object
     eQuadMainL0 = reticle.ebeamQuad()
     eQuadMainL0.ul.pos.center.x = mLoUlCoord[0]
     eQuadMainL0.ul.pos.center.y = mLoUlCoord[1]
@@ -140,7 +190,54 @@ if numLines > 6:
     eQuadMainL0.ll.pos.center.y = mLoLlCoord[1]
     eQuadMainL0.lr.pos.center.x = mLoLrCoord[0]
     eQuadMainL0.lr.pos.center.y = mLoLrCoord[1]
-    
-else:
-    # SIM
-    pass
+    # Main LO Quad Object
+    print("################################################")
+    print(" LIECA POST PROCESSED REPORT - LO (Object)")
+    print("################################################")
+    print("L0_Vertical Align Checksum = " +  str(eQuadMainL0.chkValign()))
+    print("L0_Horizontal Align Checksum = " +  str(eQuadMainL0.chkHalign()))
+    print("LO CDC Horizontal = " +  str(eQuadMainL0.chkCdcX()))
+    print("L0_CDC Vertical = " +  str(eQuadMainL0.chkCdcY()))
+    ############
+    # LO Quad
+    ############
+    loLlLrYDiff = loLlCoord[1] - loLrCoord[1]
+    loUlUrYDiff = loUlCoord[1] - loUrCoord[1]
+    loUlLlYDiff = loUlCoord[0] - loLlCoord[0]
+    loUrLrYDiff = loUrCoord[0] - loLrCoord[0]
+    print("################################################")
+    print(" LIECA POST PROCESSED REPORT - LO")
+    print("################################################")
+    print("Main_L0_LL_LR_Y_DIFF = " +  str(loLlLrYDiff))
+    print("Main_L0_LL_LR_Y_DIFF = " +  str(loUlUrYDiff))
+    print("Main_L0_UL_LL_X_DIFF = " +  str(loUlLlYDiff))
+    print("Main_L0_UR_LR_X_DIFF = " +  str(loUrLrYDiff))
+    loCdcX = loLrCoord[0] - loLlCoord[0] 
+    loCdcY = loUlCoord[1] - loLlCoord[1]
+    print("Main L0 CDC_X = " +  str(loCdcX))
+    print("Main L0 CDC_Y = " +  str(loCdcY))
+    # Populate the ebeam L0 Quad object
+    eQuadL0 = reticle.ebeamQuad()
+    eQuadL0.ul.pos.center.x = loUlCoord[0]
+    eQuadL0.ul.pos.center.y = loUlCoord[1]
+    eQuadL0.ur.pos.center.x = loUrCoord[0]
+    eQuadL0.ur.pos.center.y = loUrCoord[1]
+    eQuadL0.ll.pos.center.x = loLlCoord[0]
+    eQuadL0.ll.pos.center.y = loLlCoord[1]
+    eQuadL0.lr.pos.center.x = loLrCoord[0]
+    eQuadL0.lr.pos.center.y = loLrCoord[1]
+    print("################################################")
+    print(" LIECA POST PROCESSED REPORT -  LO (Object)")
+    print("################################################")
+    print("L0_Vertical Align Checksum = " +  str(eQuadL0.chkValign()))
+    print("L0_Horizontal Align Checksum = " +  str(eQuadL0.chkHalign()))
+    print("LO CDC Horizontal = " +  str(eQuadL0.chkCdcX()))
+    print("L0_CDC Vertical = " +  str(eQuadL0.chkCdcY()))
+    else:
+        # SIM
+        pass
+
+eQuadMainL0.chkValign()
+eQuadMainL0.chkHalign()
+eQuadMainL0.chkCdcX()
+eQuadMainL0.chkCdcY()
