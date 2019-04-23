@@ -19,10 +19,10 @@ import reticle
 ###################################################
 # UT-1 Inheritance/Composition Tests
 ###################################################
-#help(reticle.alignMark)
-#issubclass(reticle.alignMark, reticle.overhead)
-#eQuadMainL0 = reticle.ebeamQuad()
-#isinstance(eQuadMainL0, reticle.ebeamQuad)
+help(reticle.alignMark)
+issubclass(reticle.alignMark, reticle.overhead)
+eQuadMainL0 = reticle.ebeamQuad()
+isinstance(eQuadMainL0, reticle.ebeamQuad)
 
 ###################################################
 # UT-1 Parse the primary Leica portion of 
